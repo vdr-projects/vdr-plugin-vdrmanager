@@ -7,8 +7,8 @@ IUSE=""
 inherit vdr-plugin
 
 DESCRIPTION="Helper plugin for Andro-VDR android vdr control app"
-HOMEPAGE="http://projects.vdr-developer.org/wiki/kvdrmon"
-SRC_URI="http://projects.vdr-developer.org/attachments/download/372/${P}.tgz"
+HOMEPAGE="http://projects.vdr-developer.org/wiki/androvdr"
+SRC_URI="http://projects.vdr-developer.org/attachments/download/556/${P}.tgz"
 KEYWORDS="~x86 ~amd64"
 SLOT="0"
 LICENSE="GPL-2"
