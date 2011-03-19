@@ -104,11 +104,7 @@ public abstract class SvdrpClient<Result> {
 		try {
 			// connect
 			informListener(SvdrpEvent.CONNECTING, null);
-			if (prefs.isSSL()) {
-				throw new IllegalArgumentException("SSL not implemented yet");
-			} else {
-				socket = new Socket(prefs.getSvdrpHost(), prefs.getSvdrpPort());
-			}
+			socket = new Socket(prefs.getSvdrpHost(), prefs.getSvdrpPort());
 			informListener(SvdrpEvent.CONNECTED, null);
 		} catch (final IOException e) {
 			informListener(SvdrpEvent.CONNECT_ERROR, null);

@@ -50,10 +50,7 @@
     android:title="@string/wakeup_enabled_title"
     android:summary="@string/wakeup_enabled_summary"/>
 
-  <CheckBoxPreference
-    android:key="@string/wakeup_svdrphelper_key"
-    android:title="@string/wakeup_svdrphelper_title"
-    android:summary="@string/wakeup_svdrphelper_summary"/>
+  
 
   <EditTextPreference
     android:key="@string/wakeup_url_key"

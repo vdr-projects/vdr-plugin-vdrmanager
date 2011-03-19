@@ -33,19 +33,11 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 		boolean ok = false;
 		try {
 
-			// send request
-			if (prefs.isWakeupHttp()) {
-				// wakeup by http request
-				final HttpHelper httpHelper = new HttpHelper();
-				httpHelper.performGet(prefs.getWakeupUrl(), prefs.getWakeupUser(), prefs.getWakeupPassword(), null);
-				// request sent
-				ok = true;
-			} else {
-				// wakeup by SvdrpHelper
-				final WakeupClient client = new WakeupClient();
-				client.run();
-				ok = client.getState().equals(WakeupState.OK);
-			}
+			// wakeup by http request
+			final HttpHelper httpHelper = new HttpHelper();
+			httpHelper.performGet(prefs.getWakeupUrl(), prefs.getWakeupUser(), prefs.getWakeupPassword(), null);
+			// request sent
+			ok = true;
 
 		} catch (final Exception e) {
 		}

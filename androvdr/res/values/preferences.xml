@@ -14,7 +14,7 @@
   <string name="vdr_ssl_summary">Use SSL for connections</string>
   
   <!-- channel filter preferences -->
-  <string name="channel_filter_preferences">Limit channels</string>
+  <string name="channel_filter_preferences">Channel settings</string>
   <string name="channel_filter_filter_title">Limit channels</string>
   <string name="channel_filter_filter_summary">Use only given channels</string>
   <string name="channel_filter_last_title">Channels</string>
@@ -24,8 +24,6 @@
   <string name="wakeup_preferences">Remote VDR host wakeup</string>
   <string name="wakeup_enabled_title">Can remote wakeup VDR</string>
   <string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
-  <string name="wakeup_svdrphelper_title">Use HTTP request for wakeup</string>
-  <string name="wakeup_svdrphelper_summary">Wakeup by HTTP request and not using SvdrpHelper</string>
   <string name="wakeup_url_title">URL for remote wakeup</string>
   <string name="wakeup_url_summary">URL for a request doing the wakeup</string>
   <string name="wakeup_user_title">Wakeup user</string>

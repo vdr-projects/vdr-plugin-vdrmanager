@@ -13,7 +13,7 @@
   <string name="channel_filter_last_key">last_channel</string>
   
   <string name="wakeup_enabled_key">wakeup_enabled</string>
-  <string name="wakeup_svdrphelper_key">wakeup_http</string>
+  
   <string name="wakeup_url_key">wakeup_url</string>
   <string name="wakeup_user_key">wakeup_user</string>
   <string name="wakeup_password_key">wakeup_password</string>

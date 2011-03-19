@@ -23,8 +23,6 @@ public class Preferences {
 	private String channels;
 	/** Enable remote wakeup */
 	private boolean wakeupEnabled;
-	/** Wakeup by HTTP request */
-	private boolean wakeupHttp;
 	/** URL of the wakeup script */
 	private String wakeupUrl;
 	/** User for wakeup */
@@ -103,14 +101,6 @@ public class Preferences {
 	 */
 	public boolean isWakeupEnabled() {
 		return wakeupEnabled;
-	}
-
-	/**
-	 * Gets the wakeup method
-	 * @return true, wenn wakeup by http request
-	 */
-	public boolean isWakeupHttp() {
-		return wakeupHttp;
 	}
 
 	/**
@@ -248,7 +238,6 @@ public class Preferences {
 		prefs.filterChannels = getBoolean(context, sharedPrefs, R.string.channel_filter_filter_key, false);
 
 		prefs.wakeupEnabled = getBoolean(context, sharedPrefs, R.string.wakeup_enabled_key, false);
-		prefs.wakeupHttp = getBoolean(context, sharedPrefs, R.string.wakeup_svdrphelper_key, false);
 		prefs.wakeupUrl = getString(context, sharedPrefs, R.string.wakeup_url_key, "");
 		prefs.wakeupUser = getString(context, sharedPrefs, R.string.wakeup_user_key, "");
 		prefs.wakeupPassword = getString(context, sharedPrefs, R.string.wakeup_password_key, "");
