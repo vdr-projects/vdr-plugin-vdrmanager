@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    
+    <ScrollView
+        android:id="@+id/timer_detail_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5">
+
+    <LinearLayout
+        android:id="@+id/timer_detail_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+                
+			    <TextView
+			        android:id="@+id/timer_detail_channel_title"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textStyle="bold"
+			        android:text="@string/timer_detail_channel_title"/>
+			      
+			    <EditText
+			        android:id="@+id/timer_detail_channel"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:editable="false"/>
+			            				            
+			    <TextView
+			        android:id="@+id/timer_detail_title_title"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textStyle="bold"
+			        android:text="@string/timer_detail_title_title"/>
+			
+			    <EditText
+			        android:id="@+id/timer_detail_title"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"/>
+			            
+			    <TextView
+			         android:id="@+id/timer_detail_start_title"
+			         android:layout_width="wrap_content"
+			         android:layout_height="wrap_content"
+			         android:text="@string/timer_detail_start_title"/>
+			         
+			    <LinearLayout
+			         android:id="@+id/timer_detail_start_daytime"
+			         android:layout_width="fill_parent"
+			         android:layout_height="wrap_content">
+			         
+					     <EditText
+					         android:id="@+id/timer_detail_start"
+					         android:layout_width="wrap_content"
+					         android:layout_height="wrap_content"
+					         android:editable="false"/>
+					         
+               <EditText
+                   android:id="@+id/timer_detail_day"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:editable="false"/>          
+					         
+					 </LinearLayout>
+			                
+			     <TextView
+			         android:id="@+id/timer_detail_end_title"
+			         android:layout_width="wrap_content"
+			         android:layout_height="wrap_content"
+			         android:text="@string/timer_detail_end_title"/>
+			
+			     <EditText
+			         android:id="@+id/timer_detail_end"
+			         android:layout_width="wrap_content"
+			         android:layout_height="wrap_content"
+			         android:editable="false"/>
+		
+		 	     <TextView
+			         android:id="@+id/timer_detail_fill"
+			         android:layout_width="fill_parent"
+			         android:layout_height="fill_parent"
+			         android:layout_weight="0.5"/>
+			                            
+        </LinearLayout>
+        
+    </ScrollView>
+
+    <Button
+        android:id="@+id/timer_details_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/timer_details_create_title"/>
+		                          
+</LinearLayout>
