@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 
+  <!-- What's on display -->
+  <string name="epg_list_time_label">What\'s on at</string>
+  <string name="epg_list_time_now">Now</string>
+  <string name="epg_list_time_next">Next</string>
+  <string name="epg_list_channel_spinner">Channel</string>
+  <string name="epg_list_search_label">Search results</string>
+  
+  <!-- create timer -->
+  <string name="epg_event_create_timer_text">Add timer</string>
+  <string name="epg_event_modify_timer_text">Modify timer</string>
+  
+  <!-- search -->
+  <string name="epg_search_button">Search</string>
+  
+</resources>

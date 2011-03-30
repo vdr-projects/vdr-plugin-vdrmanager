@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="vdr_host_key">svdrp_host</string>
+  <string name="vdr_port_key">svdrp_port </string>
+  <string name="vdr_password_key">svdrp_password</string>
+  <string name="vdr_ssl_key">svdrp_ssl</string>
+  
+  <string name="alive_check_enabled_key">alive_check_enabled</string>
+  <string name="alive_check_interval_key">alive_check_interval</string>
+  
+  <string name="channel_filter_filter_key">limit_channels</string>
+  <string name="channel_filter_last_key">last_channel</string>
+  
+  <string name="wakeup_enabled_key">wakeup_enabled</string>
+  
+  <string name="wakeup_url_key">wakeup_url</string>
+  <string name="wakeup_user_key">wakeup_user</string>
+  <string name="wakeup_password_key">wakeup_password</string>
+  
+  <string name="timer_pre_start_buffer_key">timer_pre_start_buffer</string>
+  <string name="timer_post_end_buffer_key">timer_post_end_buffer</string>
+  <string name="timer_default_priority_key">timer_default_priority</string>
+  <string name="timer_default_primary_limit_key">timer_default_primary_limit</string>
+  <string name="timer_default_lifetime_key">timer_default_lifetime</string>
+  
+  <string name="epg_search_times_key">epg_search_times</string>
+  
+</resources>
