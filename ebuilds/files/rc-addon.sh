@@ -1,10 +1,10 @@
 plugin_pre_vdr_start() {
 
-	if [ "${ANDROVDR_PORT:=6420}" != 6420 ]; then
-		add_plugin_param "-p ${ANDROVDR_PORT}"
+	if [ "${VDRMANAGER_PORT:=6420}" != 6420 ]; then
+		add_plugin_param "-p ${VDRMANAGER_PORT}"
 	fi
 
-	if [ -n "${ANDROVDR_PASSWORD}" ]; then
-		add_plugin_param "-P ${ANDROVDR_PASSWORD}"
+	if [ -n "${VDRMANAGER_PASSWORD}" ]; then
+		add_plugin_param "-P ${VDRMANAGER_PASSWORD}"
 	fi
 }
