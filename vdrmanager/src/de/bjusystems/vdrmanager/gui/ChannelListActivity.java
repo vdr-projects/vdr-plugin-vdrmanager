@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,12 +27,12 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
- * This class is used for showing what's
- * current running on all channels
+ * This class is used for showing what's current running on all channels
+ * 
  * @author bju
  */
-public class ChannelListActivity extends Activity
-															   implements OnItemClickListener, SvdrpAsyncListener<Channel> {
+public class ChannelListActivity extends Activity implements
+		OnItemClickListener, SvdrpAsyncListener<Channel> {
 
 	ChannelClient channelClient;
 	ChannelAdapter adapter;
@@ -53,17 +54,17 @@ public class ChannelListActivity extends Activity
 		// register context menu
 		registerForContextMenu(listView);
 
-
 		// create channel list
 		channels = new ArrayList<Channel>();
 
 		listView.setOnItemClickListener(this);
 	}
 
-	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+	public void onItemClick(final AdapterView<?> parent, final View view,
+			final int position, final long id) {
 
 		// find and remember item
-		final Channel channel =  (Channel) parent.getAdapter().getItem(position);
+		final Channel channel = adapter.getItem(position);
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentChannel(channel);
 		app.setChannels(channels);
@@ -73,8 +74,6 @@ public class ChannelListActivity extends Activity
 		intent.setClass(this, EpgListActivity.class);
 		startActivity(intent);
 	}
-
-
 
 	@Override
 	protected void onResume() {
@@ -100,7 +99,8 @@ public class ChannelListActivity extends Activity
 		channelClient = new ChannelClient();
 
 		// create background task
-		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(channelClient);
+		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(
+				channelClient);
 
 		// create progress
 		progress = new SvdrpProgressDialog(this, channelClient);
@@ -128,7 +128,7 @@ public class ChannelListActivity extends Activity
 			break;
 		case FINISHED:
 			channels.addAll(channelClient.getResults());
-			for(final Channel channel : channels) {
+			for (final Channel channel : channels) {
 				adapter.add(channel);
 			}
 			progress = null;
@@ -142,46 +142,57 @@ public class ChannelListActivity extends Activity
 	}
 
 	@Override
-	public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(final ContextMenu menu, final View v,
+			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		if (v.getId() == R.id.channel_list) {
-	    final MenuInflater inflater = getMenuInflater();
-	    final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+			final MenuInflater inflater = getMenuInflater();
+			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
-	    // set menu title
-	    final Channel item = adapter.getItem(info.position);
-	    menu.setHeaderTitle(item.getName());
+			// set menu title
+			final Channel item = adapter.getItem(info.position);
+			menu.setHeaderTitle(item.getName());
 
-	    inflater.inflate(R.menu.channel_list_item_menu, menu);
+			inflater.inflate(R.menu.channel_list_item_menu, menu);
 		}
 	}
-
-
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 
-    final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-    final Channel channel = adapter.getItem(info.position);
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		final Channel channel = adapter.getItem(info.position);
 
-    switch (item.getItemId()) {
-    case R.id.channel_item_menu_epg:
-    	onItemClick(null, null, info.position, 0);
-    	break;
-    case R.id.channel_item_menu_stream:
-    	// show live stream
-    	showStream(channel);
-    	break;
+		switch (item.getItemId()) {
+		case R.id.channel_item_menu_epg:
+			onItemClick(null, null, info.position, 0);
+			break;
+		case R.id.channel_item_menu_stream:
+			// show live stream
+			showStream(channel);
+			break;
 		}
 
 		return true;
 	}
 
+	private String getStreamUrl(Channel c) {
+		//"http://192.168.1.119:3000/TS/"
+		StringBuilder sb = new StringBuilder();
+		Preferences p = Preferences.getPreferences();
+		sb.append("http://").append(p.getSvdrpHost()).append(":")
+				.append(p.getStreamPort()).append("/")
+				.append(p.getStreamFormat()).append("/")
+				.append(c.getNumber());
+		return sb.toString();
+	}
 	private void showStream(final Channel channel) {
-  	// show stream
-		final Intent intent = new Intent();
-		intent.setClass(this, VideoActivity.class);
-		startActivity(intent);
+		
+		String url = getStreamUrl(channel);
+		final Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse(url.toString()),"video/*");
+		startActivityForResult(intent, 1);
 	}
 }

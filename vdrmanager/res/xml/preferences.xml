@@ -25,6 +25,14 @@
     android:key="@string/vdr_ssl_key"
     android:title="@string/vdr_ssl_title"
     android:summary="@string/vdr_ssl_summary"/>  
+    
+   
+  <EditTextPreference
+    android:key="streamingport"
+    android:inputType="number"
+    android:title="@string/settings_livetv_port"
+    android:summary="@string/settings_livetv_port_summary"
+    android:defaultValue="3000" />
       
   </PreferenceCategory>
 
@@ -95,6 +103,16 @@
     android:summary="@string/timer_default_priority_summary"
     android:defaultValue="50"/>
   
+  </PreferenceCategory>
+  
+  
+ <PreferenceCategory android:title="@string/livetv">
+    <ListPreference
+      android:key="livetv_streamformat"
+      android:title="@string/settings_livetv_streamformat"
+      android:defaultValue="TS"
+      android:entries="@array/livetv_streamformat"
+      android:entryValues="@array/livetv_streamformat_values" />
   </PreferenceCategory>
     
 </PreferenceScreen>

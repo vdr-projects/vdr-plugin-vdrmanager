@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="livetv_streamformat">
+    <item>TS</item>
+    <item>PES</item>
+    <item>ES</item>
+    <item>PS</item>
+  </string-array>
+  <string-array name="livetv_streamformat_values">
+    <item>TS</item>
+    <item>PES</item>
+    <item>ES</item>
+    <item>PS</item>
+  </string-array>
+</resources>

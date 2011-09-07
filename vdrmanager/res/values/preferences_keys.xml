@@ -5,6 +5,8 @@
   <string name="vdr_port_key">svdrp_port </string>
   <string name="vdr_password_key">svdrp_password</string>
   <string name="vdr_ssl_key">svdrp_ssl</string>
+  <string name="vdr_stream_format">stream_format</string>
+  <string name="vdr_stream_port">stream_port</string>
   
   <string name="alive_check_enabled_key">alive_check_enabled</string>
   <string name="alive_check_interval_key">alive_check_interval</string>

@@ -43,6 +43,18 @@ public class Preferences {
 	private int timerDefaultLifetime;
 	/** user defined epg search times */
 	private String epgSearchTimes;
+	
+	private int streamPort = 3000;
+	
+	public int getStreamPort() {
+		return streamPort;
+	}
+
+	public String getStreamFormat() {
+		return streamFormat;
+	}
+
+	private String streamFormat = "TS";
 
 	/** Properties singleton */
 	private static Preferences thePrefs;
@@ -226,11 +238,13 @@ public class Preferences {
 
 		final Preferences prefs = new Preferences();
 
-		prefs.svdrpHost = getString(context, sharedPrefs, R.string.vdr_host_key, "10.0.2.2");
+		prefs.svdrpHost = getString(context, sharedPrefs, R.string.vdr_host_key, "127.0.0.1");
 		prefs.svdrpPort = getInt(context, sharedPrefs, R.string.vdr_port_key, 6419);
 		prefs.password = getString(context, sharedPrefs, R.string.vdr_password_key, "");
 		prefs.ssl = getBoolean(context, sharedPrefs, R.string.vdr_ssl_key, false);
-
+		prefs.streamPort = getInt(context, sharedPrefs, R.string.vdr_stream_port, 3000);
+		prefs.streamFormat= getString(context, sharedPrefs, R.string.vdr_stream_format, "TS");
+		
 		prefs.aliveCheckEnabled = getBoolean(context, sharedPrefs, R.string.alive_check_enabled_key, false);
 		prefs.aliveCheckInterval = getInt(context, sharedPrefs, R.string.alive_check_interval_key, 60);
 
