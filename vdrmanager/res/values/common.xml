@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-  <string name="common_delete">Delete</string>   
-  
+  <string name="common_delete">Delete</string>
+  <string name="prefs_current_value">Current:</string>
+  <string name="prefs_current_value_template">Current: %1$s</string>
 </resources>
