@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android">
   
   <PreferenceCategory android:title="@string/vdr_preferences" android:key="vdr_preferences">
-  
+
   <EditTextPreference
     android:key="@string/vdr_host_key"
     android:title="@string/vdr_host_title"
@@ -25,19 +25,26 @@
     android:key="@string/vdr_ssl_key"
     android:title="@string/vdr_ssl_title"
     android:summary="@string/vdr_ssl_summary"/>  
-    
-   
+
+  </PreferenceCategory>
+
+  <PreferenceCategory android:title="@string/livetv">
+  <ListPreference
+      android:key="livetv_streamformat"
+      android:title="@string/settings_livetv_streamformat"
+      android:defaultValue="TS"
+      android:entries="@array/livetv_streamformat"
+      android:entryValues="@array/livetv_streamformat_values" />
+
   <EditTextPreference
     android:key="streamingport"
     android:inputType="number"
     android:title="@string/settings_livetv_port"
     android:summary="@string/settings_livetv_port_summary"
     android:defaultValue="3000" />
-      
   </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/channel_filter_preferences" android:key="filter_preferences">
-  
   <CheckBoxPreference
     android:key="@string/channel_filter_filter_key"
     android:title="@string/channel_filter_filter_title"
@@ -58,22 +65,46 @@
     android:title="@string/wakeup_enabled_title"
     android:summary="@string/wakeup_enabled_summary"/>
 
+  <ListPreference
+     android:key="@string/wakeup_method_key"
+     android:title="@string/wakeup_method_title"
+     android:summary="@string/wakeup_method_summary"
+     android:entries="@array/wakeup_methods"
+     android:entryValues="@array/wakeup_methods_values"
+     android:defaultValue="@string/default_wakeup_method"
+     android:dependency="@string/wakeup_enabled_key"
+      />
   
 
   <EditTextPreference
     android:key="@string/wakeup_url_key"
     android:title="@string/wakeup_url_title"
-    android:summary="@string/wakeup_url_summary"/>
+    android:summary="@string/wakeup_url_summary"
+    android:dependency="@string/wakeup_enabled_key"
+    />
 
   <EditTextPreference
     android:key="@string/wakeup_user_key"
     android:title="@string/wakeup_user_title"
-    android:summary="@string/wakeup_user_summary"/>
+    android:summary="@string/wakeup_user_summary"
+     android:dependency="@string/wakeup_enabled_key"
+    />
 
   <EditTextPreference
     android:key="@string/wakeup_password_key"
     android:title="@string/wakeup_password_title"
-    android:summary="@string/wakeup_password_summary"/>
+    android:summary="@string/wakeup_password_summary"
+     android:dependency="@string/wakeup_enabled_key"
+   />
+   
+   
+   <EditTextPreference 
+    android:key="@string/wakeup_wol_mac_key"
+    android:title="@string/wakeup_wol_mac_title"
+    android:summary="@string/wakeup_wol_mac_summary"
+    android:dependency="@string/wakeup_enabled_key"
+   />
+   
 
   </PreferenceCategory>       
   
@@ -104,15 +135,5 @@
     android:defaultValue="50"/>
   
   </PreferenceCategory>
-  
-  
- <PreferenceCategory android:title="@string/livetv">
-    <ListPreference
-      android:key="livetv_streamformat"
-      android:title="@string/settings_livetv_streamformat"
-      android:defaultValue="TS"
-      android:entries="@array/livetv_streamformat"
-      android:entryValues="@array/livetv_streamformat_values" />
-  </PreferenceCategory>
-    
+
 </PreferenceScreen>
