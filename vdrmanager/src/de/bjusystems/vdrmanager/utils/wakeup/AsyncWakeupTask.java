@@ -2,7 +2,9 @@ package de.bjusystems.vdrmanager.utils.wakeup;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Canvas.VertexMode;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -10,6 +12,7 @@ import de.bjusystems.vdrmanager.utils.http.HttpHelper;
 
 public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 
+	private static final String TAG = "AsyncWakeupTask";
 	/** Context */
 	private final Context context;
 	/** Progress dialog */
@@ -19,34 +22,54 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 		this.context = context;
 	}
 
+	Wakeuper getWakeuper() {
+		// Preferences
+		final Preferences prefs = Preferences.getPreferences();
+
+		if (Preferences.getPreferences().getWakeupMethod().equals("url")) {
+			return new Wakeuper() {
+				public void wakeup(Context context) {
+					// wakeup by http request
+					final HttpHelper httpHelper = new HttpHelper();
+					httpHelper.performGet(prefs.getWakeupUrl(),
+							prefs.getWakeupUser(), prefs.getWakeupPassword(),
+							null);
+					// request sent
+
+				}
+			};
+		} else {
+			return new Wakeuper() {
+				public void wakeup(Context context) throws Exception {
+					WakeOnLanClient.wake(prefs.getVdrMac());
+				}
+			};
+		}
+	}
+
 	@Override
 	protected Void doInBackground(final Object... params) {
 
 		// open progress dialog
-		publishProgress(WakeupProgress.WAKEUP_STARTED);
-
-		// Preferences
-		final Preferences prefs = Preferences.getPreferences();
+		publishProgress(new WakeupProgress(WakeupProgressType.WAKEUP_STARTED));
 
 		boolean ok = false;
+		String msg = null;
 		try {
-
-			// wakeup by http request
-			final HttpHelper httpHelper = new HttpHelper();
-			httpHelper.performGet(prefs.getWakeupUrl(), prefs.getWakeupUser(), prefs.getWakeupPassword(), null);
-			// request sent
+			getWakeuper().wakeup(context);
 			ok = true;
-
 		} catch (final Exception e) {
+			Log.w(TAG, e);
+			msg = e.getMessage();
 		}
 
 		// close progress
-		publishProgress(WakeupProgress.WAKEUP_FINISHED);
-
+		publishProgress(new WakeupProgress(WakeupProgressType.WAKEUP_FINISHED));
 		if (ok) {
-			publishProgress(WakeupProgress.WAKEUP_OK);
+			publishProgress(new WakeupProgress(WakeupProgressType.WAKEUP_OK));
 		} else {
-			publishProgress(WakeupProgress.WAKEUP_ERROR);
+			publishProgress(new WakeupProgress(WakeupProgressType.WAKEUP_ERROR,
+					msg));
 		}
 
 		return null;
@@ -56,9 +79,12 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 	protected void onProgressUpdate(final WakeupProgress... values) {
 		super.onProgressUpdate(values);
 
-		switch (values[0]) {
+		WakeupProgress t = values[0];
+
+		switch (t.getState()) {
 		case WAKEUP_STARTED:
-			final CharSequence message = context.getText(R.string.progress_wakeup_sending);
+			final CharSequence message = context
+					.getText(R.string.progress_wakeup_sending);
 			progressDialog = ProgressDialog.show(context, "", message);
 			break;
 		case WAKEUP_FINISHED:
@@ -68,14 +94,19 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 			showToast(R.string.progress_wakeup_sent);
 			break;
 		case WAKEUP_ERROR:
-			showToast(R.string.progress_wakeup_error);
+			showToast(R.string.progress_wakeup_error, t.getInfo());
 			break;
 		}
 	}
 
-	private void showToast(final int textId) {
+	private void showToast(final int textId, Object... args) {
 
-		final CharSequence text = context.getText(textId);
+		final CharSequence text;
+		if (args.length > 1) {
+			text = context.getString(textId);
+		} else {
+			text = context.getString(textId, args);
+		}
 		final int duration = Toast.LENGTH_SHORT;
 		final Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
