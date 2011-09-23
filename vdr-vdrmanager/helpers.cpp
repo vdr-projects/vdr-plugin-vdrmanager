@@ -101,6 +101,8 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
       result += number;
       result += ":";
       result += channel->Name();
+      result += ":";
+      result += channel->Provider();
       result += "\r\n";
     }
   }
