@@ -289,6 +289,8 @@ string cHelpers::ToText(cEvent * event) {
   result += MapSpecialChars(event->Title());
   result += ":";
   result += MapSpecialChars(event->Description() ? event->Description() : "");
+  result += ":";
+  result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
   result += "\r\n";
 
   if (eventTimer) {
