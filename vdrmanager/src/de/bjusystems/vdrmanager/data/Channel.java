@@ -1,6 +1,9 @@
 package de.bjusystems.vdrmanager.data;
 
-public class Channel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Channel implements Parcelable {
 
 	private final int number;
 	private final String name;
@@ -22,6 +25,12 @@ public class Channel {
 		this.number = 0;
 		this.name = "Unknown";
 		this.provider = "Unknown";
+	}
+
+	public Channel(Parcel in) {
+		this.number = in.readInt();
+		this.name = in.readString();
+		this.provider = in.readString();
 	}
 
 	public boolean isGroupSeparator() {
@@ -46,8 +55,28 @@ public class Channel {
 		text.append(number);
 		text.append(" - ");
 		text.append(name);
-		text.append(" : ");
-		text.append(provider);
+		// text.append(" : ");
+		// text.append(provider);
 		return text.toString();
 	}
+
+	public int describeContents() {
+		return 0;
+	}
+
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(number);
+		dest.writeString(name);
+		dest.writeString(provider);
+	}
+
+	public static final Parcelable.Creator<Channel> CREATOR = new Parcelable.Creator<Channel>() {
+		public Channel createFromParcel(Parcel in) {
+			return new Channel(in);
+		}
+
+		public Channel[] newArray(int size) {
+			return new Channel[size];
+		}
+	};
 }
