@@ -22,7 +22,16 @@ public class VdrManagerApp extends Application {
 	private Epg currentEvent;
 	private Timer currentTimer;
 	private Channel currentChannel;
-	private List<Channel> channels;
+	
+	private ArrayList<Epg> currentEpgList = new ArrayList<Epg>();
+	public ArrayList<Epg> getCurrentEpgList() {
+		return currentEpgList;
+	}
+
+	public void setCurrentEpgList(ArrayList<Epg> currentEpgList) {
+		this.currentEpgList = currentEpgList;
+	}
+
 	private EpgSearchParams currentSearch;
 	private Class<? extends Activity> nextActivity;
 	private final List<Activity> activitiesToFinish = new ArrayList<Activity>();
@@ -32,13 +41,13 @@ public class VdrManagerApp extends Application {
 	public void onCreate() {
 		super.onCreate();
 	}
-
+	
 	public void clear() {
 		this.currentEvent = null;
 		this.currentTimer = null;
 		this.currentChannel = null;
 		this.currentSearch = null;
-
+		this.currentEpgList = null;
 		this.epgListState = EpgListState.EPG_TIME;
 	}
 
@@ -75,13 +84,6 @@ public class VdrManagerApp extends Application {
 		this.epgListState = EpgListState.EPG_CHANNEL;
 	}
 
-	public List<Channel> getChannels() {
-		return channels;
-	}
-
-	public void setChannels(final List<Channel> channels) {
-		this.channels = channels;
-	}
 
 	public EpgSearchParams getCurrentSearch() {
 		return currentSearch;

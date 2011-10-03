@@ -6,18 +6,13 @@ import java.util.Date;
  * Class for EPG events
  * @author bju
  */
-public class Epg implements Event {
+public class Epg extends BaseEvent {
 
-	private final String channelNumber;
-	private final String channelName;
-	private final String title;
-	private final String description;
-	private final Date start;
-	private final Date stop;
 	private Timer timer;
 
 	public Epg(final String line) {
-
+		super(null);
+		
 		final String[] words = line.split(":");
 
 		channelNumber = words[0].substring(1);
@@ -26,26 +21,9 @@ public class Epg implements Event {
 		stop = new Date(Long.parseLong(words[3])*1000);
 		title = words[4];
 		description = words.length > 5 ? words[5] : "";
+		shortText = words.length > 6 ? words[6] : "";
 	}
-
-	public String getChannelNumber() {
-		return channelNumber;
-	}
-	public String getChannelName() {
-		return channelName;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public Date getStart() {
-		return start;
-	}
-	public Date getStop() {
-		return stop;
-	}
+	
 
 	public Timer getTimer() {
 		return timer;

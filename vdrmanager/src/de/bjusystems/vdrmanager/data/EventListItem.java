@@ -2,33 +2,48 @@ package de.bjusystems.vdrmanager.data;
 
 import java.util.Date;
 
+import de.bjusystems.vdrmanager.gui.Utils;
 
-public class EventListItem implements Event {
 
+public class EventListItem extends BaseEvent {
+
+	private final Recording rec;
 	private final Timer timer;
 	private final Epg epg;
 	private final String header;
-	private final Event event;
+	
+
+
+	public EventListItem(final Recording rec) {
+		super(rec);
+		this.header = null;
+		this.rec = rec;
+		this.epg = null;
+		this.timer = null;
+	}
 
 	public EventListItem(final Timer timer) {
+		super(timer);
 		this.header = null;
 		this.timer = timer;
 		this.epg = null;
-		this.event = timer;
+		this.rec = null;
 	}
 
 	public EventListItem(final Epg epg) {
+		super(epg);
 		this.header = null;
 		this.timer = null;
 		this.epg = epg;
-		this.event = epg;
+		this.rec = null;
 	}
 
 	public EventListItem(final String header) {
+		super(null);
 		this.header = header;
 		this.timer = null;
 		this.epg = null;
-		this.event = null;
+		this.rec = null;
 	}
 
 	public boolean isHeader() {
@@ -82,6 +97,10 @@ public class EventListItem implements Event {
 	public Event getEvent() {
 		return event;
 	}
+	
+	public boolean isLive(){
+		return Utils.isLive(event);
+	}
 
 	@Override
 	public String toString() {
@@ -96,5 +115,9 @@ public class EventListItem implements Event {
 		text.append(" (").append(event.getChannelName()).append("), ");
 		text.append("Zeit: ").append(formatter.getDate()).append(" ").append(formatter.getTime());
 		return text.toString();
+	}
+
+	public String getShortText() {
+		return event != null ? event.getShortText() : null;
 	}
 }

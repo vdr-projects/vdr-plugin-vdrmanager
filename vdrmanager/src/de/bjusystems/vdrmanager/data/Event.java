@@ -8,13 +8,16 @@ public interface Event {
 		None,
 		Active,
 		Inactive,
-		Recording
+		Recording,
+		Recorded
+		;
 	}
 
 	String getChannelNumber();
 	String getChannelName();
 	String getTitle();
 	String getDescription();
+	String getShortText();
 	Date getStart();
 	Date getStop();
 	TimerState getTimerState();

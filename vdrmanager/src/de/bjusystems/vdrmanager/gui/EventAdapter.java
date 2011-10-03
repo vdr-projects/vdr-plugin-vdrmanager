@@ -1,54 +1,64 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
-import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 
-class EventAdapter extends ArrayAdapter<EventListItem> {
+abstract class EventAdapter extends ArrayAdapter<EventListItem> {
 
-	private final LayoutInflater inflater;
-	private final List<EventListItem> items;
-	private final boolean sortByTime;
+	protected final int layout;
+	protected final LayoutInflater inflater;
+	//protected final List<EventListItem> items;
+	
+	protected boolean hideChannelName = false;
 
-	public EventAdapter(final Context context, final boolean sortByTime) {
-		super(context, R.layout.event_item);
+	public EventAdapter(final Context context, int layout) {
+		super(context, layout);
+		this.layout = layout;
 		inflater = LayoutInflater.from(context);
-		items = new ArrayList<EventListItem>();
-		this.sortByTime = sortByTime;
 	}
 
 	@Override
-	public View getView(final int position, final View convertView, final ViewGroup parent) {
+	public View getView(final int position, final View convertView,
+			final ViewGroup parent) {
 
 		EventListItemHolder itemHolder = new EventListItemHolder();
 
 		// recycle view?
 		View view = convertView;
 		if (view == null) {
-			view = inflater.inflate(R.layout.event_item, null);
+			view = inflater.inflate(layout, null);
+
 			itemHolder = new EventListItemHolder();
 
-			itemHolder.state = (ImageView) view.findViewById(R.id.timer_item_state);
-			itemHolder.time = (TextView) view.findViewById(R.id.timer_item_time);
-			itemHolder.channel = (TextView) view.findViewById(R.id.timer_item_channel);
-			itemHolder.title = (TextView) view.findViewById(R.id.timer_item_title);
-
+			itemHolder.state = (ImageView) view
+					.findViewById(R.id.timer_item_state);
+			itemHolder.time = (TextView) view
+					.findViewById(R.id.timer_item_time);
+			itemHolder.channel = (TextView) view
+					.findViewById(R.id.timer_item_channel);
+			itemHolder.title = (TextView) view
+					.findViewById(R.id.timer_item_title);
+			itemHolder.progress = (ProgressBar) view
+					.findViewById(R.id.timer_progress);
+			itemHolder.shortText = (TextView) view
+					.findViewById(R.id.timer_item_shorttext);
+			itemHolder.duration = (TextView) view
+					.findViewById(R.id.timer_item_duration);
 			view.setTag(itemHolder);
 		} else {
 			itemHolder = (EventListItemHolder) view.getTag();
@@ -62,14 +72,24 @@ class EventAdapter extends ArrayAdapter<EventListItem> {
 			view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), 0);
 			view.setBackgroundColor(Color.DKGRAY);
 			itemHolder.state.setVisibility(View.GONE);
-			itemHolder.channel.setVisibility(View.GONE);
+			itemHolder.channel.setText(item.getHeader());
 			itemHolder.title.setVisibility(View.GONE);
-			itemHolder.time.setText(item.getHeader());
+			itemHolder.time.setVisibility(View.GONE);
+			itemHolder.progress.setVisibility(View.GONE);
+			itemHolder.shortText.setVisibility(View.GONE);
+			itemHolder.duration.setVisibility(View.GONE);
+
 		} else {
+
 			view.setBackgroundColor(Color.BLACK);
-			itemHolder.channel.setVisibility(View.VISIBLE);
+			// itemHolder.channel.setVisibility(View.VISIBLE);
+			itemHolder.time.setVisibility(View.VISIBLE);
 			itemHolder.title.setVisibility(View.VISIBLE);
 			itemHolder.state.setVisibility(View.VISIBLE);
+			// itemHolder.channel.setVisibility(View.VISIBLE);
+			itemHolder.shortText.setVisibility(View.VISIBLE);
+			itemHolder.duration.setVisibility(View.VISIBLE);
+			// itemHolder.state.setVisibility(View.);
 			switch (item.getTimerState()) {
 			case Active:
 				itemHolder.state.setImageResource(R.drawable.timer_active);
@@ -84,88 +104,42 @@ class EventAdapter extends ArrayAdapter<EventListItem> {
 				itemHolder.state.setImageResource(R.drawable.timer_none);
 				break;
 			}
-			final EventFormatter formatter = new EventFormatter(item.getEvent());
+			final EventFormatter formatter = getEventFormatter(item.getEvent());
 			itemHolder.time.setText(formatter.getTime());
-			itemHolder.channel.setText(item.getChannelName());
+			if(hideChannelName){
+				itemHolder.channel.setVisibility(View.GONE);
+			} else {
+				itemHolder.channel.setText(item.getChannelName());
+			}
 			itemHolder.title.setText(formatter.getTitle());
+			itemHolder.shortText.setText(TextUtils.isEmpty(formatter
+					.getShortText()) ? " " : formatter.getShortText().trim());
+			int p = Utils.getProgress(item);
+			if (p == -1) {
+				itemHolder.progress.setVisibility(View.GONE);
+				// itemHolder.time.setTypeface(null, Typeface.NORMAL);
+				// itemHolder.title.setTypeface(null, Typeface.NORMAL);
+				// itemHolder.shortText.setTypeface(null, Typeface.NORMAL);
+				int dura = Utils.getDuration(item);
+				itemHolder.duration.setText(getContext().getString(
+						R.string.epg_duration_template, dura));
+			} else {
+				itemHolder.progress.setVisibility(View.VISIBLE);
+				itemHolder.progress.setProgress(p);
+				// itemHolder.time.setTypeface(null, Typeface.BOLD);
+				// itemHolder.title.setTypeface(null, Typeface.BOLD);
+				// itemHolder.shortText.setTypeface(null, Typeface.BOLD);
+				int dura = Utils.getDuration(item);
+				int rest = dura - (dura * p / 100);
+				itemHolder.duration.setText(getContext().getString(
+						R.string.epg_duration_template_live, rest, dura));
+			}
 		}
-
 		return view;
 	}
 
-	public void addItem(final EventListItem item) {
-		items.add(item);
+	protected EventFormatter getEventFormatter(Event event) {
+		return new EventFormatter(event);
 	}
 
-	public void sortItems() {
-		if (sortByTime) {
-			sortItemsByTime();
-		} else {
-			sortItemsByChannel();
-		}
-	}
-
-	private void sortItemsByTime() {
-
-		// sort by start time
-		final EventListItem[] unsortedItems = items.toArray(new EventListItem[0]);
-		final Comparator<EventListItem> comparator = new Comparator<EventListItem>() {
-
-			public int compare(final EventListItem item1, final EventListItem item2) {
-				return item1.getStart().compareTo(item2.getStart());
-			}
-		};
-		Arrays.sort(unsortedItems, comparator);
-
-		// insert daily headers
-		final List<EventListItem> sortedItems = new ArrayList<EventListItem>();
-		final GregorianCalendar itemCal = new GregorianCalendar();
-		final GregorianCalendar lastHeaderCal = new GregorianCalendar();
-		lastHeaderCal.set(Calendar.YEAR, 1970);
-
-		for(final EventListItem item : unsortedItems) {
-			itemCal.setTime(item.getStart());
-
-			if (itemCal.get(Calendar.DAY_OF_YEAR) != lastHeaderCal.get(Calendar.DAY_OF_YEAR) ||
-					itemCal.get(Calendar.YEAR) != lastHeaderCal.get(Calendar.YEAR)) {
-				lastHeaderCal.setTimeInMillis(itemCal.getTimeInMillis());
-				final DateFormatter dateFormatter = new DateFormatter(lastHeaderCal);
-				sortedItems.add(new EventListItem(dateFormatter.getDailyHeader()));
-			}
-
-			sortedItems.add(item);
-		}
-
-		// fill adapter
-		clear();
-		for(final EventListItem item : sortedItems) {
-			add(item);
-		}
-	}
-
-	private void sortItemsByChannel() {
-
-		final EventListItem[] sortedItems = items.toArray(new EventListItem[0]);
-		final Comparator<EventListItem> comparator = new Comparator<EventListItem>() {
-
-			public int compare(final EventListItem item1, final EventListItem item2) {
-				return Integer.valueOf(item1.getChannelNumber()).compareTo(Integer.valueOf(item2.getChannelNumber()));
-			}
-		};
-		Arrays.sort(sortedItems, comparator);
-
-		// fill adapter
-		clear();
-		if (sortedItems.length > 0) {
-			add(new EventListItem(new DateFormatter(sortedItems[0].getStart()).getDailyHeader()));
-		}
-		for(final EventListItem item : sortedItems) {
-			add(item);
-		}
-
-	}
-
-	public void clearItems() {
-		items.clear();
-	}
 }

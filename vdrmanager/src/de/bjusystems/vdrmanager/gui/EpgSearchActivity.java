@@ -13,12 +13,11 @@ import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Preferences;
 
 /**
- * This class is used for showing what's
- * current running on all channels
+ * This class is used for showing what's current running on all channels
+ * 
  * @author bju
  */
-public class EpgSearchActivity extends Activity
-				implements OnClickListener {
+public class EpgSearchActivity extends Activity implements OnClickListener {
 
 	Preferences prefs;
 	TextView text;
@@ -33,9 +32,9 @@ public class EpgSearchActivity extends Activity
 		// save fields
 		text = (TextView) findViewById(R.id.epg_search_text);
 
-    // register button
-    final Button button = (Button) findViewById(R.id.epg_search_button);
-    button.setOnClickListener(this);
+		// register button
+		final Button button = (Button) findViewById(R.id.epg_search_button);
+		button.setOnClickListener(this);
 	}
 
 	@Override
@@ -53,11 +52,11 @@ public class EpgSearchActivity extends Activity
 		// Save search parameters
 		final EpgSearchParams search = new EpgSearchParams();
 		search.setTitle(text.getText().toString());
-		((VdrManagerApp)getApplication()).setCurrentSearch(search);
+		((VdrManagerApp) getApplication()).setCurrentSearch(search);
 
 		// show timer details
 		final Intent intent = new Intent();
-		intent.setClass(this, EpgListActivity.class);
+		//intent.setClass(this, EpgListActivity.class);
 		startActivity(intent);
 	}
 }

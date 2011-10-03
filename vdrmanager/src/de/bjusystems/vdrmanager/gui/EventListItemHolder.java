@@ -1,6 +1,8 @@
 package de.bjusystems.vdrmanager.gui;
 
+
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 class EventListItemHolder {
@@ -9,4 +11,7 @@ class EventListItemHolder {
 	public TextView date;
 	public TextView time;
 	public TextView channel;
+	public TextView shortText;
+	public ProgressBar progress;
+	public TextView duration;
 }

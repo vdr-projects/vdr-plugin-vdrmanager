@@ -15,9 +15,11 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
+import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
@@ -30,13 +32,10 @@ import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
  * 
  * @author bju
  */
-public class TimerListActivity extends BaseActivity implements
-		OnItemClickListener, SvdrpAsyncListener<Timer> {
+public class RecordingListActivity extends BaseActivity implements
+		OnItemClickListener, SvdrpAsyncListener<Recording> {
 
-	
-	private static final int REQUEST_CODE_TIMED_EDIT = 41;
-	
-	TimerClient timerClient;
+	RecordingClient recordingClient;
 	EventAdapter adapter;
 	SvdrpProgressDialog progress;
 
@@ -54,7 +53,7 @@ public class TimerListActivity extends BaseActivity implements
 		adapter = new TimeEventAdapter(this);
 
 		// attach adapter to ListView
-		final ListView listView = (ListView) findViewById(R.id.timer_list);
+		final ListView listView = (ListView) findViewById(R.id.recording_list);
 		listView.setAdapter(adapter);
 
 		// set click listener
@@ -64,22 +63,12 @@ public class TimerListActivity extends BaseActivity implements
 		registerForContextMenu(listView);
 
 		// start query
-		startTimerQuery();
+		startRecordingQuery();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		reloadIfNeeded();
-	}
-
-	private void reloadIfNeeded() {
-
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		if (app.isReload()) {
-			app.setReload(false);
-			startTimerQuery();
-		}
 	}
 
 	protected void updateWindowTitle(int topic, int subtopic) {
@@ -94,8 +83,8 @@ public class TimerListActivity extends BaseActivity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (timerClient != null) {
-			timerClient.abort();
+		if (recordingClient != null) {
+			recordingClient.abort();
 		}
 		if (progress != null) {
 			progress.dismiss();
@@ -108,7 +97,7 @@ public class TimerListActivity extends BaseActivity implements
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		if (v.getId() == R.id.timer_list) {
+		if (v.getId() == R.id.recording_list) {
 			final MenuInflater inflater = getMenuInflater();
 			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
@@ -117,41 +106,28 @@ public class TimerListActivity extends BaseActivity implements
 			final EventFormatter formatter = new EventFormatter(item);
 			menu.setHeaderTitle(formatter.getTitle());
 
-			inflater.inflate(R.menu.epg_list_item_menu, menu);
-
-			// remove unneeded menu items
-			menu.findItem(R.id.epg_item_menu_timer_add).setVisible(false);
-			final MenuItem enableMenuItem = menu
-					.findItem(R.id.epg_item_menu_timer_toggle);
-			enableMenuItem
-					.setTitle(item.getTimer().isEnabled() ? R.string.epg_item_menu_timer_disable
-							: R.string.epg_item_menu_timer_enable);
+			inflater.inflate(R.menu.recording_list_item_menu, menu);
 		}
 	}
-//
-//	@Override
-//	public boolean onContextItemSelected(final MenuItem item) {
-//
-//		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-//				.getMenuInfo();
-//		final EventListItem event = adapter.getItem(info.position);
-//
-//		switch (item.getItemId()) {
-//		case R.id.epg_item_menu_timer_modify: {
-//			onItemClick(null, null, info.position, 0);
-//			break;
-//		}
-//		case R.id.epg_item_menu_timer_delete: {
-//			deleteTimer(event);
-//			break;
-//		}
-//		case R.id.epg_item_menu_timer_toggle: {
-//			toggleTimer(event);
-//		}
-//		}
-//
-//		return true;
-//	}
+
+	@Override
+	public boolean onContextItemSelected(final MenuItem item) {
+
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		final EventListItem event = adapter.getItem(info.position);
+
+		switch (item.getItemId()) {
+		case R.id.recording_item_menu_delete: {
+
+			break;
+		}
+		case R.id.recording_item_menu_stream: {
+			break;
+		}
+		}
+		return true;
+	}
 
 	public void onItemClick(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
@@ -163,27 +139,30 @@ public class TimerListActivity extends BaseActivity implements
 			return;
 		}
 
+		final VdrManagerApp app = (VdrManagerApp) getApplication();
+		app.setCurrentTimer(timer);
 
-		//timer.getChannelName()
-		//timer.getEvent();
+		// after timer editing return to the timer list
+		app.setNextActivity(RecordingListActivity.class);
+		app.clearActivitiesToFinish();
 
-		// show details
+		// show timer details
 		final Intent intent = new Intent();
-		intent.setClass(this, EpgDetailsActivity.class);
+		intent.setClass(this, TimerDetailsActivity.class);
 		startActivity(intent);
 	}
 
-	private void startTimerQuery() {
+	private void startRecordingQuery() {
 
 		// get timer client
-		timerClient = new TimerClient();
+		recordingClient = new RecordingClient();
 
 		// create backgound task
-		final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(
-				timerClient);
+		final SvdrpAsyncTask<Recording, SvdrpClient<Recording>> task = new SvdrpAsyncTask<Recording, SvdrpClient<Recording>>(
+				recordingClient);
 
 		// create progress dialog
-		progress = new SvdrpProgressDialog(this, timerClient);
+		progress = new SvdrpProgressDialog(this, recordingClient);
 
 		// attach listener
 		task.addListener(this);
@@ -192,7 +171,7 @@ public class TimerListActivity extends BaseActivity implements
 		task.run();
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final Timer result) {
+	public void svdrpEvent(final SvdrpEvent event, final Recording result) {
 
 		if (progress != null) {
 			progress.svdrpEvent(event);
@@ -210,15 +189,17 @@ public class TimerListActivity extends BaseActivity implements
 			break;
 		case FINISHED_SUCCESS:
 			adapter.clear();
-			for (final Timer timer : timerClient.getResults()) {
-				adapter.add(new EventListItem(timer));
+			for (final Recording rec : recordingClient.getResults()) {
+				adapter.add(new EventListItem(rec));
 			}
 			// adapter.sortItems();
-			progress.dismiss();
-			progress = null;
-			if (timerClient.getResults().isEmpty()) {
-				Toast.makeText(TimerListActivity.this, R.string.epg_no_items,
-						Toast.LENGTH_SHORT).show();
+			if (progress != null) {
+				progress.dismiss();
+				progress = null;
+			}
+			if (recordingClient.getResults().isEmpty()) {
+				Toast.makeText(RecordingListActivity.this,
+						R.string.epg_no_items, Toast.LENGTH_SHORT).show();
 			}
 			break;
 		}
@@ -238,72 +219,23 @@ public class TimerListActivity extends BaseActivity implements
 				// refresh epg list after return
 				final VdrManagerApp app = (VdrManagerApp) getApplication();
 				app.setReload(true);
-				reloadIfNeeded();
-			}
-		};
-		task.start();
-	}
-
-	@Override
-	public boolean onContextItemSelected(final MenuItem item) {
-
-		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-				.getMenuInfo();
-		final EventListItem event = adapter.getItem(info.position);
-
-		switch (item.getItemId()) {
-		case R.id.epg_item_menu_timer_add:
-		case R.id.epg_item_menu_timer_modify: {
-			//prepareTimer(event);
-			final Intent intent = new Intent();
-			intent.setClass(this, TimerDetailsActivity.class);
-			startActivityForResult(intent, REQUEST_CODE_TIMED_EDIT);
-			break;
-		}
-		case R.id.epg_item_menu_timer_delete: {
-			deleteTimer(event);
-			break;
-		}
-		case R.id.epg_item_menu_timer_toggle: {
-			toggleTimer(event);
-			break;
-		}
-		case R.id.epg_item_menu_live_tv: {
-			Utils.stream(this, event.getEvent());
-			break;
-
-		}
-		}
-
-		return true;
-	}
-	
-	
-	private void toggleTimer(final EventListItem item) {
-
-		final ToggleTimerTask task = new ToggleTimerTask(this, item.getTimer()) {
-			@Override
-			public void finished() {
-				// refresh epg list after return
-				final VdrManagerApp app = (VdrManagerApp) getApplication();
-				app.setReload(true);
-				reloadIfNeeded();
 			}
 		};
 		task.start();
 	}
 
 	protected void retry() {
-		startTimerQuery();
+		startRecordingQuery();
 	}
 
 	protected void refresh() {
-		startTimerQuery();
+		startRecordingQuery();
 	}
 
 	@Override
 	protected int getMainLayout() {
-		return R.layout.timer_list;
+		return R.layout.recording_list;
 	}
+
 
 }

@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
  * Class for timer data
  * @author bju
  */
-public class Timer implements Event {
+public class Timer extends BaseEvent {
 
 	private static final int ENABLED = 1;
 	private static final int INSTANT = 2;
@@ -17,12 +17,6 @@ public class Timer implements Event {
 
 	private final int number;
 	private int flags;
-	private String title;
-	private String description;
-	private Date start;
-	private Date stop;
-	private final String channelNumber;
-	private final String channelName;
 	private final int priority;
 	private final int lifetime;
 
@@ -33,6 +27,7 @@ public class Timer implements Event {
 	 * @param channels list of channels
 	 */
 	public Timer(final String timerData) {
+		super(null);
 
 		final String[] values = timerData.split(":");
 
@@ -58,6 +53,7 @@ public class Timer implements Event {
 	}
 
 	public Timer(final Epg event) {
+		super(event);
 
 		final Preferences prefs = Preferences.getPreferences();
 
@@ -99,42 +95,10 @@ public class Timer implements Event {
 		return line.toString();
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
 	public int getNumber() {
 		return number;
 	}
-
-	public Date getStart() {
-		return start;
-	}
-
-	public Date getStop() {
-		return stop;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(final String title) {
-		this.title = title;
-	}
-
-	public String getChannelNumber() {
-		return channelNumber;
-	}
-
-	public String getChannelName() {
-		return channelName;
-	}
-
+	
 	public int getPriority() {
 		return priority;
 	}

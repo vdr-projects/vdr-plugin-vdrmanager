@@ -46,6 +46,7 @@ public class VdrManagerActivity extends Activity {
 		public int getIconId() {
 			return iconId;
 		}
+
 		public int getTextId() {
 			return textId;
 		}
@@ -58,7 +59,8 @@ public class VdrManagerActivity extends Activity {
 			return enabled;
 		}
 
-		public MenuActivity(final int iconId, final int textId, final Class handler) {
+		public MenuActivity(final int iconId, final int textId,
+				final Class handler) {
 			this.iconId = iconId;
 			this.textId = textId;
 			this.handler = handler;
@@ -70,7 +72,8 @@ public class VdrManagerActivity extends Activity {
 		}
 	}
 
-	class MenuAdapter extends ArrayAdapter<MenuActivity> implements OnClickListener {
+	class MenuAdapter extends ArrayAdapter<MenuActivity> implements
+			OnClickListener {
 
 		private final LayoutInflater inflater;
 
@@ -81,7 +84,8 @@ public class VdrManagerActivity extends Activity {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
+		public View getView(final int position, final View convertView,
+				final ViewGroup parent) {
 
 			View view = convertView;
 			View itemView;
@@ -130,7 +134,8 @@ public class VdrManagerActivity extends Activity {
 			} else if (MenuActionHandler.class.isAssignableFrom(actionClass)) {
 				final Class<? extends MenuActionHandler> handlerClass = actionClass;
 				try {
-					final MenuActionHandler handler = handlerClass.newInstance();
+					final MenuActionHandler handler = handlerClass
+							.newInstance();
 					handler.executeAction(getContext());
 				} catch (final InstantiationException e) {
 
@@ -142,12 +147,18 @@ public class VdrManagerActivity extends Activity {
 	}
 
 	MenuActivity[] menuItems = new MenuActivity[] {
-		new MenuActivity(R.drawable.whatson, R.string.action_menu_epg, EpgListActivity.class),
-		new MenuActivity(0, R.string.action_menu_search, EpgSearchActivity.class),
-		new MenuActivity(R.drawable.timers, R.string.action_menu_timers, TimerListActivity.class),
-		new MenuActivity(R.drawable.channels, R.string.action_menu_channels, ChannelListActivity.class),
-		new MenuActivity(0, R.string.action_menu_wakeup, WakeupAction.class),
-	};
+			new MenuActivity(R.drawable.whatson, R.string.action_menu_epg,
+					TimeEpgListActivity.class),
+			new MenuActivity(0, R.string.action_menu_search,
+					EpgSearchActivity.class),
+			new MenuActivity(R.drawable.timers, R.string.action_menu_timers,
+					TimerListActivity.class),
+			new MenuActivity(R.drawable.timers, R.string.action_menu_recordings,
+						RecordingListActivity.class),
+
+			new MenuActivity(R.drawable.channels,
+					R.string.action_menu_channels, ChannelListActivity.class),
+			new MenuActivity(0, R.string.action_menu_wakeup, WakeupAction.class), };
 	Map<View, Class<? extends Activity>> menuActivityMap = new HashMap<View, Class<? extends Activity>>();
 
 	@Override
@@ -157,6 +168,8 @@ public class VdrManagerActivity extends Activity {
 		// attach view
 		setContentView(R.layout.vdrmanager);
 
+		Preferences.loadPreferences(this);
+		
 		// add and register buttons
 		createButtons();
 	}
@@ -170,19 +183,21 @@ public class VdrManagerActivity extends Activity {
 
 		// get list
 		final AbsListView listView = (AbsListView) findViewById(R.id.vdrmanager_menu);
-		final MenuAdapter adapter =	new MenuAdapter(this, R.layout.vdrmanager_menu_item);
+		final MenuAdapter adapter = new MenuAdapter(this,
+				R.layout.vdrmanager_menu_item);
 		listView.setAdapter(adapter);
 
 		// add menu items
-		for(final MenuActivity menuItem : menuItems) {
-			if (menuItem.getTextId() != R.string.action_menu_wakeup || prefs.isWakeupEnabled()) {
+		for (final MenuActivity menuItem : menuItems) {
+			if (menuItem.getTextId() != R.string.action_menu_wakeup
+					|| prefs.isWakeupEnabled()) {
 				adapter.add(menuItem);
 			}
 		}
 
 		// set grid layout dimensions
 		if (listView instanceof GridView) {
-			final GridView grid = (GridView)listView;
+			final GridView grid = (GridView) listView;
 			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 				grid.setNumColumns(2);
 			} else {
@@ -195,16 +210,15 @@ public class VdrManagerActivity extends Activity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-    final MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.main_menu, menu);
-    return true;
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
-		switch (item.getItemId())
-		{
+		switch (item.getItemId()) {
 		case R.id.main_menu_preferences:
 			// remember activity for finishing
 			final VdrManagerApp app = (VdrManagerApp) getApplication();

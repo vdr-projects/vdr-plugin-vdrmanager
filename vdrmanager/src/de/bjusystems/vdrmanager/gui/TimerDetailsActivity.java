@@ -29,12 +29,12 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
- * This class is used for showing what's
- * current running on all channels
+ * This class is used for showing what's current running on all channels
+ * 
  * @author bju
  */
-public class TimerDetailsActivity extends Activity
-				implements OnClickListener, OnDateSetListener, OnTimeSetListener, SvdrpAsyncListener<Timer> {
+public class TimerDetailsActivity extends Activity implements OnClickListener,
+		OnDateSetListener, OnTimeSetListener, SvdrpAsyncListener<Timer> {
 
 	Preferences prefs;
 	TextView dateField;
@@ -52,25 +52,25 @@ public class TimerDetailsActivity extends Activity
 		// Attach view
 		setContentView(R.layout.timer_detail);
 
-    // timer
-    timer = ((VdrManagerApp)getApplication()).getCurrentTimer();
+		// timer
+		timer = ((VdrManagerApp) getApplication()).getCurrentTimer();
 
-    // update display
-    updateDisplay();
+		// update display
+		updateDisplay();
 
-    // register buttons
-    final Button saveButton = (Button) findViewById(R.id.timer_details_save);
-    saveButton.setOnClickListener(this);
-    if (timer.getNumber() > 0) {
-    	saveButton.setText(R.string.timer_details_save_title);
-    } else {
-    	saveButton.setText(R.string.timer_details_create_title);
-    }
+		// register buttons
+		final Button saveButton = (Button) findViewById(R.id.timer_details_save);
+		saveButton.setOnClickListener(this);
+		if (timer.getNumber() > 0) {
+			saveButton.setText(R.string.timer_details_save_title);
+		} else {
+			saveButton.setText(R.string.timer_details_create_title);
+		}
 
-    // register text fields for editing
-    dateField.setOnClickListener(this);
-    startField.setOnClickListener(this);
-    endField.setOnClickListener(this);
+		// register text fields for editing
+		dateField.setOnClickListener(this);
+		startField.setOnClickListener(this);
+		endField.setOnClickListener(this);
 	}
 
 	@Override
@@ -85,45 +85,46 @@ public class TimerDetailsActivity extends Activity
 
 	public void onClick(final View view) {
 		switch (view.getId()) {
-		case R.id.timer_detail_day:
-		{
+		case R.id.timer_detail_day: {
 			final Calendar cal = new GregorianCalendar();
 			cal.setTime(timer.getStart());
-			final DatePickerDialog dialog = new DatePickerDialog(this, this, cal.get(Calendar.YEAR),
-																									cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			final DatePickerDialog dialog = new DatePickerDialog(this, this,
+					cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+					cal.get(Calendar.DAY_OF_MONTH));
 			dialog.show();
 			break;
 		}
-		case R.id.timer_detail_start:
-		{
+		case R.id.timer_detail_start: {
 			final Calendar cal = new GregorianCalendar();
 			cal.setTime(timer.getStart());
 			editStart = true;
-			final TimePickerDialog dialog = new TimePickerDialog(this, this, cal.get(Calendar.HOUR_OF_DAY),
-																									cal.get(Calendar.MINUTE), true);
+			final TimePickerDialog dialog = new TimePickerDialog(this, this,
+					cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
+					true);
 			dialog.show();
 			break;
 		}
-		case R.id.timer_detail_end:
-		{
+		case R.id.timer_detail_end: {
 			final Calendar cal = new GregorianCalendar();
 			cal.setTime(timer.getStop());
 			editStart = false;
-			final TimePickerDialog dialog = new TimePickerDialog(this, this, cal.get(Calendar.HOUR_OF_DAY),
-																									cal.get(Calendar.MINUTE), true);
+			final TimePickerDialog dialog = new TimePickerDialog(this, this,
+					cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
+					true);
 			dialog.show();
 			break;
 		}
-		case R.id.timer_details_save:
-		{
+		case R.id.timer_details_save: {
 			// collect values
-	    timer.setTitle(((TextView)findViewById(R.id.timer_detail_title)).getText().toString());
+			timer.setTitle(((TextView) findViewById(R.id.timer_detail_title))
+					.getText().toString());
 
 			// create client for saving the timer
 			setTimerClient = new SetTimerClient(timer, false);
 
 			// create backgound task
-			final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(setTimerClient);
+			final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(
+					setTimerClient);
 
 			// create progress
 			progress = new SvdrpProgressDialog(this, setTimerClient);
@@ -137,21 +138,27 @@ public class TimerDetailsActivity extends Activity
 		}
 	}
 
-	public void onTimeSet(final TimePicker view, final int hourOfDay, final int minute) {
+	public void onTimeSet(final TimePicker view, final int hourOfDay,
+			final int minute) {
 		if (editStart) {
-			timer.setStart(calculateTime(timer.getStart(), hourOfDay, minute, null));
+			timer.setStart(calculateTime(timer.getStart(), hourOfDay, minute,
+					null));
 		} else {
-			timer.setStop(calculateTime(timer.getStop(), hourOfDay, minute, timer.getStart()));
+			timer.setStop(calculateTime(timer.getStop(), hourOfDay, minute,
+					timer.getStart()));
 		}
 		updateDisplay();
 	}
 
-	public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
-		timer.setStart(calculateDate(timer.getStart(), year, monthOfYear, dayOfMonth));
+	public void onDateSet(final DatePicker view, final int year,
+			final int monthOfYear, final int dayOfMonth) {
+		timer.setStart(calculateDate(timer.getStart(), year, monthOfYear,
+				dayOfMonth));
 		updateDisplay();
 	}
 
-	private Date calculateDate(final Date oldDate, final int year, final int monthOfYear, final int dayOfMonth) {
+	private Date calculateDate(final Date oldDate, final int year,
+			final int monthOfYear, final int dayOfMonth) {
 
 		final Calendar cal = new GregorianCalendar();
 		cal.setTime(oldDate);
@@ -162,7 +169,8 @@ public class TimerDetailsActivity extends Activity
 		return cal.getTime();
 	}
 
-	private Date calculateTime(final Date oldTime, final int hourOfDay, final int minute, final Date startTime) {
+	private Date calculateTime(final Date oldTime, final int hourOfDay,
+			final int minute, final Date startTime) {
 
 		// set hour and minute
 		final Calendar cal = new GregorianCalendar();
@@ -183,24 +191,26 @@ public class TimerDetailsActivity extends Activity
 
 	private void updateDisplay() {
 
-    ((TextView)findViewById(R.id.timer_detail_title)).setText(timer.getTitle());
-    ((TextView)findViewById(R.id.timer_detail_channel)).setText(timer.getChannelName());
-    dateField = (TextView)findViewById(R.id.timer_detail_day);
-    final DateFormatter dateFormatter = new DateFormatter(timer.getStart());
-    dateField.setText(dateFormatter.getDateString());
-    startField = (TextView)findViewById(R.id.timer_detail_start);
-    startField.setText(dateFormatter.getTimeString());
-    endField = (TextView)findViewById(R.id.timer_detail_end);
-    endField.setText(new DateFormatter(timer.getStop()).getTimeString());
+		((TextView) findViewById(R.id.timer_detail_title)).setText(timer
+				.getTitle());
+		((TextView) findViewById(R.id.timer_detail_channel)).setText(timer
+				.getChannelName());
+		dateField = (TextView) findViewById(R.id.timer_detail_day);
+		final DateFormatter dateFormatter = new DateFormatter(timer.getStart());
+		dateField.setText(dateFormatter.getDateString());
+		startField = (TextView) findViewById(R.id.timer_detail_start);
+		startField.setText(dateFormatter.getTimeString());
+		endField = (TextView) findViewById(R.id.timer_detail_end);
+		endField.setText(new DateFormatter(timer.getStop()).getTimeString());
 
-    final Button button = (Button) findViewById(R.id.timer_details_save);
-    if (timer.getNumber() > 0) {
-    	// existing timer
-    	button.setText(R.string.timer_details_save_title);
-    } else {
-    	// new timer
-    	button.setText(R.string.timer_details_create_title);
-    }
+		final Button button = (Button) findViewById(R.id.timer_details_save);
+		if (timer.getNumber() > 0) {
+			// existing timer
+			button.setText(R.string.timer_details_save_title);
+		} else {
+			// new timer
+			button.setText(R.string.timer_details_create_title);
+		}
 	}
 
 	public void svdrpEvent(final SvdrpEvent event, final Timer result) {
@@ -208,20 +218,20 @@ public class TimerDetailsActivity extends Activity
 		progress.svdrpEvent(event);
 
 		switch (event) {
-		case FINISHED:
-			// remove this activity from stack
+		case FINISHED_ABNORMALY:
 			finish();
-
-			// finish previous activities
-			final VdrManagerApp app = (VdrManagerApp) getApplication();
-			app.finishActivities();
-
-			// refresh last view
-			app.setReload(true);
-
-			// free progress dialog
-			progress = null;
-
+			if(progress != null) {
+				progress.dismiss();
+				progress = null;
+			}
+			break;
+		case FINISHED_SUCCESS:
+			if(progress != null){
+				progress.dismiss();
+				progress = null;
+			}
+			setResult(Activity.RESULT_OK);
+			finish();
 			break;
 		}
 	}
