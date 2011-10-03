@@ -192,6 +192,7 @@ string cHelpers::SetTimerIntern(string args) {
     return "!ERROR\r\n";
   }
 
+  Timers.IncBeingEdited();
   if (!number) {
     // new timer
     Timers.Add(timer);
@@ -200,6 +201,7 @@ string cHelpers::SetTimerIntern(string args) {
     delete timer;
     cTimer * oldTimer = Timers.Get(number);
     if (!oldTimer) {
+      Timers.DecBeingEdited();
       return "!ERROR\r\n";
     }
     if (delTimer) {
@@ -208,7 +210,8 @@ string cHelpers::SetTimerIntern(string args) {
       oldTimer->Parse(params.c_str());
     }
   }
-  Timers.Save();
+  Timers.SetModified();
+  Timers.DecBeingEdited();
 
   return "START\r\nEND\r\n";
 }
