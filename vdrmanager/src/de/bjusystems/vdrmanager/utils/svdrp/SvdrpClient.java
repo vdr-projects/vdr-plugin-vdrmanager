@@ -8,15 +8,18 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import de.bjusystems.vdrmanager.data.Preferences;
-
 
 /**
  * Class for SVDRP communication
+ * 
  * @author bju
- *
+ * 
  */
 public abstract class SvdrpClient<Result> {
+
+	private final String TAG = getClass().getName();
 
 	/** Socket for connection to SVDRP */
 	private Socket socket;
@@ -35,7 +38,9 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Parse received answer line
-	 * @param line line
+	 * 
+	 * @param line
+	 *            line
 	 * @return received data object or null if not completed yet
 	 */
 	protected abstract Result parseAnswer(String line);
@@ -46,10 +51,12 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Constructor
-	 * @param prefs Preferences
+	 * 
+	 * @param prefs
+	 *            Preferences
 	 */
 	protected SvdrpClient() {
-		results.clear();
+		// results.clear();
 	}
 
 	/**
@@ -61,7 +68,9 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Adds the listener to the list of listeners
-	 * @param listener listener
+	 * 
+	 * @param listener
+	 *            listener
 	 */
 	public void addSvdrpListener(final SvdrpListener<Result> listener) {
 		listeners.add(listener);
@@ -69,7 +78,9 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Removes the listener from the list of listeners
-	 * @param listener listener
+	 * 
+	 * @param listener
+	 *            listener
 	 */
 	public void removeSvdrpListener(final SvdrpListener<Result> listener) {
 		listeners.remove(listener);
@@ -84,6 +95,7 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Gets the list of results
+	 * 
 	 * @return results
 	 */
 	public List<Result> getResults() {
@@ -92,10 +104,15 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Connect to SVDRP
-	 * @param host host
-	 * @param port port
-	 * @param ssl use SSL
-	 * @throws IOException on errors
+	 * 
+	 * @param host
+	 *            host
+	 * @param port
+	 *            port
+	 * @param ssl
+	 *            use SSL
+	 * @throws IOException
+	 *             on errors
 	 */
 	protected boolean connect() throws IOException {
 
@@ -107,6 +124,7 @@ public abstract class SvdrpClient<Result> {
 			socket = new Socket(prefs.getSvdrpHost(), prefs.getSvdrpPort());
 			informListener(SvdrpEvent.CONNECTED, null);
 		} catch (final IOException e) {
+			Log.w(TAG, e);
 			informListener(SvdrpEvent.CONNECT_ERROR, null);
 			return false;
 		}
@@ -131,7 +149,9 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Disconnect from SVDRP if connected
-	 * @throws IOException on errors
+	 * 
+	 * @throws IOException
+	 *             on errors
 	 */
 	protected void disconnect() throws IOException {
 		informListener(SvdrpEvent.DISCONNECTING, null);
@@ -144,8 +164,11 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Sends one line to SVDRP
-	 * @param line line of text
-	 * @throws IOException on errors
+	 * 
+	 * @param line
+	 *            line of text
+	 * @throws IOException
+	 *             on errors
 	 */
 	protected void writeLine(final String line) throws IOException {
 
@@ -157,22 +180,24 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Reads one line from SVDRP
+	 * 
 	 * @return line read
-	 * @throws IOException on errors
+	 * @throws IOException
+	 *             on errors
 	 */
 	protected String readLine() throws IOException {
 
 		// handle not gzipped input
 		final ByteArrayOutputStream lineBytes = new ByteArrayOutputStream();
 
-		for(;;) {
+		for (;;) {
 
 			// read next char
 			final int d = inputStream.read();
 			if (d < 0) {
 				break;
 			}
-			final char c = (char)d;
+			final char c = (char) d;
 
 			// skip '\r'
 			if (c == '\r') {
@@ -219,7 +244,7 @@ public abstract class SvdrpClient<Result> {
 			}
 
 			// read answer lines
-			for(;!abort;) {
+			for (; !abort;) {
 
 				// get next line
 				line = readLine();
@@ -252,10 +277,11 @@ public abstract class SvdrpClient<Result> {
 			// disconnect
 			disconnect();
 
-		} catch (final IOException e) {
-			throw new SvdrpException(e);
-		} finally {
-			informListener(SvdrpEvent.FINISHED, null);
+			informListener(SvdrpEvent.FINISHED_SUCCESS, null);
+
+		} catch (final Exception e) {
+			// throw new SvdrpException(e);
+			informListener(SvdrpEvent.FINISHED_ABNORMALY, null);
 		}
 	}
 
@@ -263,8 +289,13 @@ public abstract class SvdrpClient<Result> {
 		this.resultInfoEnabled = resultInfoEnabled;
 	}
 
-	private void informListener(final SvdrpEvent event, final Result result) {
-		for(final SvdrpListener<Result> listener : listeners) {
+	protected void informListenerError(final SvdrpEvent event,
+			final Throwable result) {
+
+	}
+
+	protected void informListener(final SvdrpEvent event, final Result result) {
+		for (final SvdrpListener<Result> listener : listeners) {
 			listener.svdrpEvent(event, result);
 		}
 	}
