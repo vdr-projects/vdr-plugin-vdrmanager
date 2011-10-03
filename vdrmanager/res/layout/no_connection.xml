@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android" android:visibility="gone">
+	<LinearLayout android:layout_height="fill_parent"  android:gravity="center"
+		android:layout_width="fill_parent" android:orientation="horizontal">
+		<TextView android:text="@string/no_connection" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="18dip"/>
+		<ImageView android:src="@drawable/sad" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+		<Button android:text="@string/no_connection_retry" android:textSize="18dip"
+			android:layout_height="wrap_content" android:layout_width="wrap_content"
+			android:id="@+id/retry_button" />
+	</LinearLayout>
+</LinearLayout>
