@@ -17,9 +17,9 @@ public abstract class AsyncProgressTask<Result> {
 
 		public void svdrpEvent(final SvdrpEvent event, final Object result) {
 			svdrpEvent(event);
-
 			switch (event) {
-			case FINISHED:
+			case FINISHED_ABNORMALY:
+			case FINISHED_SUCCESS:
 				AsyncProgressTask.this.finished();
 				break;
 			}
