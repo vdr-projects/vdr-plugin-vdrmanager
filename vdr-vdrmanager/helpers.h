@@ -15,6 +15,7 @@ public:
   static string GetChannels(string args);
   static string GetChannelEvents(string args);
   static string GetTimeEvents(string args);
+  static string GetRecordings(string args);
   static string SetTimer(string args);
   static string SearchEvents(string args);
   static string ToUpper(string text);
@@ -24,6 +25,7 @@ private:
   static string SafeCall(string (*)(string), string arg);
   static string SafeCall(string (*)(string, string), string arg1, string arg2);
   static string GetTimersIntern();
+  static string GetRecordingsIntern();
   static string GetChannelsIntern(string wantedChannels);
   static string GetEventsIntern(string wantedChannels, string when);
   static string SetTimerIntern(string args);
@@ -32,6 +34,7 @@ private:
   static bool IsWantedChannel(cChannel * channel, string wantedChannels);
   static bool IsWantedTime(time_t when, cEvent * event);
   static string MapSpecialChars(string text);
-  static string ToText(cEvent * event);
+  static string ToText(const cEvent * event);
   static string ToText(cTimer * timer);
+  static string ToText(cRecording * recording);
 };

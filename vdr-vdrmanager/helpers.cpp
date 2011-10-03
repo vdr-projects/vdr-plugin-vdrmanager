@@ -7,11 +7,16 @@
 #include <values.h>
 #include <vdr/plugin.h>
 #include <vdr/timers.h>
+#include <vdr/recording.h>
 #include <vdr/channels.h>
 #include <vdr/epg.h>
 #include <vdr/videodir.h>
 #include "helpers.h"
 #include "vdrmanagerthread.h"
+
+string cHelpers::GetRecordings(string args) {
+  return SafeCall(GetRecordingsIntern);
+}
 
 string cHelpers::GetTimers(string args) {
   return SafeCall(GetTimersIntern);
@@ -69,6 +74,18 @@ string cHelpers::GetTimersIntern() {
       result += ToText(timer);
   }
 
+  return result + "END\r\n";
+}
+
+string cHelpers::GetRecordingsIntern() {
+
+  string result = "START\r\n";
+  // iterate through all recordings
+  cRecording* recording = NULL;
+  for (int i = 0; i < Recordings.Count(); i++) {
+    recording = Recordings.Get(i);
+    result += ToText(recording);
+  }
   return result + "END\r\n";
 }
 
@@ -222,6 +239,63 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
   return result + "END\r\n";
 }
 
+string cHelpers::ToText(cRecording * recording){
+  const cRecordingInfo * info = recording->Info();
+  const cEvent * event = info->GetEvent();
+  
+  /**
+  tChannelID ChannelID(void) const;
+  const cSchedule *Schedule(void) const { return schedule; }
+  tEventID EventID(void) const { return eventID; }
+  uchar TableID(void) const { return tableID; }
+  uchar Version(void) const { return version; }
+  int RunningStatus(void) const { return runningStatus; }
+  const char *Title(void) const { return title; }
+  const char *ShortText(void) const { return shortText; }
+  const char *Description(void) const { return description; }
+  const cComponents *Components(void) const { return components; }
+  uchar Contents(int i = 0) const { return (0 <= i && i < MaxEventContents) ? contents[i] : 0; }
+  int ParentalRating(void) const { return parentalRating; }
+  time_t StartTime(void) const { return startTime; }
+  time_t EndTime(void) const { return startTime + duration; }
+  int Duration(void) const { return duration; }
+  time_t Vps(void) const { return vps; }
+  time_t Seen(void) const { return seen; }
+  bool SeenWithin(int Seconds) const { return time(NULL) - seen < Seconds; }
+  bool HasTimer(void) const;
+  bool IsRunning(bool OrAboutToStart = false) const;
+  static const char *ContentToString(uchar Content);
+  cString GetParentalRatingString(void) const;
+  cString GetDateString(void) const;
+  cString GetTimeString(void) const;
+  cString GetEndTimeString(void) const;
+  cString GetVpsString(void) const;
+  */
+
+  char buf[100];
+  string result = "";
+  
+  time_t startTime = event->StartTime();
+  //time_t stopTime  = event->EndTime();
+  
+  sprintf(buf, "%lu", startTime);
+  result += buf;
+  result += ":";
+  sprintf(buf, "%d", event->Duration() ? event->Duration : 0);
+  result += ":";
+  result += info -> ChannelName();
+  result += ":";
+  result += MapSpecialChars(event->Title());
+  result += ":";
+  result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
+  result += ":";
+  result += MapSpecialChars(event->Description() ? event->Description() : "");
+  result += ":";
+  result += recording->FileName();
+  result += "\r\n";
+  return result;
+}
+
 string cHelpers::ToText(cTimer * timer) {
 
   const char * channelName = timer->Channel()->Name();
@@ -259,7 +333,7 @@ string cHelpers::ToText(cTimer * timer) {
   return result;
 }
 
-string cHelpers::ToText(cEvent * event) {
+string cHelpers::ToText(const cEvent * event) {
 
 
   cChannel * channel = Channels.GetByChannelID(event->Schedule()->ChannelID());

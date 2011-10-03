@@ -79,6 +79,11 @@ bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
         string text = cHelpers::SearchEvents(args);
         sock->PutLine(text);
       }
+      else if(cmd == "RECORDINGS")
+      {
+        string text = cHelpers::GetRecordings(args);
+        sock->PutLine(text);
+      }
       else if (cmd == "QUIT")
       {
         // close socket
