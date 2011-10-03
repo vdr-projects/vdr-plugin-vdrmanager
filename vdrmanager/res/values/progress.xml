@@ -3,10 +3,12 @@
   
   <!--  progress -->
   <string name="progress_connect">Connecting …</string>
+  <string name="progress_connect_error">Connection failed</string>
   <string name="progress_login">Login …</string>
   <string name="progress_login_error">Login failed</string>
   <string name="progress_whatson_loading">Loading EPG …</string>
   <string name="progress_timers_loading">Loading timers …</string>
+  <string name="progress_recordings_loading">Loading recordings …</string>
   <string name="progress_channels_loading">Loading channels …</string>
   <string name="progress_disconnect">Disconnecting …</string>
   <string name="progress_wakeup_sending">Initiating wakeup request …</string>
@@ -16,5 +18,8 @@
   <string name="progress_timer_delete">Deleting timer …</string>
   <string name="progress_timer_enable">Enabling timer …</string>
   <string name="progress_timer_disable">Disabling timer …</string>
+  <string name="progress_connect_finished_abnormal">Connection finished abnormal …</string>
+  <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
+  <string name="progress_cache_hit">Loading from cache …</string>
   
 </resources>

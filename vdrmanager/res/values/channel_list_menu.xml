@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-  <string name="channel_item_menu_epg">Show EPG</string>
-  <string name="channel_item_menu_stream">Show live stream</string>
-  
-</resources>

@@ -3,4 +3,7 @@
   <string name="common_delete">Delete</string>
   <string name="prefs_current_value">Current:</string>
   <string name="prefs_current_value_template">Current: %1$s</string>
+  <string name="no_connection">No connection</string>
+  <string name="no_connection_retry">Retry</string>
+  <string name="refresh">Refresh</string>
 </resources>

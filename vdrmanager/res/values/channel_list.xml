@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="channel_item_menu_epg">Show EPG</string>
+  <string name="channel_item_menu_stream">Show live stream</string>
+  <string name="channel_item_menu_hide">Hide</string>
+  <string name="channel_item_menu_hide_permanent">Hide permanent</string>
+  
+  <string name="channel_group_menu_hide">Hide</string>
+  <string name="channel_group_menu_hide_permanent">Hide permanent</string>
+  
+  <string name="groupby_group">Group</string>
+  <string name="groupby_provider">Provider</string>
+  <string name="groupby_name">Name</string>
+  <string name="groupby_name_all_channels_group">All Channels</string>
+  <string name="groupby_window_title_templte">Group by %1$s</string>
+</resources>

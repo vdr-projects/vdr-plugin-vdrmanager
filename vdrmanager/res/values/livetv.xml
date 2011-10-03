@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="livetv">Live TV</string>
+	<string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
+		player such as VPlayer</string>
+	<string name="settings_livetv_streamformat">Streamformat</string>
+	<string name="settings_livetv_port">Streaming Port</string>
+	<string name="settings_livetv_port_summary">Default 3000. The access must be enabled in
+		streamdevhosts.conf.</string>
+	<string-array name="livetv_streamformat">
+		<item>TS</item>
+		<item>PES</item>
+		<item>ES</item>
+		<item>PS</item>
+		<item>External</item>
+	</string-array>
+	<string-array name="livetv_streamformat_values">
+		<item>TS</item>
+		<item>PES</item>
+		<item>ES</item>
+		<item>PS</item>
+		<item>EXT</item>
+	</string-array>
+</resources>

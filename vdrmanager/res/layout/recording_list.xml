@@ -5,7 +5,7 @@
 	<LinearLayout android:layout_height="fill_parent"
 		android:layout_width="fill_parent" android:id="@+id/main_content">
 		<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-			android:id="@+id/timer_list" android:layout_width="fill_parent"
+			android:id="@+id/recording_list" android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_alignWithParentIfMissing="true"
 			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"

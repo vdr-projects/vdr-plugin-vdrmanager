@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:orientation="vertical">
     
@@ -9,7 +9,9 @@
         android:id="@+id/epg_detail_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textSize="15dip"
+        android:text="Unterwegs nach Cold Mountain"/>
 
     <LinearLayout
         android:id="@+id/epg_detail_time_channel"
@@ -22,32 +24,58 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:gravity="left"
-		        android:layout_weight="1"/>
+		        android:text="20:10-20-15"
+		        />
+	   
+	       <TextView
+		        android:id="@+id/epg_detail_duration"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:gravity="right" android:layout_weight="1"
+		        android:paddingLeft="10dip"
+		        android:text="2/123min"
+		        />
+	
 		
 		    <TextView
 		        android:id="@+id/epg_detail_channel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:text="Sky Cinema"
+		        android:visibility="gone"
 		        android:gravity="right"/>
 		        
     </LinearLayout>
+   
+   
         
     <TextView
-        android:id="@+id/epg_detail_date"
+        android:id="@+id/epg_detail_shorttext"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
+        android:text="Krimikömedie"
         android:layout_below="@id/epg_detail_time"/>
+       
+   
+
 
     <TextView
         android:id="@+id/epg_detail_separator_0"
         android:layout_width="fill_parent"
         android:layout_height="2sp"/>
         
-    <TextView
-        android:id="@+id/epg_detail_separator_1"
-        android:layout_width="fill_parent"
-        android:layout_height="1sp"/>
+ 
+	
+
+		<ProgressBar
+       		    android:id="@+id/epg_detail_progress"
+       			android:layout_width="fill_parent"
+       			android:indeterminate="false"
+       			android:layout_height="2dip"
+       			android:progress="40"
+       			style="?android:attr/progressBarStyleHorizontal"/>
 
     <ScrollView
         android:id="@+id/epg_detail_description_scroll"
@@ -56,6 +84,7 @@
         android:layout_weight="1">
 
         <TextView
+        	android:textSize="15dip"
             android:id="@+id/epg_detail_description"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
@@ -72,13 +101,72 @@
         android:id="@+id/epg_detail_separator_3"
         android:layout_width="fill_parent"
         android:layout_height="4sp"/>
+	
+<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="center">
 
-    <Button
-      android:id="@+id/epg_event_create_timer"
+<!-- 
+    <ImageButton
+      android:id="@+id/epg_event_left"
+      android:src="@drawable/left"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:gravity="left"
+      style="?android:attr/buttonStyleSmall"
+      android:layout_marginRight="40dip" 
+      android:background="@android:drawable/list_selector_background"/>
+    
+   -->
+    
+    
+    <ImageButton
+      android:id="@+id/epg_event_livetv"
+      android:src="@drawable/tv"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
       android:layout_centerHorizontal="true"
+      style="?android:attr/buttonStyleSmall" android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+      android:background="@android:drawable/list_selector_background"
       android:text="@string/epg_event_create_timer_text"/>
+      
+     <ImageButton
+      android:id="@+id/epg_event_create_timer"
+      android:src="@drawable/timer"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+      android:layout_gravity="center_horizontal"
+      android:layout_centerHorizontal="true" 
+      android:background="@android:drawable/list_selector_background"
+      style="?android:attr/buttonStyleSmall"
+      android:text="@string/epg_event_create_timer_text"/>
+      
+     <!-- 
+     <ImageButton
+      android:id="@+id/epg_event_epg"
+      android:src="@drawable/epg"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_centerHorizontal="true"  android:layout_weight="1" 
+      android:background="@android:drawable/list_selector_background"
+      style="?android:attr/buttonStyleSmall"
+      android:text="@string/epg_event_create_timer_text"/>
+      -->
+      <!-- 
+          <ImageButton
+      android:id="@+id/epg_event_right"
+      android:src="@drawable/right"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"
+      android:layout_centerHorizontal="true"  
+      style="?android:attr/buttonStyleSmall"
+      android:layout_marginLeft="40dip"
+      android:background="@android:drawable/list_selector_background"/>
+-->
+      
+      
+                  </LinearLayout>
+                  
                   
 </LinearLayout>
