@@ -1,8 +1,12 @@
 package de.bjusystems.vdrmanager.utils.date;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import de.bjusystems.vdrmanager.data.Preferences;
+
 
 /**
  * Class for formatting date and time values
@@ -16,8 +20,10 @@ public class DateFormatter {
 	private final String dailyHeader;
 
 	public DateFormatter(final Date date) {
-		timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
-		dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
+		SimpleDateFormat sdf = new SimpleDateFormat(Preferences.get().getTimeFormat());
+		timeString = sdf.format(date);
+		sdf = new SimpleDateFormat("EEE dd.MM.yy");
+		dateString = sdf.format(date);
 		dailyHeader = DateFormat.getDateInstance(DateFormat.FULL).format(date);
 	}
 
