@@ -12,12 +12,14 @@
             </intent-filter>
         </activity>
 
-<activity android:name=".gui.EpgListActivity"></activity>
+<activity android:name=".gui.TimeEpgListActivity" android:configChanges="orientation"/>
+<activity android:name=".gui.EventEpgListActivity" android:configChanges="orientation"/>
 <activity android:name=".gui.TimerListActivity"></activity>
 <activity android:name=".gui.PreferencesActivity"></activity>
 <activity android:name=".gui.ChannelListActivity"></activity>
 <activity android:name=".gui.EpgDetailsActivity"></activity>
 <activity android:name=".gui.TimerDetailsActivity"></activity>
+<activity android:name=".gui.RecordingListActivity"></activity>
 <activity android:name=".gui.EpgSearchActivity"></activity>
 <activity android:name=".gui.EpgSearchTimesListActivity"></activity>
 </application>
