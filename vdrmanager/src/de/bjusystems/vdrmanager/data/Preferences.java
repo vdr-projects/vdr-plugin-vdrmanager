@@ -2,10 +2,12 @@ package de.bjusystems.vdrmanager.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.test.IsolatedContext;
 import de.bjusystems.vdrmanager.R;
 
 /**
  * Class for all preferences
+ * 
  * @author bju
  */
 public class Preferences {
@@ -29,6 +31,19 @@ public class Preferences {
 	private String wakeupUser;
 	/** Password for wakeup */
 	private String wakeupPassword;
+	/**
+	 * vdr mac for wol
+	 * 
+	 * @since 0.2
+	 */
+	private String vdrMac;
+	/**
+	 * which wakeup method to use
+	 * 
+	 * @since 0.2
+	 * 
+	 */
+	private String wakeupMethod;
 	/** Check for running VDR is enabled */
 	private boolean aliveCheckEnabled;
 	/** Intervall for alive test */
@@ -43,24 +58,69 @@ public class Preferences {
 	private int timerDefaultLifetime;
 	/** user defined epg search times */
 	private String epgSearchTimes;
-	
+	/**
+	 * Which port to use for streaming
+	 * 
+	 * @since 0.2
+	 */
 	private int streamPort = 3000;
-	
-	public int getStreamPort() {
-		return streamPort;
-	}
 
-	public String getStreamFormat() {
-		return streamFormat;
-	}
-
+	/**
+	 * Which format to use for streaming
+	 * 
+	 * @since 0.2
+	 */
 	private String streamFormat = "TS";
+
+	/**
+	 * format times AM/PM or 24H
+	 * 
+	 * @since 0.2
+	 */
+	private boolean use24hFormat;
+
+	/**
+	 * Do not send broadcasts, send directly to the host (router problem)
+	 * @since 0.2
+	 */
+	private String wolCustomBroadcast = "";
+
+	/**
+	 * Whether to show channel numbers in the overviews
+	 * @since 0.2
+	 */
+	private boolean showChannelNumbers = false;
+
 
 	/** Properties singleton */
 	private static Preferences thePrefs;
 
+	
+	/**
+	 * Whether to send Packets to the custom broadcast address.
+	 * It is used, if the address ist not empty
+	 * 
+	 * @return
+	 * @since 0.2
+	 */
+	public String getWolCustomBroadcast() {
+		return wolCustomBroadcast;
+	}
+
+	
+	/**
+	 * Getter for use24hFormat
+	 * 
+	 * @since 0.2
+	 * @return
+	 */
+	public boolean isUse24hFormat() {
+		return use24hFormat;
+	}
+
 	/**
 	 * Checks for connect using SSL
+	 * 
 	 * @return true, if use SSL connections
 	 */
 	public boolean isSSL() {
@@ -69,6 +129,7 @@ public class Preferences {
 
 	/**
 	 * Retrieves the channel filtering mode
+	 * 
 	 * @return true, if channels will be filtered
 	 */
 	public boolean isFilterChannels() {
@@ -77,6 +138,7 @@ public class Preferences {
 
 	/**
 	 * Last channel to receive
+	 * 
 	 * @return channel number
 	 */
 	public String getChannels() {
@@ -85,6 +147,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP host or IP address
+	 * 
 	 * @return SVDRP host
 	 */
 	public String getSvdrpHost() {
@@ -93,6 +156,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP port
+	 * 
 	 * @return SVDRP port
 	 */
 	public int getSvdrpPort() {
@@ -101,6 +165,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP password
+	 * 
 	 * @return SVDRO password
 	 */
 	public String getPassword() {
@@ -109,6 +174,7 @@ public class Preferences {
 
 	/**
 	 * Checks for enables remote wakeup
+	 * 
 	 * @return true, if remote wakeup is enabled
 	 */
 	public boolean isWakeupEnabled() {
@@ -117,6 +183,7 @@ public class Preferences {
 
 	/**
 	 * Gets the URL for the wakeup request
+	 * 
 	 * @return wakeup url
 	 */
 	public String getWakeupUrl() {
@@ -125,6 +192,7 @@ public class Preferences {
 
 	/**
 	 * Gets the user for the wakeup url
+	 * 
 	 * @return user name
 	 */
 	public String getWakeupUser() {
@@ -133,6 +201,7 @@ public class Preferences {
 
 	/**
 	 * Gets the password for the wakeup url
+	 * 
 	 * @return password
 	 */
 	public String getWakeupPassword() {
@@ -141,6 +210,7 @@ public class Preferences {
 
 	/**
 	 * Checks for enabled alive check
+	 * 
 	 * @return true, if enabled
 	 */
 	public boolean isAliveCheckEnabled() {
@@ -149,6 +219,7 @@ public class Preferences {
 
 	/**
 	 * Gets the time between alive checks
+	 * 
 	 * @return time in seconds
 	 */
 	public int getAliveCheckInterval() {
@@ -157,6 +228,7 @@ public class Preferences {
 
 	/**
 	 * Gets the buffer before the event start
+	 * 
 	 * @return pre event buffer
 	 */
 	public int getTimerPreMargin() {
@@ -165,6 +237,7 @@ public class Preferences {
 
 	/**
 	 * Gets the buffer after the event stop
+	 * 
 	 * @return post event buffer
 	 */
 	public int getTimerPostMargin() {
@@ -173,6 +246,7 @@ public class Preferences {
 
 	/**
 	 * Gets the default priority
+	 * 
 	 * @return default priority
 	 */
 	public int getTimerDefaultPriority() {
@@ -181,6 +255,7 @@ public class Preferences {
 
 	/**
 	 * Gets the default lifetime
+	 * 
 	 * @return default lifetime
 	 */
 	public int getTimerDefaultLifetime() {
@@ -189,21 +264,66 @@ public class Preferences {
 
 	/**
 	 * Gets the time values for the epg search
+	 * 
 	 * @return
 	 */
 	public String getEpgSearchTimes() {
-			return epgSearchTimes;
+		return epgSearchTimes;
+	}
+
+	/**
+	 * gets the MAC Address of the vdr host
+	 * 
+	 * @return
+	 * @since 0.2
+	 */
+	public String getVdrMac() {
+		return vdrMac;
+	}
+
+	/**
+	 * Gets the selection which wakeup method to use
+	 * 
+	 * @return
+	 * @since 0.2
+	 */
+	public String getWakeupMethod() {
+		return wakeupMethod;
+	}
+
+	/**
+	 * Getter for streaming port
+	 * 
+	 * @return
+	 * @since 02.
+	 */
+	public int getStreamPort() {
+		return streamPort;
+	}
+
+	/**
+	 * Getter for selected streaming format
+	 * 
+	 * @return
+	 * @since 0.2
+	 */
+	public String getStreamFormat() {
+		return streamFormat;
 	}
 
 	/**
 	 * Sets the time values for the epg search
-	 * @param epgSearchTimes new time values
+	 * 
+	 * @param epgSearchTimes
+	 *            new time values
 	 */
-	public void setEpgSearchTimes(final Context context, final String epgSearchTimes) {
+	public void setEpgSearchTimes(final Context context,
+			final String epgSearchTimes) {
 
 		final SharedPreferences prefs = getSharedPreferences(context);
 		final SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(context.getString(R.string.epg_search_times_key), epgSearchTimes);
+		editor.putString(context.getString(R.string.epg_search_times_key),
+				epgSearchTimes);
 		editor.commit();
 
 		// reload
@@ -212,104 +332,177 @@ public class Preferences {
 
 	/**
 	 * Gets the name for the file which preferences will be saved into
-	 * @param context Context
+	 * 
+	 * @param context
+	 *            Context
 	 * @return filename
 	 */
 	public static String getPreferenceFile(final Context context) {
 		return context.getString(R.string.app_name);
 	}
 
+	
+
+	
+	
+	/**
+	 * Show Channel Numbers in the overviews
+	 * @since 0.2
+	 * @return
+	 */
+	public boolean isShowChannelNumbers() {
+		return showChannelNumbers;
+	}
+	
 	/**
 	 * Gets the previous loaded preferences
+	 * 
 	 * @return preferences
 	 */
 	public static Preferences getPreferences() {
 		return thePrefs;
 	}
+	
+	/**
+	 * 
+	 * Gets the previous loaded preferences, same as getPreferences();
+	 * 
+	 * @return
+	 */
+	public static Preferences get(){
+		return thePrefs;
+	}
 
 	/**
 	 * Loads all preferences
-	 * @param context Context
+	 * 
+	 * @param context
+	 *            Context
 	 * @return Preferences
 	 */
 	public static void loadPreferences(final Context context) {
 
-		final SharedPreferences sharedPrefs = getSharedPreferences(context);
-
 		final Preferences prefs = new Preferences();
 
-		prefs.svdrpHost = getString(context, sharedPrefs, R.string.vdr_host_key, "127.0.0.1");
-		prefs.svdrpPort = getInt(context, sharedPrefs, R.string.vdr_port_key, 6419);
-		prefs.password = getString(context, sharedPrefs, R.string.vdr_password_key, "");
-		prefs.ssl = getBoolean(context, sharedPrefs, R.string.vdr_ssl_key, false);
-		prefs.streamPort = getInt(context, sharedPrefs, R.string.vdr_stream_port, 3000);
-		prefs.streamFormat= getString(context, sharedPrefs, R.string.vdr_stream_format, "TS");
+		prefs.svdrpHost = getString(context, R.string.vdr_host_key, "0.0.0.0");
+		prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6419);
+		prefs.password = getString(context, R.string.vdr_password_key, "");
+		prefs.ssl = getBoolean(context, R.string.vdr_ssl_key, false);
+		prefs.streamPort = getInt(context, R.string.vdr_stream_port, 3000);
+		prefs.streamFormat = getString(context, R.string.vdr_stream_format,
+				"TS");
+
+		prefs.aliveCheckEnabled = getBoolean(context,
+				R.string.alive_check_enabled_key, false);
+		prefs.aliveCheckInterval = getInt(context,
+				R.string.alive_check_interval_key, 60);
+
+		prefs.channels = getString(context, R.string.channel_filter_last_key,
+				"").replace(" ", "");
+		prefs.filterChannels = getBoolean(context,
+				R.string.channel_filter_filter_key, false);
+
+		prefs.wakeupEnabled = getBoolean(context, R.string.wakeup_enabled_key,
+				false);
+		prefs.wakeupUrl = getString(context, R.string.wakeup_url_key, "");
+		prefs.wakeupUser = getString(context, R.string.wakeup_user_key, "");
+		prefs.wakeupPassword = getString(context, R.string.wakeup_password_key,
+				"");
+
+		prefs.timerPreMargin = getInt(context,
+				R.string.timer_pre_start_buffer_key, 5);
+		prefs.timerPostMargin = getInt(context,
+				R.string.timer_post_end_buffer_key, 30);
+		prefs.timerDefaultPriority = getInt(context,
+				R.string.timer_default_priority_key, 99);
+		prefs.timerDefaultLifetime = getInt(context,
+				R.string.timer_default_lifetime_key, 99);
+
+		prefs.epgSearchTimes = getString(context,
+				R.string.epg_search_times_key, "");
+
+		prefs.vdrMac = getString(context, R.string.wakeup_wol_mac_key, "");
+		prefs.wakeupMethod = getString(context, R.string.wakeup_method_key,
+				"url");
+
+		prefs.use24hFormat = getBoolean(context,
+				R.string.gui_enable_24h_format_key, true);
 		
-		prefs.aliveCheckEnabled = getBoolean(context, sharedPrefs, R.string.alive_check_enabled_key, false);
-		prefs.aliveCheckInterval = getInt(context, sharedPrefs, R.string.alive_check_interval_key, 60);
+		prefs.wolCustomBroadcast = getString(context, R.string.wakeup_wol_custom_broadcast_key, "");
 
-		prefs.channels = getString(context, sharedPrefs, R.string.channel_filter_last_key, "").replace(" ", "");
-		prefs.filterChannels = getBoolean(context, sharedPrefs, R.string.channel_filter_filter_key, false);
-
-		prefs.wakeupEnabled = getBoolean(context, sharedPrefs, R.string.wakeup_enabled_key, false);
-		prefs.wakeupUrl = getString(context, sharedPrefs, R.string.wakeup_url_key, "");
-		prefs.wakeupUser = getString(context, sharedPrefs, R.string.wakeup_user_key, "");
-		prefs.wakeupPassword = getString(context, sharedPrefs, R.string.wakeup_password_key, "");
-
-		prefs.timerPreMargin = getInt(context, sharedPrefs, R.string.timer_pre_start_buffer_key, 5);
-		prefs.timerPostMargin = getInt(context, sharedPrefs, R.string.timer_post_end_buffer_key, 30);
-		prefs.timerDefaultPriority = getInt(context, sharedPrefs, R.string.timer_default_priority_key, 99);
-		prefs.timerDefaultLifetime = getInt(context, sharedPrefs, R.string.timer_default_lifetime_key, 99);
-
-		prefs.epgSearchTimes = getString(context, sharedPrefs, R.string.epg_search_times_key, "");
-
+		prefs.showChannelNumbers = getBoolean(context, R.string.gui_channels_show_channel_numbers_key, false);
+		
 		thePrefs = prefs;
 	}
 
 	/**
 	 * Gets the persistent preferences
-	 * @param context Context
+	 * 
+	 * @param context
+	 *            Context
 	 * @return preferences
 	 */
-	private static SharedPreferences getSharedPreferences(final Context context) {
-
-		return context.getSharedPreferences(getPreferenceFile(context), Context.MODE_PRIVATE);
+	public static SharedPreferences getSharedPreferences(final Context context) {
+		return context.getSharedPreferences(getPreferenceFile(context),
+				Context.MODE_PRIVATE);
 	}
 
 	/**
 	 * Helper for retrieving integer values from preferences
-	 * @param context Context
-	 * @param sharedPrefs Object for the preference file
-	 * @param resId ressource id of the preferences name
-	 * @param defValue default value
+	 * 
+	 * @param context
+	 *            Context
+	 * @param resId
+	 *            ressource id of the preferences name
+	 * @param defValue
+	 *            default value
 	 * @return value or the default value if not defined
 	 */
-	private static int getInt(final Context context, final SharedPreferences sharedPrefs, final int resId, final int defValue) {
-		final String value = getString(context, sharedPrefs, resId, String.valueOf(defValue));
+	private static int getInt(final Context context, final int resId,
+			final int defValue) {
+		final String value = getString(context, resId, String.valueOf(defValue));
 		return Integer.parseInt(value);
 	}
 
 	/**
 	 * Helper for retrieving boolean values from preferences
-	 * @param context Context
-	 * @param sharedPrefs Object for the preference file
-	 * @param resId ressource id of the preferences name
-	 * @param defValue default value
+	 * 
+	 * @param context
+	 *            Context
+	 * @param resId
+	 *            ressource id of the preferences name
+	 * @param defValue
+	 *            default value
 	 * @return value or the default value if not defined
 	 */
-	private static boolean getBoolean(final Context context, final SharedPreferences sharedPrefs, final int resId, final boolean defValue) {
+	private static boolean getBoolean(final Context context, final int resId,
+			final boolean defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		return sharedPrefs.getBoolean(context.getString(resId), defValue);
 	}
 
+	
 	/**
 	 * Helper for retrieving string values from preferences
-	 * @param context Context
-	 * @param sharedPrefs Object for the preference file
-	 * @param resId ressource id of the preferences name
-	 * @param defValue default value
+	 * 
+	 * @param context
+	 *            Context
+	 * @param resId
+	 *            ressource id of the preferences name
+	 * @param defValue
+	 *            default value
 	 * @return value or the default value if not defined
 	 */
-	private static String getString(final Context context, final SharedPreferences sharedPrefs, final int resId, final String defValue) {
+	private static String getString(final Context context, final int resId,
+			final String defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		return sharedPrefs.getString(context.getString(resId), defValue);
+	}
+
+	public  String getTimeFormat() {
+		if (isUse24hFormat()) {
+			return "HH:mm";
+		}
+		return "h:mm a";
 	}
 }
