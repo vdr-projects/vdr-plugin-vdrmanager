@@ -1,10 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
- <ListView
-     xmlns:android="http://schemas.android.com/apk/res/android"
-     android:id="@+id/channel_list"        
-     android:layout_width="fill_parent"
-     android:layout_height="fill_parent"
-     android:layout_alignWithParentIfMissing="true"
-     android:layout_alignParentTop="true"
-     android:layout_centerHorizontal="true"
-     android:cacheColorHint="?android:attr/colorBackground"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical">
+
+	<LinearLayout android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:id="@+id/main_content">
+		<EditText android:id="@+id/search_box" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:hint="type to filter"
+			android:inputType="text" android:maxLines="1" android:visibility="gone" />
+
+		<ExpandableListView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/channel_list" android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+			android:cacheColorHint="?android:attr/colorBackground" />
+
+
+	</LinearLayout>
+	<LinearLayout android:orientation="vertical"
+		android:id="@+id/no_connection_layout" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:visibility="gone">
+		<LinearLayout android:layout_height="fill_parent"
+			android:gravity="center" android:layout_width="fill_parent"
+			android:orientation="horizontal">
+			<TextView android:text="@string/no_connection"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:textSize="18dip" />
+			<ImageView android:src="@drawable/sad"
+				android:layout_height="wrap_content" android:layout_width="wrap_content" />
+			<Button android:text="@string/no_connection_retry"
+				android:textSize="18dip" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:id="@+id/retry_button" />
+
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>
