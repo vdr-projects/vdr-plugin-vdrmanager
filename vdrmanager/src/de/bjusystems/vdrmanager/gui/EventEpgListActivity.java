@@ -236,4 +236,9 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		startEpgQuery(currentChannel, true);
 	}
 
+	@Override
+	protected int getWindowTitle() {
+		return R.string.epg_by_channel;
+	}
+
 }

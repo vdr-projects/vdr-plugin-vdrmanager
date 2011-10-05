@@ -45,12 +45,14 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	protected ListView listView;
 
 
+	abstract protected int getWindowTitle();
 	
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initChannel();
+		getWindowTitle();
 	}
 	
 	private void initChannel(){

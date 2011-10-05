@@ -17,5 +17,7 @@
   <string name="epg_duration_template">%1$s min</string>
   <string name="epg_duration_template_live">%1$s/%2$s min</string>
   <string name="epg_of_a_channel">EPG -> %1$s</string>
+  <string name="epg_by_channel">EPG by channel</string>
+  <string name="epg_by_time">EPG by time</string>  
 
 </resources>

@@ -18,14 +18,12 @@ import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
-import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
-import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -44,7 +42,7 @@ public class RecordingListActivity extends BaseActivity implements
 		super.onCreate(savedInstanceState);
 
 		// set title
-		setTitle(R.string.action_menu_timers);
+		setTitle(R.string.action_menu_recordings);
 
 		// Attach view
 		setContentView(getMainLayout());

@@ -254,5 +254,9 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	protected void retry() {
 		refresh();
 	}
-
+	
+	@Override
+	protected int getWindowTitle() {
+		return R.string.epg_by_time;
+	}
 }
