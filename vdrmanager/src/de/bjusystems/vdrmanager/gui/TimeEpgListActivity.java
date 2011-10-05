@@ -185,7 +185,6 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 		// get spinner value
 		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
 				.getSelectedItem();
-		setTitle(getString(R.string.epg_of_a_channel, selection));
 		adapter.clear();
 		CACHE.clear();
 		nextForceCache = FUTURE;

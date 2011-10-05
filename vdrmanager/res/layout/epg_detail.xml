@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="15dip"
+        android:textAppearance="?android:textAppearanceMedium"
         android:text="Unterwegs nach Cold Mountain"/>
 
     <LinearLayout
@@ -24,6 +24,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:gravity="left"
+		       	android:textAppearance="?android:textAppearanceSmall"
 		        android:text="20:10-20-15"
 		        />
 	   
@@ -34,6 +35,7 @@
 		        android:gravity="right" android:layout_weight="1"
 		        android:paddingLeft="10dip"
 		        android:text="2/123min"
+		        android:textAppearance="?android:textAppearanceSmall"
 		        />
 	
 		
@@ -56,6 +58,7 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:text="Krimikömedie"
+        android:textAppearance="?android:textAppearanceSmall"
         android:layout_below="@id/epg_detail_time"/>
        
    
@@ -84,9 +87,10 @@
         android:layout_weight="1">
 
         <TextView
-        	android:textSize="15dip"
+            android:textAppearance="?android:textAppearanceSmall"
             android:id="@+id/epg_detail_description"
             android:layout_width="fill_parent"
+            android:text="Lorem Ipsum"
             android:layout_height="fill_parent">
         </TextView>
         

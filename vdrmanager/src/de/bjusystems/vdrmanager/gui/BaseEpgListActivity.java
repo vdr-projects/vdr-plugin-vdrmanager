@@ -51,8 +51,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle(getWindowTitle());
 		initChannel();
-		getWindowTitle();
+		
 	}
 	
 	private void initChannel(){
