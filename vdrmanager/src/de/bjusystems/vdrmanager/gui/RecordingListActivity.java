@@ -1,5 +1,7 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.Calendar;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -13,11 +15,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
+import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -48,7 +52,7 @@ public class RecordingListActivity extends BaseActivity implements
 		setContentView(getMainLayout());
 
 		// create an adapter
-		adapter = new TimeEventAdapter(this);
+		adapter = new RecordingAdapter(this);
 
 		// attach adapter to ListView
 		final ListView listView = (ListView) findViewById(R.id.recording_list);
@@ -187,7 +191,16 @@ public class RecordingListActivity extends BaseActivity implements
 			break;
 		case FINISHED_SUCCESS:
 			adapter.clear();
+			Calendar cal = Calendar.getInstance();
+			int day = -1;
 			for (final Recording rec : recordingClient.getResults()) {
+					cal.setTime(rec.getStart());
+					int eday = cal.get(Calendar.DAY_OF_YEAR);
+					if (eday != day) {
+						day = eday;
+						adapter.add(new EventListItem(new DateFormatter(cal)
+								.getDailyHeader()));
+					}
 				adapter.add(new EventListItem(rec));
 			}
 			// adapter.sortItems();

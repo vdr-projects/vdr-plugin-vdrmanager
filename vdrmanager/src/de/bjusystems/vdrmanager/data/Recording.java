@@ -9,7 +9,7 @@ public class Recording extends BaseEvent{
 		super(null);
 		final String[] words = line.split(":");
 		start = new Date(Long.parseLong(words[0])*1000);
-		stop = new Date(Long.parseLong(words[0] + 1000 * 60 * 60 * 2)*1000);
+		stop = new Date(start.getTime() - 1000 * 1 * 60);
 		channelName = words[2];
 		title = words[3];
 		shortText = words[4];
