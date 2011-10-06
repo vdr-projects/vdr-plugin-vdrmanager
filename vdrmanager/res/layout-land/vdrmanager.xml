@@ -4,13 +4,13 @@
 	android:orientation="vertical" android:padding="10dip">
 
 	<ImageView android:id="@+id/main_logo" android:layout_width="fill_parent"
-		android:layout_height="150dip" android:src="@drawable/vdr_logo" android:paddingBottom="10dip" />
+		android:layout_height="90dip" android:src="@drawable/vdr_logo" android:paddingBottom="5dip" />
 
 	<!-- <ListView android:id="@+id/vdrmanager_menu" android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" android:layout_below="@id/main_logo"/> -->
 
 		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:orientation="horizontal" android:padding="5dip">
+			android:layout_height="wrap_content" android:orientation="horizontal" android:padding="3dip">
 			<Button android:text="@string/action_menu_channels"
 				xmlns:android="http://schemas.android.com/apk/res/android"
 				android:drawableTop="@drawable/btn_channels" android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
 
 
 			<Button android:text="@string/action_menu_recordings"
-				xmlns:android="http://schemas.android.com/apk/res/android"  android:padding="5dip"
+				xmlns:android="http://schemas.android.com/apk/res/android"  android:padding="3dip"
 				android:drawableTop="@drawable/btn_recordings" android:layout_width="wrap_content"
 				android:id="@+id/action_menu_recordings" android:layout_height="wrap_content"
 				android:textAppearance="?android:textAppearanceSmall" android:layout_weight="1"
@@ -31,7 +31,7 @@
 				/>
 				
 			<Button android:text="@string/action_menu_timers"
-				xmlns:android="http://schemas.android.com/apk/res/android"  android:padding="5dip"
+				xmlns:android="http://schemas.android.com/apk/res/android"  android:padding="3dip"
 				android:drawableTop="@drawable/btn_timer" android:layout_width="wrap_content"
 				android:id="@+id/action_menu_timers" android:layout_height="wrap_content"
 				android:textAppearance="?android:textAppearanceSmall" android:layout_weight="1"
@@ -47,7 +47,7 @@
 				android:id="@+id/action_menu_epg" android:layout_height="wrap_content"
 				android:textAppearance="?android:textAppearanceSmall" android:layout_weight="1"
 				android:cacheColorHint="?android:attr/colorBackground"
-				android:padding="5dip"
+				android:padding="3dip"
 				android:background="@android:drawable/list_selector_background"
 				android:textColor="#FFF" />
 
@@ -58,12 +58,12 @@
 				android:textAppearance="?android:textAppearanceSmall" android:layout_weight="1"
 				android:cacheColorHint="?android:attr/colorBackground"
 				android:background="@android:drawable/list_selector_background"
-				android:padding="5dip"
+				android:padding="3dip"
 				android:textColor="#FFF" />
 
 			<Button android:text="@string/action_menu_wakeup"
 				xmlns:android="http://schemas.android.com/apk/res/android" android:layout_weight="1"
-				android:padding="5dip"
+				android:padding="3dip"
 				android:drawableTop="@drawable/btn_wakeup" android:layout_width="wrap_content"
 				android:id="@+id/action_menu_wakeup" android:layout_height="wrap_content"
 				android:textAppearance="?android:textAppearanceSmall"

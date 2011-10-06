@@ -6,6 +6,7 @@
 		android:layout_height="40dip" android:text="Channel" android:gravity="center_vertical|left"
 		android:paddingLeft="15dip" android:paddingRight="5dip"
 		android:textColor="#ffffffff"  android:background="@android:drawable/list_selector_background"
-		android:textSize="17dip"/>
+		android:textStyle="bold"
+		android:textAppearance="?android:textAppearanceMedium"/>
 
 </LinearLayout>
