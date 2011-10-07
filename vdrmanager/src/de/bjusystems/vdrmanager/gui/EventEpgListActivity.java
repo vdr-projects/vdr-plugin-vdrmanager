@@ -179,6 +179,10 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		task.run();
 	}
 
+	/* (non-Javadoc)
+	 * TODO this method also should be used in startEpgQuery on cache hit
+	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
+	 */
 	@Override
 	protected void finishedSuccess() {
 		adapter.clear();

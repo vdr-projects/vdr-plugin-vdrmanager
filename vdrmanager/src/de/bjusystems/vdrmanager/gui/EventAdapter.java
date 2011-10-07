@@ -72,6 +72,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> {
 			view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), 0);
 			view.setBackgroundColor(Color.DKGRAY);
 			itemHolder.state.setVisibility(View.GONE);
+			itemHolder.channel.setVisibility(View.VISIBLE);
 			itemHolder.channel.setText(item.getHeader());
 			itemHolder.title.setVisibility(View.GONE);
 			itemHolder.time.setVisibility(View.GONE);
