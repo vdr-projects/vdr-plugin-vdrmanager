@@ -53,131 +53,9 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		this.groups.addAll(groups);
 		channels.clear();
 		channels.putAll(data);
-		// sections = new Object[groups.size()];
-		// for(int i = 0; i < groups.size(); ++i){
-		// String g = groups.get(i);
-		// /if(g.length() > 0){
-		// sections[i] = g.subSequence(0, 1);
-		// } else {
-		// sections[i] = "";
-		// }
-		// }
 		notifyDataSetChanged();
 
 	}
-
-	// public ChannelAdapter(final Context context) {
-	// super(context, R.layout.channel_item);
-	// inflater = LayoutInflater.from(context);
-	// // items = new ArrayList<Channel>();
-	// }
-
-	// @Override
-	// public View getView(final int position, final View convertView,
-	// final ViewGroup parent) {
-	//
-	// ChannelHolder itemHolder = new ChannelHolder();
-	//
-	// // recycle view?
-	// View view = convertView;
-	// if (view == null) {
-	// view = inflater.inflate(R.layout.channel_item, null);
-	// itemHolder = new ChannelHolder();
-	//
-	// itemHolder.name = (TextView) view.findViewById(R.id.channel_name);
-	// itemHolder.type = (ImageView) view.findViewById(R.id.channel_type);
-	//
-	// view.setTag(itemHolder);
-	// } else {
-	// itemHolder = (ChannelHolder) view.getTag();
-	// }
-	//
-	// // get item
-	// final Channel item = getItem(position);
-	//
-	// // fill item
-	// if (item.isGroupSeparator()) {
-	// view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), 0);
-	// view.setBackgroundColor(Color.DKGRAY);
-	// itemHolder.type.setVisibility(View.GONE);
-	// itemHolder.name.setVisibility(View.VISIBLE);
-	// itemHolder.name.setText(item.getName());
-	// itemHolder.name.setPadding(0, 0, 0, 0);
-	// } else {
-	// view.setBackgroundColor(Color.BLACK);
-	// itemHolder.type.setVisibility(View.VISIBLE);
-	// itemHolder.type.setVisibility(View.VISIBLE);
-	// itemHolder.name.setText(item.toString());
-	// }
-	//
-	// return view;
-	// }
-
-	//
-	// public void addItem(final Channel channel) {
-	// items.add(channel);
-	// }
-	//
-	// public void clearItems() {
-	// items.clear();
-	// }
-
-	// public int getPositionForSection(int section) {
-	// // Log.v("getPositionForSection", ""+section);
-	// String letter = sections[section];
-	//
-	// return alphaIndexer.get(letter);
-	// }
-	//
-	// public int getSectionForPosition(int position) {
-	//
-	// // you will notice it will be never called (right?)
-	// Log.v("getSectionForPosition", "called");
-	// return 0;
-	// }
-	//
-	// public Object[] getSections() {
-	//
-	// if (sections == null) {
-	// alphaIndexer = new HashMap<String, Integer>();
-	// int size = getCount();
-	// for (int i = 0; i < size; ++i) {
-	// Channel element = getItem(i);
-	// alphaIndexer.put(element.getName().substring(0, 1), i);
-	// // We store the first letter of the word, and its index.
-	// // The Hashmap will replace the value for identical keys are
-	// // putted in
-	// }
-	//
-	// // now we have an hashmap containing for each first-letter
-	// // sections(key), the index(value) in where this sections begins
-	//
-	// // we have now to build the sections(letters to be displayed)
-	// // array .it must contains the keys, and must (I do so...) be
-	// // ordered alphabetically
-	//
-	// Set<String> keys = alphaIndexer.keySet(); // set of letters ...sets
-	// // cannot be sorted...
-	//
-	// Iterator<String> it = keys.iterator();
-	// ArrayList<String> keyList = new ArrayList<String>(); // list can be
-	// // sorted
-	//
-	// while (it.hasNext()) {
-	// String key = it.next();
-	// keyList.add(key);
-	// }
-	//
-	// Collections.sort(keyList);
-	//
-	// sections = new String[keyList.size()]; // simple conversion to an
-	// // array of object
-	// keyList.toArray(sections);
-	// }
-	//
-	// return sections; // to string will be called each object, to display
-	// // the letter
-	// }
 
 	public Object getChild(int groupPosition, int childPosition) {
 		String gn = groups.get(groupPosition);
@@ -212,16 +90,6 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			itemHolder = (ChannelHolder) view.getTag();
 		}
 
-		//
-		// // fill item
-		// if (item.isGroupSeparator()) {
-		// view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), 0);
-		// view.setBackgroundColor(Color.DKGRAY);
-		// itemHolder.type.setVisibility(View.GONE);
-		// itemHolder.name.setVisibility(View.VISIBLE);
-		// itemHolder.name.setText(item.getName());
-		// itemHolder.name.setPadding(0, 0, 0, 0);
-		// } else {
 		view.setBackgroundColor(Color.BLACK);
 
 		String name = item.getName();
@@ -229,31 +97,8 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			name = item.getNumber() + " - " + name;
 		}
 		itemHolder.name.setText(name);
-		// }
 
 		return view;
-
-		// if (convertView == null) {
-		// LayoutInflater infalInflater = (LayoutInflater) context
-		// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		// convertView = infalInflater.inflate(R.layout.child_layout, null);
-		// }
-		// TextView tv = (TextView) convertView.findViewById(R.id.tvChild);
-		// tv.setText("   " + vehicle.getName());
-		//
-		// // Depending upon the child type, set the imageTextView01
-		// tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-		// // if (vehicle instanceof Car) {
-		// // tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.car, 0, 0,
-		// 0);
-		// // } else if (vehicle instanceof Bus) {
-		// // tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bus, 0, 0,
-		// 0);
-		// // } else if (vehicle instanceof Bike) {
-		// // tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bike, 0, 0,
-		// 0);
-		// // }
-		// return convertView;
 	}
 
 	public int getChildrenCount(int groupPosition) {
@@ -280,23 +125,25 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			View convertView, ViewGroup parent) {
 
 		String group = (String) getGroup(groupPosition);
-		ChannelHolder itemHolder = new ChannelHolder();
+		GroupHolder itemHolder = new GroupHolder();
 
 		// recycle view?
 		View view = convertView;
 		if (view == null) {
 			view = inflater.inflate(R.layout.group_layout, null);
-			itemHolder = new ChannelHolder();
+			itemHolder = new GroupHolder();
 
-			itemHolder.name = (TextView) view.findViewById(R.id.channel_name);
+			itemHolder.name = (TextView) view.findViewById(R.id.group_name);
+			itemHolder.count = (TextView) view.findViewById(R.id.channel_count);
 			// itemHolder.type = (ImageView)
 			// view.findViewById(R.id.channel_type);
 
 			view.setTag(itemHolder);
 		} else {
-			itemHolder = (ChannelHolder) view.getTag();
+			itemHolder = (GroupHolder) view.getTag();
 		}
 		itemHolder.name.setText(group);
+		itemHolder.count.setText(String.valueOf(this.channels.get(group).size()));
 		return view;
 
 	}
@@ -338,17 +185,4 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			}
 		};
 	}
-
-	// public int getPositionForSection(int arg0) {
-	// return arg0;
-	// }
-	//
-	// public int getSectionForPosition(int arg0) {
-	// return arg0;
-	// }
-	//
-	// public Object[] getSections() {
-	// return sections;
-	// }
-
 }

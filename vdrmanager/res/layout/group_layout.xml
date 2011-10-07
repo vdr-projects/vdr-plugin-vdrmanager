@@ -1,12 +1,16 @@
 <LinearLayout android:id="@+id/LinearLayout01"
 	android:layout_width="fill_parent" android:layout_height="40dip"
 	xmlns:android="http://schemas.android.com/apk/res/android">
-<!--  -->
-	<TextView android:id="@+id/channel_name" android:layout_width="fill_parent"
-		android:layout_height="40dip" android:text="Groups" android:gravity="center_vertical|left"
+	<!-- -->
+	<TextView android:id="@+id/group_name" android:layout_width="wrap_content"
+		android:layout_height="40dip" android:text="Sky" android:gravity="center_vertical|left"
 		android:paddingLeft="35dip" android:paddingRight="5dip"
-		android:textColor="#BDBDBD"
-		android:textStyle="bold"
-		android:textAppearance="?android:textAppearanceMedium"
-		/>
+		android:textColor="#BDBDBD" android:textStyle="bold"
+		android:textAppearance="?android:textAppearanceMedium" />
+	<TextView android:id="@+id/channel_count"
+		android:layout_width="fill_parent" android:layout_height="40dip"
+		android:text="23" android:gravity="center_vertical|right"
+		android:layout_marginRight="5dip" android:textColor="#BDBDBD"
+		android:textStyle="bold" android:textAppearance="?android:textAppearanceMedium" />
+
 </LinearLayout>
