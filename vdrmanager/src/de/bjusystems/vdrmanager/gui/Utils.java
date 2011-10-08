@@ -3,9 +3,13 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 
+import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -36,11 +40,12 @@ public class Utils {
 		return -1;
 	}
 
-	public static boolean isLive(Event event){
+	public static boolean isLive(Event event) {
 		long now = new Date().getTime();
-		return now >= event.getStart().getTime() && now < event.getStop().getTime();
+		return now >= event.getStart().getTime()
+				&& now < event.getStop().getTime();
 	}
-	
+
 	private static String getStreamUrl(String chn) {
 		// "http://192.168.1.119:3000/TS/"
 		StringBuilder sb = new StringBuilder();
@@ -51,28 +56,68 @@ public class Utils {
 		return sb.toString();
 	}
 
-	
+	private static String getRemuxStreamUrl(String chn) {
+		// "http://192.168.1.119:3000/TS/"
+		StringBuilder sb = new StringBuilder();
+		Preferences p = Preferences.getPreferences();
+		sb.append("http://").append(p.getSvdrpHost()).append(":")
+				.append(p.getStreamPort()).append("/")
+				.append(p.getRemuxCommand()).append(";")
+				.append(p.getRemuxParameter()).append("/").append(chn);
+		return sb.toString();
+	}
+
 	public static void stream(Activity activity, Event event) {
 		stream(activity, event.getChannelNumber());
 	}
 
-	public static void stream(Activity a, Channel c){
+	public static void stream(Activity a, Channel c) {
 		stream(a, String.valueOf(c.getNumber()));
 	}
-	
-	
-	public static void stream(Activity activity, String chn) {
+
+	public static void stream(final Activity activity, final String chn) {
+
 		String url = getStreamUrl(chn);
+		if (Preferences.get().isEnableRemux() == false) {
+			url = getStreamUrl(chn);
+			startStream(activity, url);
+		}
+
+		String sf = Preferences.get().getStreamFormat();
+		String ext = activity.getString(R.string.remux_title);
+		new AlertDialog.Builder(activity)
+				.setTitle(R.string.stream_via_as)//
+				.setItems(
+						new String[] {
+								activity.getString(R.string.stream_as, sf),
+								activity.getString(R.string.stream_via, ext) },//
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								String url = null;
+								switch (which) {
+								case 0:
+									url = getStreamUrl(chn);
+									break;
+								case 1:
+									url = getRemuxStreamUrl(chn);
+									break;
+								}
+								startStream(activity, url);
+							}
+						}).create().show();
+	}
+
+	public static void startStream(Activity activity, String url) {
 		final Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse(url.toString()), "video/*");
 		activity.startActivityForResult(intent, 1);
-
 	}
 
-	public static int getDuration(Event event){
+	public static int getDuration(Event event) {
 		long millis = event.getStop().getTime() - event.getStart().getTime();
-		int minuts = (int)(millis / 1000 / 60);
+		int minuts = (int) (millis / 1000 / 60);
 		return minuts;
 	}
-	
+
 }

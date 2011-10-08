@@ -112,6 +112,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 			updateSummary(p);
 		}
 
+		
 	}
 
 	@Override

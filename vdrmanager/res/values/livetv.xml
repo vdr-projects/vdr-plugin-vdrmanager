@@ -12,13 +12,28 @@
 		<item>PES</item>
 		<item>ES</item>
 		<item>PS</item>
-		<item>External</item>
 	</string-array>
 	<string-array name="livetv_streamformat_values">
 		<item>TS</item>
 		<item>PES</item>
 		<item>ES</item>
 		<item>PS</item>
-		<item>EXT</item>
 	</string-array>
+	<string name="key_remux_enable">remux_enable</string>
+	<string name="key_remux_command">remux_command</string>
+	<string name="key_remux_parameter">remux_parameter</string>
+	
+	<string name="stream_via_as">Stream</string>
+	<string name="stream_via">via %s</string>
+	<string name="stream_as">as %s</string>
+	<string name="remux_title">Remux</string>
+	<string name="remux_enable_title">Enable Remux</string>
+	<string name="remux_enable_summary">Enable streaming via remux (e.g. externremux.sh)</string>
+	
+	<string name="remux_command_title">Command</string>
+	<string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/Extern/1</string>
+	
+	<string name="remux_parameter_title">Parameter</string>
+	<string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/Extern;DSL1000/1</string>
+	
 </resources>

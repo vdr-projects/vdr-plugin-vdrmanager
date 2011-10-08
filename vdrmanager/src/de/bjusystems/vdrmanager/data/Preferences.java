@@ -91,6 +91,20 @@ public class Preferences {
 	 */
 	private boolean showChannelNumbers = false;
 
+	/**
+	 * Use remux ?
+	 */
+	private boolean enableRemux;
+	
+	/**
+	 * Remux command
+	 */
+	private String remuxCommand;
+	
+	/**
+	 * Remux command  Parameter
+	 */
+	private String remuxParameter;
 
 	/** Properties singleton */
 	private static Preferences thePrefs;
@@ -354,6 +368,35 @@ public class Preferences {
 		return showChannelNumbers;
 	}
 	
+	
+
+	/**
+	 * getter 
+	 * @return
+	 */
+	public boolean isEnableRemux() {
+		return enableRemux;
+	}
+
+
+	/**
+	 * getter
+	 * @return
+	 */
+	public String getRemuxCommand() {
+		return remuxCommand;
+	}
+
+
+	/**
+	 * getter
+	 * @return
+	 */
+	public String getRemuxParameter() {
+		return remuxParameter;
+	}
+
+	
 	/**
 	 * Gets the previous loaded preferences
 	 * 
@@ -431,6 +474,12 @@ public class Preferences {
 		prefs.wolCustomBroadcast = getString(context, R.string.wakeup_wol_custom_broadcast_key, "");
 
 		prefs.showChannelNumbers = getBoolean(context, R.string.gui_channels_show_channel_numbers_key, false);
+		
+		prefs.enableRemux = getBoolean(context, R.string.key_remux_enable, false);
+		
+		prefs.remuxCommand =getString(context, R.string.key_remux_command, "EXT");
+		
+		prefs.remuxParameter = getString(context, R.string.key_remux_parameter, "");
 		
 		thePrefs = prefs;
 	}
