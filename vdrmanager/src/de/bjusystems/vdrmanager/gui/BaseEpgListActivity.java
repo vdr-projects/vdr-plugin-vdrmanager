@@ -3,6 +3,7 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
@@ -44,16 +46,16 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	
 	protected ListView listView;
 
-
 	abstract protected int getWindowTitle();
 	
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// Attach view
+		setContentView(getMainLayout());
 		setTitle(getWindowTitle());
 		initChannel();
-		
 	}
 	
 	private void initChannel(){
@@ -74,6 +76,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	
 	
 
+	/* (non-Javadoc)
+	 * @see de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -87,6 +92,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 
@@ -121,6 +129,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
 		Intent intent;
@@ -141,6 +152,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 */
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
@@ -190,6 +204,9 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		task.start();
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_CODE_TIMED_EDIT) {
@@ -199,6 +216,12 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		}
 	}
 	
+	/**
+	 * @param parent
+	 * @param view
+	 * @param position
+	 * @param id
+	 */
 	public void onItemClick(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
 
@@ -272,5 +295,12 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 	}
 	
 	protected abstract void finishedSuccess();
+
+	public boolean onSearchRequested() {
+		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMgr.toggleSoftInput(0, 0);
+		return true;
+	}
+
 
 }
