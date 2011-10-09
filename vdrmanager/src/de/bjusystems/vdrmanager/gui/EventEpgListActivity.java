@@ -49,12 +49,6 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		// get state
 		final List<Channel> channels = ChannelClient.getChannels();
 
-		// Attach view
-		setContentView(getMainLayout());
-
-		ListView lv = (ListView) findViewById(R.id.whatson_list);
-		lv.setFastScrollEnabled(true);
-
 		// create adapter for channel spinner
 		final ArrayAdapter<Channel> channelSpinnerAdapter = new ArrayAdapter<Channel>(
 				this, android.R.layout.simple_spinner_item);
@@ -81,6 +75,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
 		listView.setAdapter(adapter);
+		listView.setFastScrollEnabled(true);
+		listView.setTextFilterEnabled(true);
 		registerForContextMenu(listView);
 
 		// register EPG item click
@@ -91,7 +87,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// startEpgQuery();
+		//adapter.notifyDataSetChanged();
+		//startEpgQuery();
 	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
@@ -244,5 +241,4 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	protected int getWindowTitle() {
 		return R.string.epg_by_channel;
 	}
-
 }
