@@ -15,7 +15,7 @@
         android:id="@+id/whatson_list"        
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/epg_list_time_spinner"
+        android:layout_below="@id/epg_list_channel_spinner"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
