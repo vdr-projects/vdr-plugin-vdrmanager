@@ -72,10 +72,10 @@ public abstract class BaseEvent implements Event {
 			return shortText;
 		}
 		if (TextUtils.isEmpty(description) == false) {
-			if (description.length() < 20) {
+			if (description.length() < 30) {
 				return description;
 			}
-			return TextUtils.substring(description, 0, 20) + "…";
+			return TextUtils.substring(description, 0, 30) + "…";
 		}
 		return shortText;
 	}
