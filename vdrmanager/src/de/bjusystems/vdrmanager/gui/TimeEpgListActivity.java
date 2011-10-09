@@ -48,13 +48,9 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 
-		// Attach view
-		setContentView(getMainLayout());
-
-		ListView lv = (ListView) findViewById(R.id.whatson_list);
-		lv.setFastScrollEnabled(true);
-
+		
 		// create adapter for time spinner
 		timeSpinnerAdapter = new ArrayAdapter<EpgSearchTimeValue>(this,
 				android.R.layout.simple_spinner_item);
@@ -73,6 +69,9 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
+		listView.setFastScrollEnabled(true);
+		listView.setTextFilterEnabled(true);
+
 		listView.setAdapter(adapter);
 		registerForContextMenu(listView);
 
@@ -258,4 +257,5 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	protected int getWindowTitle() {
 		return R.string.epg_by_time;
 	}
+
 }
