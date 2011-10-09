@@ -173,6 +173,13 @@ public class RecordingListActivity extends BaseActivity implements
 		task.run();
 	}
 
+	
+	private void dismiss(){
+		if (progress != null) {
+			progress.dismiss();
+		}
+	}
+	
 	public void svdrpEvent(final SvdrpEvent event, final Recording result) {
 
 		if (progress != null) {
@@ -186,7 +193,7 @@ public class RecordingListActivity extends BaseActivity implements
 		case CONNECT_ERROR:
 			switchNoConnection();// TODO pass arg, what is the problem
 		case LOGIN_ERROR:
-			progress.dismiss();
+			dismiss();
 			switchNoConnection();
 			break;
 		case FINISHED_SUCCESS:
@@ -204,10 +211,7 @@ public class RecordingListActivity extends BaseActivity implements
 				adapter.add(new EventListItem(rec));
 			}
 			// adapter.sortItems();
-			if (progress != null) {
-				progress.dismiss();
-				progress = null;
-			}
+			dismiss();
 			if (recordingClient.getResults().isEmpty()) {
 				Toast.makeText(RecordingListActivity.this,
 						R.string.epg_no_items, Toast.LENGTH_SHORT).show();
