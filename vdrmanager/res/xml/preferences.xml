@@ -78,6 +78,12 @@
 			android:title="@string/gui_enable_24h_format_title"
 			android:summaryOn="@string/gui_enable_24h_format_summary_on"
 			android:summaryOff="@string/gui_enable_24h_format_summary_off" />
+			
+		<CheckBoxPreference  android:key="@string/qui_quit_on_back_key"
+			android:title="@string/gui_quit_on_back_title"
+			android:summaryOn="@string/gui_quit_on_back_summary_on"
+			android:summaryOff="@string/gui_quit_on_back_summary_off"
+			android:defaultValue="true" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/livetv">
 		<EditTextPreference android:key="streamingport"

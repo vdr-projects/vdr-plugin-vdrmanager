@@ -76,6 +76,9 @@
 	<string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
 	<string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
     <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
-	
+	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
+	<string name="gui_quit_on_back_title">Quit on back button</string>
+	<string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
+	<string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>	
 
 </resources>

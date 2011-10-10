@@ -105,6 +105,11 @@ public class Preferences {
 	 * Remux command  Parameter
 	 */
 	private String remuxParameter;
+	
+	/**
+	 * Quits the app on back button
+	 */
+	private boolean quiteOnBackButton = true; 
 
 	/** Properties singleton */
 	private static Preferences thePrefs;
@@ -396,6 +401,16 @@ public class Preferences {
 		return remuxParameter;
 	}
 
+
+	/**
+	 * getter
+	 * 
+	 * @return
+	 */
+	public boolean isQuiteOnBackButton() {
+		return quiteOnBackButton;
+	}
+
 	
 	/**
 	 * Gets the previous loaded preferences
@@ -480,6 +495,8 @@ public class Preferences {
 		prefs.remuxCommand =getString(context, R.string.key_remux_command, "EXT");
 		
 		prefs.remuxParameter = getString(context, R.string.key_remux_parameter, "");
+		
+		prefs.quiteOnBackButton = getBoolean(context, R.string.qui_quit_on_back_key, true);
 		
 		thePrefs = prefs;
 	}

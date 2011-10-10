@@ -49,7 +49,7 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
@@ -73,6 +73,9 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
+		if(Preferences.get().isQuiteOnBackButton()){
+			super.onBackPressed();
+		}
 	}
 	
 	public void startActivity(Class<?> clazz) {
@@ -105,6 +108,15 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			wakeupTask.execute();
 			break;
 		}
+
+	}
+	
+	@Override
+	public boolean onSearchRequested() {
+		 Bundle appData = new Bundle();
+	     //appData.putBoolean(SearchableActivity.JARGON, true);
+	     startSearch(null, false, appData, false);
+	     return true;
 
 	}
 }
