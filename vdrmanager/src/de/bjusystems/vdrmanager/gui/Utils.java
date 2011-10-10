@@ -77,10 +77,10 @@ public class Utils {
 
 	public static void stream(final Activity activity, final String chn) {
 
-		String url = getStreamUrl(chn);
 		if (Preferences.get().isEnableRemux() == false) {
-			url = getStreamUrl(chn);
+			String url = getStreamUrl(chn);
 			startStream(activity, url);
+			return;
 		}
 
 		String sf = Preferences.get().getStreamFormat();
@@ -90,7 +90,7 @@ public class Utils {
 				.setItems(
 						new String[] {
 								activity.getString(R.string.stream_as, sf),
-								activity.getString(R.string.stream_via, ext) },//
+								activity.getString(R.string.stream_via, ext) },//TODO add here what will be used
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
