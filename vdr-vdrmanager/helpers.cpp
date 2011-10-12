@@ -1,3 +1,4 @@
+
 /*
  * event und message handler
  */
@@ -192,7 +193,6 @@ string cHelpers::SetTimerIntern(string args) {
     return "!ERROR\r\n";
   }
 
-  Timers.IncBeingEdited();
   if (!number) {
     // new timer
     Timers.Add(timer);
@@ -201,7 +201,6 @@ string cHelpers::SetTimerIntern(string args) {
     delete timer;
     cTimer * oldTimer = Timers.Get(number);
     if (!oldTimer) {
-      Timers.DecBeingEdited();
       return "!ERROR\r\n";
     }
     if (delTimer) {
@@ -210,8 +209,7 @@ string cHelpers::SetTimerIntern(string args) {
       oldTimer->Parse(params.c_str());
     }
   }
-  Timers.SetModified();
-  Timers.DecBeingEdited();
+  Timers.Save();
 
   return "START\r\nEND\r\n";
 }
@@ -279,12 +277,16 @@ string cHelpers::ToText(cRecording * recording){
   string result = "";
   
   time_t startTime = event->StartTime();
-  //time_t stopTime  = event->EndTime();
-  
+  time_t endTime = event->EndTime();
+
   sprintf(buf, "%lu", startTime);
   result += buf;
   result += ":";
-  sprintf(buf, "%d", event->Duration() ? event->Duration : 0);
+  sprintf(buf, "%lu", endTime);
+  result += buf;
+  result += ":";
+  sprintf(buf, "%d", DirSizeMB(recording->FileName()));
+  result += buf;
   result += ":";
   result += info -> ChannelName();
   result += ":";
