@@ -14,6 +14,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
@@ -256,6 +257,37 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	@Override
 	protected int getWindowTitle() {
 		return R.string.epg_by_time;
+	}
+	
+
+	private void nextEvent(){
+		int pos = timeSpinner.getSelectedItemPosition();
+		if(pos + 1 >= timeSpinnerAdapter.getCount()){
+			Toast.makeText(this, R.string.navigae_at_the_end, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		timeSpinner.setSelection(pos+1, true);
+	}
+	
+	private void prevEvent(){
+		int pos = timeSpinner.getSelectedItemPosition();
+		if(pos <= 0){
+			Toast.makeText(this, R.string.navigae_at_the_start, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		timeSpinner.setSelection(pos-1, true);
+	}
+	
+	@Override
+	public void onSwipe(int direction) {
+		switch (direction) {
+		case SimpleGestureFilter.SWIPE_RIGHT:
+			prevEvent();
+			break;
+		case SimpleGestureFilter.SWIPE_LEFT:
+			nextEvent();
+			break;
+		}
 	}
 
 }

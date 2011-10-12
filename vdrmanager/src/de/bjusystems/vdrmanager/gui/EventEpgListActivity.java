@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
@@ -42,6 +43,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 
 	Spinner channelSpinner;
 
+	ArrayAdapter<Channel> channelSpinnerAdapter;
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +53,7 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		final List<Channel> channels = ChannelClient.getChannels();
 
 		// create adapter for channel spinner
-		final ArrayAdapter<Channel> channelSpinnerAdapter = new ArrayAdapter<Channel>(
+		channelSpinnerAdapter = new ArrayAdapter<Channel>(
 				this, android.R.layout.simple_spinner_item);
 		channelSpinnerAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,8 +90,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//adapter.notifyDataSetChanged();
-		//startEpgQuery();
+		// adapter.notifyDataSetChanged();
+		// startEpgQuery();
 	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
@@ -176,8 +179,10 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		task.run();
 	}
 
-	/* (non-Javadoc)
-	 * TODO this method also should be used in startEpgQuery on cache hit
+	/*
+	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
+	 * cache hit
+	 * 
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
@@ -240,5 +245,37 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	@Override
 	protected int getWindowTitle() {
 		return R.string.epg_by_channel;
+	}
+
+	private void nextEvent() {
+		int pos = channelSpinner.getSelectedItemPosition();
+		if (pos + 1 >= channelSpinnerAdapter.getCount()) {
+			Toast.makeText(this, R.string.navigae_at_the_end,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		channelSpinner.setSelection(pos + 1, true);
+	}
+
+	private void prevEvent() {
+		int pos = channelSpinner.getSelectedItemPosition();
+		if (pos <= 0) {
+			Toast.makeText(this, R.string.navigae_at_the_start,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		channelSpinner.setSelection(pos - 1, true);
+	}
+
+	@Override
+	public void onSwipe(int direction) {
+		switch (direction) {
+		case SimpleGestureFilter.SWIPE_RIGHT:
+			prevEvent();
+			break;
+		case SimpleGestureFilter.SWIPE_LEFT:
+			nextEvent();
+			break;
+		}
 	}
 }

@@ -11,6 +11,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -21,15 +22,22 @@ import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
-public abstract class BaseEpgListActivity extends BaseActivity {
+/**
+ * @author lado
+ *
+ */
+public abstract class BaseEpgListActivity extends BaseActivity implements SimpleGestureListener{
 
 	
 	private static final int REQUEST_CODE_TIMED_EDIT = 41;
+	
+	private SimpleGestureFilter detector;
 	
 	protected EpgClient epgClient;
 	
@@ -54,6 +62,7 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		// Attach view
 		setContentView(getMainLayout());
+		detector = new SimpleGestureFilter(this, this);
 		setTitle(getWindowTitle());
 		initChannel();
 	}
@@ -302,5 +311,18 @@ public abstract class BaseEpgListActivity extends BaseActivity {
 		return true;
 	}
 
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent me) {
+		this.detector.onTouchEvent(me);
+		return super.dispatchTouchEvent(me);
+	}
+
+	public void onSwipe(int direction) {
+		
+	}
+	public void onDoubleTap() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
