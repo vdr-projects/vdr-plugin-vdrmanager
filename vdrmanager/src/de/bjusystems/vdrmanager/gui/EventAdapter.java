@@ -184,8 +184,13 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		super.add(item);
 	}
 
+	//TODO implement locking in performFiltering, check the parent class
+	//
 	public Filter getFilter() {
 		return new Filter() {
+			/**
+			 * 
+			 */
 			EventListItem prevHead = null;
 
 			@Override
