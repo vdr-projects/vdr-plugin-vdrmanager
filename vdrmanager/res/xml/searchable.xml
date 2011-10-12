@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/app_name" android:includeInGlobalSearch="true"
+     android:searchSettingsDescription="@string/epg_search_settings_description"
+     android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+     android:hint="@string/search_epg_hint" >
+     <!-- 
+     <actionkey
+        android:keycode="KEYCODE_SEARCH"
+        android:queryActionMsg="string"
+        android:suggestActionMsg="string"
+        android:suggestActionMsgColumn="string"/>
+     -->
+</searchable>
