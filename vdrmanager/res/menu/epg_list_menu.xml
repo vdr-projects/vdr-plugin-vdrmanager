@@ -3,9 +3,11 @@
 
 	<item
 	  android:id="@+id/epg_menu_search"
+	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_search"/>
 	<item
 	  android:id="@+id/epg_menu_times"
+	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_times"/>
     
 </menu>

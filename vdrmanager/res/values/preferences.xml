@@ -17,8 +17,8 @@
 	<string name="channel_filter_preferences">Channel settings</string>
 	<string name="channel_filter_filter_title">Limit channels</string>
 	<string name="channel_filter_filter_summary">Use only given channels</string>
-	<string name="channel_filter_last_title">Channels</string>
-	<string name="channel_filter_last_summary">Channels to use</string>
+	<string name="channel_filter_last_title">Channel filter</string>
+	<string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10</string>
 
 	<!-- wakeup -->
 	<string name="wakeup_preferences">Remote VDR host wakeup</string>
@@ -76,9 +76,30 @@
 	<string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
 	<string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
     <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
+	
 	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
 	<string name="gui_quit_on_back_title">Quit on back button</string>
 	<string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
 	<string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>	
+	
+	<string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
+	<string name="qui_show_imdb_button_title">Show IMDB Button</string>
+	<string name="qui_show_imdb_button_summary_on">IMDB Button is shown</string>
+	<string name="qui_show_imdb_button_summary_off">IMDB Button is not shown</string>	
+	
+	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
+	<string name="qui_imdb_url_title">IMDb Site</string>
+	<string name="qui_imdb_url_summary">Which IMDb site to search.</string>
+	
+	
+	<string-array name="imdb_urls">
+		<item>imdb.com</item>
+		<item>uk.imdb.com</item>
+		<item>imdb.de</item>
+		<item>imdb.es</item>
+		<item>imdb.fr</item>
+		<item>imdb.it</item>
+		<item>imdb.pt</item>
+	</string-array>
 
 </resources>

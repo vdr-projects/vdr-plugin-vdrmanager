@@ -14,4 +14,5 @@ class EventListItemHolder {
 	public TextView shortText;
 	public ProgressBar progress;
 	public TextView duration;
+	public TextView description;
 }

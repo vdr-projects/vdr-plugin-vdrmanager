@@ -3,7 +3,7 @@
 
 	<PreferenceCategory android:title="@string/vdr_preferences"
 		android:key="vdr_preferences">
-		
+
 		<EditTextPreference android:key="@string/vdr_host_key"
 			android:title="@string/vdr_host_title" android:summary="@string/vdr_host_summary" />
 		<EditTextPreference android:key="@string/vdr_port_key"
@@ -16,13 +16,14 @@
 			android:title="@string/vdr_ssl_title" android:summary="@string/vdr_ssl_summary" />
 	</PreferenceCategory>
 
-	
+
 	<PreferenceCategory android:title="@string/channel_filter_preferences"
 		android:key="filter_preferences">
 		<CheckBoxPreference android:key="@string/channel_filter_filter_key"
 			android:title="@string/channel_filter_filter_title" android:summary="@string/channel_filter_filter_summary" />
 		<EditTextPreference android:key="@string/channel_filter_last_key"
 			android:title="@string/channel_filter_last_title" android:summary="@string/channel_filter_last_summary"
+			android:dependency="@string/channel_filter_filter_key"
 			android:defaultValue="1" />
 	</PreferenceCategory>
 
@@ -78,35 +79,48 @@
 			android:title="@string/gui_enable_24h_format_title"
 			android:summaryOn="@string/gui_enable_24h_format_summary_on"
 			android:summaryOff="@string/gui_enable_24h_format_summary_off" />
-			
-		<CheckBoxPreference  android:key="@string/qui_quit_on_back_key"
+
+		<CheckBoxPreference android:key="@string/qui_show_imdb_button_key"
+			android:title="@string/qui_show_imdb_button_title" android:summaryOn="@string/qui_show_imdb_button_summary_on"
+			android:summaryOff="@string/qui_show_imdb_button_summary_off"
+			android:defaultValue="true" />
+
+		<ListPreference android:key="@string/qui_imdb_url_key"
+			android:title="@string/qui_imdb_url_title" android:summaryOn="@string/qui_imdb_url_summary"
+			android:entries="@array/imdb_urls" android:entryValues="@array/imdb_urls"
+			android:dependency="@string/qui_show_imdb_button_key"
+			android:defaultValue="imdb.de" />
+
+		<CheckBoxPreference android:key="@string/qui_quit_on_back_key"
 			android:title="@string/gui_quit_on_back_title"
 			android:summaryOn="@string/gui_quit_on_back_summary_on"
 			android:summaryOff="@string/gui_quit_on_back_summary_off"
 			android:defaultValue="true" />
 	</PreferenceCategory>
+	
 	<PreferenceCategory android:title="@string/livetv">
 		<EditTextPreference android:key="streamingport"
 			android:inputType="number" android:title="@string/settings_livetv_port"
 			android:summary="@string/settings_livetv_port_summary"
 			android:defaultValue="3000" />
-	
+
 		<ListPreference android:key="livetv_streamformat"
 			android:title="@string/settings_livetv_streamformat"
 			android:defaultValue="TS" android:entries="@array/livetv_streamformat"
 			android:entryValues="@array/livetv_streamformat_values" />
-		
-		<CheckBoxPreference android:key="remux_enable" android:title="@string/remux_enable_title" android:summary="@string/remux_enable_summary"
-			
-		/>
-		<EditTextPreference android:dependency="remux_enable" android:key="remux_command" android:title="@string/remux_command_title"  android:defaultValue="EXT" android:summary="@string/remux_command_summary" 
-		/>
 
-		<EditTextPreference  android:dependency="remux_enable" android:key="remux_parameter" android:title="@string/remux_parameter_title" android:summary="@string/remux_parameter_summary" 
-		android:defaultValue="QUALITY=DSL1000"
-		/>
-			
-		
+		<CheckBoxPreference android:key="remux_enable"
+			android:title="@string/remux_enable_title" android:summary="@string/remux_enable_summary" />
+		<EditTextPreference android:dependency="remux_enable"
+			android:key="remux_command" android:title="@string/remux_command_title"
+			android:defaultValue="EXT" android:summary="@string/remux_command_summary" />
+
+		<EditTextPreference android:dependency="remux_enable"
+			android:key="remux_parameter" android:title="@string/remux_parameter_title"
+			android:summary="@string/remux_parameter_summary"
+			android:defaultValue="QUALITY=DSL1000" />
+
+
 	</PreferenceCategory>
-	
+
 </PreferenceScreen>

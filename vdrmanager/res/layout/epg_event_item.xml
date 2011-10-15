@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/timer_item" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:padding="4dp"
+	android:layout_height="fill_parent" android:padding="5dp"
 	android:orientation="vertical">
 	
 <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical"
@@ -31,7 +31,7 @@
 			
 	</LinearLayout>
 
-	<LinearLayout android:layout_width="fill_parent"
+	<LinearLayout android:layout_width="fill_parent" 		android:padding="3dip"
 		android:layout_height="wrap_content" android:layout_marginTop="0dip"
 		android:orientation="horizontal">
 
@@ -49,5 +49,13 @@
 			android:layout_height="wrap_content" android:text="89min"/>
 			
 	</LinearLayout>
+	
+	<TextView android:id="@+id/event_item_description"
+			android:layout_width="wrap_content"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:visibility="gone"
+			android:textSize="12dip"
+			android:padding="3dip"
+			android:layout_height="wrap_content" />
 </LinearLayout>
 </LinearLayout>

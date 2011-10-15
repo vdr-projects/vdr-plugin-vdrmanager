@@ -4,11 +4,15 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
-
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.util.Pair;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
@@ -16,6 +20,46 @@ import de.bjusystems.vdrmanager.data.Preferences;
 
 public class Utils {
 
+	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
+			Color.RED);
+	
+	
+
+	public static CharSequence highlight(String where, String what){
+		if(TextUtils.isEmpty(what)){
+			return where;
+		}
+		
+		String str = where.toLowerCase();
+			what = what.toLowerCase();
+			int idx = str.indexOf(what);
+			if(idx == -1){
+				return where;
+			}
+			SpannableString ss = new SpannableString(where);
+			ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			return ss;
+	}
+	
+	public static Pair<Boolean,CharSequence> highlight2(String where, String what){
+		if(TextUtils.isEmpty(what)){
+			return Pair.create(Boolean.FALSE, (CharSequence)where);
+		}
+		
+		String str = where.toLowerCase();
+			what = what.toLowerCase();
+			int idx = str.indexOf(what);
+			if(idx == -1){
+				return Pair.create(Boolean.FALSE, (CharSequence)where);
+			}
+			SpannableString ss = new SpannableString(where);
+			ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			return Pair.create(Boolean.TRUE, (CharSequence)ss);
+	}
+	
+	
 	public static int getProgress(Date start, Date stop) {
 		long now = System.currentTimeMillis();
 		return getProgress(now, start.getTime(), stop.getTime());

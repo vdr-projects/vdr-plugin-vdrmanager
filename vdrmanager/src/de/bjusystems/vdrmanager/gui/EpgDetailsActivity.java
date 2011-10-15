@@ -1,11 +1,11 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
@@ -33,9 +34,11 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 public class EpgDetailsActivity extends Activity implements OnClickListener,
 		SimpleGestureListener {
 
-	Preferences prefs;
-
+	public static String IMDB_URL = "http://www.%s/find?s=all&q=%s";
+	
 	private SimpleGestureFilter detector;
+	
+	private String highlight = null;
 	
 	ImageButton event_left;
 	
@@ -45,8 +48,13 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Intent  i = getIntent();
+		highlight =  i.getStringExtra(Intents.HIGHLIGHT);
+		
 		// Attach view
 		setContentView(R.layout.epg_detail);
+		
+		
 		detector = new SimpleGestureFilter(this, this);
 
 		//event_left = (ImageButton) findViewById(R.id.epg_event_left);
@@ -89,53 +97,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		}.execute((Void)null);
 
 		publishEPG(epg);
-		// final EventFormatter formatter = new EventFormatter(event);
-		//
-		// final TextView title = (TextView)
-		// findViewById(R.id.epg_detail_title);
-		// title.setText(formatter.getTitle());
-		// title.setTextSize(TypedValue.COMPLEX_UNIT_PX, title.getTextSize()
-		// * (float) 1.3);
-		//
-		// ((TextView) findViewById(R.id.epg_detail_time)).setText(formatter
-		// .getTime());
-		// ((TextView) findViewById(R.id.epg_detail_channel)).setText(event
-		// .getChannelName());
-		// ((TextView) findViewById(R.id.epg_detail_date)).setText(formatter
-		// .getLongDate());
-		// final TextView textView = (TextView)
-		// findViewById(R.id.epg_detail_description);
-		// textView.setText(formatter.getDescription());
-		//
-		// // copy color for separator lines
-		// final int color = textView.getTextColors().getDefaultColor();
-		// // ((TextView) findViewById(R.id.epg_detail_separator_1))
-		// // .setBackgroundColor(color);
-		//
-		// ((ProgressBar) findViewById(R.id.epg_detail_progress))
-		// .setProgress(Utils.getProgress(event));
-		//
-		// ((TextView) findViewById(R.id.epg_detail_separator_2))
-		// .setBackgroundColor(color);
-		//
-		// // register button handler
-		// final ImageButton timeButton = (ImageButton)
-		// findViewById(R.id.epg_event_create_timer);
-		// timeButton.setOnClickListener(this);
-		//
-		// final ImageButton livetvButton = (ImageButton)
-		// findViewById(R.id.epg_event_livetv);
-		// livetvButton.setOnClickListener(this);
-		//
-		//
-		// // set button text
-		// if (event.getTimer() == null) {
-		// // timeButton.setText(R.string.epg_event_create_timer_text);
-		// } else {
-		// // timeButton.setText(R.string.epg_event_modify_timer_text);
-		// }
-
-		// clear list of activities to finish
+		
+		//TODO was ist das?
 		app.clearActivitiesToFinish();
 	}
 
@@ -148,7 +111,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		final EventFormatter formatter = new EventFormatter(event);
 
 		final TextView title = (TextView) findViewById(R.id.epg_detail_title);
-		title.setText(formatter.getTitle());
+		String titleText = formatter.getTitle();
+		title.setText(Utils.highlight(titleText, highlight));
 		// title.setTextSize(TypedValue.COMPLEX_UNIT_PX, title.getTextSize()
 		// * (float) 1.3);
 
@@ -163,11 +127,11 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			//	.getLongDate());
 		
 		final TextView shortText = (TextView) findViewById(R.id.epg_detail_shorttext);
-		shortText.setText(formatter.getShortText());
+		shortText.setText(Utils.highlight(formatter.getShortText(), highlight));
 
 		
 		final TextView textView = (TextView) findViewById(R.id.epg_detail_description);
-		textView.setText(formatter.getDescription());
+		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
 
 		// copy color for separator lines
 		final int color = textView.getTextColors().getDefaultColor();
@@ -191,7 +155,18 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 		// register button handler
 		setThisAsOnClickListener(R.id.epg_event_create_timer);
-		View b = findViewById(R.id.epg_event_livetv);
+		
+		
+		View b = findViewById(R.id.epg_event_imdb);
+	
+		if(Preferences.get().isShowImdbButton() == false){
+			b.setVisibility(View.GONE);
+		} else {
+			b.setVisibility(View.VISIBLE);
+			setThisAsOnClickListener(b);
+		}
+		
+		b = findViewById(R.id.epg_event_livetv);
 		if (Utils.isLive(event) == false) {
 			b.setVisibility(View.GONE);
 		} else {
@@ -223,6 +198,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	@Override
 	protected void onResume() {
 		super.onResume();
+		//TODO Check here whether the config has changed for imdb
+		//TODO check here if we are still live ?
+		
 	}
 
 	@Override
@@ -241,13 +219,13 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		case R.id.epg_event_create_timer:
 			Toast.makeText(this, "Soon we get here the timer menu", Toast.LENGTH_SHORT).show();
 			break;
-
-//		case R.id.epg_event_left:
-//			prevEPG();
-//			break;
-//		case R.id.epg_event_right:
-//			nextEPG();
-//			break;
+		case R.id.epg_event_imdb:
+			final TextView title = (TextView) findViewById(R.id.epg_detail_title);
+			String url = String.format(IMDB_URL,Preferences.get().getImdbUrl(), String.valueOf(title.getText()));
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse(url));
+			startActivity(i);
+			break;
 		}
 	}
 
@@ -274,12 +252,10 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
-	ArrayList<Epg> epgs = null;
+	List<Epg> epgs = null;
 	int counter = 0;
 
 	public void initEPGs() {
-		
-	//	epgs = ((VdrManagerApp)getApplication()).getCurrentEpgList();
 		
 		if (epgs != null) {
 			return;

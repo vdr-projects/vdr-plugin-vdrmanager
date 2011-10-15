@@ -30,33 +30,33 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * @author lado
- *
+ * 
  */
-public abstract class BaseEpgListActivity extends BaseActivity implements SimpleGestureListener{
+public abstract class BaseEpgListActivity extends BaseActivity implements
+		SimpleGestureListener {
 
-	
 	private static final int REQUEST_CODE_TIMED_EDIT = 41;
-	
-	private SimpleGestureFilter detector;
-	
-	protected EpgClient epgClient;
-	
-	protected EventAdapter adapter;
-	
-	protected SvdrpProgressDialog progress;
-	
-	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
-	
-	//private static final Date BEGIN = new Date(0);
 
+	private SimpleGestureFilter detector;
+
+	protected EpgClient epgClient;
+
+	protected EventAdapter adapter;
+
+	protected SvdrpProgressDialog progress;
+
+	protected String highlight = null;
+
+	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
+
+	// private static final Date BEGIN = new Date(0);
 
 	protected Channel currentChannel = null;
-	
+
 	protected ListView listView;
 
 	abstract protected int getWindowTitle();
-	
-	
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,11 +66,12 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		setTitle(getWindowTitle());
 		initChannel();
 	}
-	
-	private void initChannel(){
-		currentChannel = getIntent().getParcelableExtra(Intents.CURRENT_CHANNEL);		
+
+	private void initChannel() {
+		currentChannel = getIntent()
+				.getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
-	
+
 	protected void deleteTimer(final EventListItem item) {
 
 		final DeleteTimerTask task = new DeleteTimerTask(this, item.getEpg()
@@ -82,11 +83,13 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		};
 		task.start();
 	}
-	
-	
 
-	/* (non-Javadoc)
-	 * @see de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android.view.Menu)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
+	 * .view.Menu)
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -97,11 +100,13 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		return true;
 	}
 
-	protected void prepareTimer(EventListItem event){
-		
+	protected void prepareTimer(EventListItem event) {
+
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
 	 */
 	@Override
@@ -137,9 +142,13 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android.view.MenuItem)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
+	 * .view.MenuItem)
 	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
@@ -147,9 +156,8 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 
 		switch (item.getItemId()) {
 		case R.id.epg_menu_search:
-			intent = new Intent();
-			intent.setClass(this, EpgSearchActivity.class);
-			startActivity(intent);
+			//startSearchManager();
+			super.onSearchRequested();
 			break;
 		case R.id.epg_menu_times:
 			intent = new Intent();
@@ -160,9 +168,11 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		return super.onOptionsItemSelected(item);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
+	 * android.view.View, android.view.ContextMenu.ContextMenuInfo)
 	 */
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
@@ -201,7 +211,6 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 
 	}
 
-
 	protected void toggleTimer(final EventListItem item) {
 		final ToggleTimerTask task = new ToggleTimerTask(this, item.getEpg()
 				.getTimer()) {
@@ -213,8 +222,11 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		task.start();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onActivityResult(int, int,
+	 * android.content.Intent)
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -224,7 +236,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 			}
 		}
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param view
@@ -247,9 +259,13 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		// show details
 		final Intent intent = new Intent();
 		intent.setClass(this, EpgDetailsActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		if (highlight != null) {
+			intent.putExtra(Intents.HIGHLIGHT, highlight);
+		}
 		startActivity(intent);
 	}
-
 
 	@Override
 	protected void onPause() {
@@ -262,7 +278,6 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 			progress = null;
 		}
 	}
-	
 
 	public void svdrpEvent(final SvdrpEvent event, final Epg result) {
 
@@ -285,7 +300,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 			break;
 		}
 	}
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -293,6 +308,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		int top = savedInstanceState.getInt("TOP");
 		listView.setSelectionFromTop(index, top);
 	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		int index = listView.getFirstVisiblePosition();
@@ -302,13 +318,18 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 		outState.putInt("TOP", top);
 		super.onSaveInstanceState(outState);
 	}
-	
+
 	protected abstract void finishedSuccess();
 
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMgr.toggleSoftInput(0, 0);
 		return true;
+	}
+
+	protected void startSearchManager() {
+		Bundle appData = new Bundle();
+		startSearch(highlight, false, appData, false);
 	}
 
 	@Override
@@ -318,11 +339,12 @@ public abstract class BaseEpgListActivity extends BaseActivity implements Simple
 	}
 
 	public void onSwipe(int direction) {
-		
+
 	}
+
 	public void onDoubleTap() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

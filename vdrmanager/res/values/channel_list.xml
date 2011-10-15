@@ -9,6 +9,7 @@
   <string name="channel_group_menu_hide">Hide</string>
   <string name="channel_group_menu_hide_permanent">Hide permanent</string>
   
+  <string name="menu_groupby">Group by</string>
   <string name="groupby_group">Group</string>
   <string name="groupby_provider">Provider</string>
   <string name="groupby_name">Name</string>

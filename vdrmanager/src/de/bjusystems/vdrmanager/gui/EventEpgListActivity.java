@@ -5,7 +5,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -44,7 +47,7 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	Spinner channelSpinner;
 
 	ArrayAdapter<Channel> channelSpinnerAdapter;
-	
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,8 +56,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		final List<Channel> channels = ChannelClient.getChannels();
 
 		// create adapter for channel spinner
-		channelSpinnerAdapter = new ArrayAdapter<Channel>(
-				this, android.R.layout.simple_spinner_item);
+		channelSpinnerAdapter = new ArrayAdapter<Channel>(this,
+				android.R.layout.simple_spinner_item);
 		channelSpinnerAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		channelSpinner = (Spinner) findViewById(R.id.epg_list_channel_spinner);

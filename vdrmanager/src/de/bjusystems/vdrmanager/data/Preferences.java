@@ -2,13 +2,13 @@ package de.bjusystems.vdrmanager.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.test.IsolatedContext;
 import de.bjusystems.vdrmanager.R;
 
 /**
  * Class for all preferences
  * 
- * @author bju
+ * @author bju, lado
+ *
  */
 public class Preferences {
 
@@ -110,6 +110,36 @@ public class Preferences {
 	 * Quits the app on back button
 	 */
 	private boolean quiteOnBackButton = true; 
+	
+	
+	/**
+	 * Show IMDB buttons, where possible (e.g. EPG Details) 
+	 */
+	private boolean showImdbButton = true;
+	
+	
+	/**
+	 * On Which imdb site to search?
+	 */
+	private String imdbUrl = "imdb.de";
+
+	
+	public String getImdbUrl() {
+		return imdbUrl;
+	}
+
+
+	public void setImdbUrl(String imdbUrl) {
+		this.imdbUrl = imdbUrl;
+	}
+
+
+	/**
+	 * @return whether to shwo imdb button
+	 */
+	public boolean isShowImdbButton() {
+		return showImdbButton;
+	}
 
 	/** Properties singleton */
 	private static Preferences thePrefs;
@@ -497,6 +527,10 @@ public class Preferences {
 		prefs.remuxParameter = getString(context, R.string.key_remux_parameter, "");
 		
 		prefs.quiteOnBackButton = getBoolean(context, R.string.qui_quit_on_back_key, true);
+		
+		prefs.showImdbButton = getBoolean(context, R.string.qui_show_imdb_button_key, true);
+		
+		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
 		
 		thePrefs = prefs;
 	}

@@ -9,6 +9,8 @@
   <string name="epg_list_search_label">Search results</string>
   
   <!-- create timer -->
+  <string name="epg_event_imdb_text">IMDB Search</string>
+  <string name="epg_eent_livetv_text">Stream</string>
   <string name="epg_event_create_timer_text">Add timer</string>
   <string name="epg_event_modify_timer_text">Modify timer</string>
   
@@ -18,8 +20,10 @@
   <string name="epg_duration_template_live">%1$s/%2$s min</string>
   <string name="epg_of_a_channel">EPG -> %1$s</string>
   <string name="epg_by_channel">EPG by channel</string>
+  <string name="epg_by_search">EPG Search</string>
+  <string name="epg_by_search_param">EPG Search: \'%1$s\'</string>
   <string name="epg_by_time">EPG by time</string>  
   <string name="search_epg_hint">Search EPG</string>
-  <string name="epg_search_settings_description">Searcg VDR EPG</string>
+  <string name="epg_search_settings_description">Search VDR EPG</string>
 
 </resources>

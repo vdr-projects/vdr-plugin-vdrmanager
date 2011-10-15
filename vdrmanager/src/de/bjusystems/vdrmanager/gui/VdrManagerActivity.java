@@ -101,7 +101,7 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			startActivity(TimeEpgListActivity.class);
 			break;
 		case R.id.action_menu_search:
-			startActivity(EpgSearchActivity.class);
+			onSearchRequested();
 			break;
 		case R.id.action_menu_wakeup:
 			final AsyncWakeupTask wakeupTask = new AsyncWakeupTask(this);
@@ -117,6 +117,5 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 	     //appData.putBoolean(SearchableActivity.JARGON, true);
 	     startSearch(null, false, appData, false);
 	     return true;
-
 	}
 }

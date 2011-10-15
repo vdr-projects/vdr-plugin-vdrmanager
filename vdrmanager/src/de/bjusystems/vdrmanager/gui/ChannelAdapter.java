@@ -7,6 +7,10 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +22,11 @@ import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 
 class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
-																			// SectionIndexer
+// SectionIndexer
 {
-
 	@Override
 	public boolean areAllItemsEnabled() {
 		return true;
@@ -93,18 +97,20 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 
 		view.setBackgroundColor(Color.BLACK);
 
-		String name = item.getName();
+		CharSequence name = item.getName();
+		name = Utils.highlight(String.valueOf(name), channelFilter);
+
 		if (showChannelNumber) {
 			name = item.getNumber() + " - " + name;
 		}
 		itemHolder.name.setText(name);
-		
-		if(groupBy != ChannelListActivity.MENU_PROVIDER){
+
+		if (groupBy != ChannelListActivity.MENU_PROVIDER) {
 			itemHolder.aux.setText(item.getProvider());
 		} else {
 			itemHolder.aux.setText("");
 		}
-		
+
 		return view;
 	}
 
@@ -132,6 +138,11 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			View convertView, ViewGroup parent) {
 
 		String group = (String) getGroup(groupPosition);
+
+		int channelCount = this.channels.get(group).size();
+
+		CharSequence groupDisplay = Utils.highlight(group, groupFilter);
+
 		ChannelHolder itemHolder = new ChannelHolder();
 
 		// recycle view?
@@ -149,8 +160,8 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		} else {
 			itemHolder = (ChannelHolder) view.getTag();
 		}
-		itemHolder.name.setText(group);
-		itemHolder.aux.setText(String.valueOf(this.channels.get(group).size()));
+		itemHolder.name.setText(groupDisplay);
+		itemHolder.aux.setText(String.valueOf(channelCount));
 		return view;
 
 	}
@@ -168,27 +179,64 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		return true;
 	}
 
+	private String groupFilter = null;
+
+	private String channelFilter = null;
+
 	public Filter getFilter() {
 		return new Filter() {
-
-			private ArrayList<Channel> ALL = channels.get(0);
-
 			@Override
 			protected FilterResults performFiltering(CharSequence arg0) {
-				ArrayList<Channel> c = new ArrayList<Channel>(ALL);
-				Iterator<Channel> ci = c.iterator();
-				while (ci.hasNext()) {
-					if (ci.next().getName().startsWith(arg0.toString()) == false) {
-						ci.remove();
-					}
-				}
 				FilterResults fr = new FilterResults();
+				String q = String.valueOf(arg0).toLowerCase();
+				ArrayList<String> groups = new ArrayList<String>();
+				HashMap<String, ArrayList<Channel>> groupChannels = new HashMap<String, ArrayList<Channel>>();
+				if (groupBy == ChannelListActivity.MENU_GROUP) {
+					groupFilter = String.valueOf(arg0).toLowerCase();
+					for (String str : ChannelClient.getChannelGroups()) {
+						String g = str.toLowerCase();
+						if (g.indexOf(q) != -1) {
+							groups.add(str);
+							groupChannels.put(str, ChannelClient
+									.getGroupChannels().get(str));
+						}
+					}
+				
+				} else if (groupBy == ChannelListActivity.MENU_PROVIDER) {
+					groupFilter = String.valueOf(arg0).toLowerCase();
+					for (Map.Entry<String, ArrayList<Channel>> p : ChannelClient
+							.getProviderChannels().entrySet()) {
+						String pr = p.getKey();
+						String g = pr.toLowerCase();
+						if (g.indexOf(q) != -1) {
+							groups.add(pr);
+							groupChannels.put(pr, p.getValue());
+						}
+					}
+
+				} else {
+					channelFilter = String.valueOf(arg0).toLowerCase();
+					ArrayList<Channel> channels = new ArrayList<Channel>();
+					for(Channel c : ChannelClient.getChannels()){
+						String cname = c.getName();
+						String tmp = cname.toLowerCase();
+						if(tmp.indexOf(channelFilter) != -1){
+							channels.add(c);
+						}
+					}
+					String fakeGroup = context.getString(R.string.groupby_name_all_channels_group);
+					groups.add	(fakeGroup);
+					groupChannels.put(fakeGroup, channels);
+				}
+				fr.values = Pair.create(groups, groupChannels);
 				return fr;
 			}
 
 			@Override
 			protected void publishResults(CharSequence arg0, FilterResults arg1) {
-				notifyDataSetChanged();
+				Pair<ArrayList<String>, HashMap<String, ArrayList<Channel>>> res = (Pair<ArrayList<String>, HashMap<String, ArrayList<Channel>>>) arg1.values;
+				fill(res.first, res.second, groupBy);
+
 			}
 		};
 	}

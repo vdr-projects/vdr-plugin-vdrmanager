@@ -23,12 +23,12 @@ public class VdrManagerApp extends Application {
 	private Timer currentTimer;
 	private Channel currentChannel;
 	
-	private ArrayList<Epg> currentEpgList = new ArrayList<Epg>();
-	public ArrayList<Epg> getCurrentEpgList() {
+	private List<Epg> currentEpgList = new ArrayList<Epg>();
+	public List<Epg> getCurrentEpgList() {
 		return currentEpgList;
 	}
 
-	public void setCurrentEpgList(ArrayList<Epg> currentEpgList) {
+	public void setCurrentEpgList(List<Epg> currentEpgList) {
 		this.currentEpgList = currentEpgList;
 	}
 

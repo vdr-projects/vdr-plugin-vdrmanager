@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -46,22 +49,14 @@ public class ChannelListActivity extends BaseActivity implements
 	ChannelAdapter adapter;
 	Preferences prefs;
 	SvdrpProgressDialog progress;
-	private EditText searchBox;
 
-	public static final int MENU_GROUP_GROUP = 1;
-	public static final int MENU_GROUP_PROVIDER = 2;
-	public static final int MENU_GROUP_NAME = 3;
-	// public static final int MENU_GROUP_SHOW_CHANNEL_NUMBERS = 2;
-
-	public static final int MENU_GROUP = 1;
-	public static final int MENU_PROVIDER = 2;
-	public static final int MENU_NAME = 3;
-
-	private TextWatcher filterTextWatcher;
+	public static final int MENU_GROUP = 0;
+	public static final int MENU_PROVIDER = 1;
+	public static final int MENU_NAME = 2;
 
 	private int groupBy = MENU_GROUP;
 
-	private final ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(
+	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(
 			1);
 
 	ExpandableListView listView;
@@ -95,58 +90,17 @@ public class ChannelListActivity extends BaseActivity implements
 		setTitle(R.string.action_menu_channels);
 		adapter = new ChannelAdapter(this);
 
-		searchBox = (EditText) findViewById(R.id.search_box);
-
-		filterTextWatcher = new TextWatcher() {
-
-			public void afterTextChanged(Editable s) {
-			}
-
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				adapter.getFilter().filter(s);
-			}
-		};
-		searchBox.addTextChangedListener(filterTextWatcher);
-
 		// Create adapter for ListView
 
 		listView = (ExpandableListView) findViewById(R.id.channel_list);
 		// listView.setOnItemClickListener(this);
 		listView.setOnChildClickListener(this);
-		// listView.setOnGroupClickListener(this);
-		//
-		// public boolean onChildClick(ExpandableListView arg0, View arg1,
-		// int arg2, int arg3, long arg4) {
-		// Toast.makeText(getBaseContext(), "Child clicked",
-		// Toast.LENGTH_LONG).show();
-		// return false;
-		// }
-		// });
-		//
-		// listView.setOnGroupClickListener(new OnGroupClickListener() {
-		//
-		// public boolean onGroupClick(ExpandableListView arg0, View arg1,
-		// int arg2, long arg3) {
-		// Toast.makeText(getBaseContext(), "Group clicked",
-		// Toast.LENGTH_LONG).show();
-		// return false;
-		// }
-		// });
 		listView.setTextFilterEnabled(true);
 		listView.setFastScrollEnabled(true);
 		listView.setAdapter(adapter);
 		// register context menu
 		registerForContextMenu(listView);
 		startChannelQuery();
-
-		// create channel list
-
-		// listView.setOnItemClickListener(this);
 	}
 
 	//
@@ -166,6 +120,9 @@ public class ChannelListActivity extends BaseActivity implements
 		if (progress != null) {
 			progress.dismiss();
 			progress = null;
+		}
+		if (groupByDialog != null) {
+			groupByDialog.dismiss();
 		}
 	}
 
@@ -196,7 +153,7 @@ public class ChannelListActivity extends BaseActivity implements
 		switch (groupBy) {
 		case MENU_GROUP:
 			adapter.fill(
-					new ArrayList<String>(channelClient.getChannelGroups()),
+					channelClient.getChannelGroups(),
 					channelClient.getGroupChannels(), groupBy);
 			listView.collapseGroup(0);
 			updateWindowTitle(
@@ -204,7 +161,7 @@ public class ChannelListActivity extends BaseActivity implements
 					getString(R.string.groupby_window_title_templte,
 							getString(R.string.groupby_group)));
 			break;
-		case MENU_GROUP_PROVIDER:
+		case MENU_PROVIDER:
 			adapter.fill(new ArrayList<String>(channelClient
 					.getProviderChannels().keySet()), channelClient
 					.getProviderChannels(), groupBy);
@@ -214,7 +171,7 @@ public class ChannelListActivity extends BaseActivity implements
 					getString(R.string.groupby_window_title_templte,
 							getString(R.string.groupby_provider)));
 			break;
-		case MENU_GROUP_NAME:
+		case MENU_NAME:
 			if (ALL_CHANNELS_GROUP.isEmpty()) {
 				ALL_CHANNELS_GROUP
 						.add(getString(R.string.groupby_name_all_channels_group));
@@ -264,62 +221,69 @@ public class ChannelListActivity extends BaseActivity implements
 	}
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		switch (groupBy) {
-		case MENU_GROUP:
-			menu.setGroupVisible(MENU_GROUP_GROUP, false);
-			menu.setGroupVisible(MENU_GROUP_PROVIDER, true);
-			menu.setGroupVisible(MENU_GROUP_NAME, true);
-			break;
-
-		case MENU_PROVIDER:
-			menu.setGroupVisible(MENU_GROUP_PROVIDER, false);
-			menu.setGroupVisible(MENU_GROUP_GROUP, true);
-			menu.setGroupVisible(MENU_GROUP_NAME, true);
-			break;
-
-		case MENU_NAME:
-			menu.setGroupVisible(MENU_GROUP_NAME, false);
-			menu.setGroupVisible(MENU_GROUP_GROUP, true);
-			menu.setGroupVisible(MENU_GROUP_PROVIDER, true);
-			break;
-		default:
-			return super.onPrepareOptionsMenu(menu);
-		}
-		return true;
-
+		
+		return super.onPrepareOptionsMenu(menu);
 	}
 
+	
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
 		MenuItem item;
-		item = menu
-				.add(MENU_GROUP_GROUP, MENU_GROUP, 0, R.string.groupby_group);
+		item = menu.add(MENU_GROUP, MENU_GROUP, 0, R.string.menu_groupby);
 		item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
 		item.setAlphabeticShortcut('g');
 
-		item = menu.add(MENU_GROUP_PROVIDER, MENU_PROVIDER, 0,
-				R.string.groupby_provider);
-		item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-		item.setAlphabeticShortcut('p');
+		// item = menu.add(MENU_GROUP_PROVIDER, MENU_PROVIDER, 0,
+		// R.string.groupby_provider);
+		// item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+		// item.setAlphabeticShortcut('p');
 
-		item = menu.add(MENU_GROUP_NAME, MENU_NAME, 0, R.string.groupby_name);
-		item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-		item.setAlphabeticShortcut('n');
+		// item = menu.add(MENU_GROUP_NAME, MENU_NAME, 0,
+		// R.string.groupby_name);
+		// item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+		// item.setAlphabeticShortcut('n');
 
 		return true;
 	}
+
+	private static final String[] EMPTY = new String[] {};
+
+	private String[] getAvailableGroupByEntries() {
+		ArrayList<String> entries = new ArrayList<String>(2);
+		entries.add(getString(R.string.groupby_group));
+		entries.add(getString(R.string.groupby_provider));
+		entries.add(getString(R.string.groupby_name));
+		return entries.toArray(EMPTY);
+	}
+
+	AlertDialog groupByDialog = null;
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
 		case MENU_GROUP:
-		case MENU_PROVIDER:
-		case MENU_NAME:
-			groupBy = item.getItemId();
-			fillAdapter();
+			// case MENU_PROVIDER:
+			// case MENU_NAME:
+			if (groupByDialog == null) {
+				groupByDialog = new AlertDialog.Builder(this)
+						.setTitle(R.string.menu_groupby)
+						.setIcon(android.R.drawable.ic_menu_sort_alphabetically)
+						.setSingleChoiceItems(getAvailableGroupByEntries(),
+								groupBy, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										groupBy = which;
+										fillAdapter();
+										groupByDialog.dismiss();
+									}
+								}).create();
+			}
+
+			groupByDialog.show();
+
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -418,11 +382,6 @@ public class ChannelListActivity extends BaseActivity implements
 
 	@Override
 	public boolean onSearchRequested() {
-		if (groupBy != MENU_NAME) {
-			return true;
-		}
-		searchBox.setVisibility(View.VISIBLE);
-		searchBox.requestFocus();
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMgr.toggleSoftInput(0, 0);
 		return true;
@@ -430,11 +389,7 @@ public class ChannelListActivity extends BaseActivity implements
 
 	@Override
 	public void onBackPressed() {
-		if (searchBox.getVisibility() == View.VISIBLE) {
-			searchBox.setVisibility(View.GONE);
-		} else {
-			super.onBackPressed();
-		}
+		super.onBackPressed();
 	}
 
 	public boolean onGroupClick(ExpandableListView arg0, View arg1, int arg2,
@@ -445,8 +400,8 @@ public class ChannelListActivity extends BaseActivity implements
 	private void startChannelEPG(Channel channel) {
 		// find and remember item
 		// final Channel channel = adapter.getItem(position);
-		//final VdrManagerApp app = (VdrManagerApp) getApplication();
-		//app.setCurrentChannel(channel);
+		// final VdrManagerApp app = (VdrManagerApp) getApplication();
+		// app.setCurrentChannel(channel);
 
 		// show details
 		final Intent intent = new Intent();

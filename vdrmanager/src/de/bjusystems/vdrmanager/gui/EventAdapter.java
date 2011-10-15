@@ -9,6 +9,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,15 @@ import de.bjusystems.vdrmanager.data.EventListItem;
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		Filterable {
 
-	private static final ForegroundColorSpan HIGHLIGHT = new ForegroundColorSpan(
-			Color.RED);
-
 	protected final int layout;
 	protected final LayoutInflater inflater;
 	protected final List<EventListItem> items = new ArrayList<EventListItem>();
 
+	protected boolean hideDescription = true;
+
 	protected boolean hideChannelName = false;
+
+	String highlight;
 
 	public EventAdapter(final Context context, int layout) {
 		super(context, layout);
@@ -46,8 +48,6 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		items.add(object);
 		super.add(object);
 	}
-
-	private String highlight;
 
 	@Override
 	public View getView(final int position, final View convertView,
@@ -76,6 +76,8 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 					.findViewById(R.id.timer_item_shorttext);
 			itemHolder.duration = (TextView) view
 					.findViewById(R.id.timer_item_duration);
+			itemHolder.description = (TextView) view
+					.findViewById(R.id.event_item_description);
 			view.setTag(itemHolder);
 		} else {
 			itemHolder = (EventListItemHolder) view.getTag();
@@ -96,7 +98,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 			itemHolder.progress.setVisibility(View.GONE);
 			itemHolder.shortText.setVisibility(View.GONE);
 			itemHolder.duration.setVisibility(View.GONE);
-
+			itemHolder.description.setVisibility(View.GONE);
 		} else {
 
 			view.setBackgroundColor(Color.BLACK);
@@ -130,12 +132,22 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 				itemHolder.channel.setText(item.getChannelName());
 			}
 
-			
-			CharSequence title = highlight(formatter.getTitle(), highlight);
-			CharSequence shortText = highlight(formatter.getShortText(), highlight);
-			
+			CharSequence title = Utils.highlight(formatter.getTitle(),
+					highlight);
+			CharSequence shortText = Utils.highlight(formatter.getShortText(),
+					highlight);
 			itemHolder.title.setText(title);
 			itemHolder.shortText.setText(shortText);
+
+			if (hideDescription == false) {
+				Pair<Boolean, CharSequence> desc = Utils.highlight2(
+						formatter.getDescription(), highlight);
+				if (desc.first == true) {
+					itemHolder.description.setVisibility(View.VISIBLE);
+					itemHolder.description.setText(desc.second);
+				}
+			}
+
 			int p = Utils.getProgress(item);
 			if (p == -1) {
 				itemHolder.progress.setVisibility(View.GONE);
@@ -160,22 +172,6 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		return view;
 	}
 
-	private CharSequence highlight(String where, String what){
-		if(TextUtils.isEmpty(what)){
-			return where;
-		}
-		
-		String str = where.toLowerCase();
-			int idx = str.indexOf(highlight);
-			if(idx == -1){
-				return where;
-			}
-			SpannableString ss = new SpannableString(str);
-			ss.setSpan(HIGHLIGHT, idx, idx + highlight.length(),
-						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			return ss;
-	}
-	
 	protected EventFormatter getEventFormatter(Event event) {
 		return new EventFormatter(event);
 	}
@@ -184,7 +180,23 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		super.add(item);
 	}
 
-	//TODO implement locking in performFiltering, check the parent class
+	public boolean isHideDescription() {
+		return hideDescription;
+	}
+
+	public void setHideDescription(boolean hideDescription) {
+		this.hideDescription = hideDescription;
+	}
+
+	public boolean isHideChannelName() {
+		return hideChannelName;
+	}
+
+	public void setHideChannelName(boolean hideChannelName) {
+		this.hideChannelName = hideChannelName;
+	}
+
+	// TODO implement locking in performFiltering, check the parent class
 	//
 	public Filter getFilter() {
 		return new Filter() {
@@ -199,8 +211,8 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 				ArrayList<EventListItem> result = new ArrayList<EventListItem>();
 				for (EventListItem event : items) {
 					if (event.isHeader()) {
-						prevHead  = event;
-						//result.add(event);
+						prevHead = event;
+						// result.add(event);
 						continue;
 					}
 					if (event.getTitle().toLowerCase()
@@ -208,7 +220,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 							|| event.getShortText()
 									.toLowerCase()
 									.indexOf(String.valueOf(arg0).toLowerCase()) != -1) {
-						if(prevHead != null){
+						if (prevHead != null) {
 							result.add(prevHead);
 							prevHead = null;
 						}
