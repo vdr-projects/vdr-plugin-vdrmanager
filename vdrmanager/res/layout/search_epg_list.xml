@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/whatson_list"        
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/epg_list_channel_spinner"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:cacheColorHint="?android:attr/colorBackground"/>
+        
+     <TextView
+            android:id="@+id/epg_list_search_label"      
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/epg_list_search_label"/>
+
+	<LinearLayout android:orientation="vertical"
+		android:id="@+id/no_connection_layout" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:visibility="gone">
+		<LinearLayout android:layout_height="fill_parent"
+			android:gravity="center" android:layout_width="fill_parent"
+			android:orientation="horizontal">
+			<TextView android:text="@string/no_connection"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:textSize="18dip" />
+			<ImageView android:src="@drawable/sad"
+				android:layout_height="wrap_content" android:layout_width="wrap_content" />
+			<Button android:text="@string/no_connection_retry"
+				android:textSize="18dip" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:id="@+id/retry_button" />
+
+		</LinearLayout>
+	</LinearLayout>            
+
+     
+</LinearLayout>
