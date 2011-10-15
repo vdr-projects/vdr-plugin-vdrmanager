@@ -43,6 +43,7 @@
 			android:title="@string/wakeup_user_title" android:summary="@string/wakeup_user_summary"
 			android:dependency="@string/wakeup_enabled_key" />
 		<EditTextPreference android:key="@string/wakeup_password_key"
+			android:password="true"
 			android:title="@string/wakeup_password_title" android:summary="@string/wakeup_password_summary"
 			android:dependency="@string/wakeup_enabled_key" />
 		<EditTextPreference android:key="@string/wakeup_wol_mac_key"
