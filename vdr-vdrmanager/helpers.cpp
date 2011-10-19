@@ -302,9 +302,24 @@ string cHelpers::ToText(cRecording * recording){
 }
 
 string cHelpers::ToText(cTimer * timer) {
-
-  const char * channelName = timer->Channel()->Name();
-
+  
+  const cChannel * channel = timer->Channel();
+  const char * channelName = channel->Name();
+  
+  cSchedulesLock schedulesLock;
+  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+  
+  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
+  
+  const cList<cEvent> * events = schedule->Events();
+  cEvent * match = NULL;
+  for(cEvent * event = events->First(); event; event = events->Next(event)) {
+    if (IsWantedTime(timer->StartTime(), event)) {
+      match = event;
+      break;
+    }
+  }
+  
   string result;
   char buf[100];
   sprintf(buf, "T%d", timer->Index());
@@ -333,6 +348,14 @@ string cHelpers::ToText(cTimer * timer) {
   result += MapSpecialChars(timer->File());
   result += ":";
   result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
+  if(match){
+    result += ":";
+    result += MapSpecialChars(match->ShortText()  ? match->ShortText() : "");
+    result += ":";
+    result += MapSpecialChars(match->Description() ? match->Description() : "");
+  } else {
+    result += "::";
+  }
   result += "\r\n";
 
   return result;
@@ -386,7 +409,7 @@ bool cHelpers::IsWantedEvent(cEvent * event, string pattern) {
     text += event->Description();
   }
 
-  return ToUpper(text).find(ToUpper(pattern)) != string::npos;
+  return ToLower(text).find(ToLower(pattern)) != string::npos;
 }
 
 bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
@@ -450,6 +473,18 @@ string cHelpers::ToUpper(string text)
 
   return text;
 }
+
+string cHelpers::ToLower(string text)
+{
+  for(unsigned i = 0; i < text.length(); i++)
+  {
+    if (isupper(text[i]))
+      text[i] = tolower(text[i]);
+  }
+
+  return text;
+}
+
 
 string cHelpers::Trim(string text) {
 
