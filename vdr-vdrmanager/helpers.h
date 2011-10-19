@@ -19,6 +19,7 @@ public:
   static string SetTimer(string args);
   static string SearchEvents(string args);
   static string ToUpper(string text);
+  static string ToLower(string text);
   static string Trim(string text);
 private:
   static string SafeCall(string (*)());
