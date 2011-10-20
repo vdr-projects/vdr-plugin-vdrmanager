@@ -182,6 +182,8 @@ public class Utils {
 		share.putExtra(android.content.Intent.EXTRA_SUBJECT, sb.toString());
 		sb = new StringBuilder();
 		sb.append(title).append("\n\n");
+		sb.append(event.getChannelNumber() +" " + event.getChannelName());
+		sb.append("\n\n");
 		sb.append(ef.getShortText());
 		sb.append("\n\n");
 		sb.append(ef.getDescription());
