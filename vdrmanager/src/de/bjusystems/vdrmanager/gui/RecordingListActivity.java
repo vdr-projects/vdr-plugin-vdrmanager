@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -14,6 +15,7 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
@@ -90,25 +92,32 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 	}
 
-	// @Override
-	// public boolean onContextItemSelected(final MenuItem item) {
-	//
-	// final AdapterView.AdapterContextMenuInfo info =
-	// (AdapterView.AdapterContextMenuInfo) item
-	// .getMenuInfo();
-	// final EventListItem event = adapter.getItem(info.position);
-	//
-	// switch (item.getItemId()) {
-	// case R.id.recording_item_menu_delete: {
-	//
-	// break;
-	// }
-	// case R.id.recording_item_menu_stream: {
-	// break;
-	// }
-	// }
-	// return true;
-	// }
+	@Override
+	public boolean onContextItemSelected(final MenuItem item) {
+
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		final EventListItem event = adapter.getItem(info.position);
+		Recording rec = event.getRecording();
+		switch (item.getItemId()) {
+		case R.id.recording_item_menu_delete: {
+			DeleteRecordingTask drt = new DeleteRecordingTask(this,rec) {
+				@Override
+				public void finished() {
+					dismiss(progress);
+					refresh();
+				}
+			};
+			drt.start();
+			break;
+		}
+		case R.id.recording_item_menu_stream: {
+			say("Sorry, not yet. It would be. File -> "+ rec.getFileName());
+			break;
+		}
+		}
+		return true;
+	}
 
 	private void startRecordingQuery() {
 

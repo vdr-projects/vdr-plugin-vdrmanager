@@ -2,17 +2,16 @@ package de.bjusystems.vdrmanager.data;
 
 import de.bjusystems.vdrmanager.gui.Utils;
 
-
 /**
  * @author lado
- *
- * TODO auf Event Interface umstellen und die Aufrufen an event delegieren. Das hier ist nicht gut.
+ * 
+ *         TODO auf Event Interface umstellen und die Aufrufen an event
+ *         delegieren. Das hier ist nicht gut.
  */
 public class EventListItem extends BaseEvent {
 
-	
 	Event event;
-	
+
 	public Event getEvent() {
 		return event;
 	}
@@ -25,19 +24,18 @@ public class EventListItem extends BaseEvent {
 	private final Timer timer;
 	private final Epg epg;
 	private final String header;
-	
-//	
-//	public EventListItem(final Event event){
-//		if(event instanceof Recording){
-//			this((Recording)event);
-//		} else if (event instanceof Timer){
-//			this((Timer)event);
-//		} else {
-//			this((Epg)event);			
-//		}
-//		throw new IllegalArgumentException("Uknown event type " + event);
-//	}
 
+	//
+	// public EventListItem(final Event event){
+	// if(event instanceof Recording){
+	// this((Recording)event);
+	// } else if (event instanceof Timer){
+	// this((Timer)event);
+	// } else {
+	// this((Epg)event);
+	// }
+	// throw new IllegalArgumentException("Uknown event type " + event);
+	// }
 
 	public EventListItem(final Recording rec) {
 		super(rec);
@@ -65,10 +63,10 @@ public class EventListItem extends BaseEvent {
 		this.epg = epg;
 		this.rec = null;
 	}
-	
+
 	@Override
 	public TimerState getTimerState() {
-		if(epg != null){
+		if (epg != null) {
 			return epg.getTimerState();
 		}
 		return super.getTimerState();
@@ -89,7 +87,6 @@ public class EventListItem extends BaseEvent {
 		return timer != null;
 	}
 
-
 	public String getHeader() {
 		return header;
 	}
@@ -102,11 +99,15 @@ public class EventListItem extends BaseEvent {
 		return epg;
 	}
 
-//	public Event getEvent() {
-//		return event;
-//	}
-//	
-	public boolean isLive(){
+	public Recording getRecording() {
+		return rec;
+	}
+
+	// public Event getEvent() {
+	// return event;
+	// }
+	//
+	public boolean isLive() {
 		return Utils.isLive(this);
 	}
 
@@ -121,7 +122,8 @@ public class EventListItem extends BaseEvent {
 		text.append(isTimer() ? "Timer: " : "Event: ");
 		text.append("Channel: ").append(getChannelNumber());
 		text.append(" (").append(getChannelName()).append("), ");
-		text.append("Zeit: ").append(formatter.getDate()).append(" ").append(formatter.getTime());
+		text.append("Zeit: ").append(formatter.getDate()).append(" ")
+				.append(formatter.getTime());
 		return text.toString();
 	}
 

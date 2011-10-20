@@ -7,19 +7,32 @@ public class Recording extends BaseEvent{
 	
 	public Recording(String line)  {
 		final String[] words = line.split(":");
-		start = new Date(Long.parseLong(words[0])*1000);
-		stop = new Date(Long.parseLong(words[1]) * 1000);
-		fileSize = Integer.valueOf(words[2]);
-		channelName = words[3];
-		title = words[4];
-		shortText = words[5];
-		description = words[6];
-		fileName = words[7];
+		int idx = 0;
+		index = Integer.valueOf(words[idx++]);
+		start = new Date(Long.parseLong(words[idx++]) * 1000);
+		stop = new Date(Long.parseLong(words[idx++]) *  1000);
+		channelName = words[idx++];
+		title = words[idx++];
+		shortText = words[idx++];
+		description = words[idx++];
+		fileName = words[idx++];
+		fileSize = Integer.valueOf(words[idx++]);
+
 	}
 	
 	private String fileName;
 
 	private int fileSize;
+	
+	private int index;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
 	public int getFileSize() {
 		return fileSize;
@@ -40,5 +53,10 @@ public class Recording extends BaseEvent{
 	public TimerState getTimerState() {
 		return TimerState.Recorded;
 	}
+	
+	public String toCommandLine(){
+		return String.valueOf(index);
+	}
+	
 
 }
