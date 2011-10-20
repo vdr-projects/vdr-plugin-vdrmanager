@@ -2,54 +2,37 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.Calendar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
-import de.bjusystems.vdrmanager.data.Timer;
-import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * This class is used for showing what's current running on all channels
  * 
  * @author bju
  */
-public class RecordingListActivity extends BaseActivity implements
-		OnItemClickListener, SvdrpAsyncListener<Recording> {
+public class RecordingListActivity extends BaseEventListActivity<Recording>
+		implements OnItemLongClickListener, SvdrpAsyncListener<Recording> {
 
 	RecordingClient recordingClient;
-	EventAdapter adapter;
-	SvdrpProgressDialog progress;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// set title
-		setTitle(R.string.action_menu_recordings);
-
-		// Attach view
-		setContentView(getMainLayout());
 
 		// create an adapter
 		adapter = new RecordingAdapter(this);
@@ -59,8 +42,9 @@ public class RecordingListActivity extends BaseActivity implements
 		listView.setAdapter(adapter);
 
 		// set click listener
+		listView.setOnItemLongClickListener(this);
+		// register EPG item click
 		listView.setOnItemClickListener(this);
-
 		// context menu wanted
 		registerForContextMenu(listView);
 
@@ -73,25 +57,19 @@ public class RecordingListActivity extends BaseActivity implements
 		super.onResume();
 	}
 
-	protected void updateWindowTitle(int topic, int subtopic) {
-		String title;
-		title = getString(topic);
-		if (subtopic != -1) {
-			title += " > " + getString(subtopic);
-		}
-		setTitle(title);
-	}
-
 	@Override
 	protected void onPause() {
 		super.onPause();
 		if (recordingClient != null) {
 			recordingClient.abort();
 		}
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
+		dismiss(progress);
+	}
+
+	@Override
+	protected void prepareTimer(EventListItem event) {
+		getApp().setCurrentEvent(event);
+		getApp().setCurrentEpgList(results);
 	}
 
 	@Override
@@ -112,47 +90,25 @@ public class RecordingListActivity extends BaseActivity implements
 		}
 	}
 
-	@Override
-	public boolean onContextItemSelected(final MenuItem item) {
-
-		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-				.getMenuInfo();
-		final EventListItem event = adapter.getItem(info.position);
-
-		switch (item.getItemId()) {
-		case R.id.recording_item_menu_delete: {
-
-			break;
-		}
-		case R.id.recording_item_menu_stream: {
-			break;
-		}
-		}
-		return true;
-	}
-
-	public void onItemClick(final AdapterView<?> parent, final View view,
-			final int position, final long id) {
-
-		// save selected item
-		final Timer timer = adapter.getItem(position).getTimer();
-		if (timer == null) {
-			// header click
-			return;
-		}
-
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		app.setCurrentTimer(timer);
-
-		// after timer editing return to the timer list
-		app.setNextActivity(RecordingListActivity.class);
-		app.clearActivitiesToFinish();
-
-		// show timer details
-		final Intent intent = new Intent();
-		intent.setClass(this, TimerDetailsActivity.class);
-		startActivity(intent);
-	}
+	// @Override
+	// public boolean onContextItemSelected(final MenuItem item) {
+	//
+	// final AdapterView.AdapterContextMenuInfo info =
+	// (AdapterView.AdapterContextMenuInfo) item
+	// .getMenuInfo();
+	// final EventListItem event = adapter.getItem(info.position);
+	//
+	// switch (item.getItemId()) {
+	// case R.id.recording_item_menu_delete: {
+	//
+	// break;
+	// }
+	// case R.id.recording_item_menu_stream: {
+	// break;
+	// }
+	// }
+	// return true;
+	// }
 
 	private void startRecordingQuery() {
 
@@ -173,72 +129,6 @@ public class RecordingListActivity extends BaseActivity implements
 		task.run();
 	}
 
-	
-	private void dismiss(){
-		if (progress != null) {
-			progress.dismiss();
-		}
-	}
-	
-	public void svdrpEvent(final SvdrpEvent event, final Recording result) {
-
-		if (progress != null) {
-			progress.svdrpEvent(event);
-		}
-
-		switch (event) {
-		case CONNECTING:
-			break;
-		case FINISHED_ABNORMALY:
-		case CONNECT_ERROR:
-			switchNoConnection();// TODO pass arg, what is the problem
-		case LOGIN_ERROR:
-			dismiss();
-			switchNoConnection();
-			break;
-		case FINISHED_SUCCESS:
-			adapter.clear();
-			Calendar cal = Calendar.getInstance();
-			int day = -1;
-			for (final Recording rec : recordingClient.getResults()) {
-					cal.setTime(rec.getStart());
-					int eday = cal.get(Calendar.DAY_OF_YEAR);
-					if (eday != day) {
-						day = eday;
-						adapter.add(new EventListItem(new DateFormatter(cal)
-								.getDailyHeader()));
-					}
-				adapter.add(new EventListItem(rec));
-			}
-			// adapter.sortItems();
-			dismiss();
-			if (recordingClient.getResults().isEmpty()) {
-				Toast.makeText(RecordingListActivity.this,
-						R.string.epg_no_items, Toast.LENGTH_SHORT).show();
-			}
-			break;
-		}
-	}
-
-	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
-	}
-
-	private void deleteTimer(final EventListItem item) {
-
-		final DeleteTimerTask task = new DeleteTimerTask(this, item.getTimer()) {
-			@Override
-			public void finished() {
-				// refresh epg list after return
-				final VdrManagerApp app = (VdrManagerApp) getApplication();
-				app.setReload(true);
-			}
-		};
-		task.start();
-	}
-
 	protected void retry() {
 		startRecordingQuery();
 	}
@@ -252,5 +142,35 @@ public class RecordingListActivity extends BaseActivity implements
 		return R.layout.recording_list;
 	}
 
+	@Override
+	protected int getWindowTitle() {
+		return R.string.remux_title;
+	}
+
+	@Override
+	protected boolean finishedSuccess() {
+		adapter.clear();
+		Calendar cal = Calendar.getInstance();
+		int day = -1;
+		for (final Recording rec : recordingClient.getResults()) {
+			results.add(rec);
+			cal.setTime(rec.getStart());
+			int eday = cal.get(Calendar.DAY_OF_YEAR);
+			if (eday != day) {
+				day = eday;
+				adapter.add(new EventListItem(new DateFormatter(cal)
+						.getDailyHeader()));
+			}
+			adapter.add(new EventListItem(rec));
+		}
+		// adapter.sortItems();
+		return results.isEmpty() == false;
+	}
+
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+
+		return false;
+	}
 
 }

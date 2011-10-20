@@ -1,12 +1,10 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -14,27 +12,27 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchTimeValue;
 import de.bjusystems.vdrmanager.data.EpgSearchTimeValues;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * This class is used for showing what's current running on all channels
  * 
  * @author bju
  */
-public class TimeEpgListActivity extends BaseEpgListActivity implements
-		OnItemClickListener, OnItemSelectedListener, SvdrpAsyncListener<Epg> {
+public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
+		OnItemClickListener, OnItemSelectedListener {
 
 	Spinner timeSpinner;
 
@@ -42,16 +40,14 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 
 	protected static Date nextForceCache = null;
 
-	private final static ArrayList<Epg> CACHE = new ArrayList<Epg>();
+	private final static ArrayList<Event> CACHE = new ArrayList<Event>();
 
 	private static String cachedTime = null;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 
-		
 		// create adapter for time spinner
 		timeSpinnerAdapter = new ArrayAdapter<EpgSearchTimeValue>(this,
 				android.R.layout.simple_spinner_item);
@@ -81,6 +77,10 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 
 	}
 
+	private void addCustom() {
+
+	}
+
 	private void fillTimeSpinnerValues() {
 		final EpgSearchTimeValues values = new EpgSearchTimeValues(this);
 		timeSpinnerAdapter.clear();
@@ -88,17 +88,15 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 			timeSpinnerAdapter.add(value);
 		}
 	}
-	
+
 	private int currentPostion = 0;
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 	}
 
-
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -152,8 +150,8 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 				adapter.add(new EventListItem(new DateFormatter(CACHE.get(0)
 						.getStart()).getDailyHeader()));
 			}
-			for (Epg e : CACHE) {
-				adapter.add(new EventListItem(e));
+			for (Event e : CACHE) {
+				adapter.add(new EventListItem((Epg) e));
 			}
 			// adapter.sortItems();
 			listView.setSelectionAfterHeaderView();
@@ -163,6 +161,7 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 		clearCache();
 
 		epgClient = new EpgClient(time);
+		epgClient.setResultInfoEnabled(true);
 
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
@@ -181,7 +180,7 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	}
 
 	@Override
-	protected void finishedSuccess() {
+	protected boolean finishedSuccess() {
 		// get spinner value
 		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
 				.getSelectedItem();
@@ -190,41 +189,22 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 		nextForceCache = FUTURE;
 		cachedTime = selection.getValue();
 		Date now = new Date();
-		List<Epg> results = epgClient.getResults();
 		sortItemsByChannel(results);
 		if (results.isEmpty() == false) {
 			adapter.add(new EventListItem(new DateFormatter(results.get(0)
 					.getStart()).getDailyHeader()));
 		}
-		for (Epg e : results) {
+		for (Event e : results) {
 			CACHE.add(e);
-			adapter.add(new EventListItem(e));
+			adapter.add(new EventListItem((Epg) e));
 			if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
 				nextForceCache = e.getStop();
 			}
 		}
 		listView.setSelectionAfterHeaderView();
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
-	}
+		dismiss(progress);
+		return CACHE.isEmpty() == false;
 
-	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
-	}
-
-	private void sortItemsByChannel(List<Epg> result) {
-		final Comparator<Epg> comparator = new Comparator<Epg>() {
-
-			public int compare(final Epg item1, final Epg item2) {
-				return Integer.valueOf(item1.getChannelNumber()).compareTo(
-						Integer.valueOf(item2.getChannelNumber()));
-			}
-		};
-		Collections.sort(result, comparator);
 	}
 
 	protected void prepareTimer(final EventListItem item) {
@@ -253,31 +233,32 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 	protected void retry() {
 		refresh();
 	}
-	
+
 	@Override
 	protected int getWindowTitle() {
 		return R.string.epg_by_time;
 	}
-	
 
-	private void nextEvent(){
+	private void nextEvent() {
 		int pos = timeSpinner.getSelectedItemPosition();
-		if(pos + 1 >= timeSpinnerAdapter.getCount()){
-			Toast.makeText(this, R.string.navigae_at_the_end, Toast.LENGTH_SHORT).show();
+		if (pos + 1 >= timeSpinnerAdapter.getCount()) {
+			Toast.makeText(this, R.string.navigae_at_the_end,
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		timeSpinner.setSelection(pos+1, true);
+		timeSpinner.setSelection(pos + 1, true);
 	}
-	
-	private void prevEvent(){
+
+	private void prevEvent() {
 		int pos = timeSpinner.getSelectedItemPosition();
-		if(pos <= 0){
-			Toast.makeText(this, R.string.navigae_at_the_start, Toast.LENGTH_SHORT).show();
+		if (pos <= 0) {
+			Toast.makeText(this, R.string.navigae_at_the_start,
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		timeSpinner.setSelection(pos-1, true);
+		timeSpinner.setSelection(pos - 1, true);
 	}
-	
+
 	@Override
 	public void onSwipe(int direction) {
 		switch (direction) {
@@ -289,5 +270,4 @@ public class TimeEpgListActivity extends BaseEpgListActivity implements
 			break;
 		}
 	}
-
 }

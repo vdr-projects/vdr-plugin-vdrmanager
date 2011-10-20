@@ -1,8 +1,12 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,27 +19,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Channel;
-import de.bjusystems.vdrmanager.data.Epg;
-import de.bjusystems.vdrmanager.data.EventFormatter;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
-import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
-import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * @author lado
  * 
  */
-public abstract class BaseEpgListActivity extends BaseActivity implements
+public abstract class BaseEventListActivity<T extends Event> extends
+		BaseActivity implements OnItemClickListener,SvdrpAsyncListener<T>,
 		SimpleGestureListener {
-
-	private static final int REQUEST_CODE_TIMED_EDIT = 41;
 
 	private SimpleGestureFilter detector;
 
@@ -57,6 +61,9 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 
 	abstract protected int getWindowTitle();
 
+	protected List<Event> results = new ArrayList<Event>();
+
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,17 +79,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 				.getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
 
-	protected void deleteTimer(final EventListItem item) {
-
-		final DeleteTimerTask task = new DeleteTimerTask(this, item.getEpg()
-				.getTimer()) {
-			@Override
-			public void finished() {
-				refresh();
-			}
-		};
-		task.start();
-	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -104,6 +101,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,27 +114,11 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 				.getMenuInfo();
 		final EventListItem event = adapter.getItem(info.position);
 
-		switch (item.getItemId()) {
-		case R.id.epg_item_menu_timer_add:
-		case R.id.epg_item_menu_timer_modify: {
-			prepareTimer(event);
-			final Intent intent = new Intent();
-			intent.setClass(this, TimerDetailsActivity.class);
-			startActivityForResult(intent, REQUEST_CODE_TIMED_EDIT);
-			break;
-		}
-		case R.id.epg_item_menu_timer_delete: {
-			deleteTimer(event);
-			break;
-		}
-		case R.id.epg_item_menu_timer_toggle: {
-			toggleTimer(event);
-			break;
-		}
-		case R.id.epg_item_menu_live_tv: {
-			Utils.stream(this, event.getEvent());
-			break;
 
+		switch (item.getItemId()) {
+		case R.id.epg_item_menu_live_tv: {
+			Utils.stream(this, event);
+			break;
 		}
 		}
 
@@ -156,7 +138,7 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 
 		switch (item.getItemId()) {
 		case R.id.epg_menu_search:
-			//startSearchManager();
+			// startSearchManager();
 			super.onSearchRequested();
 			break;
 		case R.id.epg_menu_times:
@@ -179,62 +161,18 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		if (v.getId() == R.id.whatson_list) {
-			final MenuInflater inflater = getMenuInflater();
+		//if (v.getId() == R.id.whatson_list) {
 			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
 			// set menu title
 			final EventListItem item = adapter.getItem(info.position);
-			final EventFormatter formatter = new EventFormatter(item);
-			menu.setHeaderTitle(formatter.getTitle());
-
-			inflater.inflate(R.menu.epg_list_item_menu, menu);
-
-			// remove unneeded menu items
-			if (item.getEpg().getTimer() != null) {
-				menu.findItem(R.id.epg_item_menu_timer_add).setVisible(false);
-				menu.findItem(R.id.epg_item_menu_timer_modify).setVisible(true);
-				menu.findItem(R.id.epg_item_menu_timer_delete).setVisible(true);
-				final MenuItem enableMenuItem = menu
-						.findItem(R.id.epg_item_menu_timer_toggle);
-				enableMenuItem.setVisible(true);
-				enableMenuItem
-						.setTitle(item.getEpg().getTimer().isEnabled() ? R.string.epg_item_menu_timer_disable
-								: R.string.epg_item_menu_timer_enable);
-			}
-
-			if (item.isLive()) {
+			
+				if (item.isLive()) {
 				menu.findItem(R.id.epg_item_menu_live_tv).setVisible(true);
 			}
 
-		}
+		//}
 
-	}
-
-	protected void toggleTimer(final EventListItem item) {
-		final ToggleTimerTask task = new ToggleTimerTask(this, item.getEpg()
-				.getTimer()) {
-			@Override
-			public void finished() {
-				refresh();
-			}
-		};
-		task.start();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_CODE_TIMED_EDIT) {
-			if (resultCode == Activity.RESULT_OK) {
-				refresh();
-			}
-		}
 	}
 
 	/**
@@ -279,14 +217,22 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 		}
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final Epg result) {
+	public void svdrpEvent(final SvdrpEvent event, final T result) {
 
 		if (progress != null) {
 			progress.svdrpEvent(event);
 		}
 
 		switch (event) {
+		case ERROR:
+			Toast.makeText(this, R.string.epg_client_errors, Toast.LENGTH_SHORT)
+					.show();
+			dismiss(progress);
+			break;
 		case CONNECTING:
+			break;
+		case CONNECTED:
+			results.clear();
 			break;
 		case CONNECT_ERROR:
 		case FINISHED_ABNORMALY:
@@ -294,32 +240,50 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 			switchNoConnection();
 			break;
 		case FINISHED_SUCCESS:
-			finishedSuccess();
+			if (finishedSuccess() == false) {
+				say(R.string.epg_no_items);
+			}
 			break;
 		case RESULT_RECEIVED:
+			resultReceived(result);
 			break;
 		}
 	}
 
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		int index = savedInstanceState.getInt("INDEX");
-		int top = savedInstanceState.getInt("TOP");
-		listView.setSelectionFromTop(index, top);
+	protected void resultReceived(Event result) {
+		results.add(result);
 	}
 
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		int index = listView.getFirstVisiblePosition();
-		View v = listView.getChildAt(0);
-		int top = (v == null) ? 0 : v.getTop();
-		outState.putInt("INDEX", index);
-		outState.putInt("TOP", top);
-		super.onSaveInstanceState(outState);
+	//
+	// @Override
+	// protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	// super.onRestoreInstanceState(savedInstanceState);
+	// int index = savedInstanceState.getInt("INDEX");
+	// int top = savedInstanceState.getInt("TOP");
+	// listView.setSelectionFromTop(index, top);
+	// }
+	//
+	// @Override
+	// protected void onSaveInstanceState(Bundle outState) {
+	// int index = listView.getFirstVisiblePosition();
+	// View v = listView.getChildAt(0);
+	// int top = (v == null) ? 0 : v.getTop();
+	// outState.putInt("INDEX", index);
+	// outState.putInt("TOP", top);
+	// super.onSaveInstanceState(outState);
+	// }
+
+	protected void dismiss(AlertDialog dialog) {
+		if (dialog == null) {
+			return;
+		}
+		dialog.dismiss();
 	}
 
-	protected abstract void finishedSuccess();
+	/**
+	 * @return false, if no results found
+	 */
+	protected abstract boolean finishedSuccess();
 
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -343,8 +307,49 @@ public abstract class BaseEpgListActivity extends BaseActivity implements
 	}
 
 	public void onDoubleTap() {
-		// TODO Auto-generated method stub
 
 	}
+
+	protected void sortItemsByChannel(List<Event> result) {
+		final Comparator<Event> comparator = new Comparator<Event>() {
+
+			public int compare(final Event item1, final Event item2) {
+				return Integer.valueOf(item1.getChannelNumber()).compareTo(
+						Integer.valueOf(item2.getChannelNumber()));
+			}
+		};
+		Collections.sort(result, comparator);
+	}
+
+	protected void sortItemsByTime(List<Event> result) {
+		final Comparator<Event> comparator = new Comparator<Event>() {
+
+			public int compare(final Event item1, final Event item2) {
+				int c = item1.getStart().compareTo(item2.getStart());
+				if (c != 0) {
+					return c;
+				}
+				return Integer.valueOf(item1.getChannelNumber()).compareTo(
+						Integer.valueOf(item2.getChannelNumber()));
+			}
+		};
+		Collections.sort(result, comparator);
+	}
+
+	public void svdrpException(final SvdrpException exception) {
+		if (progress != null) {
+			progress.svdrpException(exception);
+		}
+	}
+
+
+	protected void say(int res) {
+		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
+	}
+
+	protected void say(String msg) {
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
+
 
 }

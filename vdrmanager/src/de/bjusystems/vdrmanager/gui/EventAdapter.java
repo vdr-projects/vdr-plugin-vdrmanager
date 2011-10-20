@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
@@ -43,6 +39,9 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		inflater = LayoutInflater.from(context);
 	}
 
+
+	
+
 	@Override
 	public void add(EventListItem object) {
 		items.add(object);
@@ -53,11 +52,25 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
 
+		// get item
+		final EventListItem item = getItem(position);
+
+		if (item.isHeader()) {
+			return getHeaderView(item, convertView, parent);
+		} else {
+			return getEventView(item, convertView, parent);
+		}
+
+	}
+
+	private View getEventView(EventListItem item, View convertView,
+			ViewGroup parent) {
+
 		EventListItemHolder itemHolder = new EventListItemHolder();
 
 		// recycle view?
 		View view = convertView;
-		if (view == null) {
+		if (view == null || view instanceof ListView == false) {
 			view = inflater.inflate(layout, null);
 
 			itemHolder = new EventListItemHolder();
@@ -83,92 +96,99 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 			itemHolder = (EventListItemHolder) view.getTag();
 		}
 
-		// get item
-		final EventListItem item = getItem(position);
 
-		// fill item
-		if (item.isHeader()) {
-			view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), 0);
-			view.setBackgroundColor(Color.DKGRAY);
-			itemHolder.state.setVisibility(View.GONE);
-			itemHolder.channel.setVisibility(View.VISIBLE);
-			itemHolder.channel.setText(item.getHeader());
-			itemHolder.title.setVisibility(View.GONE);
-			itemHolder.time.setVisibility(View.GONE);
-			itemHolder.progress.setVisibility(View.GONE);
-			itemHolder.shortText.setVisibility(View.GONE);
-			itemHolder.duration.setVisibility(View.GONE);
-			itemHolder.description.setVisibility(View.GONE);
+//		itemHolder.title.setVisibility(View.VISIBLE);
+		itemHolder.state.setVisibility(View.VISIBLE);
+		//itemHolder.shortText.setVisibility(View.VISIBLE);
+		//itemHolder.duration.setVisibility(View.VISIBLE);
+		// itemHolder.state.setVisibility(View.);
+		switch (item.getTimerState()) {
+		case Active:
+			//itemHolder.state.setVisibility(View.VISIBLE);
+			itemHolder.state.setImageResource(R.drawable.timer_active);
+			break;
+		case Inactive:
+			//itemHolder.state.setVisibility(View.VISIBLE);
+			itemHolder.state.setImageResource(R.drawable.timer_inactive);
+			break;
+		case Recording:
+			//itemHolder.state.setVisibility(View.VISIBLE);
+			itemHolder.state.setImageResource(R.drawable.timer_recording);
+			break;
+		case None:
+			//itemHolder.state.setVisibility(View.GONE);
+			itemHolder.state.setImageResource(R.drawable.timer_none);
+			break;
+		}
+		
+		final EventFormatter formatter = getEventFormatter(item);
+		itemHolder.time.setText(formatter.getTime());
+		if (hideChannelName) {
+			itemHolder.channel.setVisibility(View.GONE);
 		} else {
+			itemHolder.channel.setText(item.getChannelName());
+		}
 
-			view.setBackgroundColor(Color.BLACK);
-			// itemHolder.channel.setVisibility(View.VISIBLE);
-			itemHolder.time.setVisibility(View.VISIBLE);
-			itemHolder.title.setVisibility(View.VISIBLE);
-			itemHolder.state.setVisibility(View.VISIBLE);
-			// itemHolder.channel.setVisibility(View.VISIBLE);
-			itemHolder.shortText.setVisibility(View.VISIBLE);
-			itemHolder.duration.setVisibility(View.VISIBLE);
-			// itemHolder.state.setVisibility(View.);
-			switch (item.getTimerState()) {
-			case Active:
-				itemHolder.state.setImageResource(R.drawable.timer_active);
-				break;
-			case Inactive:
-				itemHolder.state.setImageResource(R.drawable.timer_inactive);
-				break;
-			case Recording:
-				itemHolder.state.setImageResource(R.drawable.timer_recording);
-				break;
-			case None:
-				itemHolder.state.setImageResource(R.drawable.timer_none);
-				break;
-			}
-			final EventFormatter formatter = getEventFormatter(item.getEvent());
-			itemHolder.time.setText(formatter.getTime());
-			if (hideChannelName) {
-				itemHolder.channel.setVisibility(View.GONE);
-			} else {
-				itemHolder.channel.setText(item.getChannelName());
-			}
+		CharSequence title = Utils.highlight(formatter.getTitle(), highlight);
+		CharSequence shortText = Utils.highlight(formatter.getShortText(),
+				highlight);
+		itemHolder.title.setText(title);
+		itemHolder.shortText.setText(shortText);
 
-			CharSequence title = Utils.highlight(formatter.getTitle(),
-					highlight);
-			CharSequence shortText = Utils.highlight(formatter.getShortText(),
-					highlight);
-			itemHolder.title.setText(title);
-			itemHolder.shortText.setText(shortText);
-
-			if (hideDescription == false) {
-				Pair<Boolean, CharSequence> desc = Utils.highlight2(
-						formatter.getDescription(), highlight);
-				if (desc.first == true) {
-					itemHolder.description.setVisibility(View.VISIBLE);
-					itemHolder.description.setText(desc.second);
-				}
-			}
-
-			int p = Utils.getProgress(item);
-			if (p == -1) {
-				itemHolder.progress.setVisibility(View.GONE);
-				// itemHolder.time.setTypeface(null, Typeface.NORMAL);
-				// itemHolder.title.setTypeface(null, Typeface.NORMAL);
-				// itemHolder.shortText.setTypeface(null, Typeface.NORMAL);
-				int dura = Utils.getDuration(item);
-				itemHolder.duration.setText(getContext().getString(
-						R.string.epg_duration_template, dura));
-			} else {
-				itemHolder.progress.setVisibility(View.VISIBLE);
-				itemHolder.progress.setProgress(p);
-				// itemHolder.time.setTypeface(null, Typeface.BOLD);
-				// itemHolder.title.setTypeface(null, Typeface.BOLD);
-				// itemHolder.shortText.setTypeface(null, Typeface.BOLD);
-				int dura = Utils.getDuration(item);
-				int rest = dura - (dura * p / 100);
-				itemHolder.duration.setText(getContext().getString(
-						R.string.epg_duration_template_live, rest, dura));
+		if (hideDescription == false) {
+			Pair<Boolean, CharSequence> desc = Utils.highlight2(
+					formatter.getDescription(), highlight);
+			if (desc.first == true) {
+				itemHolder.description.setVisibility(View.VISIBLE);
+				itemHolder.description.setText(desc.second);
 			}
 		}
+
+		int p = Utils.getProgress(item);
+		if (p == -1) {
+			itemHolder.progress.setVisibility(View.GONE);
+			// itemHolder.time.setTypeface(null, Typeface.NORMAL);
+			// itemHolder.title.setTypeface(null, Typeface.NORMAL);
+			// itemHolder.shortText.setTypeface(null, Typeface.NORMAL);
+			int dura = Utils.getDuration(item);
+			itemHolder.duration.setText(getContext().getString(
+					R.string.epg_duration_template, dura));
+		} else {
+			itemHolder.progress.setVisibility(View.VISIBLE);
+			itemHolder.progress.setProgress(p);
+			// itemHolder.time.setTypeface(null, Typeface.BOLD);
+			// itemHolder.title.setTypeface(null, Typeface.BOLD);
+			// itemHolder.shortText.setTypeface(null, Typeface.BOLD);
+			int dura = Utils.getDuration(item);
+			int rest = dura - (dura * p / 100);
+			itemHolder.duration.setText(getContext().getString(
+					R.string.epg_duration_template_live, rest, dura));
+		}
+
+		return view;
+	}
+
+	class EventListItemHeaderHolder {
+		public TextView header;
+	}
+
+	private View getHeaderView(EventListItem item, View convertView,
+			ViewGroup parent) {
+
+		EventListItemHeaderHolder itemHolder = new EventListItemHeaderHolder();
+
+		// recycle view?
+		View view = convertView;
+		if (view == null || convertView instanceof TextView == false) {
+			view = inflater.inflate(R.layout.header_item, null);
+
+			itemHolder = new EventListItemHeaderHolder();
+
+			itemHolder.header = (TextView) view.findViewById(R.id.header_item);
+		} else {
+			itemHolder = (EventListItemHeaderHolder) view.getTag();
+		}
+		itemHolder.header.setText(item.getHeader());
 		return view;
 	}
 

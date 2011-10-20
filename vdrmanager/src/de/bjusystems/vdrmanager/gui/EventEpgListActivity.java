@@ -5,10 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import android.app.SearchManager;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,24 +18,23 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * This class is used for showing what's current running on all channels
  * 
  * @author bju
  */
-public class EventEpgListActivity extends BaseEpgListActivity implements
-		OnItemClickListener, OnItemSelectedListener, SvdrpAsyncListener<Epg> {
+public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
+		OnItemClickListener, OnItemSelectedListener {
 
-	private final static ArrayList<Epg> CACHE = new ArrayList<Epg>();
+	private final static ArrayList<Event> CACHE = new ArrayList<Event>();
 
 	protected static Date nextForceCache = null;
 
@@ -149,7 +145,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		if (useCache(channel) && !force) {
 			Calendar cal = Calendar.getInstance();
 			int day = -1;
-			for (Epg e : CACHE) {
+			for (Event i : CACHE) {
+				Epg e  = (Epg)i;
 				cal.setTime(e.getStart());
 				int eday = cal.get(Calendar.DAY_OF_YEAR);
 				if (eday != day) {
@@ -189,7 +186,7 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
-	protected void finishedSuccess() {
+	protected boolean finishedSuccess() {
 		adapter.clear();
 		CACHE.clear();
 		Date now = new Date();
@@ -212,16 +209,8 @@ public class EventEpgListActivity extends BaseEpgListActivity implements
 		}
 		cachedChannel = currentChannel;
 		listView.setSelectionAfterHeaderView();
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
-	}
-
-	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
+		dismiss(progress);
+		return CACHE.isEmpty() == false;
 	}
 
 	protected void prepareTimer(final EventListItem item) {

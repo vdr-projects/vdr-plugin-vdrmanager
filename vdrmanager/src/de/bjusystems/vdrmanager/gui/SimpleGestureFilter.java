@@ -120,6 +120,7 @@ public class SimpleGestureFilter extends SimpleOnGestureListener{
 	   
 	   result = true;
 	  }
+	  /*
 	  else if(velocityY > this.swipe_Min_Velocity && yDistance > this.swipe_Min_Distance){
 	   if(e1.getY() > e2.getY()) // bottom to up 
 	    this.listener.onSwipe(SWIPE_UP);
@@ -128,7 +129,7 @@ public class SimpleGestureFilter extends SimpleOnGestureListener{
 	   
 	   result = true;
 	  }
-
+*/
 	   return result;
 	 }
 
