@@ -40,4 +40,5 @@ private:
   static string ToText(const cEvent * event);
   static string ToText(cTimer * timer);
   static string ToText(cRecording * recording);
+  static string GetAudioTracks(const cChannel* channel);
 };

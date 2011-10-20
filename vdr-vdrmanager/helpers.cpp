@@ -125,11 +125,41 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
       result += channel->Name();
       result += ":";
       result += channel->Provider();
+      result += ":";
+      result += channel->GetChannelID().ToString();
+      result += ":";
+      result += GetAudioTracks(channel);
+      result += ":";
       result += "\r\n";
     }
   }
 
   return result + "END\r\n";
+}
+
+string cHelpers::GetAudioTracks(const cChannel* channel){
+  
+  string result = "";
+  int count = 0;
+  for (int i = 0; channel->Apid(i) != 0; ++i, ++count)
+    ;
+  for (int i = 0; channel->Dpid(i) != 0; ++i, ++count)
+    ;
+  
+  if (count > 1)
+    {
+      int index = 1;
+      string sep = "";
+      for (int i = 0; channel->Apid(i) != 0; ++i, ++index) {
+	result += sep +"a,"+(const char*)itoa(index) + "," + channel->Alang(i);
+	sep  = "|";
+      }
+      for (int i = 0; channel->Dpid(i) != 0; ++i, ++index) {
+	result += sep + "d," + (const char*)itoa(index) + "," + channel->Dlang(i);
+      }
+      sep  = "|";
+    }
+  return result; 
 }
 
 string cHelpers::GetEventsIntern(string wantedChannels, string when) {
