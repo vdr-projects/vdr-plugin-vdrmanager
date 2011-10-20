@@ -41,6 +41,9 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		BaseActivity implements OnItemClickListener,SvdrpAsyncListener<T>,
 		SimpleGestureListener {
 
+	public static final int MENU_GROUP_SHARE = 90;
+	
+	public static final int MENU_SHARE = 90;
 	private SimpleGestureFilter detector;
 
 	protected EpgClient epgClient;
@@ -120,6 +123,9 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			Utils.stream(this, event);
 			break;
 		}
+		case MENU_REFRESH:
+			Utils.shareEvent(this, event);
+			break;
 		}
 
 		return true;
@@ -171,6 +177,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				menu.findItem(R.id.epg_item_menu_live_tv).setVisible(true);
 			}
 
+		menu.add(MENU_GROUP_SHARE, MENU_SHARE, 0, R.string.share);
 		//}
 
 	}
