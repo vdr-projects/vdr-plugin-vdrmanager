@@ -9,6 +9,7 @@
   <string name="epg_list_search_label">Search results</string>
   
   <!-- create timer -->
+  <string name="epg_event_share_text">Share</string>
   <string name="epg_event_imdb_text">IMDB Search</string>
   <string name="epg_eent_livetv_text">Stream</string>
   <string name="epg_event_create_timer_text">Add timer</string>
