@@ -10,10 +10,24 @@ import de.bjusystems.vdrmanager.data.Timer;
  */
 public class SetTimerClient extends SvdrpClient<Timer> {
 
+	public enum TimerOperation {
+		CREATE("C"),//
+		DELETE("D"),//
+		MODIFY("M");//
+		private String command;
+		private TimerOperation(String command){
+			this.command = command;
+		}
+		public String getCommand(){
+			return this.command;
+		}
+		
+	}
+	
 	/** channel names for timer */
 	Timer timer;
 	/** timer should be deleted */
-	boolean deleteTimer;
+	private TimerOperation timerOperation;
 
 	/**
 	 * Constructor
@@ -21,10 +35,10 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 	 * @param port port
 	 * @param ssl use ssl
 	 */
-	public SetTimerClient(final Timer timer, final boolean deleteTimer) {
+	public SetTimerClient(final Timer timer, TimerOperation op) {
 		super();
 		this.timer = timer;
-		this.deleteTimer = deleteTimer;
+		this.timerOperation = op;
 	}
 
 	/**
@@ -36,12 +50,11 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 		final StringBuilder command = new StringBuilder();
 
 		command.append("timer ");
-		if (deleteTimer) {
-			command.append("-");
-		}
+		command.append(timerOperation.getCommand());
+		
 		command.append(timer.getNumber());
 		command.append(" ");
-		command.append(timer.toCommandLine());
+		command.append(timer.toCommandLine(timerOperation));
 
 		runCommand(command.toString());
 	}
