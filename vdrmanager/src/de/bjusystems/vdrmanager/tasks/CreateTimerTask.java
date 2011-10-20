@@ -6,14 +6,14 @@ import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 
-public abstract class DeleteTimerTask extends AsyncProgressTask<Timer> {
+public abstract class CreateTimerTask extends AsyncProgressTask<Timer> {
 
-	public DeleteTimerTask(final Activity activity, final Timer timer) {
-		super(activity, new SetTimerClient(timer, TimerOperation.DELETE) {
+	public CreateTimerTask(final Activity activity, final Timer timer) {
+		super(activity, new SetTimerClient(timer, TimerOperation.CREATE) {
 			@Override
 			public int getProgressTextId() {
-				return R.string.progress_timer_delete;
-			}
+					return R.string.progress_timer_save;
+				}
 		});
 	}
 }
