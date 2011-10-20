@@ -8,6 +8,7 @@ import android.app.Application;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Timer;
 
 public class VdrManagerApp extends Application {
@@ -19,16 +20,17 @@ public class VdrManagerApp extends Application {
 	}
 
 	private EpgListState epgListState;
-	private Epg currentEvent;
+	private Event currentEvent;
 	private Timer currentTimer;
 	private Channel currentChannel;
 	
-	private List<Epg> currentEpgList = new ArrayList<Epg>();
-	public List<Epg> getCurrentEpgList() {
+	private List<Event> currentEpgList = new ArrayList<Event>();
+	
+	public List<Event> getCurrentEpgList() {
 		return currentEpgList;
 	}
 
-	public void setCurrentEpgList(List<Epg> currentEpgList) {
+	public void setCurrentEpgList(List<Event> currentEpgList) {
 		this.currentEpgList = currentEpgList;
 	}
 
@@ -51,18 +53,18 @@ public class VdrManagerApp extends Application {
 		this.epgListState = EpgListState.EPG_TIME;
 	}
 
-	public Epg getCurrentEvent() {
+	public Event getCurrentEvent() {
 		return currentEvent;
 	}
 
-	public void setCurrentEvent(final Epg currentEvent) {
+	public void setCurrentEvent(final Event currentEvent) {
 		clear();
 		this.currentEvent = currentEvent;
-		if (currentEvent.getTimer() != null) {
-			this.currentTimer = currentEvent.getTimer();
-		} else {
-			this.currentTimer = new Timer(currentEvent);
-		}
+		//if (currentEvent.getTimer() != null) {
+			//this.currentTimer = currentEvent.getTimer();
+		//} else {
+			//this.currentTimer = new Timer(currentEvent);
+		//}
 	}
 
 	public Timer getCurrentTimer() {
