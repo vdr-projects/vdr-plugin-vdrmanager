@@ -1,5 +1,6 @@
 package de.bjusystems.vdrmanager.data;
 
+import de.bjusystems.vdrmanager.gui.Utils;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 
 public class EventFormatter {
@@ -29,16 +30,9 @@ public class EventFormatter {
 		if(onlyStartTime == false){
 			this.time += " - " + stop;
 		}
-		this.title = mapSpecialChars(event.getTitle());
-		this.shortText = mapSpecialChars(event.getShortText());
-		this.description = mapSpecialChars(event.getDescription());
-	}
-
-	private static String mapSpecialChars(String src){
-		if(src == null){
-			return "";
-		}
-		return src.replace("|##", ":").replace("||#", "\n");
+		this.title = Utils.mapSpecialChars(event.getTitle());
+		this.shortText = Utils.mapSpecialChars(event.getShortText());
+		this.description = Utils.mapSpecialChars(event.getDescription());
 	}
 
 	public String getShortText() {

@@ -16,50 +16,49 @@ import android.util.Pair;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
+import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 
 public class Utils {
 
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
 			Color.RED);
-	
-	
 
-	public static CharSequence highlight(String where, String what){
-		if(TextUtils.isEmpty(what)){
+	public static CharSequence highlight(String where, String what) {
+		if (TextUtils.isEmpty(what)) {
 			return where;
 		}
-		
+
 		String str = where.toLowerCase();
-			what = what.toLowerCase();
-			int idx = str.indexOf(what);
-			if(idx == -1){
-				return where;
-			}
-			SpannableString ss = new SpannableString(where);
-			ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
-						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			return ss;
-	}
-	
-	public static Pair<Boolean,CharSequence> highlight2(String where, String what){
-		if(TextUtils.isEmpty(what)){
-			return Pair.create(Boolean.FALSE, (CharSequence)where);
+		what = what.toLowerCase();
+		int idx = str.indexOf(what);
+		if (idx == -1) {
+			return where;
 		}
-		
-		String str = where.toLowerCase();
-			what = what.toLowerCase();
-			int idx = str.indexOf(what);
-			if(idx == -1){
-				return Pair.create(Boolean.FALSE, (CharSequence)where);
-			}
-			SpannableString ss = new SpannableString(where);
-			ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
-						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			return Pair.create(Boolean.TRUE, (CharSequence)ss);
+		SpannableString ss = new SpannableString(where);
+		ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		return ss;
 	}
-	
-	
+
+	public static Pair<Boolean, CharSequence> highlight2(String where,
+			String what) {
+		if (TextUtils.isEmpty(what)) {
+			return Pair.create(Boolean.FALSE, (CharSequence) where);
+		}
+
+		String str = where.toLowerCase();
+		what = what.toLowerCase();
+		int idx = str.indexOf(what);
+		if (idx == -1) {
+			return Pair.create(Boolean.FALSE, (CharSequence) where);
+		}
+		SpannableString ss = new SpannableString(where);
+		ss.setSpan(HIGHLIGHT_TEXT, idx, idx + what.length(),
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		return Pair.create(Boolean.TRUE, (CharSequence) ss);
+	}
+
 	public static int getProgress(Date start, Date stop) {
 		long now = System.currentTimeMillis();
 		return getProgress(now, start.getTime(), stop.getTime());
@@ -130,11 +129,18 @@ public class Utils {
 		String sf = Preferences.get().getStreamFormat();
 		String ext = activity.getString(R.string.remux_title);
 		new AlertDialog.Builder(activity)
-				.setTitle(R.string.stream_via_as)//
+				.setTitle(R.string.stream_via_as)
+				//
 				.setItems(
 						new String[] {
 								activity.getString(R.string.stream_as, sf),
-								activity.getString(R.string.stream_via, ext) },//TODO add here what will be used
+								activity.getString(R.string.stream_via, ext) },// TODO
+																				// add
+																				// here
+																				// what
+																				// will
+																				// be
+																				// used
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -163,5 +169,35 @@ public class Utils {
 		int minuts = (int) (millis / 1000 / 60);
 		return minuts;
 	}
+
+	public static void shareEvent(Activity activity, Event event) {
+		final Intent share = new Intent(android.content.Intent.ACTION_SEND);
+		share.setType("text/plain");
+		StringBuilder sb = new StringBuilder();
+		sb.append(event.getTitle());
+		sb.append("\n");
+		EventFormatter ef = new EventFormatter(event, false);
+		sb.append(ef.getDate()).append(" ").append(ef.getTime());
+		String title = sb.toString();
+		share.putExtra(android.content.Intent.EXTRA_SUBJECT, sb.toString());
+		sb = new StringBuilder();
+		sb.append(title).append("\n\n");
+		sb.append(ef.getShortText());
+		sb.append("\n\n");
+		sb.append(ef.getDescription());
+		sb.append("\n");
+		share.putExtra(android.content.Intent.EXTRA_TEXT, sb.toString());
+		activity.startActivity(Intent.createChooser(share,
+				activity.getString(R.string.share_chooser)));
+	}
+	
+
+	public static String mapSpecialChars(String src){
+		if(src == null){
+			return "";
+		}
+		return src.replace("|##", ":").replace("||#", "\n");
+	}
+
 
 }
