@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
+
 /**
  * Class for timer data
  * @author bju
@@ -27,7 +29,6 @@ public class Timer extends BaseEvent {
 	 * @param channels list of channels
 	 */
 	public Timer(final String timerData) {
-		super(null);
 
 		final String[] values = timerData.split(":");
 
@@ -49,12 +50,19 @@ public class Timer extends BaseEvent {
 
 		// title and description
 		this.title = values[8];
+		
 		this.description = values.length > 9 ? values[9] : "";
+		
+		this.shortText = values.length > 10 ? values[10] : "";
+		
+		if(values.length > 11){
+			this.description = values[11];
+		}
+	
+		
 	}
 
-	public Timer(final Epg event) {
-		super(event);
-
+	public Timer(final Event event) {
 		final Preferences prefs = Preferences.getPreferences();
 
 		this.number = 0;
@@ -71,7 +79,7 @@ public class Timer extends BaseEvent {
 		this.description = event.getDescription();
 	}
 
-	public String toCommandLine() {
+	public String toCommandLine(TimerOperation op) {
 
 		final StringBuilder line = new StringBuilder();
 
@@ -90,7 +98,9 @@ public class Timer extends BaseEvent {
 		line.append(priority).append(":");
 		line.append(lifetime).append(":");
 		line.append(title).append(":");
-		line.append(description);
+		if(op != TimerOperation.DELETE){
+			line.append(description);
+		}
 
 		return line.toString();
 	}

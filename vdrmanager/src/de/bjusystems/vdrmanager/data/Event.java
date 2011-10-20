@@ -20,5 +20,5 @@ public interface Event {
 	String getShortText();
 	Date getStart();
 	Date getStop();
-	TimerState getTimerState();
+//	TimerState getTimerState();
 }

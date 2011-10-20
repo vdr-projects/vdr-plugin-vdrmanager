@@ -11,10 +11,7 @@ public class Epg extends BaseEvent {
 	private Timer timer;
 
 	public Epg(final String line) {
-		super(null);
-		
 		final String[] words = line.split(":");
-
 		channelNumber = words[0].substring(1);
 		channelName = words[1];
 		start = new Date(Long.parseLong(words[2])*1000);
