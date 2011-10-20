@@ -16,6 +16,7 @@ public:
   static string GetChannelEvents(string args);
   static string GetTimeEvents(string args);
   static string GetRecordings(string args);
+  static string DelRecording(string args);
   static string SetTimer(string args);
   static string SearchEvents(string args);
   static string ToUpper(string text);
@@ -29,6 +30,7 @@ private:
   static string GetRecordingsIntern();
   static string GetChannelsIntern(string wantedChannels);
   static string GetEventsIntern(string wantedChannels, string when);
+  static string DelRecordingIntern(string index);
   static string SetTimerIntern(string args);
   static string SearchEventsIntern(string wantedChannels, string pattern);
   static bool IsWantedEvent(cEvent * event, string pattern);
