@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 public abstract class BaseEvent implements Event {
 
-	protected Event event;
 	protected String channelNumber;
 	protected String channelName;
 	protected String title;
@@ -14,15 +13,19 @@ public abstract class BaseEvent implements Event {
 	protected String description;
 	protected Date start;
 	protected Date stop;
-
-	public Event getEvent() {
-		return event;
+	
+	public BaseEvent(){
+		
 	}
 
-	public void setEvent(Event event) {
-		this.event = event;
+	public Timer createTimer() {
+		return new Timer(this);
 	}
-
+	
+	public TimerState getTimerState() {
+		return TimerState.None;
+	}
+	
 	public void setChannelNumber(String channelNumber) {
 		this.channelNumber = channelNumber;
 	}
@@ -52,7 +55,13 @@ public abstract class BaseEvent implements Event {
 	}
 
 	public BaseEvent(Event event) {
-		this.event = event;
+		channelNumber = event.getChannelNumber();
+		channelName = event.getChannelName();
+		title = event.getTitle();
+		shortText = event.getShortText();
+		description = event.getDescription();
+		start = event.getStart();
+		stop = event.getStop();
 	}
 
 	public String getChannelNumber() {

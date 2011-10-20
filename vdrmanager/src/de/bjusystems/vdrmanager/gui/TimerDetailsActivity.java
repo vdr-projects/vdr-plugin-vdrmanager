@@ -120,7 +120,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 					.getText().toString());
 
 			// create client for saving the timer
-			setTimerClient = new SetTimerClient(timer, false);
+			//setTimerClient = new SetTimerClient(timer, false);
 
 			// create backgound task
 			final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(

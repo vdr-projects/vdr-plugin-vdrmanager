@@ -1,21 +1,47 @@
 package de.bjusystems.vdrmanager.data;
 
-import java.util.Date;
-
 import de.bjusystems.vdrmanager.gui.Utils;
 
 
+/**
+ * @author lado
+ *
+ * TODO auf Event Interface umstellen und die Aufrufen an event delegieren. Das hier ist nicht gut.
+ */
 public class EventListItem extends BaseEvent {
+
+	
+	Event event;
+	
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
+	}
 
 	private final Recording rec;
 	private final Timer timer;
 	private final Epg epg;
 	private final String header;
 	
+//	
+//	public EventListItem(final Event event){
+//		if(event instanceof Recording){
+//			this((Recording)event);
+//		} else if (event instanceof Timer){
+//			this((Timer)event);
+//		} else {
+//			this((Epg)event);			
+//		}
+//		throw new IllegalArgumentException("Uknown event type " + event);
+//	}
 
 
 	public EventListItem(final Recording rec) {
 		super(rec);
+		event = rec;
 		this.header = null;
 		this.rec = rec;
 		this.epg = null;
@@ -24,6 +50,7 @@ public class EventListItem extends BaseEvent {
 
 	public EventListItem(final Timer timer) {
 		super(timer);
+		event = timer;
 		this.header = null;
 		this.timer = timer;
 		this.epg = null;
@@ -32,14 +59,22 @@ public class EventListItem extends BaseEvent {
 
 	public EventListItem(final Epg epg) {
 		super(epg);
+		event = epg;
 		this.header = null;
 		this.timer = null;
 		this.epg = epg;
 		this.rec = null;
 	}
+	
+	@Override
+	public TimerState getTimerState() {
+		if(epg != null){
+			return epg.getTimerState();
+		}
+		return super.getTimerState();
+	}
 
 	public EventListItem(final String header) {
-		super(null);
 		this.header = header;
 		this.timer = null;
 		this.epg = null;
@@ -54,36 +89,9 @@ public class EventListItem extends BaseEvent {
 		return timer != null;
 	}
 
-	public Date getStart() {
-		return event != null ? event.getStart() : null;
-	}
-
-	public Date getStop() {
-		return event != null ? event.getStop() : null;
-	}
-
-	public String getChannelNumber() {
-		return event != null ? event.getChannelNumber() : null;
-	}
-
-	public String getChannelName() {
-		return event != null ? event.getChannelName() : null;
-	}
-
-	public String getTitle() {
-		return event != null ? event.getTitle() : null;
-	}
-
-	public String getDescription() {
-		return event != null ? event.getDescription() : null;
-	}
 
 	public String getHeader() {
 		return header;
-	}
-
-	public TimerState getTimerState() {
-		return event != null ? event.getTimerState() : TimerState.None;
 	}
 
 	public Timer getTimer() {
@@ -94,12 +102,12 @@ public class EventListItem extends BaseEvent {
 		return epg;
 	}
 
-	public Event getEvent() {
-		return event;
-	}
-	
+//	public Event getEvent() {
+//		return event;
+//	}
+//	
 	public boolean isLive(){
-		return Utils.isLive(event);
+		return Utils.isLive(this);
 	}
 
 	@Override
@@ -108,16 +116,13 @@ public class EventListItem extends BaseEvent {
 			return "Header: " + header;
 		}
 
-		final EventFormatter formatter = new EventFormatter(event);
+		final EventFormatter formatter = new EventFormatter(this);
 		final StringBuilder text = new StringBuilder();
 		text.append(isTimer() ? "Timer: " : "Event: ");
-		text.append("Channel: ").append(event.getChannelNumber());
-		text.append(" (").append(event.getChannelName()).append("), ");
+		text.append("Channel: ").append(getChannelNumber());
+		text.append(" (").append(getChannelName()).append("), ");
 		text.append("Zeit: ").append(formatter.getDate()).append(" ").append(formatter.getTime());
 		return text.toString();
 	}
 
-	public String getShortText() {
-		return event != null ? event.getShortText() : null;
-	}
 }

@@ -20,8 +20,10 @@ import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
@@ -64,17 +66,17 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		// current event
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		epgs = app.getCurrentEpgList();
-		Epg epg = app.getCurrentEvent();
+		Event epg = app.getCurrentEvent();
 	
 		
 		counter = 0;
-		for(Epg e : epgs){
+		for(Event e : epgs){
 			if(epg == e){
 				break;
 			}
 			counter++;
 		}
-		
+				
 
 		
 		new AsyncTask<Void,Void,Void>(){
@@ -102,7 +104,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		app.clearActivitiesToFinish();
 	}
 
-	public void publishEPG(Epg event) {
+	public void publishEPG(Event event) {
 		
 		String cn = event.getChannelName();
 		
@@ -177,7 +179,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 //		setThisAsOnClickListener(R.id.epg_event_right);
 
 		// set button text
-		if (event.getTimer() == null) {
+		if (event instanceof Timer) {
 			// timeButton.setText(R.string.epg_event_create_timer_text);
 		} else {
 			// timeButton.setText(R.string.epg_event_modify_timer_text);
@@ -213,7 +215,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
-			Epg event = app.getCurrentEvent();
+			Event event = app.getCurrentEvent();
 			Utils.stream(this, event.getChannelNumber());
 			break;
 		case R.id.epg_event_create_timer:
@@ -241,7 +243,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	}
 
 	private void prevEPG() {
-		Epg epg;
+		Event epg;
 		if (counter == 0) {
 			epg = epgs.get(0);
 		} else {
@@ -252,7 +254,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
-	List<Epg> epgs = null;
+	List<Event> epgs = null;
 	int counter = 0;
 
 	public void initEPGs() {
@@ -260,10 +262,10 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		if (epgs != null) {
 			return;
 		}
-		epgs = new ArrayList<Epg>();
+		epgs = new ArrayList<Event>();
 
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		final Epg event = app.getCurrentEvent();
+		final Event event = app.getCurrentEvent();
 		EpgClient c = new EpgClient(new Channel() {
 			@Override
 			public String getName() {
@@ -289,7 +291,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		}
 
 		epgs.addAll(e);
-		Epg fe = epgs.get(0);
+		Event fe = epgs.get(0);
 		if (event.getStart().equals(fe.getStart()) == false) {
 			epgs.set(0, event);
 			;
@@ -300,7 +302,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		if(counter < epgs.size() - 1){
 			counter ++ ;
 		}
-		Epg epg = epgs.get(counter);
+		Event epg = epgs.get(counter);
 		publishEPG(epg);
 	}
 

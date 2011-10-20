@@ -14,6 +14,7 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
@@ -27,10 +28,8 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
  * 
  * @author bju
  */
-public class EpgSearchListActivity extends BaseEpgListActivity implements
+public class EpgSearchListActivity extends BaseEventListActivity<Epg> implements
 		OnItemClickListener, SvdrpAsyncListener<Epg> {
-
-	public List<Epg> results;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -43,9 +42,9 @@ public class EpgSearchListActivity extends BaseEpgListActivity implements
 				highlight = query.trim();
 			}
 		}
-		adapter = new ChannelEventAdapter(this);
+		adapter = new TimeEventAdapter(this);
 		adapter.setHideDescription(false);
-
+		startEpgQuery();
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
 		listView.setAdapter(adapter);
@@ -62,7 +61,7 @@ public class EpgSearchListActivity extends BaseEpgListActivity implements
 	protected void onResume() {
 		super.onResume();
 		// adapter.notifyDataSetChanged();
-		 startEpgQuery();
+	
 	}
 
 
@@ -95,6 +94,8 @@ public class EpgSearchListActivity extends BaseEpgListActivity implements
 		// start task
 		task.run();
 	}
+	
+	
 
 	/*
 	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
@@ -103,14 +104,14 @@ public class EpgSearchListActivity extends BaseEpgListActivity implements
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
-	protected void finishedSuccess() {
+	protected boolean finishedSuccess() {
 		adapter.clear();
 		adapter.highlight = this.highlight;
 		
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		results = epgClient.getResults();
-		for (Epg e : results) {
+		sortItemsByTime(results);
+		for (Event e : results) {
 			cal.setTime(e.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -118,14 +119,14 @@ public class EpgSearchListActivity extends BaseEpgListActivity implements
 				adapter.add(new EventListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem(e));
+			adapter.add(new EventListItem((Epg)e));
 		}
 		listView.setSelectionAfterHeaderView();
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
+		dismiss(progress);
+		return results.isEmpty() == false;
 	}
+	
+	
 
 	public void svdrpException(final SvdrpException exception) {
 		if (progress != null) {

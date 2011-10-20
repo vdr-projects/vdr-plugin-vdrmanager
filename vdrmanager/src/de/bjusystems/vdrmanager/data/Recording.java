@@ -6,7 +6,6 @@ import java.util.Date;
 public class Recording extends BaseEvent{
 	
 	public Recording(String line)  {
-		super(null);
 		final String[] words = line.split(":");
 		start = new Date(Long.parseLong(words[0])*1000);
 		stop = new Date(Long.parseLong(words[1]) * 1000);

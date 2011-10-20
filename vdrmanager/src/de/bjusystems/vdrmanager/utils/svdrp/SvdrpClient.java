@@ -236,11 +236,13 @@ public abstract class SvdrpClient<Result> {
 			informListener(SvdrpEvent.COMMAND_SENDING, null);
 			writeLine(command);
 			informListener(SvdrpEvent.COMMAND_SENT, null);
-
+			Log.i(TAG, SvdrpEvent.COMMAND_SENT +":" + command);
+			
 			// read first line
 			String line = readLine();
 			if (!line.startsWith("START")) {
-				throw new IOException("Answer not wellformed");
+				Log.w(TAG,line);
+				throw new IOException("Answer not wellformed: " + line);
 			}
 
 			// read answer lines
@@ -259,12 +261,22 @@ public abstract class SvdrpClient<Result> {
 
 				// error?
 				if (line.startsWith("!ERROR")) {
+					Log.w(TAG, line);
 					informListener(SvdrpEvent.ERROR, null);
 					break;
 				}
 
 				// delegate analysis
-				final Result result = parseAnswer(line);
+				Result result = null;
+				try {
+					result = parseAnswer(line);
+				} catch(Exception ex){
+					Log.w(TAG, ex);
+					Log.w(TAG, "line: " + line);
+					informListener(SvdrpEvent.ERROR, null);
+					disconnect();
+					break;
+				}
 				if (result != null) {
 					results.add(result);
 					if (resultInfoEnabled) {
@@ -281,6 +293,7 @@ public abstract class SvdrpClient<Result> {
 
 		} catch (final Exception e) {
 			// throw new SvdrpException(e);
+			Log.w(TAG, e);
 			informListener(SvdrpEvent.FINISHED_ABNORMALY, null);
 		}
 	}

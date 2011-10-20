@@ -9,6 +9,7 @@
   <string name="epg_item_menu_timer_modify">Modify timer</string>
   <string name="epg_item_menu_timer_enable">Enable timer</string>
   <string name="epg_item_menu_timer_disable">Disable timer</string>
-  <string name="epg_no_items">Nothing there…</string>
+  <string name="epg_no_items">Nothing found…</string>
+  <string name="epg_client_errors">An error occurred, check logs…</string>
   
 </resources>
