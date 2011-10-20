@@ -50,6 +50,10 @@ string cHelpers::SetTimer(string args) {
   return SafeCall(SetTimerIntern, args);
 }
 
+string cHelpers::DelRecording(string args) {
+  return SafeCall(DelRecordingIntern, args);
+}
+
 string cHelpers::SearchEvents(string args) {
 
   args = Trim(args);
@@ -172,6 +176,23 @@ string cHelpers::GetEventsIntern(string wantedChannels, string when) {
   return result + "END\r\n";
 }
 
+string cHelpers::DelRecordingIntern(string args) {
+  
+  if(args.size() == 0){
+    return "!ERROR:DelRecording;empty args\r\n";
+  }
+
+  int index = atoi(args.c_str());
+  
+  cRecording * r = Recordings.Get(index);
+
+  if(!r){
+    return "!ERROR:DelRecording;Wrong recording index -> "+args+"\r\n";
+  }
+  Recordings.DelByName(r->FileName());
+  return "START\r\nEND\r\n";
+}
+
 string cHelpers::SetTimerIntern(string args) {
 
   // separete timer number
@@ -288,25 +309,36 @@ string cHelpers::ToText(cRecording * recording){
   
   time_t startTime = event->StartTime();
   time_t endTime = event->EndTime();
+  
+  sprintf(buf, "%d", recording->Index());
+  result = buf;
+  result += ":";
 
   sprintf(buf, "%lu", startTime);
   result += buf;
   result += ":";
+
   sprintf(buf, "%lu", endTime);
   result += buf;
   result += ":";
-  sprintf(buf, "%d", DirSizeMB(recording->FileName()));
-  result += buf;
-  result += ":";
+
   result += info -> ChannelName();
   result += ":";
+
   result += MapSpecialChars(event->Title());
   result += ":";
+
   result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
   result += ":";
+
   result += MapSpecialChars(event->Description() ? event->Description() : "");
   result += ":";
-  result += recording->FileName();
+
+  result += MapSpecialChars(recording->FileName());
+  result += ":";
+
+  sprintf(buf, "%d", DirSizeMB(recording->FileName()));
+  result += buf;
   result += "\r\n";
   return result;
 }
