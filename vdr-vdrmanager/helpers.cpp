@@ -177,38 +177,48 @@ string cHelpers::SetTimerIntern(string args) {
   // separete timer number
   size_t sep = args.find(':');
   if (sep == string::npos) {
-    return "!ERROR\r\n";
+    return "!ERROR:no separator found\r\n";
   }
-  int number = atoi(args.c_str());
-  bool delTimer = number < 0;
-  if (delTimer) {
-    number = -number;
-  }
-  string params = args.substr(sep+1);
+  
+  char c =  args[0];
 
+  string numberstr = args.substr(sep-1,1);
+
+  int number = atoi(numberstr.c_str());
+  
+  string params = args.substr(sep+1);
+ 
+  
   // parse timer
   cTimer * timer = new cTimer;
   if (!timer->Parse(params.c_str())) {
     delete timer;
-    return "!ERROR\r\n";
+    return "!ERROR:can not parse params '"+params+"'\r\n";
+  }
+  
+  cTimer * oldTimer;
+  switch(c){
+  case 'C':     // new timer
+  case 'c':
+    Timers.Add(timer);
+    break;
+  case 'D':
+  case 'd':
+    // delete timer
+    delete timer;
+    oldTimer = Timers.Get(number);
+    Timers.Del(oldTimer, true);
+    break;
+  case 'M':
+  case 'm':
+    // modify
+    oldTimer = Timers.Get(number);
+    oldTimer->Parse(params.c_str());
+    break;
+  default:
+    return "!ERROR:unknown timer command\r\n";
   }
 
-  if (!number) {
-    // new timer
-    Timers.Add(timer);
-  } else {
-    // modify timer
-    delete timer;
-    cTimer * oldTimer = Timers.Get(number);
-    if (!oldTimer) {
-      return "!ERROR\r\n";
-    }
-    if (delTimer) {
-      Timers.Del(oldTimer, true);
-    } else {
-      oldTimer->Parse(params.c_str());
-    }
-  }
   Timers.Save();
 
   return "START\r\nEND\r\n";
@@ -314,7 +324,10 @@ string cHelpers::ToText(cTimer * timer) {
   const cList<cEvent> * events = schedule->Events();
   cEvent * match = NULL;
   for(cEvent * event = events->First(); event; event = events->Next(event)) {
-    if (IsWantedTime(timer->StartTime(), event)) {
+    
+    time_t startTime = event->StartTime();
+    time_t stopTime = startTime + event->Duration();
+    if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
       match = event;
       break;
     }
@@ -348,7 +361,7 @@ string cHelpers::ToText(cTimer * timer) {
   result += MapSpecialChars(timer->File());
   result += ":";
   result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
-  if(match){
+  if(match && false){
     result += ":";
     result += MapSpecialChars(match->ShortText()  ? match->ShortText() : "");
     result += ":";
