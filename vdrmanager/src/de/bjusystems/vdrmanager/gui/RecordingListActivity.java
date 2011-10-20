@@ -115,6 +115,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			say("Sorry, not yet. It would be. File -> "+ rec.getFileName());
 			break;
 		}
+		
+		default:
+			return super.onContextItemSelected(item);
 		}
 		return true;
 	}

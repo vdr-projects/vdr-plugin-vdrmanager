@@ -38,12 +38,13 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
  * 
  */
 public abstract class BaseEventListActivity<T extends Event> extends
-		BaseActivity implements OnItemClickListener,SvdrpAsyncListener<T>,
+		BaseActivity implements OnItemClickListener, SvdrpAsyncListener<T>,
 		SimpleGestureListener {
 
 	public static final int MENU_GROUP_SHARE = 90;
-	
+
 	public static final int MENU_SHARE = 90;
+
 	private SimpleGestureFilter detector;
 
 	protected EpgClient epgClient;
@@ -66,7 +67,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	protected List<Event> results = new ArrayList<Event>();
 
-	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,8 +81,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		currentChannel = getIntent()
 				.getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
-
-	
 
 	/*
 	 * (non-Javadoc)
@@ -104,7 +102,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -117,18 +114,23 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				.getMenuInfo();
 		final EventListItem event = adapter.getItem(info.position);
 
+		int itemId = item.getItemId();
 
-		switch (item.getItemId()) {
+		switch (itemId) {
+
 		case R.id.epg_item_menu_live_tv: {
 			Utils.stream(this, event);
 			break;
 		}
-		case MENU_REFRESH:
+		case MENU_SHARE: {
 			Utils.shareEvent(this, event);
 			break;
 		}
+		default:
+			return super.onContextItemSelected(item);
+		}
 
-		return true;
+		return true; 
 	}
 
 	/*
@@ -167,18 +169,18 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		//if (v.getId() == R.id.whatson_list) {
-			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		// if (v.getId() == R.id.whatson_list) {
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
-			// set menu title
-			final EventListItem item = adapter.getItem(info.position);
-			
-				if (item.isLive()) {
-				menu.findItem(R.id.epg_item_menu_live_tv).setVisible(true);
-			}
+		// set menu title
+		final EventListItem item = adapter.getItem(info.position);
+
+		if (item.isLive()) {
+			menu.findItem(R.id.epg_item_menu_live_tv).setVisible(true);
+		}
 
 		menu.add(MENU_GROUP_SHARE, MENU_SHARE, 0, R.string.share);
-		//}
+		// }
 
 	}
 
@@ -349,7 +351,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		}
 	}
 
-
 	protected void say(int res) {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
 	}
@@ -357,6 +358,5 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	protected void say(String msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
-
 
 }
