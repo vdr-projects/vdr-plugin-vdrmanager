@@ -1,0 +1,11 @@
+Package: vdr-plugin-vdrmanager
+Version: 0.2-1
+Architecture: i386
+Maintainer: root <root@unknown>
+Installed-Size: 140
+Depends: libc6 (>= 2.4), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1), vdr-abi-1.7.16-yavdr9
+Section: video
+Priority: extra
+Homepage: <url://example.com>
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

@@ -1,0 +1,8 @@
+This is a "plugin" for the Video Disk Recorder (VDR).
+
+See the file COPYING for license information.
+
+Description:
+
+This helper plugin allows remote programming VDR using
+VDR-Manager running on Android devices.
