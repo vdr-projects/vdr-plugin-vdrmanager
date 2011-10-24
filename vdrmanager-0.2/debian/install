@@ -1,3 +1,0 @@
-libvdr-vdrmanager.so.*    usr/lib/vdr/plugins/
-debian/plugin.vdrmanager.conf   etc/vdr/plugins
-
