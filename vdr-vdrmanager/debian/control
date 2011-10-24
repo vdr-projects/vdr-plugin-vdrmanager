@@ -1,0 +1,15 @@
+Source: vdr-plugin-vdrmanager
+Section: video
+Priority: extra
+Maintainer: root <root@unknown>
+Build-Depends: cdbs, debhelper (>= 7), vdr-dev (>= 1.7.16-24yavdr1), gettext
+Standards-Version: 3.8.3
+Vcs-Svn: svn://svn.debian.org/pkg-vdr-dvb/vdr/vdr-plugin-vdrmanager/trunk/
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-vdr-dvb/vdr/vdr-plugin-vdrmanager/trunk/
+Homepage: <url://example.com>
+
+Package: vdr-plugin-vdrmanager
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${vdr:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

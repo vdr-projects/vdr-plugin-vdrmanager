@@ -1,0 +1,3 @@
+shlibs:Depends=libc6 (>= 2.4), libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.1.1)
+vdr:Depends=vdr-abi-1.7.21-yavdr0
+misc:Depends=
