@@ -2,26 +2,26 @@
 <resources>
   
   <!--  progress -->
-  <string name="progress_connect">Connecting …</string>
+  <string name="progress_connect">Connecting…</string>
   <string name="progress_connect_error">Connection failed</string>
-  <string name="progress_login">Login …</string>
-  <string name="progress_login_error">Login failed</string>
-  <string name="progress_whatson_loading">Loading EPG …</string>
-  <string name="progress_timers_loading">Loading timers …</string>
-  <string name="progress_recordings_loading">Loading recordings …</string>
-  <string name="progress_channels_loading">Loading channels …</string>
-  <string name="progress_disconnect">Disconnecting …</string>
-  <string name="progress_wakeup_sending">Initiating wakeup request …</string>
+  <string name="progress_login">Login.</string>
+  <string name="progress_login_error">Login failed.</string>
+  <string name="progress_whatson_loading">Loading EPG…</string>
+  <string name="progress_timers_loading">Loading timers…</string>
+  <string name="progress_recordings_loading">Loading recordings…</string>
+  <string name="progress_channels_loading">Loading channels…</string>
+  <string name="progress_disconnect">Disconnecting…</string>
+  <string name="progress_wakeup_sending">Initiating wakeup request…</string>
   <string name="progress_wakeup_sent">Wakeup request sent</string>
   <string name="progress_wakeup_error">Error sending wakeup request: %1$s</string>
-  <string name="progress_timer_save">Saving timer …</string>
-  <string name="progress_timer_delete">Deleting timer …</string>
-  <string name="progress_recording_delete">Deleting recording …</string>
-  <string name="progress_timer_enable">Enabling timer …</string>
-  <string name="progress_timer_modify">Updating timer …</string>
-  <string name="progress_timer_disable">Disabling timer …</string>
-  <string name="progress_connect_finished_abnormal">Connection finished abnormal …</string>
+  <string name="progress_timer_save">Saving timer…</string>
+  <string name="progress_timer_delete">Deleting timer…</string>
+  <string name="progress_recording_delete">Deleting recording…</string>
+  <string name="progress_timer_enable">Enabling timer…</string>
+  <string name="progress_timer_modify">Updating timer…</string>
+  <string name="progress_timer_disable">Disabling timer…</string>
+  <string name="progress_connect_finished_abnormal">Connection finished abnormal…</string>
   <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
-  <string name="progress_cache_hit">Loading from cache …</string>
+  <string name="progress_cache_hit">Loader from cache.</string>
   
 </resources>
