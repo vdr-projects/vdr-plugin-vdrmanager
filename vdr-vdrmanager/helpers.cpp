@@ -224,7 +224,7 @@ string cHelpers::DelRecordingIntern(string args) {
 }
 
 string cHelpers::SetTimerIntern(string args) {
-
+  
   // separete timer number
   size_t sep = args.find(':');
   if (sep == string::npos) {
@@ -232,14 +232,25 @@ string cHelpers::SetTimerIntern(string args) {
   }
   
   char c =  args[0];
-
+  
   string numberstr = args.substr(sep-1,1);
-
+  
   int number = atoi(numberstr.c_str());
   
   string params = args.substr(sep+1);
- 
-  
+
+  // Use StringReplace here because if ':' are characters in the
+  // title or aux string it breaks parsing of timer definition
+  // in VDRs cTimer::Parse method.  The '|' will be replaced
+  // back to ':' by the cTimer::Parse() method.
+
+  // Fix was submitted by rofafor: see
+  // http://www.vdr-portal.de/board/thread.php?threadid=100398
+  params = replaceAll(params, "|##", "|");
+
+  //replace also newlines
+  params = replaceAll(params, "||#", "\n");
+
   // parse timer
   cTimer * timer = new cTimer;
   if (!timer->Parse(params.c_str())) {
@@ -657,4 +668,23 @@ string cHelpers::MapSpecialChars(string text) {
     p++;
   }
   return result;
+}
+
+string cHelpers::replaceAll(string where, string what, string replacement){
+  int position = where.find(what);
+  int size = what.size();
+  while ( position != string::npos ) 
+    {
+      where.replace( position, size, replacement );
+      position = where.find(what, position + 1 );
+    } 
+  return where;
+}
+
+string cHelpers::UnMapSpecialChars(string text) {
+
+  string ntext = replaceAll(text, "|##", ":");
+  ntext = replaceAll(ntext, "||#", "\n");
+  
+  return ntext;
 }
