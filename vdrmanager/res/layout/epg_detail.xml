@@ -93,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <TextView      	android:textSize="17dip"
+        <TextView      	android:textSize="16dip"
             android:id="@+id/epg_detail_description"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
