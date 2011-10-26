@@ -4,10 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+
+import de.bjusystems.vdrmanager.StringUtils;
+import de.bjusystems.vdrmanager.app.C;
+import de.bjusystems.vdrmanager.gui.Utils;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 
 /**
  * Class for timer data
+ * 
  * @author bju
  */
 public class Timer extends BaseEvent {
@@ -22,15 +27,18 @@ public class Timer extends BaseEvent {
 	private final int priority;
 	private final int lifetime;
 
-
 	/**
 	 * Constructs a timer from SvdrpHelper result line
-	 * @param timerData result line
-	 * @param channels list of channels
+	 * 
+	 * @param timerData
+	 *            result line
+	 * @param channels
+	 *            list of channels
 	 */
 	public Timer(final String timerData) {
 
-		final String[] values = timerData.split(":");
+		final String[] values = StringUtils.splitPreserveAllTokens(timerData,
+				C.DATA_SEPARATOR);
 
 		// number
 		this.number = Integer.valueOf(values[0].substring(1));
@@ -38,7 +46,7 @@ public class Timer extends BaseEvent {
 		// flags, channel number and channel name
 		this.flags = Integer.valueOf(values[1]);
 		this.channelNumber = values[2];
-		this.channelName = values[3];
+		this.channelName = Utils.mapSpecialChars(values[3]);
 
 		// get start and stop
 		this.start = new Date(Long.parseLong(values[4]) * 1000);
@@ -49,17 +57,19 @@ public class Timer extends BaseEvent {
 		this.lifetime = Integer.valueOf(values[7]);
 
 		// title and description
-		this.title = values[8];
-		
-		this.description = values.length > 9 ? values[9] : "";
-		
-		this.shortText = values.length > 10 ? values[10] : "";
-		
-		if(values.length > 11){
-			this.description = values[11];
+		this.title = Utils.mapSpecialChars(values[8]);
+
+		this.description = values.length > 9 ? values[9] : "";// aux
+
+		// 10 and 11 are optional if there where event with this timer
+		this.shortText = values.length > 10 ? Utils
+				.mapSpecialChars(values[10]) : "";
+
+		if (values.length > 11) {
+			this.description = values[11]; // if real description, set it
 		}
-	
-		
+
+		description = Utils.mapSpecialChars(description);
 	}
 
 	public Timer(final Event event) {
@@ -72,8 +82,10 @@ public class Timer extends BaseEvent {
 		this.priority = prefs.getTimerDefaultPriority();
 		this.lifetime = prefs.getTimerDefaultLifetime();
 
-		this.start = new Date(event.getStart().getTime() - prefs.getTimerPreMargin() * 60000);
-		this.stop = new Date(event.getStop().getTime() + prefs.getTimerPostMargin() * 60000);
+		this.start = new Date(event.getStart().getTime()
+				- prefs.getTimerPreMargin() * 60000);
+		this.stop = new Date(event.getStop().getTime()
+				+ prefs.getTimerPostMargin() * 60000);
 
 		this.title = event.getTitle();
 		this.description = event.getDescription();
@@ -89,26 +101,25 @@ public class Timer extends BaseEvent {
 
 		final Calendar cal = new GregorianCalendar();
 		cal.setTime(start);
-		line.append(String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
-		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
+		line.append(String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
+				cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH)));
+		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY),
+				cal.get(Calendar.MINUTE)));
 
 		cal.setTime(stop);
-		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
+		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY),
+				cal.get(Calendar.MINUTE)));
 
 		line.append(priority).append(":");
 		line.append(lifetime).append(":");
-		line.append(title).append(":");
-		if(op != TimerOperation.DELETE){
-			line.append(description);
-		}
-
+		line.append(Utils.unMapSpecialChars(title));
 		return line.toString();
 	}
 
 	public int getNumber() {
 		return number;
 	}
-	
+
 	public int getPriority() {
 		return priority;
 	}
@@ -138,6 +149,7 @@ public class Timer extends BaseEvent {
 	public boolean isVps() {
 		return (flags & VPS) == VPS;
 	}
+
 	public boolean isRecording() {
 		return (flags & RECORDING) == RECORDING;
 	}
