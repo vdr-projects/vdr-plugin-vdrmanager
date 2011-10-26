@@ -1,6 +1,8 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +16,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
@@ -21,6 +24,7 @@ import de.bjusystems.vdrmanager.data.Preferences;
 
 public class Utils {
 
+	public static final List EMPTY_LIST = new ArrayList(0);
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
 			Color.RED);
 
@@ -84,7 +88,7 @@ public class Utils {
 	}
 
 	public static boolean isLive(Event event) {
-		long now = new Date().getTime();
+		long now = System.currentTimeMillis();
 		return now >= event.getStart().getTime()
 				&& now < event.getStop().getTime();
 	}
@@ -182,7 +186,7 @@ public class Utils {
 		share.putExtra(android.content.Intent.EXTRA_SUBJECT, sb.toString());
 		sb = new StringBuilder();
 		sb.append(title).append("\n\n");
-		sb.append(event.getChannelNumber() +" " + event.getChannelName());
+		sb.append(event.getChannelNumber() + " " + event.getChannelName());
 		sb.append("\n\n");
 		sb.append(ef.getShortText());
 		sb.append("\n\n");
@@ -192,14 +196,19 @@ public class Utils {
 		activity.startActivity(Intent.createChooser(share,
 				activity.getString(R.string.share_chooser)));
 	}
-	
 
-	public static String mapSpecialChars(String src){
-		if(src == null){
+	public static String mapSpecialChars(String src) {
+		if (src == null) {
 			return "";
 		}
-		return src.replace("|##", ":").replace("||#", "\n");
+		return src.replace("|##", C.DATA_SEPARATOR).replace("||#", "\n");
 	}
 
+	public static String unMapSpecialChars(String src) {
+		if (src == null) {
+			return "";
+		}
+		return src.replace(C.DATA_SEPARATOR, "|##").replace("\n", "||#");
+	}
 
 }
