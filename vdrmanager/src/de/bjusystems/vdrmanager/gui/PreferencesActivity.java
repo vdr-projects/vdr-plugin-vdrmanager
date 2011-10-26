@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -12,6 +13,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -183,7 +187,22 @@ public class PreferencesActivity extends PreferenceActivity implements
 		if (text == null) {
 			return;
 		}
+		
+		if(isPassword(ep.getEditText())){
+			text = text.replaceAll(".", "*");
+		}
+		
+		setSummary(text, ep);
+	}
 
+	private boolean isPassword(EditText et){
+		if((et.getInputType() & EditorInfo.TYPE_TEXT_VARIATION_PASSWORD) == EditorInfo.TYPE_TEXT_VARIATION_PASSWORD){
+			return true;
+		}
+		return false;
+	}
+	
+	private void setSummary(CharSequence text, DialogPreference ep){
 		CharSequence sm = ep.getSummary();
 		String sum;
 		if (sm != null) {
@@ -193,6 +212,11 @@ public class PreferencesActivity extends PreferenceActivity implements
 		} else {
 			sum = "";
 		}
+		
+		if(TextUtils.isEmpty(text)){
+			text = getString(R.string.prefs_current_value_not_set);
+		}
+		
 		if (isBlank(sum)) {
 			sum = getString(R.string.prefs_current_value_template, text);
 		} else {
@@ -201,30 +225,14 @@ public class PreferencesActivity extends PreferenceActivity implements
 		}
 		ep.setSummary(sum);
 	}
-
+	
 	private void updateSummary(ListPreference ep) {
 		CharSequence text = ep.getEntry();
 
 		if (text == null) {
 			return;
 		}
-
-		CharSequence sm = ep.getSummary();
-		String sum;
-		if (sm != null) {
-			sum = ep.getSummary().toString();
-			sum = substringBeforeLast(sum,
-					getString(R.string.prefs_current_value)).trim();
-		} else {
-			sum = "";
-		}
-		if (isBlank(sum)) {
-			sum = getString(R.string.prefs_current_value_template, text);
-		} else {
-			sum = sum + " "
-					+ getString(R.string.prefs_current_value_template, text);
-		}
-		ep.setSummary(sum);
+		setSummary(text, ep);
 	}
 
 	/**
