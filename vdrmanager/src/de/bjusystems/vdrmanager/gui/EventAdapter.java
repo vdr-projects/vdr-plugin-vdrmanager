@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
@@ -23,6 +22,8 @@ import de.bjusystems.vdrmanager.data.EventListItem;
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		Filterable {
 
+	private final int TYPE_ITEM = 0;
+	private final int TYPE_HEADER = 1;
 	protected final int layout;
 	protected final LayoutInflater inflater;
 	protected final List<EventListItem> items = new ArrayList<EventListItem>();
@@ -39,8 +40,10 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		inflater = LayoutInflater.from(context);
 	}
 
-
-	
+	@Override
+	public int getViewTypeCount() {
+		return 2;
+	}
 
 	@Override
 	public void add(EventListItem object) {
@@ -49,78 +52,103 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	}
 
 	@Override
-	public View getView(final int position, final View convertView,
-			final ViewGroup parent) {
+	public int getItemViewType(int position) {
 
 		// get item
 		final EventListItem item = getItem(position);
 
 		if (item.isHeader()) {
-			return getHeaderView(item, convertView, parent);
-		} else {
-			return getEventView(item, convertView, parent);
+			return TYPE_HEADER;
 		}
-
+		return TYPE_ITEM;
 	}
 
-	private View getEventView(EventListItem item, View convertView,
-			ViewGroup parent) {
+	@Override
+	public View getView(final int position, View convertView,
+			final ViewGroup parent) {
+
+		// get item
+		final EventListItem item = getItem(position);
+
+		Object holder = null;
+		int type = getItemViewType(position);
+		if (convertView == null) {
+			switch (type) {
+			case TYPE_ITEM:
+				convertView = inflater.inflate(layout, null);
+				holder = getEventViewHolder(item, convertView);
+				break;
+			case TYPE_HEADER:
+				convertView = inflater.inflate(R.layout.header_item, null);
+				holder = getHeaderViewHolder(item, convertView);
+				break;
+			}
+			convertView.setTag(holder);
+		} else {
+			holder = convertView.getTag();
+		}
+
+		switch (type) {
+		case TYPE_ITEM:
+			convertView = inflater.inflate(layout, null);
+			holder = getEventViewHolder(item, convertView);
+			break;
+		case TYPE_HEADER:
+			convertView = inflater.inflate(R.layout.header_item, null);
+			holder = getHeaderViewHolder(item, convertView);
+			break;
+		}
+
+		if (type == TYPE_ITEM) {
+			fillEventViewHolder((EventListItemHolder) holder, item);
+		} else {
+			((EventListItemHeaderHolder) holder).header.setText(item
+					.getHeader());
+		}
+		return convertView;
+	}
+
+	private EventListItemHolder getEventViewHolder(EventListItem item, View view) {
 
 		EventListItemHolder itemHolder = new EventListItemHolder();
 
-		// recycle view?
-		View view = convertView;
-		if (view == null || view instanceof ListView == false) {
-			view = inflater.inflate(layout, null);
+		itemHolder = new EventListItemHolder();
 
-			itemHolder = new EventListItemHolder();
+		itemHolder.state = (ImageView) view.findViewById(R.id.timer_item_state);
+		itemHolder.time = (TextView) view.findViewById(R.id.timer_item_time);
+		itemHolder.channel = (TextView) view
+				.findViewById(R.id.timer_item_channel);
+		itemHolder.title = (TextView) view.findViewById(R.id.timer_item_title);
+		itemHolder.progress = (ProgressBar) view
+				.findViewById(R.id.timer_progress);
+		itemHolder.shortText = (TextView) view
+				.findViewById(R.id.timer_item_shorttext);
+		itemHolder.duration = (TextView) view
+				.findViewById(R.id.timer_item_duration);
+		itemHolder.description = (TextView) view
+				.findViewById(R.id.event_item_description);
+		return itemHolder;
+	}
 
-			itemHolder.state = (ImageView) view
-					.findViewById(R.id.timer_item_state);
-			itemHolder.time = (TextView) view
-					.findViewById(R.id.timer_item_time);
-			itemHolder.channel = (TextView) view
-					.findViewById(R.id.timer_item_channel);
-			itemHolder.title = (TextView) view
-					.findViewById(R.id.timer_item_title);
-			itemHolder.progress = (ProgressBar) view
-					.findViewById(R.id.timer_progress);
-			itemHolder.shortText = (TextView) view
-					.findViewById(R.id.timer_item_shorttext);
-			itemHolder.duration = (TextView) view
-					.findViewById(R.id.timer_item_duration);
-			itemHolder.description = (TextView) view
-					.findViewById(R.id.event_item_description);
-			view.setTag(itemHolder);
-		} else {
-			itemHolder = (EventListItemHolder) view.getTag();
-		}
+	public void fillEventViewHolder(EventListItemHolder itemHolder,
+			EventListItem item) {
 
-
-//		itemHolder.title.setVisibility(View.VISIBLE);
 		itemHolder.state.setVisibility(View.VISIBLE);
-		//itemHolder.shortText.setVisibility(View.VISIBLE);
-		//itemHolder.duration.setVisibility(View.VISIBLE);
-		// itemHolder.state.setVisibility(View.);
 		switch (item.getTimerState()) {
 		case Active:
-			//itemHolder.state.setVisibility(View.VISIBLE);
 			itemHolder.state.setImageResource(R.drawable.timer_active);
 			break;
 		case Inactive:
-			//itemHolder.state.setVisibility(View.VISIBLE);
 			itemHolder.state.setImageResource(R.drawable.timer_inactive);
 			break;
 		case Recording:
-			//itemHolder.state.setVisibility(View.VISIBLE);
 			itemHolder.state.setImageResource(R.drawable.timer_recording);
 			break;
 		case None:
-			//itemHolder.state.setVisibility(View.GONE);
 			itemHolder.state.setImageResource(R.drawable.timer_none);
 			break;
 		}
-		
+
 		final EventFormatter formatter = getEventFormatter(item);
 		itemHolder.time.setText(formatter.getTime());
 		if (hideChannelName) {
@@ -147,49 +175,28 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		int p = Utils.getProgress(item);
 		if (p == -1) {
 			itemHolder.progress.setVisibility(View.GONE);
-			// itemHolder.time.setTypeface(null, Typeface.NORMAL);
-			// itemHolder.title.setTypeface(null, Typeface.NORMAL);
-			// itemHolder.shortText.setTypeface(null, Typeface.NORMAL);
 			int dura = Utils.getDuration(item);
 			itemHolder.duration.setText(getContext().getString(
 					R.string.epg_duration_template, dura));
 		} else {
 			itemHolder.progress.setVisibility(View.VISIBLE);
 			itemHolder.progress.setProgress(p);
-			// itemHolder.time.setTypeface(null, Typeface.BOLD);
-			// itemHolder.title.setTypeface(null, Typeface.BOLD);
-			// itemHolder.shortText.setTypeface(null, Typeface.BOLD);
 			int dura = Utils.getDuration(item);
 			int rest = dura - (dura * p / 100);
 			itemHolder.duration.setText(getContext().getString(
 					R.string.epg_duration_template_live, rest, dura));
 		}
-
-		return view;
 	}
 
 	class EventListItemHeaderHolder {
 		public TextView header;
 	}
 
-	private View getHeaderView(EventListItem item, View convertView,
-			ViewGroup parent) {
-
+	private EventListItemHeaderHolder getHeaderViewHolder(EventListItem item,
+			View view) {
 		EventListItemHeaderHolder itemHolder = new EventListItemHeaderHolder();
-
-		// recycle view?
-		View view = convertView;
-		if (view == null || convertView instanceof TextView == false) {
-			view = inflater.inflate(R.layout.header_item, null);
-
-			itemHolder = new EventListItemHeaderHolder();
-
-			itemHolder.header = (TextView) view.findViewById(R.id.header_item);
-		} else {
-			itemHolder = (EventListItemHeaderHolder) view.getTag();
-		}
-		itemHolder.header.setText(item.getHeader());
-		return view;
+		itemHolder.header = (TextView) view.findViewById(R.id.header_item);
+		return itemHolder;
 	}
 
 	protected EventFormatter getEventFormatter(Event event) {
