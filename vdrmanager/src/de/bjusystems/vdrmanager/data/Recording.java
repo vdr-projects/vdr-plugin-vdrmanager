@@ -3,19 +3,24 @@ package de.bjusystems.vdrmanager.data;
 import java.util.Date;
 
 
+import de.bjusystems.vdrmanager.StringUtils;
+import de.bjusystems.vdrmanager.app.C;
+
+import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
+
 public class Recording extends BaseEvent{
 	
 	public Recording(String line)  {
-		final String[] words = line.split(":");
+		final String[] words = StringUtils.splitPreserveAllTokens(line, C.DATA_SEPARATOR);
 		int idx = 0;
 		index = Integer.valueOf(words[idx++]);
 		start = new Date(Long.parseLong(words[idx++]) * 1000);
 		stop = new Date(Long.parseLong(words[idx++]) *  1000);
-		channelName = words[idx++];
-		title = words[idx++];
-		shortText = words[idx++];
-		description = words[idx++];
-		fileName = words[idx++];
+		channelName = mapSpecialChars(words[idx++]);
+		title = mapSpecialChars(words[idx++]);
+		shortText = mapSpecialChars(words[idx++]);
+		description = mapSpecialChars(words[idx++]);
+		fileName = mapSpecialChars(words[idx++]);
 		fileSize = Integer.valueOf(words[idx++]);
 
 	}
