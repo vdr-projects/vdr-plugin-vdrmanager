@@ -20,8 +20,8 @@
   <string name="progress_timer_enable">Enabling timer…</string>
   <string name="progress_timer_modify">Updating timer…</string>
   <string name="progress_timer_disable">Disabling timer…</string>
-  <string name="progress_connect_finished_abnormal">Connection finished abnormal…</string>
+  <string name="progress_connect_finished_abnormal">Connection finished abnormal</string>
   <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
-  <string name="progress_cache_hit">Loader from cache.</string>
+  <string name="progress_cache_hit">Loaded from cache.</string>
   
 </resources>
