@@ -2,8 +2,10 @@
 <resources>
   <string name="common_delete">Delete</string>
   <string name="prefs_current_value">Current:</string>
-  <string name="prefs_current_value_template">Current: %1$s</string>
+  <string name="prefs_current_value_template">\nCurrent: %1$s</string>
+  <string name="prefs_current_value_not_set">&lt;not set&gt;</string>
   <string name="no_connection">No connection</string>
+  <string name="aborted">Connection aborted.</string>
   <string name="no_connection_retry">Retry</string>
   <string name="refresh">Refresh</string>
   <string name="done">Done</string>
