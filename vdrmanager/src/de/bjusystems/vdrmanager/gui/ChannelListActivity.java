@@ -3,15 +3,12 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -19,15 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
@@ -42,14 +36,16 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
  * 
  * @author bju
  */
-public class ChannelListActivity extends BaseActivity implements
+public class ChannelListActivity extends BaseActivity<ExpandableListView> implements
 		OnChildClickListener, OnGroupClickListener, SvdrpAsyncListener<Channel> {
 
+	private static final String TAG = ChannelListActivity.class.getName();
 	ChannelClient channelClient;
+	
 	ChannelAdapter adapter;
+	
 	Preferences prefs;
-	SvdrpProgressDialog progress;
-
+	
 	public static final int MENU_GROUP = 0;
 	public static final int MENU_PROVIDER = 1;
 	public static final int MENU_NAME = 2;
@@ -59,7 +55,7 @@ public class ChannelListActivity extends BaseActivity implements
 	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(
 			1);
 
-	ExpandableListView listView;
+	//ExpandableListView listView;
 
 	// @Override
 	// public boolean onKeyLongPress(int keyCode, KeyEvent event) {
@@ -79,6 +75,12 @@ public class ChannelListActivity extends BaseActivity implements
 	// return super.onKeyUp(keyCode, event);
 	// }
 	//
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,27 +108,12 @@ public class ChannelListActivity extends BaseActivity implements
 	//
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-
-	}
-
-	@Override
 	protected void onPause() {
 		super.onPause();
-		if (channelClient != null) {
-			channelClient.abort();
-		}
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
-		if (groupByDialog != null) {
-			groupByDialog.dismiss();
-		}
 	}
 
 	private void startChannelQuery() {
+		backupViewSelection();
 		startChannelQuery(true);
 	}
 
@@ -140,10 +127,11 @@ public class ChannelListActivity extends BaseActivity implements
 				channelClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog(this, channelClient);
+		progress = new SvdrpProgressDialog<Channel>(this, channelClient);
 
 		// attach listener
 		task.addListener(this);
+		task.addListener(progress);
 
 		// start task
 		task.run();
@@ -152,20 +140,24 @@ public class ChannelListActivity extends BaseActivity implements
 	private void fillAdapter() {
 		switch (groupBy) {
 		case MENU_GROUP:
-			adapter.fill(
-					channelClient.getChannelGroups(),
-					channelClient.getGroupChannels(), groupBy);
-			listView.collapseGroup(0);
+			ArrayList<String> cgs = channelClient.getChannelGroups();
+			adapter.fill(cgs, channelClient.getGroupChannels(), groupBy);
+			if(cgs.size() == 1){
+			listView.expandGroup(0);
+			}
 			updateWindowTitle(
 					getString(R.string.action_menu_channels),
 					getString(R.string.groupby_window_title_templte,
 							getString(R.string.groupby_group)));
 			break;
 		case MENU_PROVIDER:
-			adapter.fill(new ArrayList<String>(channelClient
-					.getProviderChannels().keySet()), channelClient
+			ArrayList<String> gs = new ArrayList<String>(channelClient
+					.getProviderChannels().keySet());
+			adapter.fill(gs, channelClient
 					.getProviderChannels(), groupBy);
-			listView.collapseGroup(0);
+			if(gs.size() == 1){
+				listView.expandGroup(0);
+			}
 			updateWindowTitle(
 					getString(R.string.action_menu_channels),
 					getString(R.string.groupby_window_title_templte,
@@ -190,35 +182,46 @@ public class ChannelListActivity extends BaseActivity implements
 	}
 
 	public void svdrpEvent(final SvdrpEvent event, final Channel result) {
-
-		if (progress != null) {
-			progress.svdrpEvent(event);
-		}
-
 		switch (event) {
+		case ABORTED:
+			say(R.string.aborted);
+			break;
+		case ERROR:
+			say(R.string.epg_client_errors);
+			break;
 		case CONNECTING:
 			break;
 		case CONNECT_ERROR:
+			say(R.string.progress_connect_error);
+			switchNoConnection();
+			break;
+		case FINISHED_ABNORMALY:
+			say(R.string.progress_connect_finished_abnormal);
 			switchNoConnection();
 			break;
 		case LOGIN_ERROR:
 			switchNoConnection();
 			break;
-		case FINISHED_SUCCESS:
 		case CACHE_HIT:
+			say(R.string.progress_cache_hit);
 			fillAdapter();
+			restoreViewSelection();
 			break;
-		case FINISHED_ABNORMALY:
-			switchNoConnection();
+		case FINISHED_SUCCESS:
+			fillAdapter();
+			restoreViewSelection();
 			break;
+
 		}
 	}
+	
 
 	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
+		progress.svdrpException(exception);
+		Log.w(TAG, exception);
+		alert(getString(R.string.vdr_error_text, exception.getMessage()));
 	}
+
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		
@@ -420,12 +423,13 @@ public class ChannelListActivity extends BaseActivity implements
 
 	@Override
 	protected void refresh() {
+		backupViewSelection();
 		startChannelQuery(false);
 	}
 
 	@Override
 	protected void retry() {
-		startChannelQuery(false);
+		refresh();
 	}
 
 	@Override

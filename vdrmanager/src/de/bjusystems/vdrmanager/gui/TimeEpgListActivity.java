@@ -77,9 +77,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-	private void addCustom() {
 
-	}
 
 	private void fillTimeSpinnerValues() {
 		final EpgSearchTimeValues values = new EpgSearchTimeValues(this);
@@ -89,7 +87,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
-	private int currentPostion = 0;
 
 	@Override
 	protected void onPause() {
@@ -97,10 +94,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
@@ -171,8 +164,9 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog(this, epgClient);
+		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
 		// attach listener
+		task.addListener(progress);
 		task.addListener(this);
 
 		// start task

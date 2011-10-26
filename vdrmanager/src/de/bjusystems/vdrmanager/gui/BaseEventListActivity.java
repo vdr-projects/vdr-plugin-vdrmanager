@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -21,7 +22,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Channel;
@@ -38,8 +38,10 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
  * 
  */
 public abstract class BaseEventListActivity<T extends Event> extends
-		BaseActivity implements OnItemClickListener, SvdrpAsyncListener<T>,
-		SimpleGestureListener {
+		BaseActivity<ListView> implements OnItemClickListener,
+		SvdrpAsyncListener<T>, SimpleGestureListener {
+
+	public static final String TAG = BaseEventListActivity.class.getName();
 
 	public static final int MENU_GROUP_SHARE = 90;
 
@@ -51,8 +53,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	protected EventAdapter adapter;
 
-	protected SvdrpProgressDialog progress;
-
 	protected String highlight = null;
 
 	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
@@ -60,8 +60,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	// private static final Date BEGIN = new Date(0);
 
 	protected Channel currentChannel = null;
-
-	protected ListView listView;
 
 	abstract protected int getWindowTitle();
 
@@ -80,6 +78,16 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	private void initChannel() {
 		currentChannel = getIntent()
 				.getParcelableExtra(Intents.CURRENT_CHANNEL);
+	}
+
+	private boolean refreshViewOnResume = false;
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (refreshViewOnResume) {
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	/*
@@ -130,7 +138,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			return super.onContextItemSelected(item);
 		}
 
-		return true; 
+		return true;
 	}
 
 	/*
@@ -167,7 +175,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
 
 		// if (v.getId() == R.id.whatson_list) {
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
@@ -175,12 +182,14 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// set menu title
 		final EventListItem item = adapter.getItem(info.position);
 
+		MenuItem mi = menu.findItem(R.id.epg_item_menu_live_tv);
 		if (item.isLive()) {
-			menu.findItem(R.id.epg_item_menu_live_tv).setVisible(true);
+			mi.setVisible(true);
+		} else {
+			mi.setVisible(false);
 		}
-
 		menu.add(MENU_GROUP_SHARE, MENU_SHARE, 0, R.string.share);
-		// }
+		super.onCreateContextMenu(menu, v, menuInfo);
 
 	}
 
@@ -217,40 +226,48 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (epgClient != null) {
-			epgClient.abort();
-		}
-		if (progress != null) {
-			progress.dismiss();
-			progress = null;
-		}
+		refreshViewOnResume = true;
+		// if (epgClient != null) {
+		// epgClient.abort();
+		// }
+		// if (progress != null) {
+		// progress.dismiss();
+		// progress = null;
+		// }
 	}
 
 	public void svdrpEvent(final SvdrpEvent event, final T result) {
 
-		if (progress != null) {
-			progress.svdrpEvent(event);
-		}
-
 		switch (event) {
+		case ABORTED:
+			alert(R.string.aborted);
+			break;
 		case ERROR:
-			Toast.makeText(this, R.string.epg_client_errors, Toast.LENGTH_SHORT)
-					.show();
-			dismiss(progress);
+			alert(R.string.epg_client_errors);
+			// say(R.string.epg_client_errors);
+			// dismiss(progress);
 			break;
-		case CONNECTING:
-			break;
+		// case CONNECTING:
+		// break;
 		case CONNECTED:
 			results.clear();
 			break;
 		case CONNECT_ERROR:
+			say(R.string.progress_connect_error);
+			switchNoConnection();
+			break;
 		case FINISHED_ABNORMALY:
+			alert(R.string.progress_connect_finished_abnormal);
+			switchNoConnection();
+			break;
 		case LOGIN_ERROR:
 			switchNoConnection();
 			break;
 		case FINISHED_SUCCESS:
 			if (finishedSuccess() == false) {
 				say(R.string.epg_no_items);
+			} else {
+				restoreViewSelection();
 			}
 			break;
 		case RESULT_RECEIVED:
@@ -263,24 +280,23 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		results.add(result);
 	}
 
-	//
-	// @Override
-	// protected void onRestoreInstanceState(Bundle savedInstanceState) {
-	// super.onRestoreInstanceState(savedInstanceState);
-	// int index = savedInstanceState.getInt("INDEX");
-	// int top = savedInstanceState.getInt("TOP");
-	// listView.setSelectionFromTop(index, top);
-	// }
-	//
-	// @Override
-	// protected void onSaveInstanceState(Bundle outState) {
-	// int index = listView.getFirstVisiblePosition();
-	// View v = listView.getChildAt(0);
-	// int top = (v == null) ? 0 : v.getTop();
-	// outState.putInt("INDEX", index);
-	// outState.putInt("TOP", top);
-	// super.onSaveInstanceState(outState);
-	// }
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		int index = savedInstanceState.getInt("INDEX");
+		int top = savedInstanceState.getInt("TOP");
+		listView.setSelectionFromTop(index, top);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		int index = listView.getFirstVisiblePosition();
+		View v = listView.getChildAt(0);
+		int top = (v == null) ? 0 : v.getTop();
+		outState.putInt("INDEX", index);
+		outState.putInt("TOP", top);
+		super.onSaveInstanceState(outState);
+	}
 
 	protected void dismiss(AlertDialog dialog) {
 		if (dialog == null) {
@@ -346,17 +362,8 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	}
 
 	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
-	}
-
-	protected void say(int res) {
-		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
-	}
-
-	protected void say(String msg) {
-		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		Log.w(TAG, exception);
+		alert(getString(R.string.vdr_error_text, exception.getMessage()));
 	}
 
 }

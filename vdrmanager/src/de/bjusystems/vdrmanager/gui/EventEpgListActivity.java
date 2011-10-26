@@ -77,7 +77,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
 		listView.setAdapter(adapter);
-		listView.setFastScrollEnabled(true);
+		//listView.setFastScrollEnabled(true);
 		listView.setTextFilterEnabled(true);
 		registerForContextMenu(listView);
 
@@ -86,12 +86,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// adapter.notifyDataSetChanged();
-		// startEpgQuery();
-	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
@@ -171,9 +165,11 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog(this, epgClient);
+		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
 		// attach listener
+		task.addListener(progress);
 		task.addListener(this);
+
 
 		// start task
 		task.run();
@@ -208,7 +204,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 		}
 		cachedChannel = currentChannel;
-		listView.setSelectionAfterHeaderView();
+		//listView.setSelectionAfterHeaderView();
 		dismiss(progress);
 		return CACHE.isEmpty() == false;
 	}
@@ -252,8 +248,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private void prevEvent() {
 		int pos = channelSpinner.getSelectedItemPosition();
 		if (pos <= 0) {
-			Toast.makeText(this, R.string.navigae_at_the_start,
-					Toast.LENGTH_SHORT).show();
+			say(R.string.navigae_at_the_start);
 			return;
 		}
 		channelSpinner.setSelection(pos - 1, true);

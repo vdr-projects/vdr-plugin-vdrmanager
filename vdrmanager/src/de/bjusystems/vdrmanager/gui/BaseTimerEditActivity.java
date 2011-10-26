@@ -21,7 +21,6 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
@@ -30,7 +29,6 @@ import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
-import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 
 public abstract class BaseTimerEditActivity<T extends Event> extends
@@ -64,24 +62,25 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		case CREATE:
 			tView.modifyButton.setVisibility(View.GONE);
 			tView.saveButton.setVisibility(View.VISIBLE);
-			tView.saveButton.setText(R.string.timer_details_save_title);
+			tView.saveButton.setText(R.string.timer_details_create_title);
 			break;
 		case MODIFY:
 			tView.saveButton.setVisibility(View.GONE);
 			tView.modifyButton.setVisibility(View.VISIBLE);
+			tView.saveButton.setText(R.string.timer_details_save_title);
+			break;
 		}
 
 	}
 
 	private void updateDisplay() {
-		final DateFormatter dateFormatter = new DateFormatter(timer.getStart());
+		EventFormatter f = new EventFormatter(timer,true);
 		tView.channel.setText(timer.getChannelNumber() + " "
 				+ timer.getChannelName());
-		tView.title.setText(timer.getTitle());
-		tView.dateField.setText(dateFormatter.getDateString());
-		tView.startField.setText(dateFormatter.getTimeString());
-		tView.endField.setText(new DateFormatter(timer.getStop())
-				.getTimeString());
+		tView.title.setText(f.getTitle());
+		tView.dateField.setText(f.getDate());
+		tView.startField.setText(f.getTime());
+		tView.endField.setText(f.getStop());
 	}
 
 	protected Timer getTimer(EventListItem item) {
@@ -258,38 +257,44 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 			say(R.string.done);
 			break;
 		}
+		
+		default:
+			super.onClick(view);
 		}
 	}
 
 	private void modifyTimer(Timer timer) {
+		backupViewSelection();
 		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
 			@Override
 			public void finished() {
 				refresh();
-				say(R.string.done);
+				//say(R.string.done);
 			}
 		};
 		task.start();
 	}
 
 	protected void deleteTimer(final Timer timer) {
-
+		backupViewSelection();
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
 			@Override
 			public void finished() {
 				refresh();
-				say(R.string.done);
+				restoreViewSelection();
+				//say(R.string.done);
 			}
 		};
 		task.start();
 	}
 
 	private void createTimer(Timer timer) {
+		backupViewSelection();
 		final CreateTimerTask task = new CreateTimerTask(this, timer) {
 			@Override
 			public void finished() {
 				refresh();
-				say(R.string.done);
+				//say(R.string.done);
 			}
 		};
 		task.start();

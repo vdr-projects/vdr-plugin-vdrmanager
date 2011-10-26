@@ -44,7 +44,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 public class EpgDetailsActivity extends Activity implements OnClickListener,
 		SimpleGestureListener {
 
-	public static String IMDB_URL = "http://www.%s/find?s=all&q=%s";
+	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
 
 	private SimpleGestureFilter detector;
 
@@ -61,6 +61,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		super.onCreate(savedInstanceState);
 
 		Intent i = getIntent();
+	
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
 
 		// Attach view
@@ -84,29 +85,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			counter++;
 		}
 
-		new AsyncTask<Void, Void, Void>() {
-
-			protected void onPreExecute() {
-				// event_left.setEnabled(false);
-				// event_right.setEnabled(false);
-			};
-
-			protected Void doInBackground(Void... params) {
-				initEPGs();
-				return null;
-			};
-
-			protected void onPostExecute(Void result) {
-				// event_left.setEnabled(true);
-				// event_right.setEnabled(true);
-			};
-
-		}.execute((Void) null);
-
 		publishEPG(epg);
-
-		// TODO was ist das?
-		app.clearActivitiesToFinish();
 	}
 
 	private void setState(ImageView view, int res) {
@@ -280,9 +259,10 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
-	List<Event> epgs = null;
+	List<Event> epgs = new ArrayList<Event>();
+	
 	int counter = 0;
-
+/*
 	public void initEPGs() {
 
 		if (epgs != null) {
@@ -323,7 +303,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			;
 		}
 	}
-
+*/
 	private void nextEPG() {
 		if (counter < epgs.size() - 1) {
 			counter++;
