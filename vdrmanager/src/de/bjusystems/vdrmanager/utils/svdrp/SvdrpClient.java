@@ -4,11 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.util.Log;
+import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Preferences;
 
 /**
@@ -35,6 +39,8 @@ public abstract class SvdrpClient<Result> {
 	private final List<Result> results = new ArrayList<Result>();
 	/** should the listener be informed about each received result */
 	private boolean resultInfoEnabled = false;
+
+	private Timer watchDog = new Timer();
 
 	/**
 	 * Parse received answer line
@@ -116,12 +122,22 @@ public abstract class SvdrpClient<Result> {
 	 */
 	protected boolean connect() throws IOException {
 
-		final Preferences prefs = Preferences.getPreferences();
-
+		Preferences prefs = Preferences.get();
 		try {
 			// connect
+			//TODO prefs
 			informListener(SvdrpEvent.CONNECTING, null);
-			socket = new Socket(prefs.getSvdrpHost(), prefs.getSvdrpPort());
+			socket = new Socket();
+			socket.connect(new InetSocketAddress(prefs.getSvdrpHost(), prefs.getSvdrpPort()), 10 * 1000);//8 secs for connect
+			socket.setSoTimeout(15 * 1000);//15 sec for each read 
+			final long delay = C.ONE_MINUTE_IN_MILLIS * 3; //in 3 minutes we abort the communication
+			watchDog.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					Log.w(TAG, "Aborted after " + delay + " ms");
+					abort = true;
+				}
+			}, delay);
 			informListener(SvdrpEvent.CONNECTED, null);
 		} catch (final IOException e) {
 			Log.w(TAG, e);
@@ -236,12 +252,12 @@ public abstract class SvdrpClient<Result> {
 			informListener(SvdrpEvent.COMMAND_SENDING, null);
 			writeLine(command);
 			informListener(SvdrpEvent.COMMAND_SENT, null);
-			Log.i(TAG, SvdrpEvent.COMMAND_SENT +":" + command);
-			
+			Log.i(TAG, SvdrpEvent.COMMAND_SENT + ":" + command);
+
 			// read first line
 			String line = readLine();
 			if (!line.startsWith("START")) {
-				Log.w(TAG,line);
+				Log.w(TAG, line);
 				throw new IOException("Answer not wellformed: " + line);
 			}
 
@@ -270,7 +286,7 @@ public abstract class SvdrpClient<Result> {
 				Result result = null;
 				try {
 					result = parseAnswer(line);
-				} catch(Exception ex){
+				} catch (Exception ex) {
 					Log.w(TAG, ex);
 					Log.w(TAG, "line: " + line);
 					informListener(SvdrpEvent.ERROR, null);
@@ -289,7 +305,11 @@ public abstract class SvdrpClient<Result> {
 			// disconnect
 			disconnect();
 
-			informListener(SvdrpEvent.FINISHED_SUCCESS, null);
+			if (abort) {
+				informListener(SvdrpEvent.ABORTED, null);
+			} else {
+				informListener(SvdrpEvent.FINISHED_SUCCESS, null);
+			}
 
 		} catch (final Exception e) {
 			// throw new SvdrpException(e);
