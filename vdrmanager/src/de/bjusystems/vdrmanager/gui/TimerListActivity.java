@@ -53,10 +53,6 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		startTimerQuery();
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
 
 	@Override
 	protected void onPause() {
@@ -86,7 +82,6 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		// start task
 		task.run();
 	}
-
 
 	@Override
 	protected Timer getTimer(EventListItem item) {
