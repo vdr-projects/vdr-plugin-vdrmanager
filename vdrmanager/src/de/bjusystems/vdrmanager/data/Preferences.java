@@ -8,7 +8,7 @@ import de.bjusystems.vdrmanager.R;
  * Class for all preferences
  * 
  * @author bju, lado
- *
+ * 
  */
 public class Preferences {
 
@@ -81,12 +81,14 @@ public class Preferences {
 
 	/**
 	 * Do not send broadcasts, send directly to the host (router problem)
+	 * 
 	 * @since 0.2
 	 */
 	private String wolCustomBroadcast = "";
 
 	/**
 	 * Whether to show channel numbers in the overviews
+	 * 
 	 * @since 0.2
 	 */
 	private boolean showChannelNumbers = false;
@@ -95,44 +97,39 @@ public class Preferences {
 	 * Use remux ?
 	 */
 	private boolean enableRemux;
-	
+
 	/**
 	 * Remux command
 	 */
 	private String remuxCommand;
-	
+
 	/**
-	 * Remux command  Parameter
+	 * Remux command Parameter
 	 */
 	private String remuxParameter;
-	
+
 	/**
 	 * Quits the app on back button
 	 */
-	private boolean quiteOnBackButton = true; 
-	
-	
+	private boolean quiteOnBackButton = true;
+
 	/**
-	 * Show IMDB buttons, where possible (e.g. EPG Details) 
+	 * Show IMDB buttons, where possible (e.g. EPG Details)
 	 */
 	private boolean showImdbButton = true;
-	
-	
+
 	/**
 	 * On Which imdb site to search?
 	 */
 	private String imdbUrl = "akas.imdb.com";
 
-	
 	public String getImdbUrl() {
 		return imdbUrl;
 	}
 
-
 	public void setImdbUrl(String imdbUrl) {
 		this.imdbUrl = imdbUrl;
 	}
-
 
 	/**
 	 * @return whether to shwo imdb button
@@ -144,10 +141,9 @@ public class Preferences {
 	/** Properties singleton */
 	private static Preferences thePrefs;
 
-	
 	/**
-	 * Whether to send Packets to the custom broadcast address.
-	 * It is used, if the address ist not empty
+	 * Whether to send Packets to the custom broadcast address. It is used, if
+	 * the address ist not empty
 	 * 
 	 * @return
 	 * @since 0.2
@@ -156,7 +152,6 @@ public class Preferences {
 		return wolCustomBroadcast;
 	}
 
-	
 	/**
 	 * Getter for use24hFormat
 	 * 
@@ -376,7 +371,7 @@ public class Preferences {
 		editor.commit();
 
 		// reload
-		loadPreferences(context);
+		init(context);
 	}
 
 	/**
@@ -390,47 +385,42 @@ public class Preferences {
 		return context.getString(R.string.app_name);
 	}
 
-	
-
-	
-	
 	/**
 	 * Show Channel Numbers in the overviews
+	 * 
 	 * @since 0.2
 	 * @return
 	 */
 	public boolean isShowChannelNumbers() {
 		return showChannelNumbers;
 	}
-	
-	
 
 	/**
-	 * getter 
+	 * getter
+	 * 
 	 * @return
 	 */
 	public boolean isEnableRemux() {
 		return enableRemux;
 	}
 
-
 	/**
 	 * getter
+	 * 
 	 * @return
 	 */
 	public String getRemuxCommand() {
 		return remuxCommand;
 	}
 
-
 	/**
 	 * getter
+	 * 
 	 * @return
 	 */
 	public String getRemuxParameter() {
 		return remuxParameter;
 	}
-
 
 	/**
 	 * getter
@@ -441,7 +431,6 @@ public class Preferences {
 		return quiteOnBackButton;
 	}
 
-	
 	/**
 	 * Gets the previous loaded preferences
 	 * 
@@ -450,30 +439,23 @@ public class Preferences {
 	public static Preferences getPreferences() {
 		return thePrefs;
 	}
-	
+
 	/**
 	 * 
 	 * Gets the previous loaded preferences, same as getPreferences();
 	 * 
 	 * @return
 	 */
-	public static Preferences get(){
+	public static Preferences get() {
 		return thePrefs;
 	}
 
-	/**
-	 * Loads all preferences
-	 * 
-	 * @param context
-	 *            Context
-	 * @return Preferences
-	 */
-	public static void loadPreferences(final Context context) {
+	private static void initInternal(final Context context) {
 
 		final Preferences prefs = new Preferences();
 
 		prefs.svdrpHost = getString(context, R.string.vdr_host_key, "0.0.0.0");
-		prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6419);
+		prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6420);
 		prefs.password = getString(context, R.string.vdr_password_key, "");
 		prefs.ssl = getBoolean(context, R.string.vdr_ssl_key, false);
 		prefs.streamPort = getInt(context, R.string.vdr_stream_port, 3000);
@@ -515,24 +497,53 @@ public class Preferences {
 
 		prefs.use24hFormat = getBoolean(context,
 				R.string.gui_enable_24h_format_key, true);
-		
-		prefs.wolCustomBroadcast = getString(context, R.string.wakeup_wol_custom_broadcast_key, "");
 
-		prefs.showChannelNumbers = getBoolean(context, R.string.gui_channels_show_channel_numbers_key, false);
-		
-		prefs.enableRemux = getBoolean(context, R.string.key_remux_enable, false);
-		
-		prefs.remuxCommand =getString(context, R.string.key_remux_command, "EXT");
-		
-		prefs.remuxParameter = getString(context, R.string.key_remux_parameter, "");
-		
-		prefs.quiteOnBackButton = getBoolean(context, R.string.qui_quit_on_back_key, true);
-		
-		prefs.showImdbButton = getBoolean(context, R.string.qui_show_imdb_button_key, true);
-		
+		prefs.wolCustomBroadcast = getString(context,
+				R.string.wakeup_wol_custom_broadcast_key, "");
+
+		prefs.showChannelNumbers = getBoolean(context,
+				R.string.gui_channels_show_channel_numbers_key, false);
+
+		prefs.enableRemux = getBoolean(context, R.string.key_remux_enable,
+				false);
+
+		prefs.remuxCommand = getString(context, R.string.key_remux_command,
+				"EXT");
+
+		prefs.remuxParameter = getString(context, R.string.key_remux_parameter,
+				"");
+
+		prefs.quiteOnBackButton = getBoolean(context,
+				R.string.qui_quit_on_back_key, true);
+
+		prefs.showImdbButton = getBoolean(context,
+				R.string.qui_show_imdb_button_key, true);
+
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
-		
+
 		thePrefs = prefs;
+	}
+
+	/**
+	 * Loads all preferences
+	 * 
+	 * @param context
+	 *            Context
+	 * @return Preferences
+	 */
+	public static void init(final Context context) {
+
+		if (thePrefs != null) {
+			return;
+		}
+
+		synchronized (Preferences.class) {
+			if (thePrefs != null) {
+				return;
+			}
+			initInternal(context);
+		}
+
 	}
 
 	/**
@@ -581,7 +592,6 @@ public class Preferences {
 		return sharedPrefs.getBoolean(context.getString(resId), defValue);
 	}
 
-	
 	/**
 	 * Helper for retrieving string values from preferences
 	 * 
@@ -599,7 +609,7 @@ public class Preferences {
 		return sharedPrefs.getString(context.getString(resId), defValue);
 	}
 
-	public  String getTimeFormat() {
+	public String getTimeFormat() {
 		if (isUse24hFormat()) {
 			return "HH:mm";
 		}
