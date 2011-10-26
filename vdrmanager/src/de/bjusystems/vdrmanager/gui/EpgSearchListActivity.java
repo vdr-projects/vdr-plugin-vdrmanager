@@ -1,7 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.Calendar;
-import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -16,54 +15,64 @@ import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * This class is used for showing what's current running on all channels
  * 
  * @author bju
  */
-public class EpgSearchListActivity extends BaseEventListActivity<Epg> implements
+public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		OnItemClickListener, SvdrpAsyncListener<Epg> {
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
+	private void initSearch(Intent intent){
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			if (TextUtils.isEmpty(query) == false) {
 				highlight = query.trim();
 			}
 		}
-		adapter = new TimeEventAdapter(this);
-		adapter.setHideDescription(false);
+	}
+	
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		initSearch(intent);
+		startSearch();
+	}
+	
+	
+	private void startSearch(){
 		startEpgQuery();
+	}
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		
+		Preferences.init(this);
+		
+		super.onCreate(savedInstanceState);
+
+		
+		Intent intent = getIntent();
+		initSearch(intent);
+		adapter = new TimeEventAdapter(this);
+
 		// Create adapter for EPG list
+		adapter.setHideDescription(false);
 		listView = (ListView) findViewById(R.id.whatson_list);
 		listView.setAdapter(adapter);
-		listView.setFastScrollEnabled(true);
 		listView.setTextFilterEnabled(true);
 		registerForContextMenu(listView);
-
 		// register EPG item click
 		listView.setOnItemClickListener(this);
-
+		startSearch();
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// adapter.notifyDataSetChanged();
-	
-	}
-
 
 
 	public void onNothingSelected(final AdapterView<?> arg0) {
@@ -78,7 +87,7 @@ public class EpgSearchListActivity extends BaseEventListActivity<Epg> implements
 		sp.setTitle(highlight);
 		setTitle(getString(R.string.epg_by_search_param, highlight));
 		epgClient = new EpgClient(sp);
-
+		epgClient.setResultInfoEnabled(true);
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
 
@@ -87,8 +96,9 @@ public class EpgSearchListActivity extends BaseEventListActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog(this, epgClient);
+		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
 		// attach listener
+		task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -126,13 +136,6 @@ public class EpgSearchListActivity extends BaseEventListActivity<Epg> implements
 		return results.isEmpty() == false;
 	}
 	
-	
-
-	public void svdrpException(final SvdrpException exception) {
-		if (progress != null) {
-			progress.svdrpException(exception);
-		}
-	}
 
 	protected void prepareTimer(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
