@@ -2,14 +2,10 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
