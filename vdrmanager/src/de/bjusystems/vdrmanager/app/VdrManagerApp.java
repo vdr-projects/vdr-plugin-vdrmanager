@@ -6,9 +6,9 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Application;
 import de.bjusystems.vdrmanager.data.Channel;
-import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 
 public class VdrManagerApp extends Application {
@@ -42,7 +42,9 @@ public class VdrManagerApp extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Preferences.loadPreferences(this);
 	}
+	
 	
 	public void clear() {
 		this.currentEvent = null;
