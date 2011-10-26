@@ -23,7 +23,7 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		// attach view
 		setContentView(R.layout.vdrmanager);
 
-		Preferences.loadPreferences(this);
+		//Preferences.loadPreferences(this);
 
 		findViewById(R.id.action_menu_channels).setOnClickListener(this);
 		findViewById(R.id.action_menu_recordings).setOnClickListener(this);
