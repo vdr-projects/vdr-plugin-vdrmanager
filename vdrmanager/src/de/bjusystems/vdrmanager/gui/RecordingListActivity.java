@@ -40,7 +40,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		adapter = new RecordingAdapter(this);
 
 		// attach adapter to ListView
-		final ListView listView = (ListView) findViewById(R.id.recording_list);
+		listView = (ListView) findViewById(R.id.recording_list);
 		listView.setAdapter(adapter);
 
 		// set click listener
@@ -55,17 +55,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
-	@Override
 	protected void onPause() {
 		super.onPause();
-		if (recordingClient != null) {
-			recordingClient.abort();
-		}
-		dismiss(progress);
 	}
 
 	@Override
@@ -77,7 +68,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
 
 		if (v.getId() == R.id.recording_list) {
 			final MenuInflater inflater = getMenuInflater();
@@ -90,6 +80,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 			inflater.inflate(R.menu.recording_list_item_menu, menu);
 		}
+		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
@@ -101,7 +92,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		Recording rec = event.getRecording();
 		switch (item.getItemId()) {
 		case R.id.recording_item_menu_delete: {
-			DeleteRecordingTask drt = new DeleteRecordingTask(this,rec) {
+			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
 				@Override
 				public void finished() {
 					dismiss(progress);
@@ -112,10 +103,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			break;
 		}
 		case R.id.recording_item_menu_stream: {
-			say("Sorry, not yet. It would be. File -> "+ rec.getFileName());
+			say("Sorry, not yet. It would be. File -> " + rec.getFileName());
 			break;
 		}
-		
+
 		default:
 			return super.onContextItemSelected(item);
 		}
@@ -132,9 +123,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				recordingClient);
 
 		// create progress dialog
+		
 		progress = new SvdrpProgressDialog(this, recordingClient);
 
+		
 		// attach listener
+		task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -156,7 +150,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	@Override
 	protected int getWindowTitle() {
-		return R.string.remux_title;
+		return R.string.action_menu_recordings;
 	}
 
 	@Override
