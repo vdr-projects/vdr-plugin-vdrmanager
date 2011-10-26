@@ -121,7 +121,7 @@ public class Preferences {
 	/**
 	 * On Which imdb site to search?
 	 */
-	private String imdbUrl = "imdb.de";
+	private String imdbUrl = "akas.imdb.com";
 
 	
 	public String getImdbUrl() {
