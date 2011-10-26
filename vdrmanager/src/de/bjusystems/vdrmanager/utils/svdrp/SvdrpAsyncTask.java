@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
 										extends AsyncTask<Void, Object, Void>
@@ -34,13 +35,13 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
 		try {
 			client.run();
 		} catch (final SvdrpException e) {
-			publishProgress(null, null, e);
+			publishProgress(e);
 		}
 		return null;
 	}
 
 	public void svdrpEvent(final SvdrpEvent event, final Result result) {
-		publishProgress(event, result, null);
+		publishProgress(event, result);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -48,14 +49,16 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
 	protected void onProgressUpdate(final Object... values) {
 		super.onProgressUpdate(values);
 
-		if (values[2] == null) {
+		if (values.length == 2) {
 			for(final SvdrpAsyncListener<Result> listener : listeners) {
 				listener.svdrpEvent((SvdrpEvent)values[0], (Result)values[1]);
 			}
-		} else {
+		} else if(values.length == 1) {
 			for(final SvdrpAsyncListener<Result> listener : listeners) {
-				listener.svdrpException((SvdrpException)values[2]);
+				listener.svdrpException((SvdrpException)values[0]);
 			}
+		} else {
+			Log.w(toString(), "Unknonw count of argument in onProgressUpdate");
 		}
 	}
 }
