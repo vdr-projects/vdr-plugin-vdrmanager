@@ -9,17 +9,18 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 public abstract class AsyncProgressTask<Result> {
 
-	class AsyncProgress extends SvdrpProgressDialog implements SvdrpAsyncListener<Result> {
+	class AsyncProgress extends SvdrpProgressDialog<Result> implements SvdrpAsyncListener<Result> {
 
 		public AsyncProgress(final Activity activity, final SvdrpClient<Result> client) {
 			super(activity, client);
 		}
 
-		public void svdrpEvent(final SvdrpEvent event, final Object result) {
-			svdrpEvent(event);
+		public void svdrpEvent(final SvdrpEvent event, final Result result) {
+			super.svdrpEvent(event, result);
 			switch (event) {
 			case FINISHED_ABNORMALY:
 			case FINISHED_SUCCESS:
+			case ABORTED:
 				AsyncProgressTask.this.finished();
 				break;
 			}
