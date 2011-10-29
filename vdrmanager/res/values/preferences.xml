@@ -1,118 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!-- VDR plugin preferences -->
-	<string name="vdr_preferences">Network settings</string>
-	<string name="vdr_host_title">VDR host</string>
-	<string name="vdr_host_summary">Host running VDR</string>
-	<string name="vdr_port_title">VDR plugin port </string>
-	<string name="vdr_port_summary">Port for connections to VDR plugin</string>
-	<string name="vdr_port_default">6420</string>
-	<string name="vdr_password_title">VDR plugin password</string>
-	<string name="vdr_password_summary">Password for the VDR plugin</string>
-	<string name="vdr_ssl_title">Secure connect</string>
-	<string name="vdr_ssl_summary">Use SSL for connections</string>
+    <!-- VDR plugin preferences -->
+    <string name="vdr_preferences">Network settings</string>
+    <string name="vdr_host_title">VDR host</string>
+    <string name="vdr_host_summary">Host running VDR</string>
+    <string name="vdr_port_title">VDR plugin port </string>
+    <string name="vdr_port_summary">Port for connections to VDR plugin</string>
+    <string name="vdr_port_default">6420</string>
+    <string name="vdr_password_title">VDR plugin password</string>
+    <string name="vdr_password_summary">Password for the VDR plugin</string>
+    <string name="vdr_ssl_title">Secure connect</string>
+    <string name="vdr_ssl_summary">Use SSL for connections</string>
 
-	<!-- channel filter preferences -->
-	<string name="channel_filter_preferences">Channel settings</string>
-	<string name="channel_filter_filter_title">Limit channels</string>
-	<string name="channel_filter_filter_summary">Use only given channels</string>
-	<string name="channel_filter_last_title">Channel filter</string>
-	<string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10</string>
+    <!-- channel filter preferences -->
+    <string name="channel_filter_preferences">Channel settings</string>
+    <string name="channel_filter_filter_title">Limit channels</string>
+    <string name="channel_filter_filter_summary">Use only given channels</string>
+    <string name="channel_filter_last_title">Channel filter</string>
+    <string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10</string>
 
-	<!-- wakeup -->
-	<string name="wakeup_preferences">Remote VDR host wakeup</string>
-	<string name="wakeup_enabled_title">Can remote wakeup VDR</string>
-	<string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
-	<string name="wakeup_url_title">URL for remote wakeup</string>
-	<string name="wakeup_url_summary">URL for a request doing the wakeup</string>
-	<string name="wakeup_user_title">Wakeup user</string>
-	<string name="wakeup_user_summary">User for remote wakeup</string>
-	<string name="wakeup_password_title">Wakeup password</string>
-	<string name="wakeup_password_summary">Password for remote wakeup</string>
-	<string name="wakeup_method_key">key_wakeup_method</string>
-	<string name="wakeup_method_title">Wakeup method</string>
-	<string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
-	<string-array name="wakeup_methods">
-		<item>Call a URL</item>
-		<item>WOL</item>
-	</string-array>
-	<string-array name="wakeup_methods_values">
-		<item>url</item>
-		<item>wol</item>
-	</string-array>
-	<string name="default_wakeup_method">url</string>
-	<string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
+    <!-- wakeup -->
+    <string name="wakeup_preferences">Remote VDR host wakeup</string>
+    <string name="wakeup_enabled_title">Can remote wakeup VDR</string>
+    <string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
+    <string name="wakeup_url_title">URL for remote wakeup</string>
+    <string name="wakeup_url_summary">URL for a request doing the wakeup</string>
+    <string name="wakeup_user_title">Wakeup user</string>
+    <string name="wakeup_user_summary">User for remote wakeup</string>
+    <string name="wakeup_password_title">Wakeup password</string>
+    <string name="wakeup_password_summary">Password for remote wakeup</string>
+    <string name="wakeup_method_key">key_wakeup_method</string>
+    <string name="wakeup_method_title">Wakeup method</string>
+    <string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
+
+    <string-array name="wakeup_methods">
+        <item>Call a URL</item>
+        <item>WOL</item>
+    </string-array>
+    <string-array name="wakeup_methods_values">
+        <item>url</item>
+        <item>wol</item>
+    </string-array>
+
+    <string name="default_wakeup_method">url</string>
+    <string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
     <string name="wakeup_wol_custom_boradcast_title">Custom broadcast address</string>
     <string name="wakeup_wol_custom_boradcast_summary">Enter custom broadcast address rather then 255.255.255.255. Useful for VPN connection as example.</string>
     <string name="wakeup_wol_custom_boradcast_summary_on">Broadcast </string>
-	
-	
-	<string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
+    <string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
     <string name="wakeup_wol_mac_title">MAC-Address</string>
     <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. User \':\' or \'-\' or a space as separator.</string>
 
-	<!-- timer -->
-	<string name="timer_preferences">Timer defaults</string>
-	<string name="timer_pre_start_buffer_title">Margin at start</string>
-	<string name="timer_pre_start_buffer_summary">Minutes recording starts before the beginning of
+    <!-- timer -->
+    <string name="timer_preferences">Timer defaults</string>
+    <string name="timer_pre_start_buffer_title">Margin at start</string>
+    <string name="timer_pre_start_buffer_summary">Minutes recording starts before the beginning of
 		the broadcast</string>
-	<string name="timer_post_end_buffer_title">Margin at stop</string>
-	<string name="timer_post_end_buffer_summary">Minutes recording stops after the end of the
+    <string name="timer_post_end_buffer_title">Margin at stop</string>
+    <string name="timer_post_end_buffer_summary">Minutes recording stops after the end of the
 		broadcast</string>
-	<string name="timer_default_priority_title">Default priority</string>
-	<string name="timer_default_priority_summary">Default priority</string>
-	<string name="timer_default_primary_limit_title">Default primary limit</string>
-	<string name="timer_default_primary_limit_summary">Default primary limit</string>
-	<string name="timer_default_lifetime_title">Default lifetime</string>
-	<string name="timer_default_lifetime_summary">Default lifetime</string>
+    <string name="timer_default_priority_title">Default priority</string>
+    <string name="timer_default_priority_summary">Default priority</string>
+    <string name="timer_default_primary_limit_title">Default primary limit</string>
+    <string name="timer_default_primary_limit_summary">Default primary limit</string>
+    <string name="timer_default_lifetime_title">Default lifetime</string>
+    <string name="timer_default_lifetime_summary">Default lifetime</string>
 
-	<!-- GUI -->
-	<string name="gui_preferences">GUI Settings</string>
-	<string name="gui_enable_24h_format_key">key_enable_24h</string>
-	<string name="gui_enable_24h_format_title">Use 24-hour format</string>
-	<string name="gui_enable_24h_format_summary_on">13:00</string>
-	<string name="gui_enable_24h_format_summary_off">1:00 PM</string>
-	<string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
-	<string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
+    <!-- GUI -->
+    <string name="gui_preferences">GUI Settings</string>
+    <string name="gui_enable_24h_format_key">key_enable_24h</string>
+    <string name="gui_enable_24h_format_title">Use 24-hour format</string>
+    <string name="gui_enable_24h_format_summary_on">13:00</string>
+    <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
+    <string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
+    <string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
     <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
-	
-	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
-	<string name="gui_quit_on_back_title">Quit on back button</string>
-	<string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
-	<string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>	
-	
-	<string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
-	<string name="qui_show_imdb_button_title">Show IMDB Button</string>
-	<string name="qui_show_imdb_button_summary_on">IMDB Button is shown</string>
-	<string name="qui_show_imdb_button_summary_off">IMDB Button is not shown</string>	
-	
-	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
-	<string name="qui_imdb_url_title">IMDb Site</string>
-	<string name="qui_imdb_url_summary">Which IMDb site to search.</string>
-	
-	
-	<string-array name="imdb_urls">
-		<item>akas.imdb.com</item>
-		<item>imdb.com</item>
-		<item>uk.imdb.com</item>
-		<item>imdb.de</item>
-		<item>imdb.es</item>
-		<item>imdb.fr</item>
-		<item>imdb.it</item>
-		<item>imdb.pt</item>
-	</string-array>
+    <string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
+    <string name="gui_quit_on_back_title">Quit on back button</string>
+    <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
+    <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
+    <string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
+    <string name="qui_show_imdb_button_title">Show IMDB Button</string>
+    <string name="qui_show_imdb_button_summary_on">IMDB Button is shown</string>
+    <string name="qui_show_imdb_button_summary_off">IMDB Button is not shown</string>
+    <string name="qui_imdb_url_key">key_qui_imdb_url</string>
+    <string name="qui_imdb_url_title">IMDb Site</string>
+    <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
 
-	<string-array name="imdb_urls_values">
-		<item>International</item>
-		<item>imdb.com</item>
-		<item>uk.imdb.com</item>
-		<item>imdb.de</item>
-		<item>imdb.es</item>
-		<item>imdb.fr</item>
-		<item>imdb.it</item>
-		<item>imdb.pt</item>
-	</string-array>
-	
+    <string-array name="imdb_urls">
+        <item>akas.imdb.com</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+    </string-array>
+    <string-array name="imdb_urls_values">
+        <item>International</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+    </string-array>
+
+    <string name="vdr_conntimeout_key">key_conntimeout_key</string>
+    <string name="vdr_conntimeout_title">Connection Timeout</string>
+    <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
+    <string name="vdr_readtimeout_key">key_vdr_readtimeout</string>
+    <string name="vdr_readtimeout_title">Read Timeout</string>
+    <string name="vdr_readtimeout_sum">How long (in seconds) to wait for every read line operation?</string>
+    <string name="vdr_timeout_key">key_vdr_timeout</string>
+    <string name="vdr_timeout_title">Total timeout</string>
+    <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?</string>
 
 </resources>
