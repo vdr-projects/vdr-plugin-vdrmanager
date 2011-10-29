@@ -14,6 +14,11 @@
 			android:password="true" />
 		<CheckBoxPreference android:key="@string/vdr_ssl_key"
 			android:title="@string/vdr_ssl_title" android:summary="@string/vdr_ssl_summary" />
+		<PreferenceScreen android:title="Advanced">
+			<EditTextPreference android:key="@string/vdr_conntimeout_key" android:title="@string/vdr_conntimeout_title" android:summary="@string/vdr_conntimeout_sum"  android:defaultValue="10" 	android:inputType="number" />
+			<EditTextPreference android:key="@string/vdr_readtimeout_key" android:title="@string/vdr_readtimeout_title" android:summary="@string/vdr_readtimeout_sum" android:defaultValue="10"  	android:inputType="number" />
+			<EditTextPreference android:key="@string/vdr_timeout_key"     android:title="@string/vdr_timeout_title" android:summary="@string/vdr_timeout_sum"  android:defaultValue="120"	android:inputType="number" />
+		</PreferenceScreen>
 	</PreferenceCategory>
 
 
@@ -88,9 +93,9 @@
 
 		<ListPreference android:key="@string/qui_imdb_url_key"
 			android:title="@string/qui_imdb_url_title" android:summaryOn="@string/qui_imdb_url_summary"
-			android:entries="@array/imdb_urls" android:entryValues="@array/imdb_urls"
+			android:entries="@array/imdb_urls_values" android:entryValues="@array/imdb_urls"
 			android:dependency="@string/qui_show_imdb_button_key"
-			android:defaultValue="imdb.de" />
+			android:defaultValue="akas.imdb.com" />
 
 		<CheckBoxPreference android:key="@string/qui_quit_on_back_key"
 			android:title="@string/gui_quit_on_back_title"
@@ -112,6 +117,7 @@
 
 		<CheckBoxPreference android:key="remux_enable"
 			android:title="@string/remux_enable_title" android:summary="@string/remux_enable_summary" />
+		
 		<EditTextPreference android:dependency="remux_enable"
 			android:key="remux_command" android:title="@string/remux_command_title"
 			android:defaultValue="EXT" android:summary="@string/remux_command_summary" />
