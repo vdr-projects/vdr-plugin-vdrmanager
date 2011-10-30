@@ -1,7 +1,11 @@
 package de.bjusystems.vdrmanager.data;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.text.TextUtils;
 import de.bjusystems.vdrmanager.R;
 
 /**
@@ -122,6 +126,47 @@ public class Preferences {
 	 * On Which imdb site to search?
 	 */
 	private String imdbUrl = "akas.imdb.com";
+
+	
+	/**
+	 * Connection timeout
+	 */
+	private int connectionTimeout;
+
+	/**
+	 * Read Timeout
+	 */
+	private int readTimeout;
+	
+	/**
+	 * Timeout for a whole command run
+	 */
+	private int timeout;
+	
+	
+	public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
 
 	public String getImdbUrl() {
 		return imdbUrl;
@@ -520,10 +565,18 @@ public class Preferences {
 				R.string.qui_show_imdb_button_key, true);
 
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
+		
+		prefs.connectionTimeout = getInt(context, R.string.vdr_conntimeout_key, 10);
+		prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key, 10);
+		prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
 
 		thePrefs = prefs;
 	}
 
+	public static void reset(){
+		thePrefs = null;
+	}
+	
 	/**
 	 * Loads all preferences
 	 * 
@@ -533,15 +586,16 @@ public class Preferences {
 	 */
 	public static void init(final Context context) {
 
-		if (thePrefs != null) {
-			return;
-		}
+//		if (thePrefs != null) {
+//			return;
+//		}
 
 		synchronized (Preferences.class) {
-			if (thePrefs != null) {
-				return;
-			}
+//			if (thePrefs != null) {
+//				return;
+//			}
 			initInternal(context);
+			setLocale(context);
 		}
 
 	}
@@ -614,5 +668,23 @@ public class Preferences {
 			return "HH:mm";
 		}
 		return "h:mm a";
+	}
+
+	/**
+	 * Set locale read from preferences to context.
+	 * 
+	 * @param context
+	 *            {@link Context}
+	 */
+	public static void setLocale(final Context context) {
+		final String lc = getString(context, R.string.gui_custom_locale_key, null);
+		if (TextUtils.isEmpty(lc)) {
+			return;
+		}
+		final Locale locale = new Locale(lc);
+		Locale.setDefault(locale);
+		final Configuration config = new Configuration();
+		config.locale = locale;
+		context.getResources().updateConfiguration(config, null);
 	}
 }
