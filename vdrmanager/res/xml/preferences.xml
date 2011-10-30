@@ -102,6 +102,11 @@
 			android:summaryOn="@string/gui_quit_on_back_summary_on"
 			android:summaryOff="@string/gui_quit_on_back_summary_off"
 			android:defaultValue="true" />
+		
+		<ListPreference android:key="@string/gui_custom_locale_key"
+				android:title="@string/gui_custom_locale_title" android:summary="@string/gui_custom_locale_sum"
+				android:entries="@array/lang" android:entryValues="@array/lang_values" android:defaultValue="DEFAULT" />	
+	
 	</PreferenceCategory>
 	
 	<PreferenceCategory android:title="@string/livetv">

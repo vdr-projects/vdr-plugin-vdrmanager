@@ -20,9 +20,9 @@
 		</activity>
 
 		<activity android:name=".gui.TimeEpgListActivity"
-			android:configChanges="orientation" />
+			android:configChanges="orientation|locale" />
 		<activity android:name=".gui.EventEpgListActivity"
-			android:configChanges="orientation">
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -30,7 +30,7 @@
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
 		<activity android:name=".gui.TimerListActivity"
-			android:configChanges="orientation">
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -38,9 +38,9 @@
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
 		<activity android:name=".gui.PreferencesActivity"
-			android:configChanges="orientation"></activity>
+			android:configChanges="orientation|locale"/>
 		<activity android:name=".gui.ChannelListActivity"
-			android:configChanges="orientation">
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -48,7 +48,7 @@
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
 		<activity android:name=".gui.EpgDetailsActivity"
-			android:configChanges="orientation">
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -63,19 +63,19 @@
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
 		<activity android:name=".gui.RecordingListActivity"
-			android:configChanges="orientation">
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
 			<meta-data android:name="android.app.default_searchable"
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
-		<activity android:name=".gui.EpgSearchListActivity"
-			android:configChanges="orientation">
+		<activity android:name=".gui.EpgSearchListActivity" android:launchMode="singleTask"
+			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
-			<meta-data android:name="android.app.searchable"
+			<meta-data android:name="android.app.searchable"  
 				android:resource="@xml/searchable" />
 
 		</activity>
@@ -88,7 +88,9 @@
 	</application>
 
 
-	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	    
 
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 

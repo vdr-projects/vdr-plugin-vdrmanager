@@ -16,6 +16,8 @@ import de.bjusystems.vdrmanager.R;
  */
 public class Preferences {
 
+	public static final String DEFAULT_LANGUAGE_VALUE = "DEFAULT";
+	
 	private boolean ssl;
 	/** SVDRP host name or ip */
 	private String svdrpHost;
@@ -677,11 +679,13 @@ public class Preferences {
 	 *            {@link Context}
 	 */
 	public static void setLocale(final Context context) {
-		final String lc = getString(context, R.string.gui_custom_locale_key, null);
-		if (TextUtils.isEmpty(lc)) {
-			return;
+		String lc = getString(context, R.string.gui_custom_locale_key, DEFAULT_LANGUAGE_VALUE);
+		Locale locale;
+		if(lc.equals(DEFAULT_LANGUAGE_VALUE) == false){
+			locale = new Locale(lc);
+		} else {
+			locale = new Locale("");
 		}
-		final Locale locale = new Locale(lc);
 		Locale.setDefault(locale);
 		final Configuration config = new Configuration();
 		config.locale = locale;
