@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.bjusystems.vdrmanager" android:versionName="0.2_12102011"
+	package="de.bjusystems.vdrmanager" android:versionName="0.2beta"
 	android:versionCode="02">
 	<application android:icon="@drawable/app_logo"
 		android:label="@string/app_name" android:debuggable="true"
 		android:name=".app.VdrManagerApp">
-		<activity android:label="@string/app_name" android:name=".gui.VdrManagerActivity">
+		<activity android:label="@string/app_name" android:name=".gui.VdrManagerActivity" android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
