@@ -1,8 +1,14 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
 2011-10-12: Version 0.2-pre
+
 - Recording Info via recordings command
+- Delete a recording via drecord <recording index> commmand
 - shortText delivery with event commands
+- Timer Modification flow rewritten
+- Search for event for a timer
+- bug fixes
+
 
 2011-03-19: Version 0.1
 
