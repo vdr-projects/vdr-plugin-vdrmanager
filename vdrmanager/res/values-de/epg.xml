@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 
+  <!-- What's on display -->
+  <string name="epg_list_time_label">Was kommt</string>
+  <string name="epg_list_time_now">jetzt</string>
+  <string name="epg_list_time_next">als nächstes</string>
+  <string name="epg_list_channel_spinner">Kanal</string>
+  <string name="epg_list_search_label">Suchergebnisse</string>
+  
+  <!-- create timer -->
+  <string name="epg_event_share_text">Share</string>
+  <string name="epg_event_imdb_text">IMDB Suche</string>
+  <string name="epg_eent_livetv_text">Stream</string>
+  <string name="epg_event_create_timer_text">Timer hinzufügen</string>
+  <string name="epg_event_modify_timer_text">Timer modifizieren</string>
+  
+  <!-- search -->
+  <string name="epg_search_button">Suchen</string>
+  <string name="epg_duration_template">%1$s min</string>
+  <string name="epg_duration_template_live">%1$s/%2$s min</string>
+  <string name="epg_of_a_channel">EPG -> %1$s</string>
+  <string name="epg_by_channel">EPG nach Kanälen</string>
+  <string name="epg_by_search">EPG Suche</string>
+  <string name="epg_by_search_param">EPG Suche: \'%1$s\'</string>
+  <string name="epg_by_time">EPG nach Zeit</string>  
+  <string name="search_epg_hint">Suche EPG</string>
+  <string name="epg_search_settings_description">Suche VDR EPG</string>
+
+</resources>

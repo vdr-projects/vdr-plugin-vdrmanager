@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="main_menu_preferences">Einstellungen</string>
+  <string name="main_menu_info">Infomationen</string>
+  <string name="main_menu_exit">Beenden</string>   
+  
+</resources>
