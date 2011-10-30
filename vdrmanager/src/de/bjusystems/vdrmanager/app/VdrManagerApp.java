@@ -42,7 +42,7 @@ public class VdrManagerApp extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Preferences.loadPreferences(this);
+		Preferences.init(this);
 	}
 	
 	
