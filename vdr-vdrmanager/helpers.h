@@ -41,6 +41,6 @@ private:
   static string ToText(cTimer * timer);
   static string ToText(cRecording * recording);
   static string GetAudioTracks(const cChannel* channel);
-  static string replaceAll(string where, string what, string replacement);
+  static string replaceAll(const string& where, const string& what, const string& replacement);
   static string UnMapSpecialChars(string text);
 };

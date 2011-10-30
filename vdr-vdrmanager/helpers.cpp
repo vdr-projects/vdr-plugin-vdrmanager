@@ -58,16 +58,20 @@ string cHelpers::SearchEvents(string args) {
 
   args = Trim(args);
 
+  string wantedChannels;
+  string pattern;
+  
+
   size_t space = args.find(' ');
-  if (space == string::npos) {
-    return "!ERROR\r\n";
+  if (space == string::npos) {//so only search term
+    pattern = args;
+    wantedChannels = "";
+  } else {
+    wantedChannels = args.substr(0, space);
+    pattern = args.substr(space+1);
   }
 
-  string wantedChannels = args.substr(0, space);
-  string pattern = args.substr(space+1);
-
   return SafeCall(SearchEventsIntern, Trim(wantedChannels), Trim(pattern));
-
 }
 
 string cHelpers::GetTimersIntern() {
@@ -294,7 +298,7 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
   cSchedulesLock schedulesLock;
   const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
   for(cSchedule * schedule = schedules->First(); schedule; schedule = schedules->Next(schedule)) {
-
+    
     cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
     if (!IsWantedChannel(channel, wantedChannels)) {
       continue;
@@ -302,8 +306,8 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 
     const cList<cEvent> * events = schedule->Events();
     for(cEvent * event = events->First(); event; event = events->Next(event)) {
-
-      if (IsWantedEvent(event, pattern)) {
+      
+      if (IsWantedTime(0, event) && IsWantedEvent(event, pattern) ) {//time must be ok, so stop > now
         result += ToText(event);
       }
     }
@@ -362,8 +366,12 @@ string cHelpers::ToText(cRecording * recording){
   sprintf(buf, "%lu", endTime);
   result += buf;
   result += ":";
-
-  result += info -> ChannelName();
+  
+  if(info -> ChannelName()){
+    result += info -> ChannelName();
+  } else {
+    result += "<unknown>";
+  }
   result += ":";
 
   result += MapSpecialChars(event->Title());
@@ -389,23 +397,24 @@ string cHelpers::ToText(cTimer * timer) {
   const cChannel * channel = timer->Channel();
   const char * channelName = channel->Name();
   
-  cSchedulesLock schedulesLock;
-  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+  //cSchedulesLock schedulesLock;
+  //  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
   
-  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
+  //  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
   
-  const cList<cEvent> * events = schedule->Events();
-  cEvent * match = NULL;
-  for(cEvent * event = events->First(); event; event = events->Next(event)) {
-    
-    time_t startTime = event->StartTime();
-    time_t stopTime = startTime + event->Duration();
-    if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
-      match = event;
-      break;
-    }
-  }
+  //const cList<cEvent> * events = schedule->Events();
+  //  cEvent * match = NULL;
+  //  for(cEvent * event = events->First(); event; event = events->Next(event)) {
+  //
+  //time_t startTime = event->StartTime();
+  //    time_t stopTime = startTime + event->Duration();
+  //if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
+  //  match = event;
+  //  break;
+  //}
+  //  }
   
+
   string result;
   char buf[100];
   sprintf(buf, "T%d", timer->Index());
@@ -434,11 +443,12 @@ string cHelpers::ToText(cTimer * timer) {
   result += MapSpecialChars(timer->File());
   result += ":";
   result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
-  if(match && false){
+  const cEvent * event = timer->Event();
+  if(event){
     result += ":";
-    result += MapSpecialChars(match->ShortText()  ? match->ShortText() : "");
+    result += event->ShortText()  ? MapSpecialChars(event->ShortText()) : "";
     result += ":";
-    result += MapSpecialChars(match->Description() ? match->Description() : "");
+    result += event->Description() ? MapSpecialChars(event->Description()) : "";
   } else {
     result += "::";
   }
@@ -670,15 +680,17 @@ string cHelpers::MapSpecialChars(string text) {
   return result;
 }
 
-string cHelpers::replaceAll(string where, string what, string replacement){
-  int position = where.find(what);
-  int size = what.size();
-  while ( position != string::npos ) 
-    {
-      where.replace( position, size, replacement );
-      position = where.find(what, position + 1 );
-    } 
-  return where;
+
+//from live plugin StringReplace
+string cHelpers::replaceAll(string const& text, string const& substring, string const& replacement )
+{
+  string result = text;
+  string::size_type pos = 0;
+  while ( ( pos = result.find( substring, pos ) ) != string::npos ) {
+    result.replace( pos, substring.length(), replacement );
+    pos += replacement.length();
+  }
+  return result;
 }
 
 string cHelpers::UnMapSpecialChars(string text) {
