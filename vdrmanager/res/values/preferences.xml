@@ -50,7 +50,7 @@
     <string name="wakeup_wol_custom_boradcast_summary_on">Broadcast </string>
     <string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
     <string name="wakeup_wol_mac_title">MAC-Address</string>
-    <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. User \':\' or \'-\' or a space as separator.</string>
+    <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
 
     <!-- timer -->
     <string name="timer_preferences">Timer defaults</string>
@@ -87,7 +87,10 @@
     <string name="qui_imdb_url_key">key_qui_imdb_url</string>
     <string name="qui_imdb_url_title">IMDb Site</string>
     <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
-
+    <string name="gui_custom_locale_key">key_gui_custom_locale</string>
+	<string name="gui_custom_locale_title">Custom language</string>
+	<string name="gui_custom_locale_sum">Set a custom language.</string>
+        
     <string-array name="imdb_urls">
         <item>akas.imdb.com</item>
         <item>imdb.com</item>
@@ -107,6 +110,16 @@
         <item>imdb.fr</item>
         <item>imdb.it</item>
         <item>imdb.pt</item>
+    </string-array>
+    <string-array name="lang_values">
+        <item></item>
+        <item>en</item>
+        <item>de</item>
+    </string-array>
+    <string-array name="lang">
+        <item>Default language</item>
+        <item>English</item>
+        <item>German</item>
     </string-array>
 
     <string name="vdr_conntimeout_key">key_conntimeout_key</string>

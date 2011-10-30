@@ -88,7 +88,8 @@
 	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
 	<string name="qui_imdb_url_title">IMDb Seite</string>
 	<string name="qui_imdb_url_summary">Welche IMDb Seite für die Suche verwenden.</string>
-	
+	<string name="gui_custom_locale_title">Andere Sprache</string>
+	<string name="gui_custom_locale_sum">Eine andere Sprache aktivieren.</string>
 	
 	<string-array name="imdb_urls">
 		<item>imdb.com</item>
@@ -100,4 +101,26 @@
 		<item>imdb.pt</item>
 	</string-array>
 
+	<string-array name="imdb_urls_values">
+        <item>International</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+     </string-array>
+	
+	<string-array name="lang_values">
+        <item></item>
+        <item>en</item>
+        <item>de</item>
+    </string-array>
+    <string-array name="lang">
+        <item>Voreinstellung</item>
+        <item>Englisch</item>
+        <item>Deutsch</item>
+    </string-array>
+	    
 </resources>
