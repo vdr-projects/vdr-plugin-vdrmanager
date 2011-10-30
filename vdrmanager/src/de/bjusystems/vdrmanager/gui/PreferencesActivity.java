@@ -138,7 +138,9 @@ public class PreferencesActivity extends PreferenceActivity implements
 		updateChildPreferences();
 		Preference p = findPreference(key);
 		updateSummary(p);
-		Preferences.loadPreferences(this);
+		//Preferences.reset();
+		Preferences.init(this);
+		//Preferences.setLocale(getBaseContext());
 	}
 
 	public boolean onPreferenceChange(Preference arg0, Object arg1) {
