@@ -1,6 +1,8 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
@@ -31,8 +33,8 @@ public class EpgSearchTimesListActivity extends Activity
 				implements OnClickListener, OnTimeSetListener {
 
 	ArrayAdapter<EpgSearchTimeValue> adapter;
+	
 	List<EpgSearchTimeValue> values;
-	Preferences prefs;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class EpgSearchTimesListActivity extends Activity
 		// Attach view
 		setContentView(R.layout.epg_search_times_list);
 
+		setTitle(R.string.epg_search_times_window);
+		
 		// Create adapter for ListView
 		adapter = new ArrayAdapter<EpgSearchTimeValue>(this, R.layout.epg_search_times_item);
 		final ListView listView = (ListView) findViewById(R.id.epg_search_times_list);
@@ -56,9 +60,9 @@ public class EpgSearchTimesListActivity extends Activity
 	}
 
 	public void onClick(final View v) {
-
+		final Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 		// show time selection
-		final TimePickerDialog dialog = new TimePickerDialog(this, this, 0, 0, true);
+		final TimePickerDialog dialog = new TimePickerDialog(this, this, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), Preferences.get().isUse24hFormat());
 		dialog.show();
 	}
 
@@ -107,7 +111,6 @@ public class EpgSearchTimesListActivity extends Activity
 		if (item.getItemId() == R.id.epg_search_time_delete) {
 			values.remove(time);
 			adapter.remove(time);
-
 			save();
 		}
 
@@ -119,7 +122,7 @@ public class EpgSearchTimesListActivity extends Activity
 		// get values
 		values = new EpgSearchTimeValues(this).getValues();
 		adapter.clear();
-		for(int i = 2; i < values.size(); i++) {
+		for(int i = 2; i < values.size() - 1; i++) {
 			adapter.add(values.get(i));
 		}
 	}
