@@ -18,10 +18,14 @@ public abstract class AsyncProgressTask<Result> {
 		public void svdrpEvent(final SvdrpEvent event, final Result result) {
 			super.svdrpEvent(event, result);
 			switch (event) {
+			case ABORTED:
+			case CONNECT_ERROR:
+			case ERROR:
+			case LOGIN_ERROR:
 			case FINISHED_ABNORMALY:
 			case FINISHED_SUCCESS:
-			case ABORTED:
-				AsyncProgressTask.this.finished();
+			case CACHE_HIT:
+				AsyncProgressTask.this.finished(event);
 				break;
 			}
 		}
@@ -52,5 +56,5 @@ public abstract class AsyncProgressTask<Result> {
 		task.run();
 	}
 
-	public abstract void finished();
+	public abstract void finished(SvdrpEvent event);
 }
