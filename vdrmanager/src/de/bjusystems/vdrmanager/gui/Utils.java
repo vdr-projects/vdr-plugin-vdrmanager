@@ -6,8 +6,11 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.Spannable;
@@ -210,5 +213,18 @@ public class Utils {
 		}
 		return src.replace(C.DATA_SEPARATOR, "|##").replace("\n", "||#");
 	}
+	
+
+	public static PackageInfo getPackageInfo(Context ctx) {
+		PackageInfo pi = null;
+		try {
+			pi = ctx.getPackageManager().getPackageInfo(
+					ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return pi;
+	}
+
 
 }
