@@ -62,7 +62,7 @@ string cHelpers::SearchEvents(string args) {
   string pattern;
   
 
-  size_t space = args.find(' ');
+  size_t space = args.find(':');
   if (space == string::npos) {//so only search term
     pattern = args;
     wantedChannels = "";
@@ -70,7 +70,7 @@ string cHelpers::SearchEvents(string args) {
     wantedChannels = args.substr(0, space);
     pattern = args.substr(space+1);
   }
-
+  pattern = UnMapSpecialChars(pattern);
   return SafeCall(SearchEventsIntern, Trim(wantedChannels), Trim(pattern));
 }
 
