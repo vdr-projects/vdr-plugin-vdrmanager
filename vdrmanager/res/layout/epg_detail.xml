@@ -90,7 +90,7 @@
         <ScrollView
             android:id="@+id/epg_detail_description_scroll"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content" android:padding="5dip"
             android:layout_weight="1" >
 
             <TextView
