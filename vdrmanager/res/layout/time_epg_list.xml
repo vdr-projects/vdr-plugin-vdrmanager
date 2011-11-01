@@ -32,7 +32,7 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@android:drawable/list_selector_background"
                 android:clickable="true"
-                android:src="@android:drawable/ic_menu_recent_history" />
+                android:src="@drawable/btn_search_times" />
 
             <Spinner
                 android:id="@+id/epg_list_time_spinner"
@@ -50,7 +50,7 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@android:drawable/list_selector_background"
                 android:clickable="true"
-                android:src="@android:drawable/ic_menu_revert" />
+                android:src="@drawable/ic_menu_revert" />
         </LinearLayout>
 
         <ListView
