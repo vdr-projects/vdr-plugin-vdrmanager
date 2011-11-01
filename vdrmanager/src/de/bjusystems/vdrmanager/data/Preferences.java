@@ -680,13 +680,10 @@ public class Preferences {
 	 */
 	public static void setLocale(final Context context) {
 		String lc = getString(context, R.string.gui_custom_locale_key, DEFAULT_LANGUAGE_VALUE);
-		Locale locale;
-		if(lc.equals(DEFAULT_LANGUAGE_VALUE) == false){
-			locale = new Locale(lc);
-		} else {
-			locale = new Locale("");
+		if(lc.equals(DEFAULT_LANGUAGE_VALUE)){
+			return;
 		}
-		Locale.setDefault(locale);
+		Locale locale = new Locale(lc);
 		final Configuration config = new Configuration();
 		config.locale = locale;
 		context.getResources().updateConfiguration(config, null);
