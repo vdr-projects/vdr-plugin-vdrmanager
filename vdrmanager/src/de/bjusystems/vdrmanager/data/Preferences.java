@@ -17,7 +17,7 @@ import de.bjusystems.vdrmanager.R;
 public class Preferences {
 
 	public static final String DEFAULT_LANGUAGE_VALUE = "DEFAULT";
-	
+
 	private boolean ssl;
 	/** SVDRP host name or ip */
 	private String svdrpHost;
@@ -129,7 +129,6 @@ public class Preferences {
 	 */
 	private String imdbUrl = "akas.imdb.com";
 
-	
 	/**
 	 * Connection timeout
 	 */
@@ -139,13 +138,12 @@ public class Preferences {
 	 * Read Timeout
 	 */
 	private int readTimeout;
-	
+
 	/**
 	 * Timeout for a whole command run
 	 */
 	private int timeout;
-	
-	
+
 	public int getConnectionTimeout() {
 		return connectionTimeout;
 	}
@@ -567,18 +565,19 @@ public class Preferences {
 				R.string.qui_show_imdb_button_key, true);
 
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
-		
-		prefs.connectionTimeout = getInt(context, R.string.vdr_conntimeout_key, 10);
+
+		prefs.connectionTimeout = getInt(context, R.string.vdr_conntimeout_key,
+				10);
 		prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key, 10);
 		prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
 
 		thePrefs = prefs;
 	}
 
-	public static void reset(){
+	public static void reset() {
 		thePrefs = null;
 	}
-	
+
 	/**
 	 * Loads all preferences
 	 * 
@@ -588,14 +587,14 @@ public class Preferences {
 	 */
 	public static void init(final Context context) {
 
-//		if (thePrefs != null) {
-//			return;
-//		}
+		// if (thePrefs != null) {
+		// return;
+		// }
 
 		synchronized (Preferences.class) {
-//			if (thePrefs != null) {
-//				return;
-//			}
+			// if (thePrefs != null) {
+			// return;
+			// }
 			initInternal(context);
 			setLocale(context);
 		}
@@ -680,10 +679,17 @@ public class Preferences {
 	 */
 	public static void setLocale(final Context context) {
 		String lc = getString(context, R.string.gui_custom_locale_key, DEFAULT_LANGUAGE_VALUE);
-		if(lc.equals(DEFAULT_LANGUAGE_VALUE)){
-			return;
+		Locale locale = null;
+		if (lc.equals(DEFAULT_LANGUAGE_VALUE)) {
+			String lang = Locale.getDefault().toString();
+			if (lang.startsWith("de")) {
+				locale = Locale.GERMAN;
+			} else {
+				locale = Locale.ENGLISH;
+			}
+		} else {
+			locale = new Locale(lc);
 		}
-		Locale locale = new Locale(lc);
 		final Configuration config = new Configuration();
 		config.locale = locale;
 		context.getResources().updateConfiguration(config, null);

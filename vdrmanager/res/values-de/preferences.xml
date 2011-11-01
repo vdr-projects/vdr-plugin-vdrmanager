@@ -113,7 +113,9 @@
      </string-array>
 
     <string-array name="lang">
+        <!-- 
         <item>Voreinstellung</item>
+        -->
         <item>Englisch</item>
         <item>Deutsch</item>
     </string-array>
