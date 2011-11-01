@@ -12,7 +12,10 @@
     <string name="done">Done</string>
     <string name="share">Share</string>
     <string name="share_chooser">Share EPG Entry</string>
-    <string name="about_text">If you have a VDR at home reachable
+    <string name="about_text">
+        About "VDR-Manager" Software for Android\n 
+		This is Version %1$s\n
+        If you have a VDR at home reachable
          over the internet and own a mobile phone running Android then you possibly find this program useful.
          For further details visit http://projects.vdr-developer.org/projects/vdr-manager/wiki.
          Author:\n
