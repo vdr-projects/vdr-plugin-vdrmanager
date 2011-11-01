@@ -18,13 +18,20 @@ public class EpgSearchTimeValue {
 		this.text = "";
 	}
 
+	public String getText(){
+		return text;
+	}
+	
 	public String getValue() {
 		switch (index) {
+		case -1:
+			return "adhoc";
 		case 0:
 			return "now";
 		case 1:
 			return "next";
 		default:
+			
 			final String[] values = text.split(":");
 			final Calendar cal = new GregorianCalendar();
 			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(values[0]));

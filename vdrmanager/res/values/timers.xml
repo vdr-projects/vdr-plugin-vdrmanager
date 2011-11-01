@@ -10,4 +10,6 @@
   <string name="timer_details_save_title">Save changes</string>
   <string name="timer_details_delete_title">Delete timer</string>
   
+  <string name="timer_details_add_title">Create a new timer</string>
+  <string name="timer_details_modify_title">Modify a timer</string>
 </resources>

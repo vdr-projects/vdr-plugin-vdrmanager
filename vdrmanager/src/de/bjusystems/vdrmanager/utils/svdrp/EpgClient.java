@@ -1,5 +1,6 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
+import android.text.TextUtils;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
@@ -67,7 +68,7 @@ public class EpgClient extends SvdrpClient<Epg> {
 		} else if (channel != null) {
 			runCommand(String.format("cevents %s", channel.getNumber()));
 		} else if (search != null) {
-			runCommand(String.format("search %s %s", Preferences.getPreferences().getChannels(), search.toCommandLine()));
+			runCommand(String.format("search %s:%s", Preferences.get().getChannels(), search.toCommandLine()));
 		}
 	}
 

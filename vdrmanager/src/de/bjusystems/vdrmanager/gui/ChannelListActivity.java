@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -21,81 +20,53 @@ import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * This class is used for showing what's current running on all channels
  * 
  * @author bju
  */
-public class ChannelListActivity extends BaseActivity<ExpandableListView> implements
-		OnChildClickListener, OnGroupClickListener, SvdrpAsyncListener<Channel> {
+public class ChannelListActivity extends BaseActivity<Channel, ExpandableListView>
+		implements OnChildClickListener, OnGroupClickListener
+{
 
 	private static final String TAG = ChannelListActivity.class.getName();
+
 	ChannelClient channelClient;
-	
+
 	ChannelAdapter adapter;
-	
+
 	Preferences prefs;
-	
+
 	public static final int MENU_GROUP = 0;
 	public static final int MENU_PROVIDER = 1;
 	public static final int MENU_NAME = 2;
 
 	private int groupBy = MENU_GROUP;
 
-	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(
-			1);
+	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(1);
 
-	//ExpandableListView listView;
-
-	// @Override
-	// public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-	// // TODO Auto-generated method stub
-	// return super.onKeyLongPress(keyCode, event);
-	// }
-	//
-	// @Override
-	// public boolean onKeyDown(int keyCode, KeyEvent event) {
-	// // TODO Auto-generated method stub
-	// return super.onKeyDown(keyCode, event);
-	// }
-
-	// @Override
-	// public boolean onKeyUp(int keyCode, KeyEvent event) {
-	// // TODO Auto-generated method stub
-	// return super.onKeyUp(keyCode, event);
-	// }
-	//
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
 		// Attach view
 		setContentView(getMainLayout());
 		setTitle(R.string.action_menu_channels);
+		initFlipper();
 		adapter = new ChannelAdapter(this);
 
-		// Create adapter for ListView
-
 		listView = (ExpandableListView) findViewById(R.id.channel_list);
-		// listView.setOnItemClickListener(this);
 		listView.setOnChildClickListener(this);
 		listView.setTextFilterEnabled(true);
 		listView.setFastScrollEnabled(true);
@@ -119,6 +90,11 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 
 	private void startChannelQuery(boolean useCache) {
 
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
+			return;
+		}
+
 		// get channel task
 		channelClient = new ChannelClient(useCache);
 
@@ -140,10 +116,10 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 	private void fillAdapter() {
 		switch (groupBy) {
 		case MENU_GROUP:
-			ArrayList<String> cgs = channelClient.getChannelGroups();
-			adapter.fill(cgs, channelClient.getGroupChannels(), groupBy);
-			if(cgs.size() == 1){
-			listView.expandGroup(0);
+			ArrayList<String> cgs = ChannelClient.getChannelGroups();
+			adapter.fill(cgs, ChannelClient.getGroupChannels(), groupBy);
+			if (cgs.size() == 1) {
+				listView.expandGroup(0);
 			}
 			updateWindowTitle(
 					getString(R.string.action_menu_channels),
@@ -151,11 +127,10 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 							getString(R.string.groupby_group)));
 			break;
 		case MENU_PROVIDER:
-			ArrayList<String> gs = new ArrayList<String>(channelClient
+			ArrayList<String> gs = new ArrayList<String>(ChannelClient
 					.getProviderChannels().keySet());
-			adapter.fill(gs, channelClient
-					.getProviderChannels(), groupBy);
-			if(gs.size() == 1){
+			adapter.fill(gs, ChannelClient.getProviderChannels(), groupBy);
+			if (gs.size() == 1) {
 				listView.expandGroup(0);
 			}
 			updateWindowTitle(
@@ -171,7 +146,7 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 			HashMap<String, ArrayList<Channel>> channels = new HashMap<String, ArrayList<Channel>>(
 					1);
 			channels.put(getString(R.string.groupby_name_all_channels_group),
-					channelClient.getChannels());
+					ChannelClient.getChannels());
 			adapter.fill(ALL_CHANNELS_GROUP, channels, groupBy);
 			listView.expandGroup(0);
 
@@ -181,54 +156,12 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 		}
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final Channel result) {
-		switch (event) {
-		case ABORTED:
-			say(R.string.aborted);
-			break;
-		case ERROR:
-			say(R.string.epg_client_errors);
-			break;
-		case CONNECTING:
-			break;
-		case CONNECT_ERROR:
-			say(R.string.progress_connect_error);
-			switchNoConnection();
-			break;
-		case FINISHED_ABNORMALY:
-			say(R.string.progress_connect_finished_abnormal);
-			switchNoConnection();
-			break;
-		case LOGIN_ERROR:
-			switchNoConnection();
-			break;
-		case CACHE_HIT:
-			say(R.string.progress_cache_hit);
-			fillAdapter();
-			restoreViewSelection();
-			break;
-		case FINISHED_SUCCESS:
-			fillAdapter();
-			restoreViewSelection();
-			break;
-
-		}
-	}
 	
-
-	public void svdrpException(final SvdrpException exception) {
-		progress.svdrpException(exception);
-		Log.w(TAG, exception);
-		alert(getString(R.string.vdr_error_text, exception.getMessage()));
-	}
-
-
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -237,17 +170,6 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 		item = menu.add(MENU_GROUP, MENU_GROUP, 0, R.string.menu_groupby);
 		item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
 		item.setAlphabeticShortcut('g');
-
-		// item = menu.add(MENU_GROUP_PROVIDER, MENU_PROVIDER, 0,
-		// R.string.groupby_provider);
-		// item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-		// item.setAlphabeticShortcut('p');
-
-		// item = menu.add(MENU_GROUP_NAME, MENU_NAME, 0,
-		// R.string.groupby_name);
-		// item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-		// item.setAlphabeticShortcut('n');
-
 		return true;
 	}
 
@@ -359,40 +281,12 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 
 	}
 
-	// @Override
-	// public boolean onContextItemSelected(final MenuItem item) {
-	//
-	// final AdapterView.AdapterContextMenuInfo info =
-	// (AdapterView.AdapterContextMenuInfo) item
-	// .getMenuInfo();
-	// // final Channel channel = adapter.getItem(info.position);
-	// // if(channel.isGroupSeparator()){
-	// //
-	// // }
-	//
-	// switch (item.getItemId()) {
-	// case R.id.channel_item_menu_epg:
-	// //onItemClick(null, null, info.position, 0);
-	// break;
-	// case R.id.channel_item_menu_stream:
-	// // show live stream
-	// // Utils.stream(this, channel);
-	// break;
-	// }
-	//
-	// return true;
-	// }
 
 	@Override
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMgr.toggleSoftInput(0, 0);
 		return true;
-	}
-
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
 	}
 
 	public boolean onGroupClick(ExpandableListView arg0, View arg1, int arg2,
@@ -408,7 +302,8 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 
 		// show details
 		final Intent intent = new Intent();
-		intent.putExtra(Intents.CURRENT_CHANNEL, channel);
+		getApp().setCurrentChannel(channel);
+		//intent.putExtra(Intents.CURRENT_CHANNEL, channel);
 		intent.setClass(this, EventEpgListActivity.class);
 		startActivity(intent);
 	}
@@ -435,6 +330,23 @@ public class ChannelListActivity extends BaseActivity<ExpandableListView> implem
 	@Override
 	protected int getMainLayout() {
 		return R.layout.channel_list;
+	}
+
+	@Override
+	protected boolean finishedSuccess() {
+		fillAdapter();
+		restoreViewSelection();
+		return ChannelClient.getChannels().isEmpty() == false;
+	}
+
+	@Override
+	protected void resultReceived(Channel result) {
+		
+	}
+	
+	protected void cacheHit() {
+		fillAdapter();
+		restoreViewSelection();
 	}
 
 }

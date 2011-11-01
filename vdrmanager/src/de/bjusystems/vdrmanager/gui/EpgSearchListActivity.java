@@ -83,6 +83,11 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 
 	private void startEpgQuery() {
 
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
+			return;
+		}
+		
 		EpgSearchParams sp = new EpgSearchParams();
 		sp.setTitle(highlight);
 		setTitle(getString(R.string.epg_by_search_param, highlight));

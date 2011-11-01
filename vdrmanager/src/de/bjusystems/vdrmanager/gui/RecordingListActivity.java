@@ -21,6 +21,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -94,7 +95,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		case R.id.recording_item_menu_delete: {
 			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
 				@Override
-				public void finished() {
+				public void finished(SvdrpEvent event) {
 					dismiss(progress);
 					refresh();
 				}
@@ -114,6 +115,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	private void startRecordingQuery() {
+		
+
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
+			return;
+		}
 
 		// get timer client
 		recordingClient = new RecordingClient();

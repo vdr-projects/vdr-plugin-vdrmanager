@@ -12,7 +12,7 @@ import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
  * Class for EPG events
  * @author bju
  */
-public class Epg extends BaseEvent {
+public class Epg extends Event {
 
 	private Timer timer;
 

@@ -32,7 +32,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Attach view
-		setContentView(getMainLayout());
+//		setContentView(getMainLayout());
 
 		// create an adapter
 		adapter = new TimeEventAdapter(this);
@@ -57,14 +57,15 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (timerClient != null) {
-			timerClient.abort();
-		}
-		dismiss(progress);
 	}
 
 
 	private void startTimerQuery() {
+
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
+			return;
+		}		
 
 		// get timer client
 		timerClient = new TimerClient();

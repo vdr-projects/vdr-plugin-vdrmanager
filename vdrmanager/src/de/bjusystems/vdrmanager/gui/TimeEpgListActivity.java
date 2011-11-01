@@ -1,10 +1,15 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -12,8 +17,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.TimePicker;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
@@ -21,6 +25,7 @@ import de.bjusystems.vdrmanager.data.EpgSearchTimeValue;
 import de.bjusystems.vdrmanager.data.EpgSearchTimeValues;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -32,9 +37,13 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
  * @author bju
  */
 public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
-		OnItemClickListener, OnItemSelectedListener {
+		OnItemClickListener, OnItemSelectedListener, OnTimeSetListener {
 
-	Spinner timeSpinner;
+	protected Spinner timeSpinner;
+
+	protected View switcher;
+
+	protected View clock;
 
 	ArrayAdapter<EpgSearchTimeValue> timeSpinnerAdapter;
 
@@ -43,6 +52,8 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private final static ArrayList<Event> CACHE = new ArrayList<Event>();
 
 	private static String cachedTime = null;
+
+	int selectedIndex = 0;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -56,13 +67,18 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		timeSpinner = (Spinner) findViewById(R.id.epg_list_time_spinner);
 		timeSpinner.setAdapter(timeSpinnerAdapter);
 
-		fillTimeSpinnerValues();
+		switcher = findViewById(R.id.switch_epg_view);
+		switcher.setOnClickListener(this);
+
+		clock = findViewById(R.id.epg_list_times);
+		clock.setOnClickListener(this);
 
 		// update gui
 		adapter = new TimeEventAdapter(this);
 		// searchLabel.setVisibility(View.GONE);
 		timeSpinner.setOnItemSelectedListener(this);
-		timeSpinner.setSelection(0);
+
+		fillTimeSpinnerValues();
 
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
@@ -77,8 +93,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-
-
 	private void fillTimeSpinnerValues() {
 		final EpgSearchTimeValues values = new EpgSearchTimeValues(this);
 		timeSpinnerAdapter.clear();
@@ -87,6 +101,10 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
 
 	@Override
 	protected void onPause() {
@@ -94,6 +112,49 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
+	@Override
+	public void onClick(View view) {
+		if (view == switcher) {
+			final Intent intent = new Intent();
+			intent.setClass(this, EventEpgListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(intent);
+		} else if (view == clock) {
+			Intent intent = new Intent();
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			intent.setClass(this, EpgSearchTimesListActivity.class);
+			startActivity(intent);
+		} else {
+			super.onClick(view);
+		}
+	}
+
+	public void onTimeSet(final TimePicker view, final int hourOfDay,
+			final int minute) {
+		String tm = String.format("%02d:%02d", hourOfDay, minute);
+
+		// timeSpinnerAdapter.add(time);
+		final EpgSearchTimeValues values = new EpgSearchTimeValues(this);
+		List<EpgSearchTimeValue> vs = values.getValues();
+		final EpgSearchTimeValue time = new EpgSearchTimeValue(3, tm);
+		vs.add(vs.size() - 1, time);
+		timeSpinnerAdapter.clear();
+		int select = -1;
+		int counter = 0;
+		for (final EpgSearchTimeValue value : vs) {
+			timeSpinnerAdapter.add(value);
+			if (select == -1 && value.getText().equals(tm)) {
+				select = counter;
+			}
+			counter++;
+		}
+		timeSpinner.setSelection(select);
+		setTitle(getString(R.string.epg_by_time_args, tm));
+		// update search
+		startEpgQuery(time.getValue(), false);
+	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
@@ -101,9 +162,19 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// get spinner value
 		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
 				.getSelectedItem();
-		// update search
-		startEpgQuery(selection.getValue(), false);
 
+		if (selection.getValue().equals("adhoc")) {
+			final Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+			// show time selection
+			final TimePickerDialog dialog = new TimePickerDialog(this, this,
+					cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
+					Preferences.get().isUse24hFormat());
+			dialog.show();
+		} else {
+			// update search
+			setTitle(getString(R.string.epg_by_time_args, selection.getText()));
+			startEpgQuery(selection.getValue(), false);
+		}
 	}
 
 	public void onNothingSelected(final AdapterView<?> arg0) {
@@ -148,6 +219,11 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 			// adapter.sortItems();
 			listView.setSelectionAfterHeaderView();
+			return;
+		}
+
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
 			return;
 		}
 
@@ -236,8 +312,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private void nextEvent() {
 		int pos = timeSpinner.getSelectedItemPosition();
 		if (pos + 1 >= timeSpinnerAdapter.getCount()) {
-			Toast.makeText(this, R.string.navigae_at_the_end,
-					Toast.LENGTH_SHORT).show();
+			say(R.string.navigae_at_the_end);
 			return;
 		}
 		timeSpinner.setSelection(pos + 1, true);
@@ -246,8 +321,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private void prevEvent() {
 		int pos = timeSpinner.getSelectedItemPosition();
 		if (pos <= 0) {
-			Toast.makeText(this, R.string.navigae_at_the_start,
-					Toast.LENGTH_SHORT).show();
+			say(R.string.navigae_at_the_start);
 			return;
 		}
 		timeSpinner.setSelection(pos - 1, true);
@@ -264,4 +338,5 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			break;
 		}
 	}
+
 }

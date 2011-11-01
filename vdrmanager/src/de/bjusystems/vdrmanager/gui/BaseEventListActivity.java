@@ -29,17 +29,14 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * @author lado
  * 
  */
-public abstract class BaseEventListActivity<T extends Event> extends
-		BaseActivity<ListView> implements OnItemClickListener,
-		SvdrpAsyncListener<T>, SimpleGestureListener {
+public abstract class BaseEventListActivity<T extends Event> extends BaseActivity<T, ListView> implements OnItemClickListener,
+		 SimpleGestureListener {
 
 	public static final String TAG = BaseEventListActivity.class.getName();
 
@@ -56,6 +53,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	protected String highlight = null;
 
 	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
+	
 
 	// private static final Date BEGIN = new Date(0);
 
@@ -70,14 +68,17 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		super.onCreate(savedInstanceState);
 		// Attach view
 		setContentView(getMainLayout());
-		detector = new SimpleGestureFilter(this, this);
 		setTitle(getWindowTitle());
+		initFlipper();
+		detector = new SimpleGestureFilter(this, this);
+		
 		initChannel();
 	}
 
 	private void initChannel() {
-		currentChannel = getIntent()
-				.getParcelableExtra(Intents.CURRENT_CHANNEL);
+		currentChannel = getApp().getCurrentChannel();
+		//currentChannel = getIntent()
+			//	.getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
 
 	private boolean refreshViewOnResume = false;
@@ -153,10 +154,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		Intent intent;
 
 		switch (item.getItemId()) {
-		case R.id.epg_menu_search:
+//		case R.id.epg_menu_search:
 			// startSearchManager();
-			super.onSearchRequested();
-			break;
+	//		super.onSearchRequested();
+		//	break;
 		case R.id.epg_menu_times:
 			intent = new Intent();
 			intent.setClass(this, EpgSearchTimesListActivity.class);
@@ -205,11 +206,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// find and remember item
 		final EventListItem item = adapter.getItem(position);
 
-		if (item.isHeader()) {
-			return;
-		}
-
-		// prepare timer if we want to program
 		prepareTimer(item);
 
 		// show details
@@ -236,50 +232,19 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// }
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final T result) {
-
-		switch (event) {
-		case ABORTED:
-			alert(R.string.aborted);
-			break;
-		case ERROR:
-			alert(R.string.epg_client_errors);
-			// say(R.string.epg_client_errors);
-			// dismiss(progress);
-			break;
-		// case CONNECTING:
-		// break;
-		case CONNECTED:
-			results.clear();
-			break;
-		case CONNECT_ERROR:
-			say(R.string.progress_connect_error);
-			switchNoConnection();
-			break;
-		case FINISHED_ABNORMALY:
-			alert(R.string.progress_connect_finished_abnormal);
-			switchNoConnection();
-			break;
-		case LOGIN_ERROR:
-			switchNoConnection();
-			break;
-		case FINISHED_SUCCESS:
-			if (finishedSuccess() == false) {
-				say(R.string.epg_no_items);
-			} else {
-				restoreViewSelection();
-			}
-			break;
-		case RESULT_RECEIVED:
-			resultReceived(result);
-			break;
-		}
-	}
 
 	protected void resultReceived(Event result) {
 		results.add(result);
 	}
 
+	@Override
+	protected void connected() {
+		if(flipper != null){
+			flipper.setDisplayedChild(0);
+		}
+		results.clear();
+	}
+	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -305,10 +270,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		dialog.dismiss();
 	}
 
-	/**
-	 * @return false, if no results found
-	 */
-	protected abstract boolean finishedSuccess();
 
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

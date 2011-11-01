@@ -60,7 +60,6 @@ public class VdrManagerApp extends Application {
 	}
 
 	public void setCurrentEvent(final Event currentEvent) {
-		clear();
 		this.currentEvent = currentEvent;
 		//if (currentEvent.getTimer() != null) {
 			//this.currentTimer = currentEvent.getTimer();
@@ -74,7 +73,6 @@ public class VdrManagerApp extends Application {
 	}
 
 	public void setCurrentTimer(final Timer currentTimer) {
-		clear();
 		this.currentTimer = currentTimer;
 	}
 

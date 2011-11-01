@@ -2,9 +2,12 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +28,9 @@ import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -42,15 +48,15 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	Spinner channelSpinner;
 
+	View switcher;
+
 	ArrayAdapter<Channel> channelSpinnerAdapter;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// get state
-		final List<Channel> channels = ChannelClient.getChannels();
-
+		//
+		//
 		// create adapter for channel spinner
 		channelSpinnerAdapter = new ArrayAdapter<Channel>(this,
 				android.R.layout.simple_spinner_item);
@@ -58,18 +64,19 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		channelSpinner = (Spinner) findViewById(R.id.epg_list_channel_spinner);
 		channelSpinner.setAdapter(channelSpinnerAdapter);
+		switcher = findViewById(R.id.switch_epg_view);
+		switcher.setOnClickListener(this);
 
 		// add channel values
 		// boolean useChannelNumber = Preferences.get().isShowChannelNumbers();
-		for (final Channel c : channels) {
-			channelSpinnerAdapter.add(c);
-		}
+
 		// show needed items
 
 		adapter = new ChannelEventAdapter(this);
 
-		channelSpinner.setOnItemSelectedListener(this);
-		channelSpinner.setSelection(currentChannel.getNumber() - 1);
+		// if (currentChannel != null) {
+
+		// }
 		// startChannelEpgQuery(channel);
 		// findViewById(R.id.timer_item_channel).setVisibility(View.GONE);
 		// break;
@@ -77,15 +84,28 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// Create adapter for EPG list
 		listView = (ListView) findViewById(R.id.whatson_list);
 		listView.setAdapter(adapter);
-		//listView.setFastScrollEnabled(true);
+		// listView.setFastScrollEnabled(true);
 		listView.setTextFilterEnabled(true);
 		registerForContextMenu(listView);
 
 		// register EPG item click
 		listView.setOnItemClickListener(this);
-
 	}
 
+	// private void ensureChannelList() {
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		backupViewSelection();
+		startEpgQuery();
+		channelSpinner.setOnItemSelectedListener(this);
+	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
 			final int position, final long id) {
@@ -93,11 +113,36 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// get spinner value
 		final Channel channel = (Channel) channelSpinner.getSelectedItem();
 		currentChannel = channel;
+		getApp().setCurrentChannel(currentChannel);
 		// setAsCurrent(channel);
 		// update search
 		startEpgQuery();
 
 	}
+
+	// class LoadChannelsTask extends AsyncProgressTask<Channel> {
+	//
+	// boolean f;
+	// Channel c;
+	//
+	// public LoadChannelsTask(Channel channel, boolean force,
+	// Activity activity, ChannelClient client) {
+	// super(activity, client);
+	// this.f = force;
+	// this.c = channel;
+	// }
+	//
+	// @Override
+	// public void finished(SvdrpEvent event) {
+	// if (noConnection(event)) {
+	// return;
+	// }
+	// ArrayList<Channel> channels = ChannelClient.getChannels();
+	// for (final Channel c : channels) {
+	// channelSpinnerAdapter.add(c);
+	// }
+	// }
+	// }
 
 	public void onNothingSelected(final AdapterView<?> arg0) {
 		// startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
@@ -134,13 +179,49 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		startEpgQuery(false);
 	}
 
+	@Override
+	public void onClick(View view) {
+		if (view == switcher) {
+			final Intent intent = new Intent();
+			intent.setClass(this, TimeEpgListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(intent);
+		} else {
+			super.onClick(view);
+		}
+	}
+
 	private void startEpgQuery(Channel channel, boolean force) {
+		try {
+			ChannelClient client = new ChannelClient();
+			client.addSvdrpListener(new SvdrpListener<Channel>() {
+				public void svdrpEvent(SvdrpEvent event, Channel result) {
+					if (event == SvdrpEvent.CACHE_HIT
+							|| event == SvdrpEvent.FINISHED_SUCCESS) {
+						ArrayList<Channel> channels = ChannelClient
+								.getChannels();
+						for (final Channel c : channels) {
+							channelSpinnerAdapter.add(c);
+						}
+					}
+					noConnection(event);
+				}
+			});
+			client.run();
+		} catch (SvdrpException ex) {
+			svdrpException(ex);
+		}
+		startEpgQueryImpl(channel, force);
+	}
+
+	private void startEpgQueryImpl(Channel channel, boolean force) {
 
 		if (useCache(channel) && !force) {
 			Calendar cal = Calendar.getInstance();
 			int day = -1;
 			for (Event i : CACHE) {
-				Epg e  = (Epg)i;
+				Epg e = (Epg) i;
 				cal.setTime(e.getStart());
 				int eday = cal.get(Calendar.DAY_OF_YEAR);
 				if (eday != day) {
@@ -153,9 +234,15 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			return;
 		}
 
+		if (checkInternetConnection() == false) {
+			switchNoConnection();
+			return;
+		}
+
 		clearCache();
 
 		epgClient = new EpgClient(channel);
+		epgClient.setResultInfoEnabled(true);
 
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
@@ -169,7 +256,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// attach listener
 		task.addListener(progress);
 		task.addListener(this);
-
 
 		// start task
 		task.run();
@@ -189,7 +275,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		nextForceCache = FUTURE;
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		for (Epg e : epgClient.getResults()) {
+		sortItemsByTime(results);
+		for (Event e : results) {
 			CACHE.add(e);
 			cal.setTime(e.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
@@ -198,13 +285,13 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				adapter.add(new EventListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem(e));
+			adapter.add(new EventListItem((Epg) e));
 			if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
 				nextForceCache = e.getStop();
 			}
 		}
 		cachedChannel = currentChannel;
-		//listView.setSelectionAfterHeaderView();
+		// listView.setSelectionAfterHeaderView();
 		dismiss(progress);
 		return CACHE.isEmpty() == false;
 	}
@@ -227,7 +314,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	@Override
 	protected void retry() {
-		startEpgQuery(currentChannel, true);
+		refresh();
 	}
 
 	@Override
@@ -265,4 +352,21 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			break;
 		}
 	}
+
+	protected void sortItemsByChannel(List<Event> result) {
+		final Comparator<Event> comparator = new Comparator<Event>() {
+
+			public int compare(final Event item1, final Event item2) {
+				return Integer.valueOf(item1.getChannelNumber()).compareTo(
+						Integer.valueOf(item2.getChannelNumber()));
+			}
+		};
+		Collections.sort(result, comparator);
+	}
+
+	@Override
+	protected void timerModified() {
+		cachedChannel = null;
+	}
+
 }

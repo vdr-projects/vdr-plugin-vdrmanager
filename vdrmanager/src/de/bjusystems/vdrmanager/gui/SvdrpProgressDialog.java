@@ -2,6 +2,7 @@ package de.bjusystems.vdrmanager.gui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
@@ -9,7 +10,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 public class SvdrpProgressDialog<T> extends ProgressDialog implements
-		SvdrpAsyncListener<T> {
+		SvdrpAsyncListener<T>, DialogInterface.OnCancelListener {
 	ProgressDialog progress;
 	Activity activity;
 	SvdrpClient<? extends Object> client;
@@ -20,6 +21,8 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 		this.activity = activity;
 		this.client = client;
 		progress = new ProgressDialog(activity);
+		progress.setOnCancelListener(this);
+		progress.setCancelable(false);
 	}
 
 	public void svdrpEvent(final SvdrpEvent event) {
@@ -69,8 +72,19 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 			progress.setMessage(activity.getString(resId, args));
 		}
 	}
-	
+
+	private void abort() {
+		if (client.isConnected()) {
+			client.abort();
+			dismiss();
+		}
+	}
+
 	public void dismiss() {
 		progress.dismiss();
+	}
+
+	public void onCancel(DialogInterface dialog) {
+		abort();
 	}
 }

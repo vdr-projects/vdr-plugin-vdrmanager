@@ -16,71 +16,123 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Timer;
-import de.bjusystems.vdrmanager.utils.date.DateFormatter;
-import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
+import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
+import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
+import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
-/**
- * This class is used for showing what's current running on all channels
- * 
- * @author bju
- */
 public class TimerDetailsActivity extends Activity implements OnClickListener,
-		OnDateSetListener, OnTimeSetListener, SvdrpAsyncListener<Timer> {
+		OnDateSetListener, OnTimeSetListener {
 
-	Preferences prefs;
-	TextView dateField;
-	TextView startField;
-	TextView endField;
-	boolean editStart;
-	Timer timer;
-	SvdrpProgressDialog progress;
-	SetTimerClient setTimerClient;
+	public static final int REQUEST_CODE_TIMER_EDIT = 84;
+	
+	public static final int REQUEST_CODE_TIMER_ADD = 85;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Attach view
-		setContentView(R.layout.timer_detail);
+		View view = getLayoutInflater().inflate(R.layout.timer_detail, null);
+		tView = new EditTimerViewHolder();
+		tView.view = view;
+		tView.title = (TextView) view.findViewById(R.id.timer_detail_title);
+		tView.channel = (TextView) view.findViewById(R.id.timer_detail_channel);
+		tView.dateField = (TextView) view.findViewById(R.id.timer_detail_day);
+		tView.startField = (TextView) view
+				.findViewById(R.id.timer_detail_start);
+		tView.endField = (TextView) view.findViewById(R.id.timer_detail_end);
+		tView.saveButton = (Button) view.findViewById(R.id.timer_details_save);
+		tView.modifyButton = (Button) view
+				.findViewById(R.id.timer_details_modify);
 
-		// timer
-		timer = ((VdrManagerApp) getApplication()).getCurrentTimer();
+		view.findViewById(R.id.timer_details_cancel).setOnClickListener(this);
+		tView.dateField.setOnClickListener(this);
+		tView.startField.setOnClickListener(this);
+		tView.endField.setOnClickListener(this);
+		tView.saveButton.setOnClickListener(this);
+		tView.modifyButton.setOnClickListener(this);
+		setContentView(view);
+		timer = getApp().getCurrentTimer();
+		int op = getIntent().getExtras().getInt(Intents.TIMER_OP);
+		switch (op) {
+		case Intents.ADD_TIMER:
+			setTitle(R.string.timer_details_add_title);
+			add();
+			break;
+		case Intents.EDIT_TIMER:
+			setTitle(R.string.timer_details_modify_title);
+			modify();
+			break;
 
-		// update display
-		updateDisplay();
-
-		// register buttons
-		final Button saveButton = (Button) findViewById(R.id.timer_details_save);
-		saveButton.setOnClickListener(this);
-		if (timer.getNumber() > 0) {
-			saveButton.setText(R.string.timer_details_save_title);
-		} else {
-			saveButton.setText(R.string.timer_details_create_title);
+		default:
+			finish();
 		}
 
-		// register text fields for editing
-		dateField.setOnClickListener(this);
-		startField.setOnClickListener(this);
-		endField.setOnClickListener(this);
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+	public class EditTimerViewHolder {
+		View view;
+		TextView title;
+		TextView channel;
+		TextView dateField;
+		TextView startField;
+		TextView endField;
+		Button saveButton;
+		Button modifyButton;
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
+	EditTimerViewHolder tView = null;
+
+	boolean editStart;
+
+	// SetTimerClient setTimerClient;
+
+	Timer timer;
+
+	private void updateDisplay(TimerOperation op) {
+		updateDisplay();
+		switch (op) {
+		case CREATE:
+			tView.modifyButton.setVisibility(View.GONE);
+			tView.saveButton.setVisibility(View.VISIBLE);
+			tView.saveButton.setText(R.string.timer_details_create_title);
+			break;
+		case MODIFY:
+			tView.saveButton.setVisibility(View.GONE);
+			tView.modifyButton.setVisibility(View.VISIBLE);
+			tView.saveButton.setText(R.string.timer_details_save_title);
+			break;
+		}
+
+	}
+
+	private void updateDisplay() {
+		EventFormatter f = new EventFormatter(timer, true);
+		tView.channel.setText(timer.getChannelNumber() + " "
+				+ timer.getChannelName());
+		tView.title.setText(f.getTitle());
+		tView.dateField.setText(f.getDate());
+		tView.startField.setText(f.getTime());
+		tView.endField.setText(f.getStop());
+	}
+
+	protected VdrManagerApp getApp() {
+		final VdrManagerApp app = (VdrManagerApp) getApplication();
+		return app;
+	}
+
+	public void add() {
+		updateDisplay(TimerOperation.CREATE);
+	}
+
+	public void modify() {
+		updateDisplay(TimerOperation.MODIFY);
 	}
 
 	public void onClick(final View view) {
@@ -114,28 +166,27 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			dialog.show();
 			break;
 		}
+		case R.id.timer_details_cancel: {
+			finishActivity(REQUEST_CODE_TIMER_EDIT);
+			finish();
+			break;
+		}
+		case R.id.timer_details_modify:
+			modifyTimer(timer);
+			say(R.string.done);
+			break;
+
 		case R.id.timer_details_save: {
-			// collect values
-			timer.setTitle(((TextView) findViewById(R.id.timer_detail_title))
-					.getText().toString());
-
-			// create client for saving the timer
-			//setTimerClient = new SetTimerClient(timer, false);
-
-			// create backgound task
-			final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(
-					setTimerClient);
-
-			// create progress
-			progress = new SvdrpProgressDialog(this, setTimerClient);
-
-			// attach listener
-			task.addListener(this);
-
-			// start task
-			task.run();
+			createTimer(timer);
+			say(R.string.done);
+			break;
 		}
+	
 		}
+	}
+
+	protected void say(int res) {
+		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
 	}
 
 	public void onTimeSet(final TimePicker view, final int hourOfDay,
@@ -189,54 +240,29 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
-	private void updateDisplay() {
-
-		((TextView) findViewById(R.id.timer_detail_title)).setText(timer
-				.getTitle());
-		((TextView) findViewById(R.id.timer_detail_channel)).setText(timer
-				.getChannelName());
-		dateField = (TextView) findViewById(R.id.timer_detail_day);
-		final DateFormatter dateFormatter = new DateFormatter(timer.getStart());
-		dateField.setText(dateFormatter.getDateString());
-		startField = (TextView) findViewById(R.id.timer_detail_start);
-		startField.setText(dateFormatter.getTimeString());
-		endField = (TextView) findViewById(R.id.timer_detail_end);
-		endField.setText(new DateFormatter(timer.getStop()).getTimeString());
-
-		final Button button = (Button) findViewById(R.id.timer_details_save);
-		if (timer.getNumber() > 0) {
-			// existing timer
-			button.setText(R.string.timer_details_save_title);
-		} else {
-			// new timer
-			button.setText(R.string.timer_details_create_title);
-		}
-	}
-
-	public void svdrpEvent(final SvdrpEvent event, final Timer result) {
-
-		progress.svdrpEvent(event);
-
-		switch (event) {
-		case FINISHED_ABNORMALY:
-			finish();
-			if(progress != null) {
-				progress.dismiss();
-				progress = null;
+	private void createTimer(Timer timer) {
+		final CreateTimerTask task = new CreateTimerTask(this, timer) {
+			@Override
+			public void finished(SvdrpEvent event) {
+				done();
 			}
-			break;
-		case FINISHED_SUCCESS:
-			if(progress != null){
-				progress.dismiss();
-				progress = null;
-			}
-			setResult(Activity.RESULT_OK);
-			finish();
-			break;
-		}
+		};
+		task.start();
 	}
 
-	public void svdrpException(final SvdrpException exception) {
-		progress.svdrpException(exception);
+	public void done() {
+		setResult(RESULT_OK);
+		finish();
 	}
+
+	private void modifyTimer(Timer timer) {
+		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
+			@Override
+			public void finished(SvdrpEvent event) {
+				done();
+			}
+		};
+		task.start();
+	}
+
 }

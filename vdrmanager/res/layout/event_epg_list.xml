@@ -10,12 +10,32 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
+        
+        <LinearLayout
+            android:id="@+id/whatson_time"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+        
 
         <Spinner
             android:id="@+id/epg_list_channel_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:prompt="@string/epg_list_channel_spinner" />
+
+            <ImageView
+                android:clickable="true"
+                android:background="@android:drawable/list_selector_background"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/switch_epg_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonStyleSmall"
+                android:src="@android:drawable/ic_menu_revert" />
+		</LinearLayout>
 
         <ListView
             android:id="@+id/whatson_list"

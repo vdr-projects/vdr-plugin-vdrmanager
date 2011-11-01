@@ -2,5 +2,6 @@
 <resources>
  
   <string name="epg_search_times_add">Zeit hinzufügen</string>
+  <string name="epg_search_times_window">Selbstdefinierte Zeiten</string>
   
 </resources>

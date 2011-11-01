@@ -13,7 +13,6 @@ public class EpgSearchTimeValues {
 	private final Context context;
 
 	public EpgSearchTimeValues(final Context context) {
-
 		this.context = context;
 	}
 
@@ -38,9 +37,14 @@ public class EpgSearchTimeValues {
 			}
 		}
 
+		values.add(new EpgSearchTimeValue(-1, context.getString(R.string.epg_list_time_adhoc)));
 		return values;
 	}
 
+	public void append(EpgSearchTimeValue est){
+		values.add(values.size() - 1, est);
+	}
+	
 	public void saveValues(final List<EpgSearchTimeValue> values) {
 
 		// get old values

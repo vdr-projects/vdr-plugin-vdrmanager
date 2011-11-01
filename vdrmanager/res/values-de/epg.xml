@@ -5,6 +5,7 @@
   <string name="epg_list_time_label">Was kommt</string>
   <string name="epg_list_time_now">jetzt</string>
   <string name="epg_list_time_next">als nächstes</string>
+  <string name="epg_list_time_adhoc">Ad Hoc</string>
   <string name="epg_list_channel_spinner">Kanal</string>
   <string name="epg_list_search_label">Suchergebnisse</string>
   
@@ -24,6 +25,7 @@
   <string name="epg_by_search">EPG Suche</string>
   <string name="epg_by_search_param">EPG Suche: \'%1$s\'</string>
   <string name="epg_by_time">EPG nach Zeit</string>  
+  <string name="epg_by_time_args">EPG nach Zeit: \'%1$s\'</string>  
   <string name="search_epg_hint">Suche EPG</string>
   <string name="epg_search_settings_description">Suche VDR EPG</string>
 

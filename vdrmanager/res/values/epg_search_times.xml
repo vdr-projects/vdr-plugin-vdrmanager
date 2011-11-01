@@ -2,5 +2,6 @@
 <resources>
  
   <string name="epg_search_times_add">Add time</string>
+  <string name="epg_search_times_window">Custom times</string>
   
 </resources>

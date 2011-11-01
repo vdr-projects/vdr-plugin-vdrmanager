@@ -8,7 +8,7 @@ import de.bjusystems.vdrmanager.gui.Utils;
  *         TODO auf Event Interface umstellen und die Aufrufen an event
  *         delegieren. Das hier ist nicht gut.
  */
-public class EventListItem extends BaseEvent {
+public class EventListItem extends Event {
 
 	Event event;
 

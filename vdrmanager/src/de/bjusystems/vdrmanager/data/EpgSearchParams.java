@@ -2,6 +2,8 @@ package de.bjusystems.vdrmanager.data;
 
 import java.util.Date;
 
+import de.bjusystems.vdrmanager.gui.Utils;
+
 /**
  * Class for EPG events
  * @author bju
@@ -38,6 +40,6 @@ public class EpgSearchParams {
 		this.end = end;
 	}
 	public String toCommandLine() {
-		return title;
+		return Utils.unMapSpecialChars(title);
 	}
 }

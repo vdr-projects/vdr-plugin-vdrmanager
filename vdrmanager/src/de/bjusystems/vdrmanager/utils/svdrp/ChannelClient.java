@@ -3,7 +3,6 @@ package de.bjusystems.vdrmanager.utils.svdrp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 import de.bjusystems.vdrmanager.R;
@@ -27,18 +26,18 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 
 	private static ArrayList<Channel> channels = new ArrayList<Channel>();
 
-	private static boolean  inited = false;
+	private static boolean inited = false;
 
-
-	public ChannelClient(boolean useCache){
+	public ChannelClient(boolean useCache) {
 		super();
-		if(useCache == false){
+		if (useCache == false) {
 			clearCache();
 		}
+		setResultInfoEnabled(true);
 		addSvdrpListener(this);
 	}
-	
-	private void clearCache(){
+
+	private void clearCache() {
 		channelGroups.clear();
 		groupChannels.clear();
 		providerChannels.clear();
@@ -46,9 +45,8 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		inited = false;
 	}
 
-	
 	public static ArrayList<String> getChannelGroups() {
-			return channelGroups;
+		return channelGroups;
 	}
 
 	public static HashMap<String, ArrayList<Channel>> getGroupChannels() {
@@ -103,37 +101,33 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		return R.string.progress_channels_loading;
 	}
 
-	private synchronized void  initChannels(List<Channel> results) {
-		if(inited){
-			return;
-		}
-		ArrayList<Channel> currentChannels = null;
-		for (Channel c : results) {
-			if (c.isGroupSeparator()) {
-				channelGroups.add(c.getName());
-				currentChannels = new ArrayList<Channel>();
-				groupChannels.put(c.getName(), currentChannels);
-			} else {
-				channels.add(c);
-				currentChannels.add(c);
-				String provider = c.getProvider();
-				ArrayList<Channel> channels = providerChannels.get(provider);
-				if (channels == null) {
-					channels = new ArrayList<Channel>();
-					providerChannels.put(provider, channels);
-				}
-				channels.add(c);
+	ArrayList<Channel> currentChannels = null;
+
+	private void received(Channel c) {
+		if (c.isGroupSeparator()) {
+			channelGroups.add(c.getName());
+			currentChannels = new ArrayList<Channel>();
+			groupChannels.put(c.getName(), currentChannels);
+		} else {
+			channels.add(c);
+			currentChannels.add(c);
+			String provider = c.getProvider();
+			ArrayList<Channel> channels = providerChannels.get(provider);
+			if (channels == null) {
+				channels = new ArrayList<Channel>();
+				providerChannels.put(provider, channels);
 			}
+			channels.add(c);
 		}
-		inited = true;
 	}
 
-	public void svdrpEvent(SvdrpEvent event, Channel result) {
-		if(event != SvdrpEvent.FINISHED_SUCCESS){
+	public void svdrpEvent(SvdrpEvent event, Channel c) {
+		if (event == SvdrpEvent.RESULT_RECEIVED) {
+			received(c);
 			return;
 		}
-		initChannels(getResults());
-		getResults().clear();
+		if(event == SvdrpEvent.FINISHED_SUCCESS){
+			inited = true;
+		}
 	}
-
 }

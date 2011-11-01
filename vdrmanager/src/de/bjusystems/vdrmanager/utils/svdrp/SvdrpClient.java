@@ -41,6 +41,13 @@ public abstract class SvdrpClient<Result> {
 	private boolean resultInfoEnabled = false;
 
 	private Timer watchDog = new Timer();
+	
+	public boolean isConnected(){
+		if(socket == null){
+			return false;
+		}
+		return socket.isConnected();
+	}
 
 	/**
 	 * Parse received answer line
@@ -97,6 +104,23 @@ public abstract class SvdrpClient<Result> {
 	 */
 	public void abort() {
 		abort = true;
+		try {
+			if (socket != null) {
+				if (socket.isConnected()) {
+					socket.shutdownInput();
+					socket.shutdownOutput();
+					socket.close();
+				} else {
+					if(st != null){
+						st.interrupt();
+					}
+					socket.close();
+				}
+			}
+		} catch (Exception ex) {
+			Log.w(TAG, ex);
+		}
+
 	}
 
 	/**
@@ -108,6 +132,8 @@ public abstract class SvdrpClient<Result> {
 		return results;
 	}
 
+	private Thread st;
+	
 	/**
 	 * Connect to SVDRP
 	 * 
@@ -122,15 +148,45 @@ public abstract class SvdrpClient<Result> {
 	 */
 	protected boolean connect() throws IOException {
 
-		Preferences prefs = Preferences.get();
+		final Preferences prefs = Preferences.get();
 		try {
 			// connect
-			//TODO prefs
 			informListener(SvdrpEvent.CONNECTING, null);
 			socket = new Socket();
-			socket.connect(new InetSocketAddress(prefs.getSvdrpHost(), prefs.getSvdrpPort()), 10 * 1000);//8 secs for connect
-			socket.setSoTimeout(15 * 1000);//15 sec for each read 
-			final long delay = C.ONE_MINUTE_IN_MILLIS * 3; //in 3 minutes we abort the communication
+			//st = new Thread(){
+//				@Override
+//				public void run() {
+//					try{
+					socket.connect(
+							new InetSocketAddress(prefs.getSvdrpHost(), prefs
+									.getSvdrpPort()),
+							prefs.getConnectionTimeout() * 1000);// 8 secs for connect
+//					}catch(IOException iox){
+//						throw new RuntimeException(); 
+//					}
+//				}
+//				
+//			};
+			
+//			st.start();
+//			
+//			try {
+//				st.join();
+//			} catch (InterruptedException e) {
+//				Thread.currentThread().interrupt();
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+			socket.setSoTimeout(prefs.getReadTimeout() * 1000);// 15 sec for
+																// each read
+			final long delay = C.ONE_MINUTE_IN_MILLIS * prefs.getTimeout() * 60; // in
+																					// 3
+																					// minutes
+																					// we
+																					// abort
+																					// the
+																					// communication
 			watchDog.schedule(new TimerTask() {
 				@Override
 				public void run() {
@@ -139,7 +195,7 @@ public abstract class SvdrpClient<Result> {
 				}
 			}, delay);
 			informListener(SvdrpEvent.CONNECTED, null);
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			Log.w(TAG, e);
 			informListener(SvdrpEvent.CONNECT_ERROR, null);
 			return false;
@@ -159,7 +215,6 @@ public abstract class SvdrpClient<Result> {
 		} else {
 			informListener(SvdrpEvent.LOGGED_IN, null);
 		}
-
 		return true;
 	}
 

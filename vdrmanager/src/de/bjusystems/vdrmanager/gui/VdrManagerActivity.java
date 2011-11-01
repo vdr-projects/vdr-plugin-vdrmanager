@@ -15,7 +15,6 @@ import de.bjusystems.vdrmanager.utils.wakeup.AsyncWakeupTask;
 
 public class VdrManagerActivity extends Activity implements OnClickListener {
 
-	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,15 +22,15 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		// attach view
 		setContentView(R.layout.vdrmanager);
 
-		//Preferences.loadPreferences(this);
+		// Preferences.loadPreferences(this);
 
 		findViewById(R.id.action_menu_channels).setOnClickListener(this);
 		findViewById(R.id.action_menu_recordings).setOnClickListener(this);
 		findViewById(R.id.action_menu_timers).setOnClickListener(this);
 		findViewById(R.id.action_menu_epg).setOnClickListener(this);
 		findViewById(R.id.action_menu_search).setOnClickListener(this);
-		
-		if(Preferences.get().isWakeupEnabled() == false){
+
+		if (Preferences.get().isWakeupEnabled() == false) {
 			findViewById(R.id.action_menu_wakeup).setVisibility(View.GONE);
 		} else {
 			findViewById(R.id.action_menu_wakeup).setOnClickListener(this);
@@ -49,21 +48,26 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.main_menu_preferences:
+		case R.id.main_menu_preferences: {
 			// remember activity for finishing
 			final VdrManagerApp app = (VdrManagerApp) getApplication();
 			app.clearActivitiesToFinish();
 			app.addActivityToFinish(this);
 
-			final Intent intent = new Intent();
+			Intent intent = new Intent();
 			intent.setClass(this, PreferencesActivity.class);
 			startActivity(intent);
 			break;
+		}
+		case R.id.main_menu_info: {
+			About.show(this);
+			break;
+		}
 		case R.id.main_menu_exit:
 			finish();
 			break;
@@ -73,11 +77,11 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		if(Preferences.get().isQuiteOnBackButton()){
+		if (Preferences.get().isQuiteOnBackButton()) {
 			super.onBackPressed();
 		}
 	}
-	
+
 	public void startActivity(Class<?> clazz) {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setClass(this, clazz);
@@ -110,12 +114,12 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		}
 
 	}
-	
+
 	@Override
 	public boolean onSearchRequested() {
-		 Bundle appData = new Bundle();
-	     //appData.putBoolean(SearchableActivity.JARGON, true);
-	     startSearch(null, false, appData, false);
-	     return true;
+		Bundle appData = new Bundle();
+		// appData.putBoolean(SearchableActivity.JARGON, true);
+		startSearch(null, false, appData, false);
+		return true;
 	}
 }

@@ -15,7 +15,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
  * 
  * @author bju
  */
-public class Timer extends BaseEvent {
+public class Timer extends Event {
 
 	private static final int ENABLED = 1;
 	private static final int INSTANT = 2;

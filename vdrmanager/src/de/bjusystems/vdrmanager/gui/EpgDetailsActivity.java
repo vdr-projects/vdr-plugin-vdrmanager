@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,17 +24,19 @@ import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.Event;
+import de.bjusystems.vdrmanager.data.Event.TimerState;
 import de.bjusystems.vdrmanager.data.EventFormatter;
-import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
-import de.bjusystems.vdrmanager.utils.date.DateFormatter;
-import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
+import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
+import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
+import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -56,12 +58,16 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	Event cEvent;
 
+	ImageView state;
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
 		Intent i = getIntent();
-	
+
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
 
 		// Attach view
@@ -69,23 +75,42 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 		detector = new SimpleGestureFilter(this, this);
 
-		// event_left = (ImageButton) findViewById(R.id.epg_event_left);
-		// event_right = (ImageButton) findViewById(R.id.epg_event_right);
+		event_left = (ImageButton) findViewById(R.id.epg_event_left);
+		event_right = (ImageButton) findViewById(R.id.epg_event_right);
+		state = (ImageView) findViewById(R.id.epg_timer_state);
 
-		// current event
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		epgs = app.getCurrentEpgList();
-		Event epg = app.getCurrentEvent();
+		new VoidAsyncTask() {
 
-		counter = 0;
-		for (Event e : epgs) {
-			if (epg == e) {
-				break;
+			private Event epg;
+
+			@Override
+			protected void onPreExecute() {
+				setProgressBarIndeterminateVisibility(true);
 			}
-			counter++;
-		}
 
-		publishEPG(epg);
+			@Override
+			protected Void doInBackground(Void... params) {
+				// current event
+				final VdrManagerApp app = (VdrManagerApp) getApplication();
+				epgs = app.getCurrentEpgList();
+				epg = app.getCurrentEvent();
+
+				counter = 0;
+				for (Event e : epgs) {
+					if (epg == e) {
+						break;
+					}
+					counter++;
+				}
+				return (Void) null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+				publishEPG(epg);
+			}
+		}.execute((Void) null);
+
 	}
 
 	private void setState(ImageView view, int res) {
@@ -93,7 +118,13 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		view.setImageResource(res);
 	}
 
-	public void publishEPG(Event event) {
+	public void publishEPG(final Event event) {
+		setProgressBarIndeterminateVisibility(true);
+		publishEPGImpl(event);
+		setProgressBarIndeterminateVisibility(false);
+	}
+
+	public void publishEPGImpl(Event event) {
 
 		cEvent = event;
 
@@ -118,7 +149,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				.getChannelName());
 		// ((TextView) findViewById(R.id.epg_detail_date)).setText(formatter
 		// .getLongDate());
-		ImageView state = (ImageView) findViewById(R.id.epg_timer_state);
+		
 
 		switch (event.getTimerState()) {
 		case Active:
@@ -130,6 +161,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		case Recording:
 			setState(state, R.drawable.timer_recording);
 			break;
+		default:
+			setState(state, R.drawable.timer_none);
 		}
 
 		final TextView shortText = (TextView) findViewById(R.id.epg_detail_shorttext);
@@ -177,8 +210,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			b.setVisibility(View.VISIBLE);
 			setThisAsOnClickListener(b);
 		}
-		// setThisAsOnClickListener(R.id.epg_event_left);
-		// setThisAsOnClickListener(R.id.epg_event_right);
+		setThisAsOnClickListener(R.id.epg_event_left);
+		setThisAsOnClickListener(R.id.epg_event_right);
 
 		// set button text
 		if (event instanceof Timer) {
@@ -203,13 +236,40 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	protected void onResume() {
 		super.onResume();
 		// TODO Check here whether the config has changed for imdb
-		// TODO check here if we are still live ?
-
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+
+	class Wrapper {
+		public int id;
+		public String value;
+
+		public Wrapper(int id) {
+			this.id = id;
+			this.value = getString(id);
+		}
+
+		public String toString() {
+			return value;
+		}
+	}
+
+	public Timer getTimer(Event event) {
+		if (event instanceof Timer) {
+			return (Timer) event;
+		}
+		if (event instanceof Epg) {
+			return ((Epg) event).getTimer();
+		}
+		return null;
+	}
+
+	protected VdrManagerApp getApp() {
+		final VdrManagerApp app = (VdrManagerApp) getApplication();
+		return app;
 	}
 
 	public void onClick(final View v) {
@@ -218,8 +278,72 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			Utils.stream(this, cEvent.getChannelNumber());
 			break;
 		case R.id.epg_event_create_timer:
-			Toast.makeText(this, "Soon we get here the timer menu",
-					Toast.LENGTH_SHORT).show();
+			final ArrayAdapter<Wrapper> ada = new ArrayAdapter<Wrapper>(this,
+					R.layout.timer_operation_list_item);
+			final Timer timer = getTimer(cEvent);
+			// remove unneeded menu items
+			if (timer != null) {
+				ada.add(new Wrapper(R.string.epg_item_menu_timer_modify));
+				ada.add(new Wrapper(R.string.epg_item_menu_timer_delete));
+				if (timer.isEnabled()) {
+					ada.add(new Wrapper(R.string.epg_item_menu_timer_disable));
+				} else {
+					ada.add(new Wrapper(R.string.epg_item_menu_timer_enable));
+				}
+			} else if (cEvent instanceof Recording) {
+				ada.add(new Wrapper(R.string.epg_item_menu_timer_delete));
+
+			} else {
+				ada.add(new Wrapper(R.string.epg_item_menu_timer_add));
+			}
+			new AlertDialog.Builder(this)
+					.setAdapter(ada, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							final Timer t;
+							if (timer == null) {
+								t = cEvent.createTimer();
+							} else {
+								t = timer;
+							}
+							getApp().setCurrentTimer(t);
+							Wrapper w = ada.getItem(which);
+							switch (w.id) {
+							case R.string.epg_item_menu_timer_add: {
+								final Intent intent = new Intent();
+								intent.setClass(EpgDetailsActivity.this,
+										TimerDetailsActivity.class);
+								intent.putExtra(Intents.TIMER_OP,
+										Intents.ADD_TIMER);
+								startActivityForResult(
+										intent,
+										TimerDetailsActivity.REQUEST_CODE_TIMER_ADD);
+								break;
+							}
+							case R.string.epg_item_menu_timer_modify: {
+								final Intent intent = new Intent();
+								intent.setClass(EpgDetailsActivity.this,
+										TimerDetailsActivity.class);
+								intent.putExtra(Intents.TIMER_OP,
+										Intents.EDIT_TIMER);
+								startActivityForResult(
+										intent,
+										TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
+								break;
+							}
+							case R.string.epg_item_menu_timer_delete: {
+								deleteTimer(timer);
+								break;
+							}
+							case R.string.epg_item_menu_timer_enable:
+							case R.string.epg_item_menu_timer_disable: {
+								toggleTimer(timer);
+								break;
+							}
+							}
+						}
+					}).create()//
+					.show();//
+
 			break;
 		case R.id.epg_event_imdb:
 			final TextView title = (TextView) findViewById(R.id.epg_detail_title);
@@ -230,11 +354,42 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			i.setData(Uri.parse(url));
 			startActivity(i);
 			break;
-//		case R.id.epg_event_share:
-//			shareEvent(cEvent);
-//			break;
+		case R.id.epg_event_left:
+			prevEPG();
+			break;
+		case R.id.epg_event_right:
+			nextEPG();
+			break;
+		// case R.id.epg_event_share:
+		// shareEvent(cEvent);
+		// break;
 		}
 	}
+
+	protected void toggleTimer(final Timer timer) {
+		final ToggleTimerTask task = new ToggleTimerTask(this, timer) {
+			@Override
+			public void finished(SvdrpEvent event) {
+				if (event == SvdrpEvent.FINISHED_SUCCESS) {
+					TimerState state = timer.getTimerState();
+					int res = -1;
+					if (state == TimerState.Active) {
+						res = R.drawable.timer_inactive;
+					} else if (state == TimerState.Inactive) {
+						res = R.drawable.timer_active;
+					}
+					if (res != -1) {
+						setState(
+								(ImageView) findViewById(R.id.epg_timer_state),
+								res);
+					}
+				}
+			}
+		};
+		task.start();
+	}
+
+	// EditTimerViewHolder tView = null;
 
 	public void onSwipe(int direction) {
 		switch (direction) {
@@ -250,66 +405,56 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	private void prevEPG() {
 		Event epg;
 		if (counter == 0) {
-			epg = epgs.get(0);
-		} else {
-			epg = epgs.get(--counter);
+			say(R.string.navigae_at_the_start);
+			return;
 		}
-
+		epg = epgs.get(--counter);
 		publishEPG(epg);
-
 	}
 
 	List<Event> epgs = new ArrayList<Event>();
-	
+
 	int counter = 0;
-/*
-	public void initEPGs() {
 
-		if (epgs != null) {
-			return;
-		}
-		epgs = new ArrayList<Event>();
-
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		final Event event = app.getCurrentEvent();
-		EpgClient c = new EpgClient(new Channel() {
-			@Override
-			public String getName() {
-				return event.getChannelName();
-			}
-
-			@Override
-			public int getNumber() {
-				return Integer.valueOf(event.getChannelNumber());
-			}
-		});
-
-		try {
-			c.run();
-		} catch (SvdrpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		List<Epg> e = c.getResults();
-		if (e == null || e.isEmpty()) {
-			return;
-		}
-
-		epgs.addAll(e);
-		Event fe = epgs.get(0);
-		if (event.getStart().equals(fe.getStart()) == false) {
-			epgs.set(0, event);
-			;
-		}
-	}
-*/
+	/*
+	 * public void initEPGs() {
+	 * 
+	 * if (epgs != null) { return; } epgs = new ArrayList<Event>();
+	 * 
+	 * final VdrManagerApp app = (VdrManagerApp) getApplication(); final Event
+	 * event = app.getCurrentEvent(); EpgClient c = new EpgClient(new Channel()
+	 * {
+	 * 
+	 * @Override public String getName() { return event.getChannelName(); }
+	 * 
+	 * @Override public int getNumber() { return
+	 * Integer.valueOf(event.getChannelNumber()); } });
+	 * 
+	 * try { c.run(); } catch (SvdrpException e) { // TODO Auto-generated catch
+	 * block e.printStackTrace(); }
+	 * 
+	 * List<Epg> e = c.getResults(); if (e == null || e.isEmpty()) { return; }
+	 * 
+	 * epgs.addAll(e); Event fe = epgs.get(0); if
+	 * (event.getStart().equals(fe.getStart()) == false) { epgs.set(0, event); ;
+	 * } }
+	 */
 	private void nextEPG() {
 		if (counter < epgs.size() - 1) {
 			counter++;
+			Event epg = epgs.get(counter);
+			publishEPG(epg);
+		} else {
+			say(R.string.navigae_at_the_end);
 		}
-		Event epg = epgs.get(counter);
-		publishEPG(epg);
+	}
+
+	protected void say(int res) {
+		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
+	}
+
+	protected void say(String msg) {
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 
 	public void onDoubleTap() {
@@ -337,7 +482,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	private void shareEvent(Event event) {
 		Utils.shareEvent(this, event);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == MENU_SHARE) {
@@ -346,4 +491,40 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	protected void modifyTimer(Timer timer) {
+		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
+			@Override
+			public void finished(SvdrpEvent event) {
+
+			}
+		};
+		task.start();
+	}
+
+	protected void deleteTimer(final Timer timer) {
+		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
+			@Override
+			public void finished(SvdrpEvent event) {
+				if (event == SvdrpEvent.FINISHED_SUCCESS) {
+					setState((ImageView) findViewById(R.id.epg_timer_state),
+							R.drawable.timer_none);
+				}
+			}
+		};
+		task.start();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != RESULT_OK){
+			return;
+		}
+		if(requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_ADD){
+			setState(state, Utils.isLive(getApp().getCurrentEvent()) ? R.drawable.timer_recording :  R.drawable.timer_active);
+		} else if( requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT){
+			//??
+		}
+	}
+	
 }

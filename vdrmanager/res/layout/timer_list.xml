@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical">
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flipper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 	<LinearLayout android:layout_height="fill_parent"
 		android:layout_width="fill_parent" android:id="@+id/main_content">
 		<ListView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,9 +13,10 @@
 			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
 			android:cacheColorHint="?android:attr/colorBackground" />
 	</LinearLayout>
+	
 	<LinearLayout android:orientation="vertical"
 		android:id="@+id/no_connection_layout" android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:visibility="gone">
+		android:layout_height="fill_parent">
 		<LinearLayout android:layout_height="fill_parent"
 			android:gravity="center" android:layout_width="fill_parent"
 			android:orientation="horizontal">
@@ -28,4 +31,4 @@
 
 		</LinearLayout>
 	</LinearLayout>
-</LinearLayout>
+</ViewFlipper>

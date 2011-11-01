@@ -8,7 +8,7 @@ import de.bjusystems.vdrmanager.app.C;
 
 import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
-public class Recording extends BaseEvent{
+public class Recording extends Event{
 	
 	public Recording(String line)  {
 		final String[] words = StringUtils.splitPreserveAllTokens(line, C.DATA_SEPARATOR);
