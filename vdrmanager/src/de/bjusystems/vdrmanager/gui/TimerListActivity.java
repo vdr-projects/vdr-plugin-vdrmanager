@@ -17,18 +17,22 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
 
 /**
- * This class is used for showing what's current running on all channels
+ * This class is used for showing all the existing timers
  * 
  * @author bju
  */
 public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		OnItemClickListener, SvdrpAsyncListener<Timer> {
 
+	/**
+	 * 
+	 */
 	TimerClient timerClient;
 
 	
-	
-	
+	/* (non-Javadoc)
+	 * @see de.bjusystems.vdrmanager.gui.BaseEventListActivity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,11 +89,19 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		task.run();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.bjusystems.vdrmanager.gui.BaseTimerEditActivity#getTimer(de.bjusystems.vdrmanager.data.EventListItem)
+	 */
 	@Override
 	protected Timer getTimer(EventListItem item) {
 		return (Timer)item.getEvent();
 	}
-	protected void prepareTimer(final EventListItem item) {
+	
+	
+	/* (non-Javadoc)
+	 * @see de.bjusystems.vdrmanager.gui.BaseEventListActivity#prepareTimer(de.bjusystems.vdrmanager.data.EventListItem)
+	 */
+	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		// remember event for details view and timer things
 		app.setCurrentEvent(item.getEvent());

@@ -63,7 +63,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected void prepareTimer(EventListItem event) {
+	protected void prepareDetailsViewData(EventListItem event) {
 		getApp().setCurrentEvent(event.getEvent());
 		getApp().setCurrentEpgList(results);
 	}

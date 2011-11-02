@@ -302,7 +302,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		return results.isEmpty() == false;
 	}
 
-	protected void prepareTimer(final EventListItem item) {
+	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentEvent(item.getEvent());
 		app.setCurrentEpgList(CACHE);

@@ -105,7 +105,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		return true;
 	}
 
-	protected void prepareTimer(EventListItem event) {
+	/**
+	 * Prepare the current event and the chained events for 
+	 * @param event
+	 */
+	protected void prepareDetailsViewData(EventListItem event) {
 
 	}
 
@@ -202,7 +206,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// find and remember item
 		final EventListItem item = adapter.getItem(position);
 
-		prepareTimer(item);
+		prepareDetailsViewData(item);
 
 		// show details
 		final Intent intent = new Intent();

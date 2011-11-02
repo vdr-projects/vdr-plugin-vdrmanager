@@ -278,7 +278,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-	protected void prepareTimer(final EventListItem item) {
+	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 
 		// remember event for details view and timer things

@@ -40,12 +40,20 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	
 	abstract protected int getMainLayout();
 
+	protected void switchNothinFound() {
+		if (flipper == null) {
+			return;
+		}
+		//say("can not connect...");
+		//flipper.setDisplayedChild(1);
+	}
 	
 	protected void switchNoConnection() {
 		if (flipper == null) {
 			return;
 		}
-		flipper.setDisplayedChild(1);
+		//say("can not connect...");
+		//flipper.setDisplayedChild(1);
 	}
 
 	protected void initFlipper() {

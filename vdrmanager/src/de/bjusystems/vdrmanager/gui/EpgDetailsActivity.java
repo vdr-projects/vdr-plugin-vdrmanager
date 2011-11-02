@@ -99,7 +99,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 				counter = 0;
 				for (Event e : epgs) {
-					if (epg == e) {
+					if (epg.equals(e)) {
 						break;
 					}
 					counter++;
