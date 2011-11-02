@@ -36,9 +36,15 @@ public abstract class SvdrpClient<Result> {
 	/** listener */
 	private final List<SvdrpListener<Result>> listeners = new ArrayList<SvdrpListener<Result>>();
 	/** list of results */
-	private final List<Result> results = new ArrayList<Result>();
+	//private final List<Result> results = new ArrayList<Result>();
 	/** should the listener be informed about each received result */
-	private boolean resultInfoEnabled = false;
+	//private boolean resultInfoEnabled = false;
+	/**
+	 * @return true if the client has result
+	 */
+//	public boolean hasResults(){
+//		return results.isEmpty() == false;
+//	}
 
 	private Timer watchDog = new Timer();
 	
@@ -123,14 +129,14 @@ public abstract class SvdrpClient<Result> {
 
 	}
 
-	/**
-	 * Gets the list of results
-	 * 
-	 * @return results
-	 */
-	public List<Result> getResults() {
-		return results;
-	}
+//	/**
+//	 * Gets the list of results
+//	 * 
+//	 * @return results
+//	 */
+//	public List<Result> getResults() {
+//		return results;
+//	}
 
 	private Thread st;
 	
@@ -295,7 +301,7 @@ public abstract class SvdrpClient<Result> {
 			abort = false;
 
 			// clear results
-			results.clear();
+			//results.clear();
 
 			// connect
 			final boolean connected = connect();
@@ -349,10 +355,10 @@ public abstract class SvdrpClient<Result> {
 					break;
 				}
 				if (result != null) {
-					results.add(result);
-					if (resultInfoEnabled) {
+					//results.add(result);
+					//if (resultInfoEnabled) {
 						informListener(SvdrpEvent.RESULT_RECEIVED, result);
-					}
+					//}
 				}
 
 			}
@@ -373,9 +379,9 @@ public abstract class SvdrpClient<Result> {
 		}
 	}
 
-	public void setResultInfoEnabled(final boolean resultInfoEnabled) {
-		this.resultInfoEnabled = resultInfoEnabled;
-	}
+//	public void setResultInfoEnabled(final boolean resultInfoEnabled) {
+//		this.resultInfoEnabled = resultInfoEnabled;
+//	}
 
 	protected void informListenerError(final SvdrpEvent event,
 			final Throwable result) {

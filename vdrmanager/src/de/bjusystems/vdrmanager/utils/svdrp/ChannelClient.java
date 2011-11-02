@@ -33,7 +33,6 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		if (useCache == false) {
 			clearCache();
 		}
-		setResultInfoEnabled(true);
 		addSvdrpListener(this);
 	}
 
