@@ -28,5 +28,7 @@
   <string name="epg_by_time_args">EPG by time: \'%1$s\'</string>  
   <string name="search_epg_hint">Search EPG</string>
   <string name="epg_search_settings_description">Search VDR EPG</string>
+  <string name="epg_window_title_count">%1$s,  %2$s items</string>
+  <string name="channels_window_title_count">%1$s,  %2$s/%3$s</string>
 
 </resources>
