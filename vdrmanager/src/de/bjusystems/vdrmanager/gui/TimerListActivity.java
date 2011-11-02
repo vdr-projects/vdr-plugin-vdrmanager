@@ -29,15 +29,18 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	 */
 	TimerClient timerClient;
 
-	
-	/* (non-Javadoc)
-	 * @see de.bjusystems.vdrmanager.gui.BaseEventListActivity#onCreate(android.os.Bundle)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseEventListActivity#onCreate(android.os
+	 * .Bundle)
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Attach view
-//		setContentView(getMainLayout());
+		// setContentView(getMainLayout());
 
 		// create an adapter
 		adapter = new TimeEventAdapter(this);
@@ -58,19 +61,17 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		startTimerQuery();
 	}
 
-
 	@Override
 	protected void onPause() {
 		super.onPause();
 	}
-
 
 	private void startTimerQuery() {
 
 		if (checkInternetConnection() == false) {
 			switchNoConnection();
 			return;
-		}		
+		}
 
 		// get timer client
 		timerClient = new TimerClient();
@@ -89,17 +90,24 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		task.run();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.bjusystems.vdrmanager.gui.BaseTimerEditActivity#getTimer(de.bjusystems.vdrmanager.data.EventListItem)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseTimerEditActivity#getTimer(de.bjusystems
+	 * .vdrmanager.data.EventListItem)
 	 */
 	@Override
 	protected Timer getTimer(EventListItem item) {
-		return (Timer)item.getEvent();
+		return (Timer) item.getEvent();
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see de.bjusystems.vdrmanager.gui.BaseEventListActivity#prepareTimer(de.bjusystems.vdrmanager.data.EventListItem)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseEventListActivity#prepareTimer(de.bjusystems
+	 * .vdrmanager.data.EventListItem)
 	 */
 	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
@@ -111,10 +119,9 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		sortItemsByTime(results);
-		for(Event e : results) {
-		//results.add(e);
-		Calendar cal = Calendar.getInstance();
 		int day = -1;
+		Calendar cal = Calendar.getInstance();
+		for (Event e : results) {
 			cal.setTime(e.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
