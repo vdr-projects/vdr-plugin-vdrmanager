@@ -20,9 +20,9 @@ public class EventListItem extends Event {
 		this.event = event;
 	}
 
-	private final Recording rec;
-	private final Timer timer;
-	private final Epg epg;
+	//private final Recording rec;
+	//private final Timer timer;
+	//private final Epg epg;
 	private final String header;
 
 	//
@@ -37,71 +37,75 @@ public class EventListItem extends Event {
 	// throw new IllegalArgumentException("Uknown event type " + event);
 	// }
 
-	public EventListItem(final Recording rec) {
+
+	public EventListItem(final Event rec) {
 		super(rec);
 		event = rec;
 		this.header = null;
-		this.rec = rec;
-		this.epg = null;
-		this.timer = null;
+//		this.rec = rec;
+	//	this.epg = null;
+		//this.timer = null;
 	}
-
-	public EventListItem(final Timer timer) {
-		super(timer);
-		event = timer;
-		this.header = null;
-		this.timer = timer;
-		this.epg = null;
-		this.rec = null;
-	}
-
-	public EventListItem(final Epg epg) {
-		super(epg);
-		event = epg;
-		this.header = null;
-		this.timer = null;
-		this.epg = epg;
-		this.rec = null;
-	}
+//	
+//	public EventListItem(final Recording rec) {
+//		super(rec);
+//		event = rec;
+//		this.header = null;
+//		this.rec = rec;
+//		this.epg = null;
+//		this.timer = null;
+//	}
+//
+//	public EventListItem(final Timer timer) {
+//		super(timer);
+//		event = timer;
+//		this.header = null;
+//		this.timer = timer;
+//		this.epg = null;
+//		this.rec = null;
+//	}
+//
+//	public EventListItem(final Epg epg) {
+//		super(epg);
+//		event = epg;
+//		this.header = null;
+//		this.timer = null;
+//		this.epg = epg;
+//		this.rec = null;
+//	}
 
 	@Override
 	public TimerState getTimerState() {
-		if (epg != null) {
-			return epg.getTimerState();
-		}
-		return super.getTimerState();
+		return event.getTimerState();
 	}
 
 	public EventListItem(final String header) {
 		this.header = header;
-		this.timer = null;
-		this.epg = null;
-		this.rec = null;
 	}
 
 	public boolean isHeader() {
 		return header != null;
 	}
 
-	public boolean isTimer() {
-		return timer != null;
-	}
+//	public boolean isTimer() {
+//		return event instanceof Timer;
+//	}
 
 	public String getHeader() {
 		return header;
 	}
 
-	public Timer getTimer() {
-		return timer;
-	}
-
-	public Epg getEpg() {
-		return epg;
-	}
-
-	public Recording getRecording() {
-		return rec;
-	}
+//	public Timer getTimer() {
+//		return timer;
+//	}
+//
+//	public Epg getEpg() {
+//		return epg;
+//	}
+//
+//	public Recording getRecording() {
+//		return rec;
+//	}
 
 	// public Event getEvent() {
 	// return event;
@@ -119,12 +123,17 @@ public class EventListItem extends Event {
 
 		final EventFormatter formatter = new EventFormatter(this);
 		final StringBuilder text = new StringBuilder();
-		text.append(isTimer() ? "Timer: " : "Event: ");
+		text.append("Timer / Event: ");
 		text.append("Channel: ").append(getChannelNumber());
 		text.append(" (").append(getChannelName()).append("), ");
 		text.append("Zeit: ").append(formatter.getDate()).append(" ")
 				.append(formatter.getTime());
 		return text.toString();
+	}
+
+	@Override
+	public Timer getTimer() {
+				return event.getTimer();
 	}
 
 }

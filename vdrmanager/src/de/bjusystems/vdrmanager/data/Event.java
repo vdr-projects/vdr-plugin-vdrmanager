@@ -22,6 +22,9 @@ public abstract class Event {
 		return new Timer(this);
 	}
 	
+	public abstract Timer getTimer();
+
+	
 	public TimerState getTimerState() {
 		return TimerState.None;
 	}

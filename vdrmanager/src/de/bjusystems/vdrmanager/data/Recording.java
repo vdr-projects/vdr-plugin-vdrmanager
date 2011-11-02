@@ -62,6 +62,11 @@ public class Recording extends Event{
 	public String toCommandLine(){
 		return String.valueOf(index);
 	}
+
+	@Override
+	public Timer getTimer() {
+		return null;
+	}
 	
 
 }

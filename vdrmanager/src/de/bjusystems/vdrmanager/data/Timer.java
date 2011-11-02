@@ -169,4 +169,8 @@ public class Timer extends Event {
 			flags = flags & ~ENABLED;
 		}
 	}
+
+	public Timer getTimer() {
+		return this;
+	}
 }
