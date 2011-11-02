@@ -22,7 +22,6 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 		this.client = client;
 		progress = new ProgressDialog(activity);
 		progress.setOnCancelListener(this);
-		progress.setCancelable(false);
 	}
 
 	public void svdrpEvent(final SvdrpEvent event) {
@@ -74,10 +73,8 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 	}
 
 	private void abort() {
-		if (client.isConnected()) {
-			client.abort();
-			dismiss();
-		}
+		client.abort();
+		dismiss();
 	}
 
 	public void dismiss() {

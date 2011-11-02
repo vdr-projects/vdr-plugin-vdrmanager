@@ -36,20 +36,20 @@ public abstract class SvdrpClient<Result> {
 	/** listener */
 	private final List<SvdrpListener<Result>> listeners = new ArrayList<SvdrpListener<Result>>();
 	/** list of results */
-	//private final List<Result> results = new ArrayList<Result>();
+	// private final List<Result> results = new ArrayList<Result>();
 	/** should the listener be informed about each received result */
-	//private boolean resultInfoEnabled = false;
+	// private boolean resultInfoEnabled = false;
 	/**
 	 * @return true if the client has result
 	 */
-//	public boolean hasResults(){
-//		return results.isEmpty() == false;
-//	}
+	// public boolean hasResults(){
+	// return results.isEmpty() == false;
+	// }
 
 	private Timer watchDog = new Timer();
-	
-	public boolean isConnected(){
-		if(socket == null){
+
+	public boolean isConnected() {
+		if (socket == null) {
 			return false;
 		}
 		return socket.isConnected();
@@ -111,17 +111,10 @@ public abstract class SvdrpClient<Result> {
 	public void abort() {
 		abort = true;
 		try {
-			if (socket != null) {
-				if (socket.isConnected()) {
-					socket.shutdownInput();
-					socket.shutdownOutput();
-					socket.close();
-				} else {
-					if(st != null){
-						st.interrupt();
-					}
-					socket.close();
-				}
+			if (isConnected()) {
+				socket.shutdownInput();
+				socket.shutdownOutput();
+				socket.close();
 			}
 		} catch (Exception ex) {
 			Log.w(TAG, ex);
@@ -129,17 +122,15 @@ public abstract class SvdrpClient<Result> {
 
 	}
 
-//	/**
-//	 * Gets the list of results
-//	 * 
-//	 * @return results
-//	 */
-//	public List<Result> getResults() {
-//		return results;
-//	}
+	// /**
+	// * Gets the list of results
+	// *
+	// * @return results
+	// */
+	// public List<Result> getResults() {
+	// return results;
+	// }
 
-	private Thread st;
-	
 	/**
 	 * Connect to SVDRP
 	 * 
@@ -159,31 +150,14 @@ public abstract class SvdrpClient<Result> {
 			// connect
 			informListener(SvdrpEvent.CONNECTING, null);
 			socket = new Socket();
-			//st = new Thread(){
-//				@Override
-//				public void run() {
-//					try{
-					socket.connect(
-							new InetSocketAddress(prefs.getSvdrpHost(), prefs
-									.getSvdrpPort()),
-							prefs.getConnectionTimeout() * 1000);// 8 secs for connect
-//					}catch(IOException iox){
-//						throw new RuntimeException(); 
-//					}
-//				}
-//				
-//			};
-			
-//			st.start();
-//			
-//			try {
-//				st.join();
-//			} catch (InterruptedException e) {
-//				Thread.currentThread().interrupt();
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
+			socket.connect(
+					new InetSocketAddress(prefs.getSvdrpHost(), prefs
+							.getSvdrpPort()),
+					prefs.getConnectionTimeout() * 1000);// 8 secs for connect
+			if(abort){
+				informListener(SvdrpEvent.ABORTED, null);
+			}
+			//
 			socket.setSoTimeout(prefs.getReadTimeout() * 1000);// 15 sec for
 																// each read
 			final long delay = C.ONE_MINUTE_IN_MILLIS * prefs.getTimeout() * 60; // in
@@ -301,7 +275,7 @@ public abstract class SvdrpClient<Result> {
 			abort = false;
 
 			// clear results
-			//results.clear();
+			// results.clear();
 
 			// connect
 			final boolean connected = connect();
@@ -355,10 +329,10 @@ public abstract class SvdrpClient<Result> {
 					break;
 				}
 				if (result != null) {
-					//results.add(result);
-					//if (resultInfoEnabled) {
-						informListener(SvdrpEvent.RESULT_RECEIVED, result);
-					//}
+					// results.add(result);
+					// if (resultInfoEnabled) {
+					informListener(SvdrpEvent.RESULT_RECEIVED, result);
+					// }
 				}
 
 			}
@@ -379,9 +353,9 @@ public abstract class SvdrpClient<Result> {
 		}
 	}
 
-//	public void setResultInfoEnabled(final boolean resultInfoEnabled) {
-//		this.resultInfoEnabled = resultInfoEnabled;
-//	}
+	// public void setResultInfoEnabled(final boolean resultInfoEnabled) {
+	// this.resultInfoEnabled = resultInfoEnabled;
+	// }
 
 	protected void informListenerError(final SvdrpEvent event,
 			final Throwable result) {
