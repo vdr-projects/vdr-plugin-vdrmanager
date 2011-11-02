@@ -194,7 +194,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		switch (event) {
 
 		case ABORTED:
-			alert(R.string.aborted);
+			say(R.string.aborted);
 			break;
 		case ERROR:
 			alert(R.string.epg_client_errors);
