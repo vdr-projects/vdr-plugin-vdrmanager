@@ -4,6 +4,12 @@ import java.util.Date;
 
 import android.text.TextUtils;
 
+/**
+ * Basisc class for all Events 
+ * 
+ * @author bju,lado
+ *
+ */
 public abstract class Event {
 
 	protected String channelNumber;
@@ -114,6 +120,5 @@ public abstract class Event {
 		Recorded
 		;
 	}
-
 	
 }
