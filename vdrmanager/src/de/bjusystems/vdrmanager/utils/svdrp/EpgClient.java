@@ -1,6 +1,5 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
-import android.text.TextUtils;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;

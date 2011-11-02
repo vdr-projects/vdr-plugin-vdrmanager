@@ -1,6 +1,5 @@
 package de.bjusystems.vdrmanager.gui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -43,8 +42,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 			final Intent intent = new Intent();
 			intent.setClass(this, TimerDetailsActivity.class);
 			intent.putExtra(Intents.TIMER_OP, Intents.ADD_TIMER);
-			startActivityForResult(intent,
-					TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
+			startActivityForResult(intent, TimerDetailsActivity.REQUEST_CODE_TIMER_ADD);
 		}
 			break;
 		case R.id.epg_item_menu_timer_modify: {
@@ -54,8 +52,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 			final Intent intent = new Intent();
 			intent.setClass(this, TimerDetailsActivity.class);
 			intent.putExtra(Intents.TIMER_OP, Intents.EDIT_TIMER);
-			startActivityForResult(intent,
-					TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
+			startActivityForResult(intent, TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
 			break;
 		}
 		case R.id.epg_item_menu_timer_delete: {
@@ -115,7 +112,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 	}
 
 	protected Timer getTimer(EventListItem item) {
-		return item.getEpg().getTimer();
+		return item.getTimer();
 	}
 
 	protected void toggleTimer(Timer timer) {
@@ -130,7 +127,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 	}
 
 	protected void deleteTimer(final Timer timer) {
-		//backupViewSelection();
+		// backupViewSelection();
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
@@ -140,24 +137,33 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		};
 		task.start();
 	}
-	
-	protected void timerModified(){
+
+	protected void timerModified() {
 		backupViewSelection();
 		refresh();
 	}
-		
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (resultCode != Activity.RESULT_OK) {
+		if (resultCode != RESULT_OK) {
 			return;
 		}
-		if(requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT){
+		if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT) {
 			timerModified();
+			return;
 		}
-//		refresh();
+		if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_MODIFIED) {
+			timerModified();
+			return;
+		}
+
+		if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_ADD) {
+			timerModified();
+			return;
+		}
+
 	}
 
 }

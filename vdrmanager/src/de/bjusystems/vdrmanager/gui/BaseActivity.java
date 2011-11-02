@@ -35,7 +35,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	private Button retry;
 	
 	protected SvdrpProgressDialog progress;
-
+	
+	abstract protected int getWindowTitle();
 	
 	abstract protected int getMainLayout();
 

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
@@ -50,7 +51,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		listView.setOnItemClickListener(this);
 		// context menu wanted
 		registerForContextMenu(listView);
-
+		listView.setFastScrollEnabled(true);
+		listView.setTextFilterEnabled(true);
 		// start query
 		startRecordingQuery();
 	}
@@ -62,7 +64,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	@Override
 	protected void prepareTimer(EventListItem event) {
-		getApp().setCurrentEvent(event);
+		getApp().setCurrentEvent(event.getEvent());
 		getApp().setCurrentEpgList(results);
 	}
 
@@ -90,13 +92,14 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
 		final EventListItem event = adapter.getItem(info.position);
-		Recording rec = event.getRecording();
+		Recording rec = (Recording) event.getEvent();
 		switch (item.getItemId()) {
 		case R.id.recording_item_menu_delete: {
 			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
 				@Override
 				public void finished(SvdrpEvent event) {
 					dismiss(progress);
+					backupViewSelection();
 					refresh();
 				}
 			};
@@ -161,12 +164,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected boolean finishedSuccess() {
+	protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		for (final Recording rec : recordingClient.getResults()) {
-			results.add(rec);
+		sortItemsByTime(results);
+		for (final Event rec : results) {
 			cal.setTime(rec.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -174,7 +177,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				adapter.add(new EventListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem(rec));
+			adapter.add(new EventListItem((Recording)rec));
 		}
 		// adapter.sortItems();
 		return results.isEmpty() == false;

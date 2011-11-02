@@ -30,10 +30,13 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 public class TimerDetailsActivity extends Activity implements OnClickListener,
 		OnDateSetListener, OnTimeSetListener {
 
-	public static final int REQUEST_CODE_TIMER_EDIT = 84;
-	
-	public static final int REQUEST_CODE_TIMER_ADD = 85;
 
+	public static final int REQUEST_CODE_TIMER_MODIFIED = 34;
+
+	public static final int REQUEST_CODE_TIMER_EDIT = 35;
+	
+	public static final int REQUEST_CODE_TIMER_ADD = 36;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -167,7 +170,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			break;
 		}
 		case R.id.timer_details_cancel: {
-			finishActivity(REQUEST_CODE_TIMER_EDIT);
+//			finishActivity(REQUEST_CODE_TIMER_EDIT);
 			finish();
 			break;
 		}

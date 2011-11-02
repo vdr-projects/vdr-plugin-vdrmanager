@@ -7,6 +7,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
@@ -86,19 +87,20 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 	@Override
 	protected Timer getTimer(EventListItem item) {
-		return item.getTimer();
+		return (Timer)item.getEvent();
 	}
 	protected void prepareTimer(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		// remember event for details view and timer things
-		app.setCurrentEvent(item.getTimer());
+		app.setCurrentEvent(item.getEvent());
 		app.setCurrentEpgList(results);
 	}
 
-	protected boolean finishedSuccess() {
+	protected boolean finishedSuccessImpl() {
 		adapter.clear();
-		for(Timer e : timerClient.getResults()){
-		results.add(e);
+		sortItemsByTime(results);
+		for(Event e : results) {
+		//results.add(e);
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
 			cal.setTime(e.getStart());

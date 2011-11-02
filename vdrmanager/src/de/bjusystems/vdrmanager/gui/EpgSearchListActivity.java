@@ -92,7 +92,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		sp.setTitle(highlight);
 		setTitle(getString(R.string.epg_by_search_param, highlight));
 		epgClient = new EpgClient(sp);
-		epgClient.setResultInfoEnabled(true);
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
 
@@ -119,7 +118,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
-	protected boolean finishedSuccess() {
+	protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		adapter.highlight = this.highlight;
 		
@@ -144,7 +143,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 
 	protected void prepareTimer(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		app.setCurrentEvent(item.getEpg());
+		app.setCurrentEvent(item.getEvent());
 		app.setCurrentEpgList(results);
 	}
 

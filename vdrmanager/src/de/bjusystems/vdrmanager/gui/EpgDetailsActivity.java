@@ -59,7 +59,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	Event cEvent;
 
 	ImageView state;
-	
+
+	boolean modifed = false;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -130,7 +132,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 		String cn = event.getChannelName();
 
-		setTitle(getString(R.string.epg_of_a_channel, cn));
+		setTitle(getString(R.string.epg_of_a_channel, cn, counter + 1, epgs.size()));
 
 		final EventFormatter formatter = new EventFormatter(event);
 
@@ -149,7 +151,6 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				.getChannelName());
 		// ((TextView) findViewById(R.id.epg_detail_date)).setText(formatter
 		// .getLongDate());
-		
 
 		switch (event.getTimerState()) {
 		case Active:
@@ -496,7 +497,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
-
+				modifed = true;
 			}
 		};
 		task.start();
@@ -509,6 +510,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				if (event == SvdrpEvent.FINISHED_SUCCESS) {
 					setState((ImageView) findViewById(R.id.epg_timer_state),
 							R.drawable.timer_none);
+					modifed = true;
 				}
 			}
 		};
@@ -517,14 +519,31 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode != RESULT_OK){
+		if (resultCode != RESULT_OK) {
 			return;
 		}
-		if(requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_ADD){
-			setState(state, Utils.isLive(getApp().getCurrentEvent()) ? R.drawable.timer_recording :  R.drawable.timer_active);
-		} else if( requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT){
-			//??
+		if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_ADD) {
+			modifed = true;
+			setState(
+					state,
+					Utils.isLive(getApp().getCurrentEvent()) ? R.drawable.timer_recording
+							: R.drawable.timer_active);
+		} else if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT) {
+			modifed = true;
+			// ??
 		}
 	}
+
+	@Override
+	public void onBackPressed() {
+		if (modifed) {
+			setResult(RESULT_OK);
+			finish();
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
+	
 	
 }

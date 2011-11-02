@@ -31,9 +31,9 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
  * 
  * @author bju
  */
-public class ChannelListActivity extends BaseActivity<Channel, ExpandableListView>
-		implements OnChildClickListener, OnGroupClickListener
-{
+public class ChannelListActivity extends
+		BaseActivity<Channel, ExpandableListView> implements
+		OnChildClickListener, OnGroupClickListener {
 
 	private static final String TAG = ChannelListActivity.class.getName();
 
@@ -62,7 +62,7 @@ public class ChannelListActivity extends BaseActivity<Channel, ExpandableListVie
 
 		// Attach view
 		setContentView(getMainLayout());
-		setTitle(R.string.action_menu_channels);
+		setTitle(getWindowTitle());
 		initFlipper();
 		adapter = new ChannelAdapter(this);
 
@@ -156,7 +156,6 @@ public class ChannelListActivity extends BaseActivity<Channel, ExpandableListVie
 		}
 	}
 
-	
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
 		return super.onPrepareOptionsMenu(menu);
@@ -281,7 +280,6 @@ public class ChannelListActivity extends BaseActivity<Channel, ExpandableListVie
 
 	}
 
-
 	@Override
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -303,7 +301,7 @@ public class ChannelListActivity extends BaseActivity<Channel, ExpandableListVie
 		// show details
 		final Intent intent = new Intent();
 		getApp().setCurrentChannel(channel);
-		//intent.putExtra(Intents.CURRENT_CHANNEL, channel);
+		// intent.putExtra(Intents.CURRENT_CHANNEL, channel);
 		intent.setClass(this, EventEpgListActivity.class);
 		startActivity(intent);
 	}
@@ -336,17 +334,23 @@ public class ChannelListActivity extends BaseActivity<Channel, ExpandableListVie
 	protected boolean finishedSuccess() {
 		fillAdapter();
 		restoreViewSelection();
+		setTitle(getString(R.string.channels_window_title_count,getString(getWindowTitle()), ChannelClient.getChannelGroups().size(), ChannelClient.getChannels().size()));
+
 		return ChannelClient.getChannels().isEmpty() == false;
 	}
 
 	@Override
 	protected void resultReceived(Channel result) {
-		
 	}
-	
+
 	protected void cacheHit() {
 		fillAdapter();
 		restoreViewSelection();
+	}
+
+	@Override
+	protected int getWindowTitle() {
+		return R.string.action_menu_channels;
 	}
 
 }

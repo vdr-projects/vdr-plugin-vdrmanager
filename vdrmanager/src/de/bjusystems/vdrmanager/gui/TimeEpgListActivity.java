@@ -230,7 +230,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		clearCache();
 
 		epgClient = new EpgClient(time);
-		epgClient.setResultInfoEnabled(true);
 
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
@@ -250,7 +249,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected boolean finishedSuccess() {
+	protected boolean finishedSuccessImpl() {
 		// get spinner value
 		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
 				.getSelectedItem();
@@ -260,10 +259,13 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		cachedTime = selection.getValue();
 		Date now = new Date();
 		sortItemsByChannel(results);
-		if (results.isEmpty() == false) {
-			adapter.add(new EventListItem(new DateFormatter(results.get(0)
-					.getStart()).getDailyHeader()));
+		if (results.isEmpty()) {
+			return false;
 		}
+		
+		adapter.add(new EventListItem(new DateFormatter(results.get(0)
+				.getStart()).getDailyHeader()));
+
 		for (Event e : results) {
 			CACHE.add(e);
 			adapter.add(new EventListItem((Epg) e));
@@ -272,7 +274,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 		}
 		listView.setSelectionAfterHeaderView();
-		dismiss(progress);
 		return CACHE.isEmpty() == false;
 
 	}
@@ -281,7 +282,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 
 		// remember event for details view and timer things
-		app.setCurrentEvent(item.getEpg());
+		app.setCurrentEvent(item.getEvent());
 		app.setCurrentEpgList(CACHE);
 	}
 

@@ -35,8 +35,9 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
  * @author lado
  * 
  */
-public abstract class BaseEventListActivity<T extends Event> extends BaseActivity<T, ListView> implements OnItemClickListener,
-		 SimpleGestureListener {
+public abstract class BaseEventListActivity<T extends Event> extends
+		BaseActivity<T, ListView> implements OnItemClickListener,
+		SimpleGestureListener {
 
 	public static final String TAG = BaseEventListActivity.class.getName();
 
@@ -53,13 +54,10 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 	protected String highlight = null;
 
 	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
-	
 
 	// private static final Date BEGIN = new Date(0);
 
 	protected Channel currentChannel = null;
-
-	abstract protected int getWindowTitle();
 
 	protected List<Event> results = new ArrayList<Event>();
 
@@ -71,14 +69,14 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 		setTitle(getWindowTitle());
 		initFlipper();
 		detector = new SimpleGestureFilter(this, this);
-		
+
 		initChannel();
 	}
 
 	private void initChannel() {
 		currentChannel = getApp().getCurrentChannel();
-		//currentChannel = getIntent()
-			//	.getParcelableExtra(Intents.CURRENT_CHANNEL);
+		// currentChannel = getIntent()
+		// .getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
 
 	private boolean refreshViewOnResume = false;
@@ -151,19 +149,17 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
-		Intent intent;
-
-		switch (item.getItemId()) {
-//		case R.id.epg_menu_search:
-			// startSearchManager();
-	//		super.onSearchRequested();
-		//	break;
-		case R.id.epg_menu_times:
-			intent = new Intent();
-			intent.setClass(this, EpgSearchTimesListActivity.class);
-			startActivity(intent);
-			break;
-		}
+		// switch (item.getItemId()) {
+		// case R.id.epg_menu_search:
+		// startSearchManager();
+		// super.onSearchRequested();
+		// break;
+		// case R.id.epg_menu_times:
+		// intent = new Intent();
+		// /intent.setClass(this, EpgSearchTimesListActivity.class);
+		// startActivity(intent);
+		// break;
+		// }
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -216,7 +212,8 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 		if (highlight != null) {
 			intent.putExtra(Intents.HIGHLIGHT, highlight);
 		}
-		startActivity(intent);
+		startActivityForResult(intent,
+				TimerDetailsActivity.REQUEST_CODE_TIMER_MODIFIED);
 	}
 
 	@Override
@@ -232,19 +229,18 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 		// }
 	}
 
-
 	protected void resultReceived(Event result) {
 		results.add(result);
 	}
 
 	@Override
 	protected void connected() {
-		if(flipper != null){
+		if (flipper != null) {
 			flipper.setDisplayedChild(0);
 		}
 		results.clear();
 	}
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -269,7 +265,6 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 		}
 		dialog.dismiss();
 	}
-
 
 	public boolean onSearchRequested() {
 		InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -325,6 +320,13 @@ public abstract class BaseEventListActivity<T extends Event> extends BaseActivit
 	public void svdrpException(final SvdrpException exception) {
 		Log.w(TAG, exception);
 		alert(getString(R.string.vdr_error_text, exception.getMessage()));
+	}
+
+	abstract protected boolean finishedSuccessImpl();
+
+	protected final boolean finishedSuccess() {
+		setTitle(getString(R.string.epg_window_title_count,	getString(getWindowTitle()), results.size()));
+		return finishedSuccessImpl();
 	}
 
 }
