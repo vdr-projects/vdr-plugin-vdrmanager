@@ -20,7 +20,7 @@
   <string name="epg_search_button">Suchen</string>
   <string name="epg_duration_template">%1$s min</string>
   <string name="epg_duration_template_live">%1$s/%2$s min</string>
-  <string name="epg_of_a_channel">EPG -> %1$s</string>
+  <string name="epg_of_a_channel">EPG -> %1$s,  %2$s/%3$s</string>
   <string name="epg_by_channel">EPG nach Kanälen</string>
   <string name="epg_by_search">EPG Suche</string>
   <string name="epg_by_search_param">EPG Suche: \'%1$s\'</string>
