@@ -82,7 +82,7 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 	 *            parameter for lste
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	synchronized public void run() throws SvdrpException {
 		if (inited == true) {
 			informListener(SvdrpEvent.CACHE_HIT, null);
 		} else {
@@ -100,7 +100,7 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		return R.string.progress_channels_loading;
 	}
 
-	ArrayList<Channel> currentChannels = null;
+	ArrayList<Channel> currentChannels = new ArrayList<Channel>();
 
 	private void received(Channel c) {
 		if (c.isGroupSeparator()) {
@@ -108,6 +108,10 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 			currentChannels = new ArrayList<Channel>();
 			groupChannels.put(c.getName(), currentChannels);
 		} else {
+			if(channelGroups.isEmpty()){//receiver channel with no previous group
+				channelGroups.add("");
+				groupChannels.put("", currentChannels);
+			}
 			channels.add(c);
 			currentChannels.add(c);
 			String provider = c.getProvider();
