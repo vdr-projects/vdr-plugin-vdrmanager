@@ -28,6 +28,8 @@ public class About {
 			.setCancelable(false)
 			.create();
 		}
-		about.show();
+		if(!activity.isFinishing()){
+			about.show();
+		}
 	}
 }
