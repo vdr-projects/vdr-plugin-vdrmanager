@@ -96,20 +96,28 @@ public class Utils {
 				&& now < event.getStop().getTime();
 	}
 
-	private static String getStreamUrl(String chn) {
-		// "http://192.168.1.119:3000/TS/"
+	private static String getBaseUrl() {
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
-		String auth = p.getStreamingUsername().trim() + ":" + p.getStreamingPassword();
-		if(auth.length() == 1){
+		String auth = p.getStreamingUsername().trim() + ":"
+				+ p.getStreamingPassword();
+		if (auth.length() == 1) {
 			auth = "";
 		} else {
 			auth += "@";
 		}
 
 		sb.append("http://").append(auth).append(p.getSvdrpHost()).append(":")
-				.append(p.getStreamPort()).append("/")
-				.append(p.getStreamFormat()).append("/").append(chn);
+				.append(p.getStreamPort());
+		return sb.toString();
+	}
+
+	private static String getStreamUrl(String chn) {
+		// "http://192.168.1.119:3000/TS/"
+		Preferences p = Preferences.getPreferences();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getBaseUrl()).append("/").append(p.getStreamFormat())
+				.append("/").append(chn);
 		return sb.toString();
 	}
 
@@ -117,8 +125,7 @@ public class Utils {
 		// "http://192.168.1.119:3000/TS/"
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
-		sb.append("http://").append(p.getSvdrpHost()).append(":")
-				.append(p.getStreamPort()).append("/")
+		sb.append(getBaseUrl()).append("/")
 				.append(p.getRemuxCommand()).append(";")
 				.append(p.getRemuxParameter()).append("/").append(chn);
 		return sb.toString();
@@ -220,18 +227,16 @@ public class Utils {
 		}
 		return src.replace(C.DATA_SEPARATOR, "|##").replace("\n", "||#");
 	}
-	
 
 	public static PackageInfo getPackageInfo(Context ctx) {
 		PackageInfo pi = null;
 		try {
-			pi = ctx.getPackageManager().getPackageInfo(
-					ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
+			pi = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(),
+					PackageManager.GET_ACTIVITIES);
 		} catch (PackageManager.NameNotFoundException e) {
 			e.printStackTrace();
 		}
 		return pi;
 	}
-
 
 }
