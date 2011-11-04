@@ -314,6 +314,15 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				if (c != 0) {
 					return c;
 				}
+				if(item1.getChannelNumber() == null && item2.getChannelNumber() == null){
+					return 0;
+				}
+				if(item1.getChannelNumber() == null){
+					return -1;
+				}
+				if(item2.getChannelNumber() == null){
+					return 1;
+				}
 				return Integer.valueOf(item1.getChannelNumber()).compareTo(
 						Integer.valueOf(item2.getChannelNumber()));
 			}
