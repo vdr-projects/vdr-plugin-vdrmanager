@@ -159,8 +159,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected int getWindowTitle() {
-		return R.string.action_menu_recordings;
+	protected String getWindowTitle() {
+		return getString(R.string.action_menu_recordings);
 	}
 
 	@Override

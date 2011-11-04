@@ -67,6 +67,10 @@ public class DataProvider extends ContentProvider {
 	private static final int REMUX_PARAMS = 1;
 
 	private static final int REMUX_PARAMS_ID = 2;
+	
+	private static final int VDR= 3;
+	
+	private static final int VDR_ID = 4;
 
 	// /** Internal id: terms. */
 	// private static final int TERMS_ID = 2;
@@ -114,6 +118,8 @@ public class DataProvider extends ContentProvider {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		URI_MATCHER.addURI(AUTHORITY, "remux_params", REMUX_PARAMS);
 		URI_MATCHER.addURI(AUTHORITY, "remux_params/#", REMUX_PARAMS_ID);
+		URI_MATCHER.addURI(AUTHORITY, "vdr", VDR);
+		URI_MATCHER.addURI(AUTHORITY, "vdr/#", VDR_ID);
 	}
 
 	/** {@link DatabaseHelper}. */
@@ -231,6 +237,170 @@ public class DataProvider extends ContentProvider {
 		}
 	}
 
+	
+	public static final class Vdr {
+		/** Table name. */
+		public static final String TABLE = "vdr";
+		/** {@link HashMap} for projection. */
+		private static final HashMap<String, String> PROJECTION_MAP;
+
+		/** Index in projection: ID. */
+		public static final int INDEX_ID = 0;
+		/** Index in projection: name of hours group. */
+		public static final int INDEX_NAME = 1;
+		public static final int INDEX_HOST = 2;
+		public static final int INDEX_PORT = 3;
+		public static final int INDEX_SECURE = 4;
+		public static final int INDEX_FILTER_CHANNELS  = 5;
+		public static final int INDEX_CHANNEL_FILTER = 6;
+		public static final int INDEX_ENABLE_WAKEUP = 7;
+		public static final int INDEX_WAKEUP_METHOD = 8;
+		public static final int INDEX_WAKEUP_URL = 9;
+		public static final int INDEX_WAKEUP_USER = 10;
+		public static final int INDEX_WAKEUP_PASSWORD = 11;
+		public static final int INDEX_VDR_MAC = 12;
+		public static final int INDEX_ENABLE_ALIVE_CHECK = 13;
+		public static final int INDEX_ALIVE_CHECK_INTERVAL = 14;
+		public static final int INDEX_TIMER_PRE_MARGIN = 15;
+		public static final int INDEX_TIMER_POST_MARGIN = 15;
+		public static final int INDEX_TIMER_DEFAULT_PRIORITY = 16;
+		public static final int INDEX_TIMER_DEFAULT_LIFETIME = 17;
+		public static final int INDEX_STREAM_PORT = 18;
+		public static final int INDEX_STREAM_USERNAME = 19;
+		public static final int INDEX_STREAM_PASSWORD = 20;
+		public static final int INDEX_STREAMFORMAT = 21;
+		public static final int INDEX_WOL_CUSTOM_BROADCAST = 22;
+		public static final int INDEX_ENABLE_REMUX = 23;
+		public static final int INDEX_REMUX_PARAMETER = 24;
+		
+		
+		
+		/** ID. */
+		public static final String ID = "_id";
+		public static final String HOST = "host";
+		public static final String PORT= "port";
+		public static final String SECURE = "secure";
+		/*
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		public static final String  = "";
+		
+		public static final String  = "";
+		public static final String  = "";
+		*/
+		
+
+		/** Projection used for query. */
+		public static final String[] PROJECTION = new String[] {//
+		ID,//
+				HOST, PORT, SECURE };
+
+		/** Content {@link Uri}. */
+		public static final Uri CONTENT_URI = Uri.parse("content://"
+				+ AUTHORITY + "/" + TABLE);
+		/**
+		 * The MIME type of {@link #CONTENT_URI} providing a list.
+		 */
+		public static final String CONTENT_TYPE = // .
+		"vnd.android.cursor.dir/vnd.vdramager.remux_params";
+
+		/**
+		 * The MIME type of a {@link #CONTENT_URI} single entry.
+		 */
+		public static final String CONTENT_ITEM_TYPE = // .
+		"vnd.android.cursor.item/vnd.vdramager.jobs";
+
+		static {
+			PROJECTION_MAP = new HashMap<String, String>();
+			for (String s : PROJECTION) {
+				PROJECTION_MAP.put(s, s);
+			}
+		}
+
+		/**
+		 * Get Name for id.
+		 * 
+		 * @param cr
+		 *            {@link ContentResolver}
+		 * @param id
+		 *            id
+		 * @return name
+		 */
+		// public static String getName(final ContentResolver cr, final long id)
+		// {
+		// final Cursor cursor = cr.query(
+		// ContentUris.withAppendedId(CONTENT_URI, id),
+		// new String[] { NAME }, null, null, null);
+		// String ret = null;
+		// if (cursor != null && cursor.moveToFirst()) {
+		// ret = cursor.getString(0);
+		// }
+		// if (cursor != null && !cursor.isClosed()) {
+		// cursor.close();
+		// }
+		// return ret;
+		// }
+
+		/**
+		 * Create table in {@link SQLiteDatabase}.
+		 * 
+		 * @param db
+		 *            {@link SQLiteDatabase}
+		 */
+		public static void onCreate(final SQLiteDatabase db) {
+			Log.i(TAG, "create table: " + TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE);
+			db.execSQL("CREATE TABLE " + TABLE + " (" // .
+					+ ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " // .
+					+ HOST + " TEXT, "//
+					+ PORT + " INTEGER, "
+					+ SECURE +" INTEGER" +
+							" " +
+							" " +
+							
+							
+							
+							
+							");");//
+		}
+
+		/**
+		 * Upgrade table.
+		 * 
+		 * @param db
+		 *            {@link SQLiteDatabase}
+		 * @param oldVersion
+		 *            old version
+		 * @param newVersion
+		 *            new version
+		 */
+		public static void onUpgrade(final SQLiteDatabase db,
+				final int oldVersion, final int newVersion) {
+			Log.w(TAG, "Upgrading table: " + TABLE);
+			// if(newVersion == 2){
+			// final ContentValues[] values = backup(db, TABLE, PROJECTION,
+			// null);
+			// onCreate(db);
+			// reload(db, TABLE, values);
+			// } else if (newVersion >)
+			// db.execSQL("DROP INDEX IF EXISTS jobs.canceled_index");
+			// db.execSQL("CREATE INDEX canceled_index ON jobs(canceled)");
+			// db.execSQL("ALTER TABLE JOBS ADD " + EVENT_ID2 + " LONG");
+		}
+
+		/** Default constructor. */
+		private Vdr() {
+		}
+	}
+
+	
+	
 	/**
 	 * Try to backup fields from table.
 	 * 

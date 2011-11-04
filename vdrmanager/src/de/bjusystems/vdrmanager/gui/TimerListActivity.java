@@ -137,8 +137,8 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	}
 
 	@Override
-	protected int getWindowTitle() {
-		return R.string.action_menu_timers;
+	protected String getWindowTitle() {
+		return getString(R.string.action_menu_timers);
 	}
 
 	@Override

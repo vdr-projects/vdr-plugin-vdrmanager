@@ -10,6 +10,7 @@ import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
+import de.bjusystems.vdrmanager.data.VDR;
 
 public class VdrManagerApp extends Application {
 
@@ -24,6 +25,16 @@ public class VdrManagerApp extends Application {
 	private Timer currentTimer;
 	private Channel currentChannel;
 	
+	private VDR currentVDR;
+	
+	public VDR getCurrentVDR() {
+		return currentVDR;
+	}
+
+	public void setCurrentVDR(VDR currentVDR) {
+		this.currentVDR = currentVDR;
+	}
+
 	private List<Event> currentEpgList = new ArrayList<Event>();
 	
 	public List<Event> getCurrentEpgList() {

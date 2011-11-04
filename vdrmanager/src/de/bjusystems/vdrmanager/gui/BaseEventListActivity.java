@@ -329,7 +329,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	abstract protected boolean finishedSuccessImpl();
 
 	protected final boolean finishedSuccess() {
-		setTitle(getString(R.string.epg_window_title_count,	getString(getWindowTitle()), results.size()));
+		setTitle(getString(R.string.epg_window_title_count,	getWindowTitle(), results.size()));
 		return finishedSuccessImpl();
 	}
 

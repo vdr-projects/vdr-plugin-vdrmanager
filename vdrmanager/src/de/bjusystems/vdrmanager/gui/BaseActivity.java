@@ -21,7 +21,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		implements OnClickListener, SvdrpAsyncListener<Result> {
-	
+
 	public static final String TAG = BaseActivity.class.getName();
 
 	public static final int MENU_GROUP_REFRESH = 99;
@@ -33,32 +33,33 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	protected ViewFlipper flipper;
 
 	private Button retry;
-	
+
 	protected SvdrpProgressDialog progress;
-	
-	abstract protected int getWindowTitle();
-	
+
+	abstract protected String getWindowTitle();
+
 	abstract protected int getMainLayout();
 
 	protected void switchNothinFound() {
 		if (flipper == null) {
 			return;
 		}
-		//say("can not connect...");
-		//flipper.setDisplayedChild(1);
+		// say("can not connect...");
+		// flipper.setDisplayedChild(1);
 	}
-	
+
 	protected void switchNoConnection() {
 		if (flipper == null) {
 			return;
 		}
-		//say("can not connect...");
-		//flipper.setDisplayedChild(1);
+		//TODO check if we are displaying something (results
+		// say("can not connect...");
+		// flipper.setDisplayedChild(1);
 	}
 
 	protected void initFlipper() {
 		this.flipper = (ViewFlipper) findViewById(R.id.flipper);
-		retry =  (Button) findViewById(R.id.retry_button);
+		retry = (Button) findViewById(R.id.retry_button);
 		retry.setOnClickListener(this);
 	}
 
@@ -67,23 +68,23 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 			retry();
 		}
 	}
-
-	protected void updateWindowTitle(int topic, int subtopic) {
-		String title;
-		title = getString(topic);
-		if (subtopic != -1) {
-			title += " > " + getString(subtopic);
-		}
-		setTitle(title);
-	}
-
-	protected void updateWindowTitle(String topic, String subtopic) {
-		String title = topic;
-		if (subtopic != null) {
-			title += " > " + subtopic;
-		}
-		setTitle(title);
-	}
+//
+//	protected void updateWindowTitle(int topic, int subtopic) {
+//		String title;
+//		title = getString(topic);
+//		if (subtopic != -1) {
+//			title += " > " + getString(subtopic);
+//		}
+//		setTitle(title);
+//	}
+//
+//	protected void updateWindowTitle(String topic, String subtopic) {
+//		String title = topic;
+//		if (subtopic != null) {
+//			title += " > " + subtopic;
+//		}
+//		setTitle(title);
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -215,10 +216,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 			cacheHit();
 			return;
 		case FINISHED_SUCCESS:
-			if (finishedSuccess() == false) {
-				say(R.string.epg_no_items);
-			} else {
+			if (finishedSuccess()) {
 				restoreViewSelection();
+			} else {
+				say(R.string.epg_no_items);
 			}
 			break;
 		case RESULT_RECEIVED:
@@ -242,7 +243,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	protected abstract void resultReceived(Result result);
 
 	protected void connected() {
-		
+
 	}
 
 	public void svdrpException(final SvdrpException exception) {

@@ -151,9 +151,21 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			counter++;
 		}
 		timeSpinner.setSelection(select);
-		setTitle(getString(R.string.epg_by_time_args, tm));
+		setTitle(resolveWindowTitle());
 		// update search
 		startEpgQuery(time.getValue(), false);
+	}
+
+	private String resolveWindowTitle() {
+		if (timeSpinner == null) {
+			return getString(R.string.epg_by_time);
+		}
+		EpgSearchTimeValue v = (EpgSearchTimeValue) timeSpinner
+				.getSelectedItem();
+		if (v == null) {
+			return getString(R.string.epg_by_time);
+		}
+		return getString(R.string.epg_by_time_args, v.getText());
 	}
 
 	public void onItemSelected(final AdapterView<?> parent, final View view,
@@ -262,7 +274,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		if (results.isEmpty()) {
 			return false;
 		}
-		
+
 		adapter.add(new EventListItem(new DateFormatter(results.get(0)
 				.getStart()).getDailyHeader()));
 
@@ -306,8 +318,8 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected int getWindowTitle() {
-		return R.string.epg_by_time;
+	protected String getWindowTitle() {
+		return resolveWindowTitle();
 	}
 
 	private void nextEvent() {

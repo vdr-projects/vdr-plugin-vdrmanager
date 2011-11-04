@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -118,13 +119,12 @@ public class ChannelListActivity extends
 		case MENU_GROUP:
 			ArrayList<String> cgs = ChannelClient.getChannelGroups();
 			adapter.fill(cgs, ChannelClient.getGroupChannels(), groupBy);
-			if (cgs.size() == 1) {
+			if (cgs.size() == 1 ) {//one group or first no first group
+				listView.expandGroup(0);
+			} else if ((cgs.size() > 1 && TextUtils.isEmpty(cgs.get(0)))){
 				listView.expandGroup(0);
 			}
-			updateWindowTitle(
-					getString(R.string.action_menu_channels),
-					getString(R.string.groupby_window_title_templte,
-							getString(R.string.groupby_group)));
+			updateWindowTitle();
 			break;
 		case MENU_PROVIDER:
 			ArrayList<String> gs = new ArrayList<String>(ChannelClient
@@ -133,10 +133,7 @@ public class ChannelListActivity extends
 			if (gs.size() == 1) {
 				listView.expandGroup(0);
 			}
-			updateWindowTitle(
-					getString(R.string.action_menu_channels),
-					getString(R.string.groupby_window_title_templte,
-							getString(R.string.groupby_provider)));
+			updateWindowTitle();
 			break;
 		case MENU_NAME:
 			if (ALL_CHANNELS_GROUP.isEmpty()) {
@@ -149,10 +146,7 @@ public class ChannelListActivity extends
 					ChannelClient.getChannels());
 			adapter.fill(ALL_CHANNELS_GROUP, channels, groupBy);
 			listView.expandGroup(0);
-
-			updateWindowTitle(R.string.action_menu_channels,
-					R.string.groupby_name_all_channels_group);
-			break;
+			updateWindowTitle();
 		}
 	}
 
@@ -330,12 +324,31 @@ public class ChannelListActivity extends
 		return R.layout.channel_list;
 	}
 
+	private String resolveWindowTitle(){
+		StringBuilder sb = new StringBuilder();
+		switch(groupBy){
+		case MENU_NAME:
+			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_name_all_channels_group));
+			break;
+		case MENU_PROVIDER:
+			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_window_title_templte,getString(R.string.groupby_provider)));
+			break;
+		case MENU_GROUP:
+			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_window_title_templte,getString(R.string.groupby_group)));
+			break;
+		}
+		return sb.toString();
+	}
+	
+	private void updateWindowTitle(){
+		setTitle(getString(R.string.channels_window_title_count,resolveWindowTitle(), adapter.groups.size(), ChannelClient.getChannels().size()));
+	}
+
 	@Override
 	protected boolean finishedSuccess() {
 		fillAdapter();
 		restoreViewSelection();
-		setTitle(getString(R.string.channels_window_title_count,getString(getWindowTitle()), ChannelClient.getChannelGroups().size(), ChannelClient.getChannels().size()));
-
+		updateWindowTitle();
 		return ChannelClient.getChannels().isEmpty() == false;
 	}
 
@@ -349,8 +362,8 @@ public class ChannelListActivity extends
 	}
 
 	@Override
-	protected int getWindowTitle() {
-		return R.string.action_menu_channels;
+	protected String getWindowTitle() {
+		return resolveWindowTitle();
 	}
 
 }

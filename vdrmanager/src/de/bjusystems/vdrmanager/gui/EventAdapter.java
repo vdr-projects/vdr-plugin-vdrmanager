@@ -34,6 +34,15 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 
 	String highlight;
 
+	 /**
+     * Lock used to modify the content of {@link #mObjects}. Any write operation
+     * performed on the array should be synchronized on this lock. This lock is also
+     * used by the filter (see {@link #getFilter()} to make a synchronized copy of
+     * the original array of data.
+     */
+    private final Object _Lock = new Object();
+
+	
 	public EventAdapter(final Context context, int layout) {
 		super(context, layout);
 		this.layout = layout;
@@ -224,7 +233,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	}
 
 	// TODO implement locking in performFiltering, check the parent class
-	//
+	//http://stackoverflow.com/questions/5846385/how-to-update-android-listview-with-dynamic-data-in-real-time
 	public Filter getFilter() {
 		return new Filter() {
 			/**

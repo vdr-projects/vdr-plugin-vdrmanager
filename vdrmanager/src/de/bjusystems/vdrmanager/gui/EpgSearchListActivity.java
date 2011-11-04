@@ -90,7 +90,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		
 		EpgSearchParams sp = new EpgSearchParams();
 		sp.setTitle(highlight);
-		setTitle(getString(R.string.epg_by_search_param, highlight));
+		setTitle(getWindowTitle());
 		epgClient = new EpgClient(sp);
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
@@ -163,8 +163,12 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected int getWindowTitle() {
-		return R.string.epg_by_search;
+	protected String getWindowTitle() {
+		if(TextUtils.isEmpty(highlight)){
+			return getString(R.string.epg_by_search);
+		}
+		
+		return getString(R.string.epg_by_search_param, highlight);
 	}
 	
 	@Override

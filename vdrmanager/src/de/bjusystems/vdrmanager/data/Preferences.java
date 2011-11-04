@@ -70,6 +70,10 @@ public class Preferences {
 	 * @since 0.2
 	 */
 	private int streamPort = 3000;
+	
+	private String streamingUsername = "";
+	
+	private String streamingPassword = ""; 
 
 	/**
 	 * Which format to use for streaming
@@ -181,6 +185,15 @@ public class Preferences {
 	 */
 	public boolean isShowImdbButton() {
 		return showImdbButton;
+	}
+
+
+	public String getStreamingUsername() {
+		return streamingUsername;
+	}
+
+	public String getStreamingPassword() {
+		return streamingPassword;
 	}
 
 	/** Properties singleton */
@@ -389,7 +402,7 @@ public class Preferences {
 	public int getStreamPort() {
 		return streamPort;
 	}
-
+	
 	/**
 	 * Getter for selected streaming format
 	 * 
@@ -571,6 +584,10 @@ public class Preferences {
 		prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key, 10);
 		prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
 
+		prefs.streamingUsername = getString(context, R.string.streaming_username_key, "");
+		
+		prefs.streamingPassword = getString(context, R.string.streaming_password_key, "");
+		
 		thePrefs = prefs;
 	}
 

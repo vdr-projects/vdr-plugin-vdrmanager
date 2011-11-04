@@ -100,7 +100,14 @@ public class Utils {
 		// "http://192.168.1.119:3000/TS/"
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
-		sb.append("http://").append(p.getSvdrpHost()).append(":")
+		String auth = p.getStreamingUsername().trim() + ":" + p.getStreamingPassword();
+		if(auth.length() == 1){
+			auth = "";
+		} else {
+			auth += "@";
+		}
+
+		sb.append("http://").append(auth).append(p.getSvdrpHost()).append(":")
 				.append(p.getStreamPort()).append("/")
 				.append(p.getStreamFormat()).append("/").append(chn);
 		return sb.toString();

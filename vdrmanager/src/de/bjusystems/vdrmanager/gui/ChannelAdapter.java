@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +90,7 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			itemHolder = (ChannelHolder) view.getTag();
 		}
 
-		view.setBackgroundColor(Color.BLACK);
+		//view.setBackgroundColor(Color.BLACK);
 
 		CharSequence name = item.getName();
 		name = Utils.highlight(String.valueOf(name), channelFilter);
@@ -158,6 +157,7 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		}
 		itemHolder.name.setText(groupDisplay);
 		itemHolder.aux.setText(String.valueOf(channelCount));
+
 		return view;
 
 	}

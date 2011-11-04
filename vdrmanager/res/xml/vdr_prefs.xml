@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceScreen
-        android:summary="Define one or more VDR Devices. (comming soon)"
-        android:title="VDR Devices" android:enabled="false">
-
-        <intent
-            android:action="android.intent.action.MAIN"
-            android:targetClass="de.bjusystems.vdrmanager.gui.VdrPreferencesActivity"
-            android:targetPackage="de.bjusystems.vdrmanager" />
-    </PreferenceScreen>
-
     <PreferenceCategory
         android:key="vdr_preferences"
         android:title="@string/vdr_preferences" >
@@ -35,7 +25,7 @@
         <CheckBoxPreference
             android:key="@string/vdr_ssl_key"
             android:summary="@string/vdr_ssl_summary"
-            android:title="@string/vdr_ssl_title" android:enabled="false" />
+            android:title="@string/vdr_ssl_title" />
 
         <PreferenceScreen android:title="Advanced" >
 
@@ -159,54 +149,6 @@
             android:title="@string/timer_default_priority_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="gui_preferences"
-        android:title="@string/gui_preferences" >
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/gui_channels_show_channel_numbers_key"
-            android:summary="@string/gui_channels_show_channel_numbers_summary"
-            android:title="@string/gui_channels_show_channel_numbers_title" />
-
-        <CheckBoxPreference
-            android:key="@string/gui_enable_24h_format_key"
-            android:summaryOff="@string/gui_enable_24h_format_summary_off"
-            android:summaryOn="@string/gui_enable_24h_format_summary_on"
-            android:title="@string/gui_enable_24h_format_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/qui_show_imdb_button_key"
-            android:summaryOff="@string/qui_show_imdb_button_summary_off"
-            android:summaryOn="@string/qui_show_imdb_button_summary_on"
-            android:title="@string/qui_show_imdb_button_title" />
-
-        <ListPreference
-            android:defaultValue="akas.imdb.com"
-            android:dependency="@string/qui_show_imdb_button_key"
-            android:entries="@array/imdb_urls_values"
-            android:entryValues="@array/imdb_urls"
-            android:key="@string/qui_imdb_url_key"
-            android:summaryOn="@string/qui_imdb_url_summary"
-            android:title="@string/qui_imdb_url_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/qui_quit_on_back_key"
-            android:summaryOff="@string/gui_quit_on_back_summary_off"
-            android:summaryOn="@string/gui_quit_on_back_summary_on"
-            android:title="@string/gui_quit_on_back_title" />
-
-        <ListPreference
-            android:defaultValue="DEFAULT"
-            android:entries="@array/lang"
-            android:entryValues="@array/lang_values"
-            android:key="@string/gui_custom_locale_key"
-            android:summary="@string/gui_custom_locale_sum"
-            android:title="@string/gui_custom_locale_title" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/livetv" >
 
         <EditTextPreference
@@ -215,18 +157,17 @@
             android:key="streamingport"
             android:summary="@string/settings_livetv_port_summary"
             android:title="@string/settings_livetv_port" />
-        
-         <EditTextPreference
+
+        <EditTextPreference
             android:key="@string/streaming_username_key"
             android:summary="@string/streaming_username_sum"
             android:title="@string/streaming_username_title" />
-         
-         <EditTextPreference
-            android:password="true"
+
+        <EditTextPreference
             android:key="@string/streaming_password_key"
+            android:password="true"
             android:summary="@string/streaming_password_sum"
             android:title="@string/streaming_password_title" />
-         
 
         <ListPreference
             android:defaultValue="TS"
