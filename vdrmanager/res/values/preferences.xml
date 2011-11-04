@@ -11,7 +11,7 @@
     <string name="vdr_password_title">VDR plugin password</string>
     <string name="vdr_password_summary">Password for the VDR plugin</string>
     <string name="vdr_ssl_title">Secure connect</string>
-    <string name="vdr_ssl_summary">Use SSL for connections</string>
+    <string name="vdr_ssl_summary">Use SSL for connections (currently not supported)</string>
 
     <!-- channel filter preferences -->
     <string name="channel_filter_preferences">Channel settings</string>
@@ -135,5 +135,15 @@
     <string name="vdr_timeout_key">key_vdr_timeout</string>
     <string name="vdr_timeout_title">Total timeout</string>
     <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?</string>
+    
+        
+        
+    <string name="streaming_password_title">Streamdev password</string>
+    <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
+    <string name="streaming_password_key">key_streaming_password</string>
 
+    <string name="streaming_username_title">Streamdev username</string>
+    <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
+    <string name="streaming_username_key">key_streaming_username</string>
+        
 </resources>

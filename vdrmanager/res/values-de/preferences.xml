@@ -11,7 +11,7 @@
 	<string name="vdr_password_title">VDR Plugin Passwort</string>
 	<string name="vdr_password_summary">Passwort für das VDR Plugin</string>
 	<string name="vdr_ssl_title">Sichere Verbindung</string>
-	<string name="vdr_ssl_summary">Verwende SSL für Verbindungen</string>
+	<string name="vdr_ssl_summary">Verwende SSL für Verbindungen (aktuell nicht implementiert)</string>
 
 	<!-- channel filter preferences -->
 	<string name="channel_filter_preferences">Kanaleinstellungen</string>
@@ -119,5 +119,12 @@
         <item>Englisch</item>
         <item>Deutsch</item>
     </string-array>
+    
+                
+    <string name="streaming_password_title">Streamdev Passwort</string>
+    <string name="streaming_password_sum">Streamdev Server Passwort, gesetz mit der Option "-a \'user:pass\'". wird so aufgerufen: http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
+
+    <string name="streaming_username_title">Streamdev Benutzername</string>
+    <string name="streaming_username_sum">Streamdev Server Benutzername, gesetz mit der Option "-a \'user:pass\'". wird so http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
 	    
 </resources>
