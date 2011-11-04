@@ -23,6 +23,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+			android:layout_marginTop="4dip"            
             android:prompt="@string/epg_list_channel_spinner" />
 
             <ImageView
