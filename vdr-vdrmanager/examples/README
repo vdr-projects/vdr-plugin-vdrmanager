@@ -1,2 +1,2 @@
 plugin.vdrmanager.conf - example for e.a. Debuab, ubuntu. This should be copied into /etc/vdr/plugins/
-vdr.vdrmanager.conf - example for gentoo, this file should be copied into /etc/conf.d/
+vdr.vdrmanager - example for gentoo, this file should be copied into /etc/conf.d/
