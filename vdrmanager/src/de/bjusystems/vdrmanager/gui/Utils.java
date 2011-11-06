@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -238,5 +239,16 @@ public class Utils {
 		}
 		return pi;
 	}
+	
 
+	public static boolean checkInternetConnection(Context ctx) {
+		ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		// test for connection
+		if (cm.getActiveNetworkInfo() != null
+				&& cm.getActiveNetworkInfo().isAvailable()
+				&& cm.getActiveNetworkInfo().isConnected()) {
+			return true;
+		}
+		return false;
+	}
 }
