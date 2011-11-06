@@ -71,8 +71,8 @@ cMenuSetupPage * cPluginAndroVdr::SetupMenu(void) {
 
 const char * cPluginAndroVdr::CommandLineHelp(void) {
 	return "  -p port          port number to listen to\n"
-			"  -P password      password (none if not given)"
-			"  -s               force check against svdrphosts.conf";
+		   "  -P password      password (none if not given)"
+		   "  -s               force check against svdrphosts.conf";
 }
 
 bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
