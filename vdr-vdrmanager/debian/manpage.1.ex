@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH VDR-PLUGIN-VDRMANAGER SECTION "October 21, 2011"
+.TH VDR-PLUGIN-VDRMANAGER SECTION "November  7, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
