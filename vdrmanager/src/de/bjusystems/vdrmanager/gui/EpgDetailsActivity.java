@@ -80,10 +80,13 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		event_left = (ImageButton) findViewById(R.id.epg_event_left);
 		event_right = (ImageButton) findViewById(R.id.epg_event_right);
 		state = (ImageView) findViewById(R.id.epg_timer_state);
-
+		
+		final Event epg = getApp().getCurrentEvent();
+		if(epg == null){
+			finish();
+		}
+		
 		new VoidAsyncTask() {
-
-			private Event epg;
 
 			@Override
 			protected void onPreExecute() {
@@ -95,7 +98,6 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				// current event
 				final VdrManagerApp app = (VdrManagerApp) getApplication();
 				epgs = app.getCurrentEpgList();
-				epg = app.getCurrentEvent();
 
 				counter = 0;
 				for (Event e : epgs) {
@@ -103,6 +105,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 						break;
 					}
 					counter++;
+				}
+				if(counter > epgs.size()){
+					counter = -1;
 				}
 				return (Void) null;
 			}
@@ -130,6 +135,10 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 		cEvent = event;
 
+		if(cEvent == null){
+			return;
+		}
+		
 		String cn = event.getChannelName();
 
 		setTitle(getString(R.string.epg_of_a_channel, cn, counter + 1, epgs.size()));
@@ -404,6 +413,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	}
 
 	private void prevEPG() {
+		if(counter  == -1){
+			return;
+		}
 		Event epg;
 		if (counter == 0) {
 			say(R.string.navigae_at_the_start);
@@ -441,6 +453,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	 * } }
 	 */
 	private void nextEPG() {
+		if(counter == -1){
+			return;
+		}
 		if (counter < epgs.size() - 1) {
 			counter++;
 			Event epg = epgs.get(counter);
