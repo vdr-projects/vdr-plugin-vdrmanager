@@ -16,8 +16,10 @@ class cVdrmanagerSocket
 protected:
   int sock;
   const char * password;
+  bool forceCheckSvdrp;
 protected:
   cVdrmanagerSocket();
+  bool IsPasswordSet();
 public:
   virtual ~cVdrmanagerSocket();
   void Close();
@@ -56,7 +58,7 @@ class cVdrmanagerServerSocket : public cVdrmanagerSocket
 public:
   cVdrmanagerServerSocket();
   virtual ~cVdrmanagerServerSocket();
-  bool Create(int port, const char * password);
+  bool Create(int port, const char * password, bool forceCheckSvdrp);
   cVdrmanagerClientSocket * Accept();
 };
 
