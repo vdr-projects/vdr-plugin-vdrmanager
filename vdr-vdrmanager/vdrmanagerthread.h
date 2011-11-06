@@ -21,8 +21,9 @@ private:
   cSelect * select;
   int port;
   const char * password;
+  bool forceCheckSvdrp;
 public:
-  cAndroVdrThread(int port, const char * password);
+  cAndroVdrThread(int port, const char * password, bool forceCheckSvdrp);
   virtual void Action(void);
   void Shutdown();
 private:

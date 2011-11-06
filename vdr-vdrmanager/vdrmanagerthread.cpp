@@ -8,11 +8,12 @@
 #include "select.h"
 #include "helpers.h"
 
-cAndroVdrThread::cAndroVdrThread(int port, const char * password)
+cAndroVdrThread::cAndroVdrThread(int port, const char * password, bool forceCheckSvdrp)
 {
   select = NULL;
   this->port = port;
   this->password = password;
+  this->forceCheckSvdrp = forceCheckSvdrp;
 }
 
 cAndroVdrThread::~cAndroVdrThread()
@@ -42,7 +43,7 @@ bool cAndroVdrThread::Init()
 
   // create server socket
   cVdrmanagerServerSocket * sock = new cVdrmanagerServerSocket();
-  if (sock == NULL || !sock->Create(port, password))
+  if (sock == NULL || !sock->Create(port, password, forceCheckSvdrp))
     return false;
 
   // register server socket

@@ -15,108 +15,123 @@
 
 #define ANDROVDR_PORT		6420
 
-const char *VERSION        = "0.2";
-static const char *DESCRIPTION    = "VDR-Manager support plugin";
+const char *VERSION = "0.2";
+static const char *DESCRIPTION = "VDR-Manager support plugin";
 
-class cPluginAndroVdr : public cPlugin {
+class cPluginAndroVdr: public cPlugin {
 private:
-  // Add any member variables or functions you may need here.
-  cAndroVdrThread * Thread;
-  int port;
-  const char * password;
+	// Add any member variables or functions you may need here.
+	cAndroVdrThread * Thread;
+	int port;
+	const char * password;
+	bool forceCheckSvdrp;
 protected:
 public:
-  cPluginAndroVdr(void);
-  virtual ~cPluginAndroVdr();
-  virtual const char *Version(void) { return VERSION; }
-  virtual const char *Description(void) { return DESCRIPTION; }
-  virtual const char *CommandLineHelp(void);
-  virtual bool Initialize(void);
-  virtual bool Start(void);
-  virtual void Stop(void);
-  virtual void Housekeeping(void);
-  virtual const char *MainMenuEntry(void) { return NULL; }
-  virtual cOsdObject *MainMenuAction(void);
-  virtual cMenuSetupPage *SetupMenu(void);
-  virtual bool ProcessArgs(int argc, char *argv[]);
+	cPluginAndroVdr(void);
+	virtual ~cPluginAndroVdr();
+	virtual const char *Version(void) {
+		return VERSION;
+	}
+	virtual const char *Description(void) {
+		return DESCRIPTION;
+	}
+	virtual const char *CommandLineHelp(void);
+	virtual bool Initialize(void);
+	virtual bool Start(void);
+	virtual void Stop(void);
+	virtual void Housekeeping(void);
+	virtual const char *MainMenuEntry(void) {
+		return NULL;
+	}
+	virtual cOsdObject *MainMenuAction(void);
+	virtual cMenuSetupPage *SetupMenu(void);
+	virtual bool ProcessArgs(int argc, char *argv[]);
 };
 
-cPluginAndroVdr::cPluginAndroVdr(void)
-{
-  // Initialize any member variables here.
-  // DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
-  // VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
-  Thread = NULL;
-  port = ANDROVDR_PORT;
-  password = "";
+cPluginAndroVdr::cPluginAndroVdr(void) {
+	// Initialize any member variables here.
+	// DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
+	// VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
+	Thread = NULL;
+	port = ANDROVDR_PORT;
+	password = "";
 }
 
-cPluginAndroVdr::~cPluginAndroVdr()
-{
-  // Clean up after yourself!
+cPluginAndroVdr::~cPluginAndroVdr() {
+	// Clean up after yourself!
 }
 
-cOsdObject * cPluginAndroVdr::MainMenuAction(void)
-{
-  return NULL;
+cOsdObject * cPluginAndroVdr::MainMenuAction(void) {
+	return NULL;
 }
 
-cMenuSetupPage * cPluginAndroVdr::SetupMenu(void)
-{
-  return NULL;
-}
-  
-const char * cPluginAndroVdr::CommandLineHelp(void)
-{
-  return "  -p port          port number to listen to\n"
-         "  -P password      password (none if not given)";
+cMenuSetupPage * cPluginAndroVdr::SetupMenu(void) {
+	return NULL;
 }
 
-bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[])
-{
-  for(int i = 1; i < argc; i++) {
-    if (i < argc - 1) {
-      if (strcmp(argv[i], "-p") == 0) {
-        port = atoi(argv[++i]);
-      } else if (strcmp(argv[i], "-P") == 0) {
-        password = argv[++i];
-      }
-    }
-  }
-
-  // default port
-  if (port <= 0)
-    port = ANDROVDR_PORT;
-
-  return true;
+const char * cPluginAndroVdr::CommandLineHelp(void) {
+	return "  -p port          port number to listen to\n"
+			"  -P password      password (none if not given)"
+			"  -s               force check against svdrphosts.conf";
 }
 
-bool cPluginAndroVdr::Initialize(void)
-{
-  // Initialize any background activities the plugin shall perform.
+bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
+	dsyslog("forceCheckSvdrp = true %d", argc);
 
-  // Start any background activities the plugin shall perform.
-  Thread = new cAndroVdrThread(port, password);
+	int c;
+	while ((c = getopt(argc, argv, "p:P:s")) != -1)
+		switch (c) {
+		case 'p':
+			port = atoi(optarg);
+			break;
+		case 'P':
+			password = optarg;
+			break;
+		case 's':
+			forceCheckSvdrp = true;
+			break;
+		case '?':
+			if (optopt == 'c') {
+				fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+			} else if (isprint(optopt))
+				fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+			else
+				fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+			return false;
+		default:
+			return false;
+		}
 
-  return Thread != NULL;
+// default port
+	if (port <= 0)
+		port = ANDROVDR_PORT;
+
+	return true;
 }
 
-bool cPluginAndroVdr::Start(void)
-{
-  Thread->Start();
+bool cPluginAndroVdr::Initialize(void) {
+// Initialize any background activities the plugin shall perform.
 
-  return true;
+// Start any background activities the plugin shall perform.
+	Thread = new cAndroVdrThread(port, password, forceCheckSvdrp);
+
+	return Thread != NULL;
 }
 
-void cPluginAndroVdr::Stop(void)
-{
-  // Stop any background activities the plugin shall perform.
-  Thread->Shutdown();
+bool cPluginAndroVdr::Start(void) {
+	Thread->Start();
+
+	return true;
 }
 
-void cPluginAndroVdr::Housekeeping(void)
-{
-  // Perform any cleanup or other regular tasks.
+void cPluginAndroVdr::Stop(void) {
+// Stop any background activities the plugin shall perform.
+	Thread->Shutdown();
 }
 
-VDRPLUGINCREATOR(cPluginAndroVdr); // Don't touch this!
+void cPluginAndroVdr::Housekeeping(void) {
+// Perform any cleanup or other regular tasks.
+}
+
+VDRPLUGINCREATOR(cPluginAndroVdr);
+// Don't touch this!
