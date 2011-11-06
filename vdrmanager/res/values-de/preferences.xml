@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<string name="vdr_devices_summary">Definiere ein oder weitere VDR Geräte. (aktuell nicht implementiert)</string>
+	<string name="vdr_devices">VDR Geräte</string>
+
 	<!-- VDR plugin preferences -->
 	<string name="vdr_preferences">Netzwerkeinstellungen</string>
 	<string name="vdr_host_title">VDR Rechner</string>
-	<string name="vdr_host_summary">Host running VDR</string>
-	<string name="vdr_port_title">VDR Plugin port </string>
+	<string name="vdr_host_summary">VDR Hostrechner</string>
+	<string name="vdr_port_title">VDR Plugin Port </string>
 	<string name="vdr_port_summary">Port für Verbindungen zum VDR Plugin</string>
 	<string name="vdr_port_default">6420</string>
 	<string name="vdr_password_title">VDR Plugin Passwort</string>
@@ -33,22 +36,17 @@
 	<string name="wakeup_method_key">key_wakeup_method</string>
 	<string name="wakeup_method_title">Weckmethode</string>
 	<string name="wakeup_method_summary">Wähle eine Methode zum Wecken des VDR Rechners</string>
+
 	<string-array name="wakeup_methods">
 		<item>Rufe ein URL auf</item>
 		<item>WOL</item>
 	</string-array>
-	<string-array name="wakeup_methods_values">
-		<item>url</item>
-		<item>wol</item>
-	</string-array>
-	<string name="default_wakeup_method">url</string>
-	<string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
+
     <string name="wakeup_wol_custom_boradcast_title">Eigene WOL-Netzwerkadresse</string>
     <string name="wakeup_wol_custom_boradcast_summary">Eine WOL-Netzwerkadresse von 255.255.255.255 abweichend. Zum Beispiel sinnvoll für VPN Verbindungen.</string>
     <string name="wakeup_wol_custom_boradcast_summary_on">Broadcast </string>
 	
 	
-	<string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
     <string name="wakeup_wol_mac_title">MAC-Adresse</string>
     <string name="wakeup_wol_mac_summary">MAC-Adresse des VDR Rechners. Verwende \':\' , \'-\' oder ein Leerzeichen als Trennzeichen.</string>
 
@@ -67,50 +65,26 @@
 
 	<!-- GUI -->
 	<string name="gui_preferences">Einstellungen der Benutzeroberfläche</string>
-	<string name="gui_enable_24h_format_key">key_enable_24h</string>
+
 	<string name="gui_enable_24h_format_title">Verwende 24-h Format</string>
 	<string name="gui_enable_24h_format_summary_on">13:00</string>
 	<string name="gui_enable_24h_format_summary_off">1:00 PM</string>
-	<string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
+
 	<string name="gui_channels_show_channel_numbers_title">Zeige Kanalnummern</string>
     <string name="gui_channels_show_channel_numbers_summary">Zeige Kanalnummern in der Kanalliste.</string>
 	
-	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
 	<string name="gui_quit_on_back_title">Beenden mit Zurück Button</string>
 	<string name="gui_quit_on_back_summary_on">Zurück Button schließt den VDR-Manager</string>
 	<string name="gui_quit_on_back_summary_off">Zurück Button beendet den VDR-Manager nicht</string>	
 	
-	<string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
 	<string name="qui_show_imdb_button_title">Zeige IMDB Button</string>
 	<string name="qui_show_imdb_button_summary_on">IMDB Button anzeigen</string>
 	<string name="qui_show_imdb_button_summary_off">IMDB Button nicht anzeigen</string>	
 	
-	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
 	<string name="qui_imdb_url_title">IMDb Seite</string>
 	<string name="qui_imdb_url_summary">Welche IMDb Seite für die Suche verwenden.</string>
 	<string name="gui_custom_locale_title">Andere Sprache</string>
 	<string name="gui_custom_locale_sum">Eine andere Sprache aktivieren.</string>
-	
-	<string-array name="imdb_urls">
-		<item>imdb.com</item>
-		<item>uk.imdb.com</item>
-		<item>imdb.de</item>
-		<item>imdb.es</item>
-		<item>imdb.fr</item>
-		<item>imdb.it</item>
-		<item>imdb.pt</item>
-	</string-array>
-
-	<string-array name="imdb_urls_values">
-        <item>International</item>
-        <item>imdb.com</item>
-        <item>uk.imdb.com</item>
-        <item>imdb.de</item>
-        <item>imdb.es</item>
-        <item>imdb.fr</item>
-        <item>imdb.it</item>
-        <item>imdb.pt</item>
-     </string-array>
 
     <string-array name="lang">
         <!-- 
@@ -119,12 +93,23 @@
         <item>Englisch</item>
         <item>Deutsch</item>
     </string-array>
-    
+
+    <string name="vdr_advanced_preferences">Erweitert</string>
+
+    <string name="vdr_conntimeout_title">Anmeldezeitlimit</string>
+    <string name="vdr_conntimeout_sum">Wie lang (in Sekunden) warten bis eine Verbindung hergestellt ist?</string>
+
+    <string name="vdr_readtimeout_title">Lese-Zeitlimit</string>
+    <string name="vdr_readtimeout_sum">Wie lang (in Sekunden) warten bis eine Zeile gelesen wurde?</string>
+
+    <string name="vdr_timeout_title">Gesamt-Zeitlimit</string>
+    <string name="vdr_timeout_sum">Wie lang maximal (in Sekunden) warten bis eine Datenübertragung entgültig abgebrochen wird?</string>
+        
                 
     <string name="streaming_password_title">Streamdev Passwort</string>
-    <string name="streaming_password_sum">Streamdev Server Passwort, gesetz mit der Option "-a \'user:pass\'". wird so aufgerufen: http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
+    <string name="streaming_password_sum">Streamdev Server Passwort, gesetzt mit der Option "-a \'user:pass\'". wird so aufgerufen: http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
 
     <string name="streaming_username_title">Streamdev Benutzername</string>
-    <string name="streaming_username_sum">Streamdev Server Benutzername, gesetz mit der Option "-a \'user:pass\'". wird so http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
+    <string name="streaming_username_sum">Streamdev Server Benutzername, gesetzt mit der Option "-a \'user:pass\'". wird so http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
 	    
 </resources>

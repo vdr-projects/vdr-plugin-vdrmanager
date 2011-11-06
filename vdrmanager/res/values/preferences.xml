@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="vdr_devices_summary">Define one or more VDR Devices. (comming soon)</string>
+    <string name="vdr_devices">VDR Devices</string>
+
     <!-- VDR plugin preferences -->
     <string name="vdr_preferences">Network settings</string>
     <string name="vdr_host_title">VDR host</string>
@@ -126,6 +129,8 @@
         <item>German</item>
     </string-array>
 
+    <string name="vdr_advanced_preferences">Advanced</string>
+        
     <string name="vdr_conntimeout_key">key_conntimeout_key</string>
     <string name="vdr_conntimeout_title">Connection Timeout</string>
     <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
@@ -136,8 +141,6 @@
     <string name="vdr_timeout_title">Total timeout</string>
     <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?</string>
     
-        
-        
     <string name="streaming_password_title">Streamdev password</string>
     <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
     <string name="streaming_password_key">key_streaming_password</string>

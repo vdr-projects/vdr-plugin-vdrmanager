@@ -10,6 +10,6 @@
   <string name="timer_details_save_title">Speichere Änderungen</string>
   <string name="timer_details_delete_title">Lösche Timer</string>
     
-  <string name="timer_details_add_title">Neuer Timer anlegen</string>
-  <string name="timer_details_modify_title">Einen Timer änern</string>
+  <string name="timer_details_add_title">Neuen Timer anlegen</string>
+  <string name="timer_details_modify_title">Einen Timer ändern</string>
 </resources>

@@ -2,8 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceScreen
-        android:summary="Define one or more VDR Devices. (comming soon)"
-        android:title="VDR Devices" android:enabled="false">
+        android:summary="@string/vdr_devices_summary"
+        android:title="@string/vdr_devices" android:enabled="false">
 
         <intent
             android:action="android.intent.action.MAIN"
@@ -37,7 +37,7 @@
             android:summary="@string/vdr_ssl_summary"
             android:title="@string/vdr_ssl_title" android:enabled="false" />
 
-        <PreferenceScreen android:title="Advanced" >
+        <PreferenceScreen android:title="@string/vdr_advanced_preferences" >
 
             <EditTextPreference
                 android:defaultValue="10"
