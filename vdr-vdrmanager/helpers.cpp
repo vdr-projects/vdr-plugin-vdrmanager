@@ -582,24 +582,13 @@ string cHelpers::ToLower(string text)
 }
 
 
-string cHelpers::Trim(string text) {
-
-  const char * start = text.c_str();
-
-  // skip leading spaces
-  const char * first = start;
-  while (*first && isspace(*first))
-    first++;
-
-  // find trailing spaces
-  const char * last = first + strlen(first) - 1;
-  while (first < last && isspace(*last))
-    last--;
-
-  char * dst = (char *)malloc(last - first + 2);
-  sprintf(dst, "%*s", last - first + 1, first);
-
-  return dst;
+string   cHelpers::Trim(string str)
+{
+  int a = str.find_first_not_of(" \t");
+  int b = str.find_last_not_of(" \t");
+  if ( a == -1 ) a = 0;
+  if ( b == -1 ) b = str.length() - 1;
+  return str.substr(a, (b-a)+1);
 }
 
 string cHelpers::SafeCall(string (*f)())
