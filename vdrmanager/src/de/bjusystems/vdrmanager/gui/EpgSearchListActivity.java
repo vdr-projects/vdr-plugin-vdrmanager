@@ -84,7 +84,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	private void startEpgQuery() {
 
 		if (checkInternetConnection() == false) {
-			switchNoConnection();
 			return;
 		}
 		

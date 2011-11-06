@@ -235,7 +235,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 
 		if (checkInternetConnection() == false) {
-			switchNoConnection();
 			return;
 		}
 

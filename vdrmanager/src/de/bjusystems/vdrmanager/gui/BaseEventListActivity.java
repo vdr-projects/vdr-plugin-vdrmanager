@@ -344,5 +344,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				results.size()));
 		return finishedSuccessImpl();
 	}
+	
+	@Override
+	protected boolean displayingResults() {
+		return results.isEmpty() == false;
+	}
 
 }

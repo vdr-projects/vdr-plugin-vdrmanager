@@ -92,7 +92,6 @@ public class ChannelListActivity extends
 	private void startChannelQuery(boolean useCache) {
 
 		if (checkInternetConnection() == false) {
-			switchNoConnection();
 			return;
 		}
 
@@ -364,6 +363,10 @@ public class ChannelListActivity extends
 	@Override
 	protected String getWindowTitle() {
 		return resolveWindowTitle();
+	}
+	
+	protected boolean displayingResults(){
+		return ChannelClient.getChannels().isEmpty() == false;
 	}
 
 }
