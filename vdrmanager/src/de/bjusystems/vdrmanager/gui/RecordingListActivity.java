@@ -121,7 +121,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		
 
 		if (checkInternetConnection() == false) {
-			switchNoConnection();
 			return;
 		}
 

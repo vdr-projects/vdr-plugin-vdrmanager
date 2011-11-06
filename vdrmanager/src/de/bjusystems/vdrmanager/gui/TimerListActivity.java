@@ -69,7 +69,6 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	private void startTimerQuery() {
 
 		if (checkInternetConnection() == false) {
-			switchNoConnection();
 			return;
 		}
 
