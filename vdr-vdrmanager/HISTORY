@@ -1,7 +1,11 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
-2011-10-12: Version 0.2-pre
+2011-11-06: Version 0.3
+- Check against svdrphosts.conf file only if a) forced via command
+  line argument -s or no password was specified via -P
+- arguments parsing by getopts 
 
+2011-10-12: Version 0.2
 - Recording Info via recordings command
 - Delete a recording via drecord <recording index> commmand
 - shortText delivery with event commands
