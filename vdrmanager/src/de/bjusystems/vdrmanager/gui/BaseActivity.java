@@ -40,21 +40,22 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 
 	abstract protected int getMainLayout();
 
-	protected void switchNothinFound() {
-		if (flipper == null) {
-			return;
-		}
-		// say("can not connect...");
-		// flipper.setDisplayedChild(1);
+	protected void noInternetConnection() {
+		alert(R.string.no_internet_connection);
 	}
+
+	abstract protected boolean displayingResults();
 
 	protected void switchNoConnection() {
 		if (flipper == null) {
 			return;
 		}
-		//TODO check if we are displaying something (results
-		// say("can not connect...");
-		// flipper.setDisplayedChild(1);
+
+		if (displayingResults()) {
+			say(R.string.no_connection);
+		} else {
+			flipper.setDisplayedChild(1);
+		}
 	}
 
 	protected void initFlipper() {
@@ -68,23 +69,24 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 			retry();
 		}
 	}
-//
-//	protected void updateWindowTitle(int topic, int subtopic) {
-//		String title;
-//		title = getString(topic);
-//		if (subtopic != -1) {
-//			title += " > " + getString(subtopic);
-//		}
-//		setTitle(title);
-//	}
-//
-//	protected void updateWindowTitle(String topic, String subtopic) {
-//		String title = topic;
-//		if (subtopic != null) {
-//			title += " > " + subtopic;
-//		}
-//		setTitle(title);
-//	}
+
+	//
+	// protected void updateWindowTitle(int topic, int subtopic) {
+	// String title;
+	// title = getString(topic);
+	// if (subtopic != -1) {
+	// title += " > " + getString(subtopic);
+	// }
+	// setTitle(title);
+	// }
+	//
+	// protected void updateWindowTitle(String topic, String subtopic) {
+	// String title = topic;
+	// if (subtopic != null) {
+	// title += " > " + subtopic;
+	// }
+	// setTitle(title);
+	// }
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -180,13 +182,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	int top;
 
 	protected boolean checkInternetConnection() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		// test for connection
-		if (cm.getActiveNetworkInfo() != null
-				&& cm.getActiveNetworkInfo().isAvailable()
-				&& cm.getActiveNetworkInfo().isConnected()) {
+		if(Utils.checkInternetConnection(this)){
 			return true;
 		}
+		noInternetConnection();
 		return false;
 	}
 
@@ -217,6 +216,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 			return;
 		case FINISHED_SUCCESS:
 			if (finishedSuccess()) {
+				finishedSuccess = true;
 				restoreViewSelection();
 			} else {
 				say(R.string.epg_no_items);
@@ -228,6 +228,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		}
 	}
 
+	protected boolean finishedSuccess = false;
+	
 	protected void cacheHit() {
 
 	}

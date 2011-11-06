@@ -22,5 +22,5 @@
           herrlado&lt;herrlado@gmail.com&gt;
     </string>
     <string name="about_title">Über</string>
-
+	<string name="no_internet_connection">Keine Datenverbindung</string>
 </resources>

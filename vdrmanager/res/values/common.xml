@@ -24,4 +24,5 @@
     </string>
     <string name="about_title">About</string>
 
+    <string name="no_internet_connection">No data connection</string>
 </resources>
