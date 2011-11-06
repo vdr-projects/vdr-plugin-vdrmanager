@@ -177,7 +177,11 @@ public abstract class SvdrpClient<Result> {
 			informListener(SvdrpEvent.CONNECTED, null);
 		} catch (final Exception e) {
 			Log.w(TAG, e);
-			informListener(SvdrpEvent.CONNECT_ERROR, null);
+			if(abort){
+				informListener(SvdrpEvent.ABORTED, null);
+			} else {
+				informListener(SvdrpEvent.CONNECT_ERROR, null);
+			}
 			return false;
 		}
 
