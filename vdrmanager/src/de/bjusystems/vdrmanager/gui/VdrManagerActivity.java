@@ -18,7 +18,8 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		Preferences.setLocale(this);
 		// attach view
 		setContentView(R.layout.vdrmanager);
 

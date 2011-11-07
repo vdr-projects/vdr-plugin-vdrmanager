@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ViewFlipper;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
@@ -58,6 +60,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		Preferences.init(this);
+		super.onResume();
+	}
+	
 	protected void initFlipper() {
 		this.flipper = (ViewFlipper) findViewById(R.id.flipper);
 		retry = (Button) findViewById(R.id.retry_button);
@@ -88,6 +96,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	// setTitle(title);
 	// }
 
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Preferences.setLocale(this);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		MenuItem item;

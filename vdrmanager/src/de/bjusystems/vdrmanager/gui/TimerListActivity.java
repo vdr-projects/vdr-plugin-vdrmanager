@@ -83,6 +83,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		progress = new SvdrpProgressDialog(this, timerClient);
 
 		// attach listener
+		task.addListener(progress);
 		task.addListener(this);
 
 		// start task

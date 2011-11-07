@@ -56,7 +56,6 @@ public class VdrManagerApp extends Application {
 		Preferences.init(this);
 	}
 	
-	
 	public void clear() {
 		this.currentEvent = null;
 		this.currentTimer = null;
@@ -72,11 +71,6 @@ public class VdrManagerApp extends Application {
 
 	public void setCurrentEvent(final Event currentEvent) {
 		this.currentEvent = currentEvent;
-		//if (currentEvent.getTimer() != null) {
-			//this.currentTimer = currentEvent.getTimer();
-		//} else {
-			//this.currentTimer = new Timer(currentEvent);
-		//}
 	}
 
 	public Timer getCurrentTimer() {
