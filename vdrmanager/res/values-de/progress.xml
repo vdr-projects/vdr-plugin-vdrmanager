@@ -3,7 +3,8 @@
   
   <!--  progress -->
   <string name="progress_connect">Verbinde…</string>
-  <string name="progress_connect_error">Verbindung fehlgeschlagen</string>
+  <string name="progress_connect_error">Verbindung fehlgeschlagen!</string>
+  <string name="progress_connect_timeout">Zeitüberschreitung beim Verbindungsaufbau!</string>
   <string name="progress_login">Anmelden.</string>
   <string name="progress_login_error">Anmelden fehlgeschlagen.</string>
   <string name="progress_whatson_loading">Lade EPG…</string>

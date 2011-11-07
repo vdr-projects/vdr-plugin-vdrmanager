@@ -50,6 +50,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 
 	protected void switchNoConnection() {
 		if (flipper == null) {
+			say(R.string.no_connection);
 			return;
 		}
 
@@ -152,6 +153,9 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 
 	protected boolean noConnection(SvdrpEvent event) {
 		switch (event) {
+		case CONNECTION_TIMEOUT:
+			say(R.string.progress_connect_timeout);
+			switchNoConnection();
 		case CONNECT_ERROR:
 			say(R.string.progress_connect_error);
 			switchNoConnection();
@@ -220,6 +224,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		case CONNECTED:
 			connected();
 			break;
+		case CONNECTION_TIMEOUT:
 		case CONNECT_ERROR:
 		case FINISHED_ABNORMALY:
 		case LOGIN_ERROR:

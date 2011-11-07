@@ -31,6 +31,7 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 	public void svdrpEvent(final SvdrpEvent sevent, T e) {
 		switch (sevent) {
 		case ABORTED:
+		case CONNECTION_TIMEOUT:
 		case CONNECT_ERROR:
 		case ERROR:
 		case LOGIN_ERROR:

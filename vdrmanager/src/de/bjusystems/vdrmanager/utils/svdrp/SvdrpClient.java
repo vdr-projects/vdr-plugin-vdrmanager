@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -154,7 +155,7 @@ public abstract class SvdrpClient<Result> {
 					new InetSocketAddress(prefs.getSvdrpHost(), prefs
 							.getSvdrpPort()),
 					prefs.getConnectionTimeout() * 1000);// 8 secs for connect
-			if(abort){
+			if (abort) {
 				informListener(SvdrpEvent.ABORTED, null);
 			}
 			//
@@ -175,9 +176,18 @@ public abstract class SvdrpClient<Result> {
 				}
 			}, delay);
 			informListener(SvdrpEvent.CONNECTED, null);
+		} catch (final SocketTimeoutException sote) {
+			Log.w(TAG, sote);
+			if (abort) {
+				informListener(SvdrpEvent.ABORTED, null);
+			} else {
+				informListener(SvdrpEvent.CONNECTION_TIMEOUT, null);
+			}
+			return false;
 		} catch (final Exception e) {
+
 			Log.w(TAG, e);
-			if(abort){
+			if (abort) {
 				informListener(SvdrpEvent.ABORTED, null);
 			} else {
 				informListener(SvdrpEvent.CONNECT_ERROR, null);

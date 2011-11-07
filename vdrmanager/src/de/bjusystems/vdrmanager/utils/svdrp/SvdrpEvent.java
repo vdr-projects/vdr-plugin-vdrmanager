@@ -17,4 +17,8 @@ public enum SvdrpEvent {
 	ABORTED,
 	ERROR,
 	CACHE_HIT,
+	CONNECTION_TIMEOUT
+	//
+	;
+	
 }

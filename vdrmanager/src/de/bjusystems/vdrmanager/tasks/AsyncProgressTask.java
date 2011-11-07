@@ -20,6 +20,7 @@ public abstract class AsyncProgressTask<Result> {
 			switch (event) {
 			case ABORTED:
 			case CONNECT_ERROR:
+			case CONNECTION_TIMEOUT:
 			case ERROR:
 			case LOGIN_ERROR:
 			case FINISHED_ABNORMALY:
