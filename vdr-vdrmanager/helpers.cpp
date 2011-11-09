@@ -1,4 +1,3 @@
-
 /*
  * event und message handler
  */
@@ -16,676 +15,669 @@
 #include "vdrmanagerthread.h"
 
 string cHelpers::GetRecordings(string args) {
-  return SafeCall(GetRecordingsIntern);
+	return SafeCall(GetRecordingsIntern);
 }
 
 string cHelpers::GetTimers(string args) {
-  return SafeCall(GetTimersIntern);
+	return SafeCall(GetTimersIntern);
 }
 
 string cHelpers::GetChannels(string args) {
-  return SafeCall(GetChannelsIntern, args);
+	return SafeCall(GetChannelsIntern, args);
 }
 
 string cHelpers::GetChannelEvents(string args) {
-  return SafeCall(GetEventsIntern, Trim(args), "");
+	return SafeCall(GetEventsIntern, Trim(args), "");
 }
 
 string cHelpers::GetTimeEvents(string args) {
 
-  args = Trim(args);
+	args = Trim(args);
 
-  size_t space = args.find(' ');
-  if (space == string::npos) {
-    return SafeCall(GetEventsIntern, "", args);
-  }
+	size_t space = args.find(' ');
+	if (space == string::npos) {
+		return SafeCall(GetEventsIntern, "", args);
+	}
 
-  string when = args.substr(0, space);
-  string wantedChannels = args.substr(space+1);
+	string when = args.substr(0, space);
+	string wantedChannels = args.substr(space + 1);
 
-  return SafeCall(GetEventsIntern, Trim(wantedChannels), Trim(when));
+	return SafeCall(GetEventsIntern, Trim(wantedChannels), Trim(when));
 }
 
 string cHelpers::SetTimer(string args) {
-  return SafeCall(SetTimerIntern, args);
+	return SafeCall(SetTimerIntern, args);
 }
 
 string cHelpers::DelRecording(string args) {
-  return SafeCall(DelRecordingIntern, args);
+	return SafeCall(DelRecordingIntern, args);
 }
 
 string cHelpers::SearchEvents(string args) {
 
-  args = Trim(args);
+	args = Trim(args);
 
-  string wantedChannels;
-  string pattern;
-  
+	string wantedChannels;
+	string pattern;
 
-  size_t space = args.find(':');
-  if (space == string::npos) {//so only search term
-    pattern = args;
-    wantedChannels = "";
-  } else {
-    wantedChannels = args.substr(0, space);
-    pattern = args.substr(space+1);
-  }
-  pattern = UnMapSpecialChars(pattern);
-  return SafeCall(SearchEventsIntern, Trim(wantedChannels), Trim(pattern));
+	size_t space = args.find(':');
+	if (space == string::npos) { //so only search term
+		pattern = args;
+		wantedChannels = "";
+	} else {
+		wantedChannels = args.substr(0, space);
+		pattern = args.substr(space + 1);
+	}
+	pattern = UnMapSpecialChars(pattern);
+	return SafeCall(SearchEventsIntern, Trim(wantedChannels), Trim(pattern));
 }
 
 string cHelpers::GetTimersIntern() {
 
-  string result = "START\r\n";
-  
-  // iterate through all timers
-  for(cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
-      result += ToText(timer);
-  }
+	string result = "START\r\n";
 
-  return result + "END\r\n";
+	// iterate through all timers
+	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
+		result += ToText(timer);
+	}
+
+	return result + "END\r\n";
 }
 
 string cHelpers::GetRecordingsIntern() {
 
-  string result = "START\r\n";
-  // iterate through all recordings
-  cRecording* recording = NULL;
-  for (int i = 0; i < Recordings.Count(); i++) {
-    recording = Recordings.Get(i);
-    result += ToText(recording);
-  }
-  return result + "END\r\n";
+	string result = "START\r\n";
+	// iterate through all recordings
+	cRecording* recording = NULL;
+	for (int i = 0; i < Recordings.Count(); i++) {
+		recording = Recordings.Get(i);
+		result += ToText(recording);
+	}
+	return result + "END\r\n";
 }
 
 string cHelpers::GetChannelsIntern(string wantedChannels) {
 
-  string result = "START\r\n";
-  string currentGroup = "";
+	string result = "START\r\n";
+	string currentGroup = "";
 
-  char number[10];
-  for(cChannel * channel = Channels.First(); channel; channel = Channels.Next(channel)) {
+	char number[10];
+	for (cChannel * channel = Channels.First(); channel; channel =
+			Channels.Next(channel)) {
 
-    // channel group
-    if (channel->GroupSep()) {
-      currentGroup = channel->Name();
-      continue;
-    }
+		// channel group
+		if (channel->GroupSep()) {
+			currentGroup = channel->Name();
+			continue;
+		}
 
-    // channel filtering
-    if (IsWantedChannel(channel, wantedChannels)) {
-      // current group
-      if (currentGroup.length() > 0) {
-        result += "C0:";
-        result += currentGroup;
-        result += "\r\n";
-        currentGroup = "";
-      }
+		// channel filtering
+		if (IsWantedChannel(channel, wantedChannels)) {
+			// current group
+			if (currentGroup.length() > 0) {
+				result += "C0:";
+				result += currentGroup;
+				result += "\r\n";
+				currentGroup = "";
+			}
 
-      // channel
-      sprintf(number, "C%d", channel->Number());
-      result += number;
-      result += ":";
-      result += channel->Name();
-      result += ":";
-      result += channel->Provider();
-      result += ":";
-      result += channel->GetChannelID().ToString();
-      result += ":";
-      result += GetAudioTracks(channel);
-      result += ":";
-      result += "\r\n";
-    }
-  }
+			// channel
+			sprintf(number, "C%d", channel->Number());
+			result += number;
+			result += ":";
+			result += channel->Name();
+			result += ":";
+			result += channel->Provider();
+			result += ":";
+			result += channel->GetChannelID().ToString();
+			result += ":";
+			result += GetAudioTracks(channel);
+			result += ":";
+			result += "\r\n";
+		}
+	}
 
-  return result + "END\r\n";
+	return result + "END\r\n";
 }
 
-string cHelpers::GetAudioTracks(const cChannel* channel){
-  
-  string result = "";
-  int count = 0;
-  for (int i = 0; channel->Apid(i) != 0; ++i, ++count)
-    ;
-  for (int i = 0; channel->Dpid(i) != 0; ++i, ++count)
-    ;
-  
-  if (count > 1)
-    {
-      int index = 1;
-      string sep = "";
-      for (int i = 0; channel->Apid(i) != 0; ++i, ++index) {
-	result += sep +"a,"+(const char*)itoa(index) + "," + channel->Alang(i);
-	sep  = "|";
-      }
-      for (int i = 0; channel->Dpid(i) != 0; ++i, ++index) {
-	result += sep + "d," + (const char*)itoa(index) + "," + channel->Dlang(i);
-      }
-      sep  = "|";
-    }
-  return result; 
+string cHelpers::GetAudioTracks(const cChannel* channel) {
+
+	string result = "";
+	int count = 0;
+	for (int i = 0; channel->Apid(i) != 0; ++i, ++count)
+		;
+	for (int i = 0; channel->Dpid(i) != 0; ++i, ++count)
+		;
+
+	if (count > 1) {
+		int index = 1;
+		string sep = "";
+		for (int i = 0; channel->Apid(i) != 0; ++i, ++index) {
+			result += sep + "a," + (const char*) itoa(index) + ","
+					+ channel->Alang(i);
+			sep = "|";
+		}
+		for (int i = 0; channel->Dpid(i) != 0; ++i, ++index) {
+			result += sep + "d," + (const char*) itoa(index) + ","
+					+ channel->Dlang(i);
+		}
+		sep = "|";
+	}
+	return result;
 }
 
 string cHelpers::GetEventsIntern(string wantedChannels, string when) {
 
-  when = ToUpper(when);
-  time_t wantedTime;
-  if (when == "NOW" || when == "NEXT") {
-    wantedTime = time(0);
-  } else {
-    wantedTime = atol(when.c_str());
-  }
+	when = ToUpper(when);
+	time_t wantedTime;
+	if (when == "NOW" || when == "NEXT") {
+		wantedTime = time(0);
+	} else {
+		wantedTime = atol(when.c_str());
+	}
 
-  string result = "START\r\n";
+	string result = "START\r\n";
 
-  cSchedulesLock schedulesLock;
-  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-  for(cSchedule * schedule = schedules->First(); schedule; schedule = schedules->Next(schedule)) {
+	cSchedulesLock schedulesLock;
+	const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+	for (cSchedule * schedule = schedules->First(); schedule; schedule =
+			schedules->Next(schedule)) {
 
-    cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
-    if (!IsWantedChannel(channel, wantedChannels)) {
-      continue;
-    }
+		cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
+		if (!IsWantedChannel(channel, wantedChannels)) {
+			continue;
+		}
 
-    const cList<cEvent> * events = schedule->Events();
-    for(cEvent * event = events->First(); event; event = events->Next(event)) {
-      if (IsWantedTime(wantedTime, event)) {
-        cEvent * match = event;
-        if (when == "NEXT") {
-          match = events->Next(match);
-          if (!match) {
-            break;
-          }
-        }
+		const cList<cEvent> * events = schedule->Events();
+		for (cEvent * event = events->First(); event;
+				event = events->Next(event)) {
+			if (IsWantedTime(wantedTime, event)) {
+				cEvent * match = event;
+				if (when == "NEXT") {
+					match = events->Next(match);
+					if (!match) {
+						break;
+					}
+				}
 
-        result += ToText(match);
+				result += ToText(match);
 
-        if (when.length() > 0) {
-          break;
-        }
-      }
-    }
-  }
+				if (when.length() > 0) {
+					break;
+				}
+			}
+		}
+	}
 
-  return result + "END\r\n";
+	return result + "END\r\n";
 }
 
 string cHelpers::DelRecordingIntern(string args) {
-  
-  if(args.size() == 0){
-    return "!ERROR:DelRecording;empty args\r\n";
-  }
 
-  int index = atoi(args.c_str());
-  
-  cRecording * r = Recordings.Get(index);
+	if (args.size() == 0) {
+		return "!ERROR:DelRecording;empty args\r\n";
+	}
 
-  if(!r){
-    return "!ERROR:DelRecording;Wrong recording index -> "+args+"\r\n";
-  }
-  Recordings.DelByName(r->FileName());
-  return "START\r\nEND\r\n";
+	int index = atoi(args.c_str());
+
+	cRecording * r;
+	if (index < 0 || index >= Recordings.Count()
+			|| (r = Recordings.Get(index)) == NULL) {
+		return "!ERROR:DelRecording;Wrong recording index -> " + args + "\r\n";
+	}
+
+	if (r->Delete()) {
+		Recordings.DelByName(r->FileName());
+		return "START\r\nEND\r\n";
+	} else {
+		return "!ERROR:Failed\r\n";
+	}
+
 }
 
 string cHelpers::SetTimerIntern(string args) {
-  
-  // separete timer number
-  size_t sep = args.find(':');
-  if (sep == string::npos) {
-    return "!ERROR:no separator found\r\n";
-  }
-  
-  char c =  args[0];
-  
-  string numberstr = args.substr(sep-1,1);
-  
-  int number = atoi(numberstr.c_str());
-  
-  string params = args.substr(sep+1);
 
-  // Use StringReplace here because if ':' are characters in the
-  // title or aux string it breaks parsing of timer definition
-  // in VDRs cTimer::Parse method.  The '|' will be replaced
-  // back to ':' by the cTimer::Parse() method.
+	// separete timer number
+	size_t sep = args.find(':');
+	if (sep == string::npos) {
+		return "!ERROR:no separator found\r\n";
+	}
 
-  // Fix was submitted by rofafor: see
-  // http://www.vdr-portal.de/board/thread.php?threadid=100398
-  params = replaceAll(params, "|##", "|");
+	char c = args[0];
 
-  //replace also newlines
-  params = replaceAll(params, "||#", "\n");
+	string numberstr = args.substr(sep - 1, 1);
 
-  // parse timer
-  cTimer * timer = new cTimer;
-  if (!timer->Parse(params.c_str())) {
-    delete timer;
-    return "!ERROR:can not parse params '"+params+"'\r\n";
-  }
-  
-  cTimer * oldTimer;
-  switch(c){
-  case 'C':     // new timer
-  case 'c':
-    Timers.Add(timer);
-    break;
-  case 'D':
-  case 'd':
-    // delete timer
-    delete timer;
-    oldTimer = Timers.Get(number);
-    Timers.Del(oldTimer, true);
-    break;
-  case 'M':
-  case 'm':
-    // modify
-    oldTimer = Timers.Get(number);
-    oldTimer->Parse(params.c_str());
-    break;
-  default:
-    return "!ERROR:unknown timer command\r\n";
-  }
+	int number = atoi(numberstr.c_str());
 
-  Timers.Save();
+	string params = args.substr(sep + 1);
 
-  return "START\r\nEND\r\n";
+	// Use StringReplace here because if ':' are characters in the
+	// title or aux string it breaks parsing of timer definition
+	// in VDRs cTimer::Parse method.  The '|' will be replaced
+	// back to ':' by the cTimer::Parse() method.
+
+	// Fix was submitted by rofafor: see
+	// http://www.vdr-portal.de/board/thread.php?threadid=100398
+	params = replaceAll(params, "|##", "|");
+
+	//replace also newlines
+	params = replaceAll(params, "||#", "\n");
+
+	// parse timer
+	cTimer * timer = new cTimer;
+	if (!timer->Parse(params.c_str())) {
+		delete timer;
+		return "!ERROR:can not parse params '" + params + "'\r\n";
+	}
+
+	cTimer * oldTimer;
+	switch (c) {
+	case 'C': // new timer
+	case 'c':
+		Timers.Add(timer);
+		break;
+	case 'D':
+	case 'd':
+		// delete timer
+		delete timer;
+		oldTimer = Timers.Get(number);
+		Timers.Del(oldTimer, true);
+		break;
+	case 'M':
+	case 'm':
+		// modify
+		oldTimer = Timers.Get(number);
+		oldTimer->Parse(params.c_str());
+		break;
+	default:
+		return "!ERROR:unknown timer command\r\n";
+	}
+
+	Timers.Save();
+
+	return "START\r\nEND\r\n";
 }
-
 
 string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 
-  string result = "START\r\n";
+	string result = "START\r\n";
 
-  cSchedulesLock schedulesLock;
-  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-  for(cSchedule * schedule = schedules->First(); schedule; schedule = schedules->Next(schedule)) {
-    
-    cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
-    if (!IsWantedChannel(channel, wantedChannels)) {
-      continue;
-    }
+	cSchedulesLock schedulesLock;
+	const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+	for (cSchedule * schedule = schedules->First(); schedule; schedule =
+			schedules->Next(schedule)) {
 
-    const cList<cEvent> * events = schedule->Events();
-    for(cEvent * event = events->First(); event; event = events->Next(event)) {
-      
-      if (IsWantedTime(0, event) && IsWantedEvent(event, pattern) ) {//time must be ok, so stop > now
-        result += ToText(event);
-      }
-    }
-  }
+		cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
+		if (!IsWantedChannel(channel, wantedChannels)) {
+			continue;
+		}
 
-  return result + "END\r\n";
+		const cList<cEvent> * events = schedule->Events();
+		for (cEvent * event = events->First(); event;
+				event = events->Next(event)) {
+
+			if (IsWantedTime(0, event) && IsWantedEvent(event, pattern)) { //time must be ok, so stop > now
+				result += ToText(event);
+			}
+		}
+	}
+
+	return result + "END\r\n";
 }
 
-string cHelpers::ToText(cRecording * recording){
-  const cRecordingInfo * info = recording->Info();
-  const cEvent * event = info->GetEvent();
-  
-  /**
-  tChannelID ChannelID(void) const;
-  const cSchedule *Schedule(void) const { return schedule; }
-  tEventID EventID(void) const { return eventID; }
-  uchar TableID(void) const { return tableID; }
-  uchar Version(void) const { return version; }
-  int RunningStatus(void) const { return runningStatus; }
-  const char *Title(void) const { return title; }
-  const char *ShortText(void) const { return shortText; }
-  const char *Description(void) const { return description; }
-  const cComponents *Components(void) const { return components; }
-  uchar Contents(int i = 0) const { return (0 <= i && i < MaxEventContents) ? contents[i] : 0; }
-  int ParentalRating(void) const { return parentalRating; }
-  time_t StartTime(void) const { return startTime; }
-  time_t EndTime(void) const { return startTime + duration; }
-  int Duration(void) const { return duration; }
-  time_t Vps(void) const { return vps; }
-  time_t Seen(void) const { return seen; }
-  bool SeenWithin(int Seconds) const { return time(NULL) - seen < Seconds; }
-  bool HasTimer(void) const;
-  bool IsRunning(bool OrAboutToStart = false) const;
-  static const char *ContentToString(uchar Content);
-  cString GetParentalRatingString(void) const;
-  cString GetDateString(void) const;
-  cString GetTimeString(void) const;
-  cString GetEndTimeString(void) const;
-  cString GetVpsString(void) const;
-  */
+string cHelpers::ToText(cRecording * recording) {
+	const cRecordingInfo * info = recording->Info();
+	const cEvent * event = info->GetEvent();
 
-  char buf[100];
-  string result = "";
-  
-  time_t startTime = event->StartTime();
-  time_t endTime = event->EndTime();
-  
-  sprintf(buf, "%d", recording->Index());
-  result = buf;
-  result += ":";
+	/**
+	 tChannelID ChannelID(void) const;
+	 const cSchedule *Schedule(void) const { return schedule; }
+	 tEventID EventID(void) const { return eventID; }
+	 uchar TableID(void) const { return tableID; }
+	 uchar Version(void) const { return version; }
+	 int RunningStatus(void) const { return runningStatus; }
+	 const char *Title(void) const { return title; }
+	 const char *ShortText(void) const { return shortText; }
+	 const char *Description(void) const { return description; }
+	 const cComponents *Components(void) const { return components; }
+	 uchar Contents(int i = 0) const { return (0 <= i && i < MaxEventContents) ? contents[i] : 0; }
+	 int ParentalRating(void) const { return parentalRating; }
+	 time_t StartTime(void) const { return startTime; }
+	 time_t EndTime(void) const { return startTime + duration; }
+	 int Duration(void) const { return duration; }
+	 time_t Vps(void) const { return vps; }
+	 time_t Seen(void) const { return seen; }
+	 bool SeenWithin(int Seconds) const { return time(NULL) - seen < Seconds; }
+	 bool HasTimer(void) const;
+	 bool IsRunning(bool OrAboutToStart = false) const;
+	 static const char *ContentToString(uchar Content);
+	 cString GetParentalRatingString(void) const;
+	 cString GetDateString(void) const;
+	 cString GetTimeString(void) const;
+	 cString GetEndTimeString(void) const;
+	 cString GetVpsString(void) const;
+	 */
 
-  sprintf(buf, "%lu", startTime);
-  result += buf;
-  result += ":";
+	char buf[100];
+	string result = "";
 
-  sprintf(buf, "%lu", endTime);
-  result += buf;
-  result += ":";
-  
-  if(info -> ChannelName()){
-    result += info -> ChannelName();
-  } else {
-    result += "<unknown>";
-  }
-  result += ":";
+	time_t startTime = event->StartTime();
+	time_t endTime = event->EndTime();
 
-  result += MapSpecialChars(event->Title());
-  result += ":";
+	sprintf(buf, "%d", recording->Index());
+	result = buf;
+	result += ":";
 
-  result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
-  result += ":";
+	sprintf(buf, "%lu", startTime);
+	result += buf;
+	result += ":";
 
-  result += MapSpecialChars(event->Description() ? event->Description() : "");
-  result += ":";
+	sprintf(buf, "%lu", endTime);
+	result += buf;
+	result += ":";
 
-  result += MapSpecialChars(recording->FileName());
-  result += ":";
+	if (info->ChannelName()) {
+		result += info->ChannelName();
+	} else {
+		result += "<unknown>";
+	}
+	result += ":";
 
-  sprintf(buf, "%d", DirSizeMB(recording->FileName()));
-  result += buf;
-  result += "\r\n";
-  return result;
+	result += MapSpecialChars(event->Title());
+	result += ":";
+
+	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
+	result += ":";
+
+	result += MapSpecialChars(event->Description() ? event->Description() : "");
+	result += ":";
+
+	result += MapSpecialChars(recording->FileName());
+	result += ":";
+
+	sprintf(buf, "%d", DirSizeMB(recording->FileName()));
+	result += buf;
+	result += "\r\n";
+	return result;
 }
 
 string cHelpers::ToText(cTimer * timer) {
-  
-  const cChannel * channel = timer->Channel();
-  const char * channelName = channel->Name();
-  
-  //cSchedulesLock schedulesLock;
-  //  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-  
-  //  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
-  
-  //const cList<cEvent> * events = schedule->Events();
-  //  cEvent * match = NULL;
-  //  for(cEvent * event = events->First(); event; event = events->Next(event)) {
-  //
-  //time_t startTime = event->StartTime();
-  //    time_t stopTime = startTime + event->Duration();
-  //if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
-  //  match = event;
-  //  break;
-  //}
-  //  }
-  
 
-  string result;
-  char buf[100];
-  sprintf(buf, "T%d", timer->Index());
-  result = buf;
-  result += ":";
-  sprintf(buf, "%u", timer->Flags());
-  result += buf;
-  result += ":";
-  sprintf(buf, "%d", timer->Channel()->Number());
-  result += buf;
-  result += ":";
-  result += channelName;
-  result += ":";
-  sprintf(buf, "%lu", timer->StartTime());
-  result += buf;
-  result += ":";
-  sprintf(buf, "%lu", timer->StopTime());
-  result += buf;
-  result += ":";
-  sprintf(buf, "%d", timer->Priority());
-  result += buf;
-  result += ":";
-  sprintf(buf, "%d", timer->Lifetime());
-  result += buf;
-  result += ":";
-  result += MapSpecialChars(timer->File());
-  result += ":";
-  result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
-  const cEvent * event = timer->Event();
-  if(event){
-    result += ":";
-    result += event->ShortText()  ? MapSpecialChars(event->ShortText()) : "";
-    result += ":";
-    result += event->Description() ? MapSpecialChars(event->Description()) : "";
-  } else {
-    result += "::";
-  }
-  result += "\r\n";
+	const cChannel * channel = timer->Channel();
+	const char * channelName = channel->Name();
 
-  return result;
+	//cSchedulesLock schedulesLock;
+	//  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+
+	//  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
+
+	//const cList<cEvent> * events = schedule->Events();
+	//  cEvent * match = NULL;
+	//  for(cEvent * event = events->First(); event; event = events->Next(event)) {
+	//
+	//time_t startTime = event->StartTime();
+	//    time_t stopTime = startTime + event->Duration();
+	//if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
+	//  match = event;
+	//  break;
+	//}
+	//  }
+
+	string result;
+	char buf[100];
+	sprintf(buf, "T%d", timer->Index());
+	result = buf;
+	result += ":";
+	sprintf(buf, "%u", timer->Flags());
+	result += buf;
+	result += ":";
+	sprintf(buf, "%d", timer->Channel()->Number());
+	result += buf;
+	result += ":";
+	result += channelName;
+	result += ":";
+	sprintf(buf, "%lu", timer->StartTime());
+	result += buf;
+	result += ":";
+	sprintf(buf, "%lu", timer->StopTime());
+	result += buf;
+	result += ":";
+	sprintf(buf, "%d", timer->Priority());
+	result += buf;
+	result += ":";
+	sprintf(buf, "%d", timer->Lifetime());
+	result += buf;
+	result += ":";
+	result += MapSpecialChars(timer->File());
+	result += ":";
+	result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
+	const cEvent * event = timer->Event();
+	if (event) {
+		result += ":";
+		result += event->ShortText() ? MapSpecialChars(event->ShortText()) : "";
+		result += ":";
+		result +=
+				event->Description() ?
+						MapSpecialChars(event->Description()) : "";
+	} else {
+		result += "::";
+	}
+	result += "\r\n";
+
+	return result;
 }
 
 string cHelpers::ToText(const cEvent * event) {
 
+	cChannel * channel = Channels.GetByChannelID(
+			event->Schedule()->ChannelID());
 
-  cChannel * channel = Channels.GetByChannelID(event->Schedule()->ChannelID());
+	// search assigned timer
+	cTimer * eventTimer = NULL;
+	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
+		if (timer->Channel() == channel
+				&& timer->StartTime() <= event->StartTime()
+				&& timer->StopTime() >= event->StartTime() + event->Duration()) {
+			eventTimer = timer;
+		}
+	}
 
-  // search assigned timer
-  cTimer * eventTimer = NULL;
-  for(cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
-    if (timer->Channel() == channel && timer->StartTime() <= event->StartTime() &&
-        timer->StopTime() >= event->StartTime() + event->Duration()) {
-      eventTimer = timer;
-    }
-  }
+	char buf[100];
+	string result;
+	sprintf(buf, "E%d", channel->Number());
+	result = buf;
+	result += ":";
+	result += channel->Name();
+	result += ":";
+	sprintf(buf, "%lu", event->StartTime());
+	result += buf;
+	result += ":";
+	sprintf(buf, "%lu", event->StartTime() + event->Duration());
+	result += buf;
+	result += ":";
+	result += MapSpecialChars(event->Title());
+	result += ":";
+	result += MapSpecialChars(event->Description() ? event->Description() : "");
+	result += ":";
+	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
+	result += "\r\n";
 
-  char buf[100];
-  string result;
-  sprintf(buf, "E%d", channel->Number());
-  result = buf;
-  result += ":";
-  result += channel->Name();
-  result += ":";
-  sprintf(buf, "%lu", event->StartTime());
-  result += buf;
-  result += ":";
-  sprintf(buf, "%lu", event->StartTime() + event->Duration());
-  result += buf;
-  result += ":";
-  result += MapSpecialChars(event->Title());
-  result += ":";
-  result += MapSpecialChars(event->Description() ? event->Description() : "");
-  result += ":";
-  result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
-  result += "\r\n";
+	if (eventTimer) {
+		result += ToText(eventTimer);
+	}
 
-  if (eventTimer) {
-    result += ToText(eventTimer);
-  }
-
-  return result;
+	return result;
 }
 
 bool cHelpers::IsWantedEvent(cEvent * event, string pattern) {
 
-  string text = event->Title();
-  if (event->Description()) {
-    text += event->Description();
-  }
+	string text = event->Title();
+	if (event->Description()) {
+		text += event->Description();
+	}
 
-  return ToLower(text).find(ToLower(pattern)) != string::npos;
+	return ToLower(text).find(ToLower(pattern)) != string::npos;
 }
 
 bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
 
-  if (!channel) {
-    return false;
-  }
+	if (!channel) {
+		return false;
+	}
 
-  if (wantedChannels.length() == 0) {
-    return true;
-  }
+	if (wantedChannels.length() == 0) {
+		return true;
+	}
 
-  int number = channel->Number();
-  const char * delims = ",;";
-  char * state;
-  char * buffer = (char *)malloc(wantedChannels.size()+1);
-  strcpy(buffer, wantedChannels.c_str());
+	int number = channel->Number();
+	const char * delims = ",;";
+	char * state;
+	char * buffer = (char *) malloc(wantedChannels.size() + 1);
+	strcpy(buffer, wantedChannels.c_str());
 
-  bool found = false;
-  for(char * token = strtok_r(buffer, delims, &state); token; token = strtok_r(NULL, delims, &state)) {
-    const char * rangeSep = strchr(token, '-');
-    if (rangeSep == NULL) {
-      // single channel
-      if (atoi(token) == number) {
-        found = true;
-      }
-    } else {
-      // channel range
-      int start = atoi(token);
-      while (*rangeSep && *rangeSep == '-')
-        rangeSep++;
-      int end = *rangeSep ? atoi(rangeSep) : INT_MAX;
+	bool found = false;
+	for (char * token = strtok_r(buffer, delims, &state); token; token =
+			strtok_r(NULL, delims, &state)) {
+		const char * rangeSep = strchr(token, '-');
+		if (rangeSep == NULL) {
+			// single channel
+			if (atoi(token) == number) {
+				found = true;
+			}
+		} else {
+			// channel range
+			int start = atoi(token);
+			while (*rangeSep && *rangeSep == '-')
+				rangeSep++;
+			int end = *rangeSep ? atoi(rangeSep) : INT_MAX;
 
-      if (start <= number && number <= end) {
-        found = true;
-      }
-    }
-  }
-  return found;
+			if (start <= number && number <= end) {
+				found = true;
+			}
+		}
+	}
+	return found;
 }
 
 bool cHelpers::IsWantedTime(time_t when, cEvent * event) {
 
-  time_t startTime = event->StartTime();
-  time_t stopTime = startTime + event->Duration();
+	time_t startTime = event->StartTime();
+	time_t stopTime = startTime + event->Duration();
 
-  if (when == 0) {
-    return stopTime >= time(0);
-  }
+	if (when == 0) {
+		return stopTime >= time(0);
+	}
 
-  return startTime <= when && when < stopTime;
+	return startTime <= when && when < stopTime;
 }
 
-string cHelpers::ToUpper(string text)
-{
-  for(unsigned i = 0; i < text.length(); i++)
-  {
-    if (islower(text[i]))
-      text[i] = toupper(text[i]);
-  }
+string cHelpers::ToUpper(string text) {
+	for (unsigned i = 0; i < text.length(); i++) {
+		if (islower(text[i]))
+			text[i] = toupper(text[i]);
+	}
 
-  return text;
+	return text;
 }
 
-string cHelpers::ToLower(string text)
-{
-  for(unsigned i = 0; i < text.length(); i++)
-  {
-    if (isupper(text[i]))
-      text[i] = tolower(text[i]);
-  }
+string cHelpers::ToLower(string text) {
+	for (unsigned i = 0; i < text.length(); i++) {
+		if (isupper(text[i]))
+			text[i] = tolower(text[i]);
+	}
 
-  return text;
+	return text;
 }
 
-
-string   cHelpers::Trim(string str)
-{
-  int a = str.find_first_not_of(" \t");
-  int b = str.find_last_not_of(" \t");
-  if ( a == -1 ) a = 0;
-  if ( b == -1 ) b = str.length() - 1;
-  return str.substr(a, (b-a)+1);
+string cHelpers::Trim(string str) {
+	int a = str.find_first_not_of(" \t");
+	int b = str.find_last_not_of(" \t");
+	if (a == -1)
+		a = 0;
+	if (b == -1)
+		b = str.length() - 1;
+	return str.substr(a, (b - a) + 1);
 }
 
-string cHelpers::SafeCall(string (*f)())
-{
-  // loop, if vdr modified list and we crash
-  for (int i = 0; i < 3; i++)
-  {
-    try
-    {
-      return f();
-    }
-    catch (...)
-    {
-      usleep(100);
-    }
-  }
+string cHelpers::SafeCall(string(*f)()) {
+	// loop, if vdr modified list and we crash
+	for (int i = 0; i < 3; i++) {
+		try {
+			return f();
+		} catch (...) {
+			usleep(100);
+		}
+	}
 
-  return "";
+	return "";
 }
 
-string cHelpers::SafeCall(string (*f)(string arg), string arg)
-{
-  // loop, if vdr modified list and we crash
-  for (int i = 0; i < 3; i++)
-  {
-    try
-    {
-      return f(arg);
-    }
-    catch (...)
-    {
-      usleep(100);
-    }
-  }
+string cHelpers::SafeCall(string(*f)(string arg), string arg) {
+	// loop, if vdr modified list and we crash
+	for (int i = 0; i < 3; i++) {
+		try {
+			return f(arg);
+		} catch (...) {
+			usleep(100);
+		}
+	}
 
-  return "";
+	return "";
 }
 
+string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
+		string arg2) {
+	// loop, if vdr modified list and we crash
+	for (int i = 0; i < 3; i++) {
+		try {
+			return f(arg1, arg2);
+		} catch (...) {
+			usleep(100);
+		}
+	}
 
-string cHelpers::SafeCall(string (*f)(string arg1, string arg2), string arg1, string arg2)
-{
-  // loop, if vdr modified list and we crash
-  for (int i = 0; i < 3; i++)
-  {
-    try
-    {
-      return f(arg1, arg2);
-    }
-    catch (...)
-    {
-      usleep(100);
-    }
-  }
-
-  return "";
+	return "";
 }
 
 string cHelpers::MapSpecialChars(string text) {
 
-  const char * p = text.c_str();
-  string result = "";
-  while (*p) {
-    switch (*p) {
-    case ':':
-      result += "|##";
-      break;
-    case '\r':
-      break;
-    case '\n':
-      result += "||#";
-      break;
-    default:
-      result += *p;
-      break;
-    }
-    p++;
-  }
-  return result;
+	const char * p = text.c_str();
+	string result = "";
+	while (*p) {
+		switch (*p) {
+		case ':':
+			result += "|##";
+			break;
+		case '\r':
+			break;
+		case '\n':
+			result += "||#";
+			break;
+		default:
+			result += *p;
+			break;
+		}
+		p++;
+	}
+	return result;
 }
 
-
 //from live plugin StringReplace
-string cHelpers::replaceAll(string const& text, string const& substring, string const& replacement )
-{
-  string result = text;
-  string::size_type pos = 0;
-  while ( ( pos = result.find( substring, pos ) ) != string::npos ) {
-    result.replace( pos, substring.length(), replacement );
-    pos += replacement.length();
-  }
-  return result;
+string cHelpers::replaceAll(string const& text, string const& substring,
+		string const& replacement) {
+	string result = text;
+	string::size_type pos = 0;
+	while ((pos = result.find(substring, pos)) != string::npos) {
+		result.replace(pos, substring.length(), replacement);
+		pos += replacement.length();
+	}
+	return result;
 }
 
 string cHelpers::UnMapSpecialChars(string text) {
 
-  string ntext = replaceAll(text, "|##", ":");
-  ntext = replaceAll(ntext, "||#", "\n");
-  
-  return ntext;
+	string ntext = replaceAll(text, "|##", ":");
+	ntext = replaceAll(ntext, "||#", "\n");
+
+	return ntext;
 }
