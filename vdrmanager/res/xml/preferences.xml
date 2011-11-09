@@ -23,6 +23,7 @@
         <EditTextPreference
             android:defaultValue="@string/vdr_port_default"
             android:key="@string/vdr_port_key"
+            android:inputType="number"
             android:summary="@string/vdr_port_summary"
             android:title="@string/vdr_port_title" />
 
