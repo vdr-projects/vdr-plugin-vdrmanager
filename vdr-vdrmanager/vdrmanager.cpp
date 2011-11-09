@@ -15,7 +15,7 @@
 
 #define ANDROVDR_PORT		6420
 
-const char *VERSION = "0.3";
+const char *VERSION = "0.4";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
 class cPluginAndroVdr: public cPlugin {
