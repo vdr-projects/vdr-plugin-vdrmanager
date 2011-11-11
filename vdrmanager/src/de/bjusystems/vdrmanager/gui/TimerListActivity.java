@@ -127,7 +127,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 	protected boolean finishedSuccessImpl() {
 		adapter.clear();
-		sortItemsByTime(results, true);
+		sortItemsByTime(results);
 		int day = -1;
 		Calendar cal = Calendar.getInstance();
 		for (Event e : results) {
