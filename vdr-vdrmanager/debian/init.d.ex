@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          vdr-plugin-vdr-vdrmanager
+# Provides:          vdr-plugin-vdrmanager
 # Required-Start:    $network $local_fs
 # Required-Stop:
 # Default-Start:     2 3 4 5
@@ -15,9 +15,9 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC=vdr-plugin-vdr-vdrmanager             # Introduce a short description here
-NAME=vdr-plugin-vdr-vdrmanager             # Introduce the short server's name here
-DAEMON=/usr/sbin/vdr-plugin-vdr-vdrmanager # Introduce the server's location here
+DESC=vdr-plugin-vdrmanager             # Introduce a short description here
+NAME=vdr-plugin-vdrmanager             # Introduce the short server's name here
+DAEMON=/usr/sbin/vdr-plugin-vdrmanager # Introduce the server's location here
 DAEMON_ARGS=""             # Arguments to run the daemon with
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME

@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for vdr-plugin-vdr-vdrmanager
+# postinst script for vdr-plugin-vdrmanager
 #
 # see: dh_installdeb(1)
 

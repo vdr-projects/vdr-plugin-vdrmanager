@@ -26,8 +26,8 @@ manpage.1: manpage.sgml
   <!ENTITY dhsection   "<manvolnum>SECTION</manvolnum>">
   <!ENTITY dhemail     "<email>root@unknown</email>">
   <!ENTITY dhusername  "root">
-  <!ENTITY dhucpackage "<refentrytitle>VDR-PLUGIN-VDR-VDRMANAGER</refentrytitle>">
-  <!ENTITY dhpackage   "vdr-plugin-vdr-vdrmanager">
+  <!ENTITY dhucpackage "<refentrytitle>VDR-PLUGIN-VDRMANAGER</refentrytitle>">
+  <!ENTITY dhpackage   "vdr-plugin-vdrmanager">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">

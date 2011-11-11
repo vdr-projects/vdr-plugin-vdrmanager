@@ -1,4 +1,4 @@
-vdr-plugin-vdr-vdrmanager (0.4-1) unstable; urgency=low
+vdr-plugin-vdrmanager (0.4-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
   
@@ -8,5 +8,5 @@ vdr-plugin-vdr-vdrmanager (0.4-1) unstable; urgency=low
   ITP-bug (see http://www.debian.org/devel/wnpp ) and contact the
   Debian VDR packaging team: pkg-vdr-dvb-devel@lists.alioth.debian.org
 
- -- root <root@unknown>  Fri, 11 Nov 2011 15:07:56 +0100
+ -- root <root@unknown>  Fri, 11 Nov 2011 15:45:01 +0100
 
