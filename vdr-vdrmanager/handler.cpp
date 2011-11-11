@@ -85,7 +85,7 @@ bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
         sock->PutLine(text);
       }
       else if(cmd == "DRECORDING"){
-	string text = cHelpers::DelRecording(args);
+    	string text = cHelpers::DelRecording(args);
         sock->PutLine(text);
       }
       else if (cmd == "QUIT")
