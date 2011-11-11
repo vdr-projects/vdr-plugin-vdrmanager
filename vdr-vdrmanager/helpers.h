@@ -43,4 +43,7 @@ private:
   static string GetAudioTracks(const cChannel* channel);
   static string replaceAll(const string& where, const string& what, const string& replacement);
   static string UnMapSpecialChars(string text);
+  static string Error(const string &error);
+  static string SetTimerIntern(char c, string params);
+  static int RecordingLengthInSeconds(cRecording* recording);
 };
