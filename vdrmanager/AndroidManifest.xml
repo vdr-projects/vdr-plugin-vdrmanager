@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.bjusystems.vdrmanager" android:versionName="0.2.11"
-	android:versionCode="0211">
+	package="de.bjusystems.vdrmanager" android:versionName="0.3.0"
+	android:versionCode="030">
 	<application android:icon="@drawable/app_logo"
 		android:label="@string/app_name" android:debuggable="false"
 		android:name=".app.VdrManagerApp">
@@ -47,7 +47,7 @@
 			<meta-data android:name="android.app.default_searchable"
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
-		<activity android:name=".gui.EpgDetailsActivity"
+		<activity android:name=".gui.EpgDetailsActivity" 
 			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
