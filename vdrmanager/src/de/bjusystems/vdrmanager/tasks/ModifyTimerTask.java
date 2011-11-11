@@ -8,8 +8,8 @@ import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 
 public abstract class ModifyTimerTask extends AsyncProgressTask<Timer> {
 	
-	public ModifyTimerTask(final Activity activity, final Timer timer) {
-		super(activity, new SetTimerClient(timer, TimerOperation.MODIFY) {
+	public ModifyTimerTask(final Activity activity, final Timer newTimer, final Timer oldTimer) {
+		super(activity, new SetTimerClient(newTimer, oldTimer, TimerOperation.MODIFY) {
 			@Override
 			public int getProgressTextId() {
 					return R.string.progress_timer_modify;

@@ -9,7 +9,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 public abstract class ToggleTimerTask extends AsyncProgressTask<Timer> {
 
 	public ToggleTimerTask(final Activity activity, final Timer timer) {
-		super(activity, new SetTimerClient(timer, TimerOperation.MODIFY) {
+		super(activity, new SetTimerClient(timer, TimerOperation.TOGGLE) {
 			boolean enabled = timer.isEnabled();
 
 			@Override

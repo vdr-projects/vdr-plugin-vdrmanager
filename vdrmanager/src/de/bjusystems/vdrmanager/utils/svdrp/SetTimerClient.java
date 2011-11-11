@@ -13,7 +13,9 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 	public enum TimerOperation {
 		CREATE("C"),//
 		DELETE("D"),//
-		MODIFY("M");//
+		MODIFY("M"),//
+		TOGGLE("T"),//
+		;
 		private String command;
 		private TimerOperation(String command){
 			this.command = command;
@@ -25,22 +27,33 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 	}
 	
 	/** channel names for timer */
-	Timer timer;
+	Timer newTimer;
+
+	Timer oldTimer;
+	
 	/** timer should be deleted */
 	private TimerOperation timerOperation;
 
 	/**
-	 * Constructor
-	 * @param host host
-	 * @param port port
-	 * @param ssl use ssl
+	 * @param newTimer Das was modifiziert angelegt wird
 	 */
-	public SetTimerClient(final Timer timer, TimerOperation op) {
+	public SetTimerClient(final Timer newTimer, TimerOperation op) {
+		this(newTimer, null, op);
+	}
+
+	/**
+	 * @param newTimer
+	 * @param oldTimer this is original Timer, if any (modify)
+	 * @param op
+	 */
+	public SetTimerClient(final Timer newTimer, final Timer oldTimer, TimerOperation op) {
 		super();
-		this.timer = timer;
+		this.newTimer = newTimer;
+		this.oldTimer = oldTimer;
 		this.timerOperation = op;
 	}
 
+	
 	/**
 	 * Starts the request
 	 */
@@ -51,11 +64,16 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 
 		command.append("timer ");
 		command.append(timerOperation.getCommand());
-		
-		command.append(timer.getNumber());
+		//command.append(oldTimer.getNumber());
 		command.append(" ");
-		command.append(timer.toCommandLine(timerOperation));
-
+		command.append(newTimer.toCommandLine());
+		if(timerOperation == TimerOperation.MODIFY){
+			command.append("#|#|#").append(oldTimer.toCommandLine());
+		}
+		//timer D 1:1:2011-11-11:1513:1710:50:99:Mirrors 2
+		//timer C 1:1:2011-11-11:2223:2250:50:99:Zapping
+		//timer T 0:1:2011-11-11:2013:2230:50:99:So spielt das Leben
+		//timer M
 		runCommand(command.toString());
 	}
 
