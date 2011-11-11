@@ -47,13 +47,13 @@
 			         android:layout_width="fill_parent"
 			         android:layout_height="wrap_content">
 			         
-					     <EditText
+					     <Button
 					         android:id="@+id/timer_detail_start"
 					         android:layout_width="wrap_content"
 					         android:layout_height="wrap_content"
 					         android:editable="false"/>
 					         
-               <EditText
+               <Button
                    android:id="@+id/timer_detail_day"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
 			     android:paddingLeft="4.0dip" android:paddingBottom="2.0dip" android:layout_width="fill_parent"	android:layout_height="wrap_content" android:layout_marginTop="2.0dip"
 				         android:text="@string/timer_detail_end_title"/>
 			
-			     <EditText
+			     <Button
 			         android:id="@+id/timer_detail_end"
 			         android:layout_width="wrap_content"
 			         android:layout_height="wrap_content"
