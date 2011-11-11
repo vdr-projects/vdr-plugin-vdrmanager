@@ -102,13 +102,7 @@ public class ChannelListActivity extends
 		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(
 				channelClient);
 
-		// create progress
-		progress = new SvdrpProgressDialog<Channel>(this, channelClient);
-
-		// attach listener
 		task.addListener(this);
-		task.addListener(progress);
-
 		// start task
 		task.run();
 	}
@@ -367,6 +361,11 @@ public class ChannelListActivity extends
 	
 	protected boolean displayingResults(){
 		return ChannelClient.getChannels().isEmpty() == false;
+	}
+
+	@Override
+	protected SvdrpClient<Channel> getClient() {
+		return channelClient;
 	}
 
 }
