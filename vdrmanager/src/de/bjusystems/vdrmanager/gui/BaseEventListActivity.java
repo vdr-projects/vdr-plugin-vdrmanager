@@ -61,6 +61,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	protected List<Event> results = new ArrayList<Event>();
 
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -185,7 +186,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		final EventListItem item = adapter.getItem(info.position);
 
 		MenuItem mi = menu.findItem(R.id.epg_item_menu_live_tv);
-		if (item.isLive()) {
+		if (item.isLive() && item.getStreamId() != null) {
 			mi.setVisible(true);
 		} else {
 			mi.setVisible(false);
@@ -207,6 +208,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// find and remember item
 		final EventListItem item = adapter.getItem(position);
 
+		if(item.isHeader()){
+			return;
+		}
+		
 		prepareDetailsViewData(item);
 
 		// show details
@@ -308,12 +313,17 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	}
 
 	protected void sortItemsByTime(List<Event> result) {
+		sortItemsByTime(result, false);
+	}
+	protected void sortItemsByTime(List<Event> result, final boolean reverse) {
 		final Comparator<Event> comparator = new Comparator<Event>() {
 
 			public int compare(final Event item1, final Event item2) {
 				int c = item1.getStart().compareTo(item2.getStart());
 				if (c != 0) {
-					return c;
+					if(reverse == false)
+						return c;
+					return -1 * c;
 				}
 				if (item1.getChannelNumber() == null
 						&& item2.getChannelNumber() == null) {
