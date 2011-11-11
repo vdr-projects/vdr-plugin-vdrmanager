@@ -10,6 +10,7 @@
     <string name="refresh">Auffrischen</string>
     <string name="done">Fertig</string>
     <string name="share">Share</string>
+    <string name="search_reapt">Wiederholungen</string>
     <string name="share_chooser">Share EPG Eintrag</string>
     <string name="about_text">
         Über "VDR-Manager" Software für Android\n 
@@ -23,4 +24,5 @@
     </string>
     <string name="about_title">Über</string>
 	<string name="no_internet_connection">Keine Datenverbindung</string>
+	<string name="update_will_start_in">Die Liste wird in einer Sekunde aktualisiert</string>
 </resources>
