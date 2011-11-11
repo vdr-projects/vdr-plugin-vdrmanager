@@ -498,7 +498,7 @@ string cHelpers::ToText(cRecording * recording) {
 	result += info->ChannelID().ToString();
 
 	result += ":";
-	sprintf(buf, "%lu", RecordingLengthInSeconds(recording));
+	sprintf(buf, "%d", RecordingLengthInSeconds(recording));
 	result += buf;
 
 	result += "\r\n";
