@@ -1,5 +1,9 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
+2011-11-12: Version 0.4
+-Delete recordings properly
+-Timers CRUD should be bugfree now
+
 2011-11-06: Version 0.3
 - Check against svdrphosts.conf file only if a) forced via command
   line argument -s or no password was specified via -P
