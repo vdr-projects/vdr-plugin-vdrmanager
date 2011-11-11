@@ -20,14 +20,14 @@ manpage.1: manpage.sgml
   <!ENTITY dhfirstname "<firstname>FIRSTNAME</firstname>">
   <!ENTITY dhsurname   "<surname>SURNAME</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>November  7, 2011</date>">
+  <!ENTITY dhdate      "<date>November 11, 2011</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>SECTION</manvolnum>">
   <!ENTITY dhemail     "<email>root@unknown</email>">
   <!ENTITY dhusername  "root">
-  <!ENTITY dhucpackage "<refentrytitle>VDR-PLUGIN-VDRMANAGER</refentrytitle>">
-  <!ENTITY dhpackage   "vdr-plugin-vdrmanager">
+  <!ENTITY dhucpackage "<refentrytitle>VDR-PLUGIN-VDR-VDRMANAGER</refentrytitle>">
+  <!ENTITY dhpackage   "vdr-plugin-vdr-vdrmanager">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">

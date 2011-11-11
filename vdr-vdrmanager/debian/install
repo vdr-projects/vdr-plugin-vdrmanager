@@ -1,2 +1,2 @@
-libvdr-vdrmanager.so.*    usr/lib/vdr/plugins/
-examples/plugin.vdrmanager.conf   etc/vdr/plugins
+libvdr-vdr-vdrmanager.so.*    usr/lib/vdr/plugins/
+debian/tmp/usr/share/locale

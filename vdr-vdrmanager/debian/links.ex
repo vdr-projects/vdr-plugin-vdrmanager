@@ -1,1 +1,1 @@
-usr/share/vdr-plugin-vdrmanager/vdrmanager    var/lib/vdr/plugins/vdrmanager
+usr/share/vdr-plugin-vdr-vdrmanager/vdr-vdrmanager    var/lib/vdr/plugins/vdr-vdrmanager
