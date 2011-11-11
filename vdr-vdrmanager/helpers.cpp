@@ -11,8 +11,12 @@
 #include <vdr/channels.h>
 #include <vdr/epg.h>
 #include <vdr/videodir.h>
+#include <vdr/menu.h>
 #include "helpers.h"
 #include "vdrmanagerthread.h"
+#include <memory>
+
+#define TIMER_SEP		"#|#|#"
 
 string cHelpers::GetRecordings(string args) {
 	return SafeCall(GetRecordingsIntern);
@@ -235,21 +239,139 @@ string cHelpers::DelRecordingIntern(string args) {
 
 }
 
-string cHelpers::SetTimerIntern(string args) {
+string cHelpers::SetTimerIntern(char op, string param) {
 
-	// separete timer number
-	size_t sep = args.find(':');
-	if (sep == string::npos) {
-		return "!ERROR:no separator found\r\n";
+	switch (op) {
+	case 'C': // new timer
+	case 'c': {
+		auto_ptr<cTimer> newTimer(new cTimer);
+		if (!newTimer->Parse(param.c_str())) {
+			return Error("Error in timer settings");
+		}
+
+		cTimer* checkTimer = Timers.GetTimer(newTimer.get());
+		if (checkTimer) {
+			return Error("Timer already defined");
+		}
+
+		Timers.Add(newTimer.get());
+		Timers.SetModified();
+		esyslog( "vdrmanager: timer %s added", *newTimer->ToDescr());
+		newTimer.release();
+		break;
+	}
+	case 'D':
+	case 'd': {
+		if (Timers.BeingEdited()) {
+			return Error("Timers are being edited - try again later");
+		}
+
+		esyslog("vdrmanager: try parse %s ", param.c_str());
+
+		auto_ptr<cTimer> timer(new cTimer);
+		if (!timer->Parse(param.c_str())) {
+			return Error("Error in timer settings");
+		}
+
+		esyslog("vdrmanager: timer %s parsed", *timer->ToDescr());
+
+		cTimer* oldTimer = Timers.GetTimer(timer.get());
+		if (oldTimer == 0) {
+			return Error("Timer not defined");
+		}
+
+		if (oldTimer->Recording()) {
+			oldTimer->Skip();
+			cRecordControls::Process(time(0));
+		}
+		Timers.Del(oldTimer);
+		Timers.SetModified();
+		esyslog("vdrmanager: timer %s deleted", *timer->ToDescr());
+		break;
+	}
+	case 'M':
+	case 'm': {
+
+		if (Timers.BeingEdited()) {
+			return Error("Timers are being edited - try again later");
+		}
+
+
+		string sep = string(TIMER_SEP);
+
+		size_t idx = param.find(sep);
+		if (idx == string::npos) {
+			return Error("no separator found");
+		}
+
+		string newt = param.substr(0, idx);
+		string oldt = param.substr(idx + sep.size());
+
+
+		auto_ptr<cTimer> otimer(new cTimer);
+				if (!otimer->Parse(oldt.c_str())) {
+					return Error("Error in timer settings");
+				}
+
+		cTimer* oldTimer = Timers.GetTimer(otimer.get());
+		if (oldTimer == 0) {
+			return Error("Timer not defined");
+		}
+
+		cTimer copy = *oldTimer;
+		if (!copy.Parse(newt.c_str())) {
+			return Error("Error in timer settings");
+		}
+
+		*oldTimer = copy;
+		Timers.SetModified();
+		esyslog(
+				"vdrmanager: timer %s modified (%s)", *oldTimer->ToDescr(), oldTimer->HasFlags(tfActive) ? "active" : "inactive");
+
+		break;
+	}
+	case 'T':
+	case 't': {
+		if (Timers.BeingEdited()) {
+			return Error("Timers are being edited - try again later");
+		}
+
+		auto_ptr<cTimer> timer(new cTimer);
+		if (!timer->Parse(param.c_str())) {
+			return Error("Error in timer settings");
+		}
+
+		cTimer* toggleTimer = Timers.GetTimer(timer.get());
+		if (toggleTimer == 0) {
+			return Error("Timer not defined");
+		}
+
+		toggleTimer->OnOff();
+		Timers.SetModified();
+		esyslog(
+				"vdrmanager: timer %s toggled %s", *toggleTimer->ToDescr(), toggleTimer->HasFlags(tfActive) ? "on" : "off");
+		break;
+	}
+	default:
+		return Error("unknown timer command");
 	}
 
-	char c = args[0];
+	return "START\r\nEND\r\n";
 
-	string numberstr = args.substr(sep - 1, 1);
+}
 
-	int number = atoi(numberstr.c_str());
+string cHelpers::SetTimerIntern(string args) {
+	//C dasdasda#|#|#
+	//C 1 as:asd:SadA:sd  ada:a :ada
+	// separete timer number
+	//size_t sep = args.find('');
+	//if (sep == string::npos) {
+	//return "!ERROR:no separator found\r\n";
+	//}
 
-	string params = args.substr(sep + 1);
+	char operation = args[0];
+
+	args = Trim(args.substr(1));
 
 	// Use StringReplace here because if ':' are characters in the
 	// title or aux string it breaks parsing of timer definition
@@ -258,44 +380,18 @@ string cHelpers::SetTimerIntern(string args) {
 
 	// Fix was submitted by rofafor: see
 	// http://www.vdr-portal.de/board/thread.php?threadid=100398
-	params = replaceAll(params, "|##", "|");
+	string params = replaceAll(args, "|##", "|");
 
 	//replace also newlines
 	params = replaceAll(params, "||#", "\n");
 
-	// parse timer
-	cTimer * timer = new cTimer;
-	if (!timer->Parse(params.c_str())) {
-		delete timer;
-		return "!ERROR:can not parse params '" + params + "'\r\n";
-	}
+	string result = SetTimerIntern(operation, params);
 
-	cTimer * oldTimer;
-	switch (c) {
-	case 'C': // new timer
-	case 'c':
-		Timers.Add(timer);
-		break;
-	case 'D':
-	case 'd':
-		// delete timer
-		delete timer;
-		oldTimer = Timers.Get(number);
-		Timers.Del(oldTimer, true);
-		break;
-	case 'M':
-	case 'm':
-		// modify
-		oldTimer = Timers.Get(number);
-		oldTimer->Parse(params.c_str());
-		break;
-	default:
-		return "!ERROR:unknown timer command\r\n";
-	}
+	return result;
+}
 
-	Timers.Save();
-
-	return "START\r\nEND\r\n";
+string cHelpers::Error(const string& msg) {
+	return "!ERROR:" + msg + "\r\n";
 }
 
 string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
@@ -397,6 +493,14 @@ string cHelpers::ToText(cRecording * recording) {
 
 	sprintf(buf, "%d", DirSizeMB(recording->FileName()));
 	result += buf;
+
+	result += ":";
+	result += info->ChannelID().ToString();
+
+	result += ":";
+	sprintf(buf, "%lu", RecordingLengthInSeconds(recording));
+	result += buf;
+
 	result += "\r\n";
 	return result;
 }
@@ -462,6 +566,9 @@ string cHelpers::ToText(cTimer * timer) {
 	} else {
 		result += "::";
 	}
+	result += ":";
+	result += timer->Channel()->GetChannelID().ToString();
+
 	result += "\r\n";
 
 	return result;
@@ -500,6 +607,8 @@ string cHelpers::ToText(const cEvent * event) {
 	result += MapSpecialChars(event->Description() ? event->Description() : "");
 	result += ":";
 	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
+	result += ":";
+	result += channel->GetChannelID().ToString();
 	result += "\r\n";
 
 	if (eventTimer) {
@@ -681,3 +790,21 @@ string cHelpers::UnMapSpecialChars(string text) {
 
 	return ntext;
 }
+
+/**
+ * taken from vdr-restfulapi
+ */
+int cHelpers::RecordingLengthInSeconds(cRecording* recording)
+{
+  int nf = recording->NumFrames();
+  if (nf >= 0)
+#if APIVERSNUM >= 10703
+     return int(((double)nf / recording->FramesPerSecond()));
+#else
+     return int((double)nf / FRAMESPERSEC));
+#endif
+  return -1;
+}
+
+
+
