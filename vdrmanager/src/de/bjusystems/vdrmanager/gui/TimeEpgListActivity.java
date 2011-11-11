@@ -55,6 +55,13 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	int selectedIndex = 0;
 
+
+	
+	@Override
+	protected SvdrpClient<Epg> getClient() {
+		return this.epgClient;
+	}
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -250,9 +257,6 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
-		// attach listener
-		task.addListener(progress);
 		task.addListener(this);
 
 		// start task

@@ -1,5 +1,9 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -14,6 +18,7 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
+import de.bjusystems.vdrmanager.data.Timerable;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
@@ -23,19 +28,27 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * This class is a base class for all the listings, which can deal with timers
  * 
  * @author lado
- *
- * @param <T> Class extending Event  
+ * 
+ * @param <T>
+ *            Class extending Event
  */
 public abstract class BaseTimerEditActivity<T extends Event> extends
 		BaseEventListActivity<T> implements OnClickListener // SvdrpAsyncListener<Timer>,
 {
 
+	private static final ScheduledExecutorService worker = Executors
+			.newSingleThreadScheduledExecutor();
+
+	// /@Override
+	// public boolean onPrepareOptionsMenu(Menu menu) {
+	// return super.onPrepareOptionsMenu(menu);
+	// }
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
 	 */
-	@Override
+	// @Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		//
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
@@ -44,11 +57,13 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		getApp().setCurrentEvent(event.getEvent());
 		switch (item.getItemId()) {
 		case R.id.epg_item_menu_timer_add: {
-			getApp().setCurrentTimer(event.createTimer());
+
+			getApp().setCurrentTimer(createTimer(event));
 			final Intent intent = new Intent();
 			intent.setClass(this, TimerDetailsActivity.class);
 			intent.putExtra(Intents.TIMER_OP, Intents.ADD_TIMER);
-			startActivityForResult(intent, TimerDetailsActivity.REQUEST_CODE_TIMER_ADD);
+			startActivityForResult(intent,
+					TimerDetailsActivity.REQUEST_CODE_TIMER_ADD);
 		}
 			break;
 		case R.id.epg_item_menu_timer_modify: {
@@ -56,7 +71,8 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 			final Intent intent = new Intent();
 			intent.setClass(this, TimerDetailsActivity.class);
 			intent.putExtra(Intents.TIMER_OP, Intents.EDIT_TIMER);
-			startActivityForResult(intent, TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
+			startActivityForResult(intent,
+					TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT);
 			break;
 		}
 		case R.id.epg_item_menu_timer_delete: {
@@ -112,21 +128,34 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
+	protected Timer createTimer(EventListItem item) {
+		Event e = item.getEvent();
+		if (e instanceof Timerable == false) {
+			return null;
+		}
+		return ((Timerable) e).createTimer();
+
+	}
+
 	/**
 	 * Extract a Timer from a given {@link EventListItem}
 	 * 
-	 * @param item 
+	 * @param item
 	 * @return Timer if any on the event
 	 */
 	protected Timer getTimer(EventListItem item) {
-		return item.getTimer();
+		Event e = item.getEvent();
+		if (e instanceof Timerable == false) {
+			return null;
+		}
+		return ((Timerable) e).getTimer();
 	}
 
 	protected void toggleTimer(Timer timer) {
 		final ToggleTimerTask task = new ToggleTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
-				refresh();
+				timerModified();
 				restoreViewSelection();
 			}
 		};
@@ -143,7 +172,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
-				refresh();
+				timerModified();
 				restoreViewSelection();
 			}
 		};
@@ -151,16 +180,25 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 	}
 
 	/**
-	 * Is called, if a timer has been changed and so update of the list is required
+	 * Is called, if a timer has been changed and so update of the list is
+	 * required
 	 */
 	protected void timerModified() {
 		backupViewSelection();
-		refresh();
+		//say(R.string.update_will_start_in);
+		//Runnable task = new Runnable() {
+			//public void run() {
+				refresh();
+			//}
+		//};
+		//worker.schedule(task, 1000, TimeUnit.MILLISECONDS);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see android.app.Activity#onActivityResult(int, int,
+	 * android.content.Intent)
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

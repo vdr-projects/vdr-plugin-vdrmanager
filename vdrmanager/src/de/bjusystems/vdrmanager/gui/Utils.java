@@ -133,17 +133,17 @@ public class Utils {
 	}
 
 	public static void stream(Activity activity, Event event) {
-		stream(activity, event.getChannelNumber());
+		stream(activity, event.getStreamId());
 	}
 
 	public static void stream(Activity a, Channel c) {
-		stream(a, String.valueOf(c.getNumber()));
+		stream(a, String.valueOf(c.getId()));
 	}
 
-	public static void stream(final Activity activity, final String chn) {
+	public static void stream(final Activity activity, final String idornr) {
 
 		if (Preferences.get().isEnableRemux() == false) {
-			String url = getStreamUrl(chn);
+			String url = getStreamUrl(idornr);
 			startStream(activity, url);
 			return;
 		}
@@ -169,10 +169,10 @@ public class Utils {
 								String url = null;
 								switch (which) {
 								case 0:
-									url = getStreamUrl(chn);
+									url = getStreamUrl(idornr);
 									break;
 								case 1:
-									url = getRemuxStreamUrl(chn);
+									url = getRemuxStreamUrl(idornr);
 									break;
 								}
 								startStream(activity, url);
@@ -187,7 +187,7 @@ public class Utils {
 	}
 
 	public static int getDuration(Event event) {
-		long millis = event.getStop().getTime() - event.getStart().getTime();
+		long millis = event.getDuration();
 		int minuts = (int) (millis / 1000 / 60);
 		return minuts;
 	}

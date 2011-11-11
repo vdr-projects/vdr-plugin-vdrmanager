@@ -215,15 +215,18 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
-		// attach listener
-		task.addListener(progress);
+
 		task.addListener(this);
 
 		// start task
 		task.run();
 	}
 
+		
+		@Override
+		protected SvdrpClient<Epg> getClient() {
+			return this.epgClient;
+		}
 	/*
 	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
 	 * cache hit

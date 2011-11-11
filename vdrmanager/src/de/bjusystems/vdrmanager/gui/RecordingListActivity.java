@@ -56,6 +56,13 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		// start query
 		startRecordingQuery();
 	}
+	
+
+	
+	@Override
+	protected SvdrpClient<Recording> getClient() {
+		return this.recordingClient;
+	}
 
 	@Override
 	protected void onPause() {
@@ -98,7 +105,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
 				@Override
 				public void finished(SvdrpEvent event) {
-					dismiss(progress);
 					backupViewSelection();
 					refresh();
 				}
@@ -133,11 +139,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 		// create progress dialog
 		
-		progress = new SvdrpProgressDialog(this, recordingClient);
-
-		
-		// attach listener
-		task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -167,7 +168,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		adapter.clear();
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		sortItemsByTime(results);
+		sortItemsByTime(results, true);
 		for (final Event rec : results) {
 			cal.setTime(rec.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);

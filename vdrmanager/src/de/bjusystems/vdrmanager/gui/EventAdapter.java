@@ -18,6 +18,8 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.data.Timerable;
 
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		Filterable {
@@ -142,8 +144,20 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	public void fillEventViewHolder(EventListItemHolder itemHolder,
 			EventListItem item) {
 
+		
+		
+		
+		
 		itemHolder.state.setVisibility(View.VISIBLE);
-		switch (item.getTimerState()) {
+		
+		if(item.getEvent() instanceof Timerable == false){
+			itemHolder.state.setImageResource(R.drawable.timer_none);	
+		} else if(item.getEvent() instanceof Recording){
+			if(Utils.isLive(item.getEvent())){
+				itemHolder.state.setImageResource(R.drawable.timer_recording);					
+			}
+		} else {
+		switch (((Timerable)item.getEvent()).getTimerState()) {
 		case Active:
 			itemHolder.state.setImageResource(R.drawable.timer_active);
 			break;
@@ -156,6 +170,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		case None:
 			itemHolder.state.setImageResource(R.drawable.timer_none);
 			break;
+		}
 		}
 
 		final EventFormatter formatter = getEventFormatter(item);
@@ -181,6 +196,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 			}
 		}
 
+		//TODO better render of duration
 		int p = Utils.getProgress(item);
 		if (p == -1) {
 			itemHolder.progress.setVisibility(View.GONE);

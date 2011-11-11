@@ -42,6 +42,11 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	
 	
 	@Override
+	protected SvdrpClient<Epg> getClient() {
+		return this.epgClient;
+	}
+	
+	@Override
 	protected void onNewIntent(Intent intent) {
 		initSearch(intent);
 		startSearch();
@@ -99,9 +104,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		progress = new SvdrpProgressDialog<Epg>(this, epgClient);
-		// attach listener
-		task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -135,7 +137,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 			adapter.add(new EventListItem((Epg)e));
 		}
 		listView.setSelectionAfterHeaderView();
-		dismiss(progress);
 		return results.isEmpty() == false;
 	}
 	

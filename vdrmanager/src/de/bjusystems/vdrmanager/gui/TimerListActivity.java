@@ -3,6 +3,7 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.Calendar;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
@@ -24,11 +25,19 @@ import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
 public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		OnItemClickListener, SvdrpAsyncListener<Timer> {
 
+	private static final int MENU_NEW_TIMER = 2;
+	
+	private static final int MENU_GROUP_NEW_TIMER = 2;
 	/**
 	 * 
 	 */
 	TimerClient timerClient;
 
+	
+	@Override
+	protected SvdrpClient<Timer> getClient() {
+		return this.timerClient;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -80,10 +89,10 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 				timerClient);
 
 		// create progress dialog
-		progress = new SvdrpProgressDialog(this, timerClient);
+		//progress = new SvdrpProgressDialog(this, timerClient);
 
 		// attach listener
-		task.addListener(progress);
+		//task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -118,7 +127,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 	protected boolean finishedSuccessImpl() {
 		adapter.clear();
-		sortItemsByTime(results);
+		sortItemsByTime(results, true);
 		int day = -1;
 		Calendar cal = Calendar.getInstance();
 		for (Event e : results) {
@@ -132,7 +141,6 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 			adapter.add(new EventListItem(e));
 		}
 		listView.setSelectionAfterHeaderView();
-		dismiss(progress);
 		return results.isEmpty() == false;
 	}
 
@@ -155,5 +163,14 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	protected void retry() {
 		refresh();
 	}
+	
+	public boolean onCreateOptionsMenu(final Menu menu) {
+	//	MenuItem item;
+		//item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0, R.string.new_timer);
+		//item.setIcon(android.R.drawable.ic_menu_add);;
+//		/item.setAlphabeticShortcut('r');
+		return super.onCreateOptionsMenu(menu);
+	}
+
 
 }

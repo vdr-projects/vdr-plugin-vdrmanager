@@ -2,8 +2,7 @@ package de.bjusystems.vdrmanager.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
@@ -35,8 +35,9 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	protected ViewFlipper flipper;
 
 	private Button retry;
-
-	protected SvdrpProgressDialog progress;
+	
+	private ProgressDialog progress;
+	//protected SvdrpProgressDialog progress;
 
 	abstract protected String getWindowTitle();
 
@@ -101,6 +102,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Preferences.setLocale(this);
+		progress = new ProgressDialog(this);
 	}
 	
 	@Override
@@ -115,6 +117,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	abstract protected void refresh();
 
 	abstract protected void retry();
+	
+	abstract protected SvdrpClient<Result> getClient();
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -210,17 +214,34 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	public void svdrpEvent(final SvdrpEvent event, final Result result) {
 
 		switch (event) {
-
+		case LOGIN:
+			break;
+		case COMMAND_SENDING:
+			break;
+		case CONNECTING:
+			progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			setMessage(R.string.progress_connect);
+			progress.show();
+			break;
+		case LOGGED_IN:
+			setMessage(R.string.progress_login);
+			break;
+		case COMMAND_SENT:
+			setMessage(getClient().getProgressTextId());
+			break;
+		case DISCONNECTING:
+			setMessage(R.string.progress_disconnect);
+			break;
+		case DISCONNECTED:
+			break;
 		case ABORTED:
 			say(R.string.aborted);
 			break;
 		case ERROR:
 			alert(R.string.epg_client_errors);
-			// say(R.string.epg_client_errors);
-			// dismiss(progress);
+			 progress.dismiss();
 			break;
-		case CONNECTING:
-			break;
+	
 		case CONNECTED:
 			connected();
 			break;
@@ -228,23 +249,31 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		case CONNECT_ERROR:
 		case FINISHED_ABNORMALY:
 		case LOGIN_ERROR:
+			progress.dismiss();
 			noConnection(event);
 			break;
 		case CACHE_HIT:
 			cacheHit();
+			progress.dismiss();
 			return;
 		case FINISHED_SUCCESS:
+
 			if (finishedSuccess()) {
 				finishedSuccess = true;
 				restoreViewSelection();
 			} else {
 				say(R.string.epg_no_items);
 			}
+			progress.dismiss();
 			break;
 		case RESULT_RECEIVED:
 			resultReceived(result);
 			break;
 		}
+	}
+
+	private void setMessage(int progressConnect) {
+		progress.setMessage(getString(progressConnect));
 	}
 
 	protected boolean finishedSuccess = false;
@@ -268,9 +297,17 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	}
 
 	public void svdrpException(final SvdrpException exception) {
-		progress.svdrpException(exception);
+//		svdrpException(exception);
 		// Log.w(TAG, exception);
 		alert(getString(R.string.vdr_error_text, exception.getMessage()));
+	}
+	
+	@Override
+	protected void onDestroy() {
+		if(progress.isShowing()){
+			progress.dismiss();
+		}
+		super.onDestroy();
 	}
 
 }

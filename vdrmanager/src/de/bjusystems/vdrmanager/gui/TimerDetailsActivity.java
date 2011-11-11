@@ -46,10 +46,10 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.view = view;
 		tView.title = (TextView) view.findViewById(R.id.timer_detail_title);
 		tView.channel = (TextView) view.findViewById(R.id.timer_detail_channel);
-		tView.dateField = (TextView) view.findViewById(R.id.timer_detail_day);
-		tView.startField = (TextView) view
+		tView.dateField = (Button) view.findViewById(R.id.timer_detail_day);
+		tView.startField = (Button) view
 				.findViewById(R.id.timer_detail_start);
-		tView.endField = (TextView) view.findViewById(R.id.timer_detail_end);
+		tView.endField = (Button) view.findViewById(R.id.timer_detail_end);
 		tView.saveButton = (Button) view.findViewById(R.id.timer_details_save);
 		tView.modifyButton = (Button) view
 				.findViewById(R.id.timer_details_modify);
@@ -62,6 +62,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.modifyButton.setOnClickListener(this);
 		setContentView(view);
 		timer = getApp().getCurrentTimer();
+		original = timer.copy();
 		int op = getIntent().getExtras().getInt(Intents.TIMER_OP);
 		switch (op) {
 		case Intents.ADD_TIMER:
@@ -83,9 +84,9 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		View view;
 		TextView title;
 		TextView channel;
-		TextView dateField;
-		TextView startField;
-		TextView endField;
+		Button dateField;
+		Button startField;
+		Button endField;
 		Button saveButton;
 		Button modifyButton;
 	}
@@ -97,6 +98,8 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 	// SetTimerClient setTimerClient;
 
 	Timer timer;
+	
+	Timer original;
 
 	private void updateDisplay(TimerOperation op) {
 		updateDisplay();
@@ -176,12 +179,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		}
 		case R.id.timer_details_modify:
 			modifyTimer(timer);
-			say(R.string.done);
+			//say(R.string.done);
 			break;
 
 		case R.id.timer_details_save: {
 			createTimer(timer);
-			say(R.string.done);
+			//say(R.string.done);
 			break;
 		}
 	
@@ -259,7 +262,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 	}
 
 	private void modifyTimer(Timer timer) {
-		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
+		final ModifyTimerTask task = new ModifyTimerTask(this, timer, original) {
 			@Override
 			public void finished(SvdrpEvent event) {
 				done();
