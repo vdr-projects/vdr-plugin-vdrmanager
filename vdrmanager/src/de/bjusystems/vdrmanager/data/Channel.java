@@ -67,6 +67,10 @@ public class Channel implements Parcelable {
 		return provider;
 	}
 
+	public String getId(){
+		return id;
+	}
+	
 	@Override
 	public String toString() {
 		final StringBuilder text = new StringBuilder();
