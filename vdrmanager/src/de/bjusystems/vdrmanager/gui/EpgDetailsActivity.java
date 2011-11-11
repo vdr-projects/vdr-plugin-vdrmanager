@@ -5,33 +5,38 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.viewpagerindicator.TitleProvider;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.Event;
-import de.bjusystems.vdrmanager.data.Event.TimerState;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
-import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
+import de.bjusystems.vdrmanager.data.Timerable;
+import de.bjusystems.vdrmanager.data.Timerable.TimerState;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
@@ -44,49 +49,110 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * @author bju
  */
 public class EpgDetailsActivity extends Activity implements OnClickListener,
-		SimpleGestureListener {
+		OnPageChangeListener {
 
 	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
 
-	private SimpleGestureFilter detector;
-
 	private String highlight = null;
 
-	ImageButton event_left;
+	private Event cEvent;
 
-	ImageButton event_right;
+	//private ImageView state;
 
-	Event cEvent;
+	private boolean modifed = false;
 
-	ImageView state;
+	private int current;
 
-	boolean modifed = false;
+	private ViewPager pager;
+
+	private Timerable timerable = null;
+
+	class Adapter extends PagerAdapter implements TitleProvider {
+
+		public Adapter() {
+
+		}
+
+		public String getTitle(int position) {
+			return epgs.get(position).getChannelName();
+		}
+
+		@Override
+		public int getCount() {
+			return epgs.size();
+		}
+
+		@Override
+		public Object instantiateItem(View pager, int position) {
+			View view = getLayoutInflater().inflate(R.layout.epg_detail, null);
+			// Event e = epgs.get(position);
+			publishEPG(view, position);
+			((ViewPager) pager).addView(view, 0);
+
+			return view;
+		}
+
+		@Override
+		public void destroyItem(View pager, int position, Object view) {
+			((ViewPager) pager).removeView((View) view);
+		}
+
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return view.equals(object);
+		}
+
+		@Override
+		public void finishUpdate(View view) {
+		}
+
+		@Override
+		public void restoreState(Parcelable p, ClassLoader c) {
+		}
+
+		@Override
+		public Parcelable saveState() {
+			return null;
+		}
+
+		@Override
+		public void startUpdate(View view) {
+		}
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		Intent i = getIntent();
 
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
 
+		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+		// R.layout.titlebar);
+
 		// Attach view
-		setContentView(R.layout.epg_detail);
+		setContentView(R.layout.epgdetails);
 
-		detector = new SimpleGestureFilter(this, this);
+		// detector = new SimpleGestureFilter(this, this);
 
-		event_left = (ImageButton) findViewById(R.id.epg_event_left);
-		event_right = (ImageButton) findViewById(R.id.epg_event_right);
-		state = (ImageView) findViewById(R.id.epg_timer_state);
-		
+		// state = (ImageView) findViewById(R.id.epg_timer_state);
+
 		final Event epg = getApp().getCurrentEvent();
-		if(epg == null){
+		if (epg == null) {
 			finish();
 		}
-		
+
+		if (epg instanceof Timerable) {
+			timerable = (Timerable) epg;
+		}
+
 		new VoidAsyncTask() {
+
+			int counter = 0;
 
 			@Override
 			protected void onPreExecute() {
@@ -99,14 +165,13 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				final VdrManagerApp app = (VdrManagerApp) getApplication();
 				epgs = app.getCurrentEpgList();
 
-				counter = 0;
 				for (Event e : epgs) {
 					if (epg.equals(e)) {
 						break;
 					}
 					counter++;
 				}
-				if(counter > epgs.size()){
+				if (counter > epgs.size()) {
 					counter = -1;
 				}
 				return (Void) null;
@@ -114,7 +179,20 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 			@Override
 			protected void onPostExecute(Void result) {
-				publishEPG(epg);
+
+				Adapter adapter = new Adapter();
+				ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
+				EpgDetailsActivity.this.pager = pager;
+				pager.setOnPageChangeListener(EpgDetailsActivity.this);
+				// TitlePageIndicator indicator = (TitlePageIndicator)
+				// findViewById(R.id.indicator);
+				pager.setAdapter(adapter);
+				cEvent = epgs.get(counter);
+				pager.setCurrentItem(counter);
+
+				// indicator.setViewPager(pager);
+
+				// publishEPG(epg);
 			}
 		}.execute((Void) null);
 
@@ -125,43 +203,34 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		view.setImageResource(res);
 	}
 
-	public void publishEPG(final Event event) {
-		setProgressBarIndeterminateVisibility(true);
-		publishEPGImpl(event);
-		setProgressBarIndeterminateVisibility(false);
-	}
+	public void publishEPG(View view, int position) {
 
-	public void publishEPGImpl(Event event) {
-
-		cEvent = event;
-
-		if(cEvent == null){
-			return;
-		}
-		
-		String cn = event.getChannelName();
-
-		setTitle(getString(R.string.epg_of_a_channel, cn, counter + 1, epgs.size()));
+		Event event = epgs.get(position);
 
 		final EventFormatter formatter = new EventFormatter(event);
 
-		final TextView title = (TextView) findViewById(R.id.epg_detail_title);
+		final TextView title = (TextView) view
+				.findViewById(R.id.epg_detail_title);
 		String titleText = formatter.getTitle();
 		title.setText(Utils.highlight(titleText, highlight));
 		// title.setTextSize(TypedValue.COMPLEX_UNIT_PX, title.getTextSize()
 		// * (float) 1.3);
 
-		((TextView) findViewById(R.id.epg_detail_time)).setText(formatter
+		((TextView) view.findViewById(R.id.epg_detail_time)).setText(formatter
 				.getDate() + " " + formatter.getTime());
 
-		TextView dura = (TextView) findViewById(R.id.epg_detail_duration);
+		TextView dura = (TextView) view.findViewById(R.id.epg_detail_duration);
 
-		((TextView) findViewById(R.id.epg_detail_channel)).setText(event
+		((TextView) view.findViewById(R.id.epg_detail_channel)).setText(event
 				.getChannelName());
 		// ((TextView) findViewById(R.id.epg_detail_date)).setText(formatter
 		// .getLongDate());
-
-		switch (event.getTimerState()) {
+		ImageView state = (ImageView) view.findViewById(R.id.epg_timer_state);
+		if(timerable == null){
+			setState(state, R.drawable.timer_none);
+		} else {
+	
+		switch (timerable.getTimerState()) {
 		case Active:
 			setState(state, R.drawable.timer_active);
 			break;
@@ -174,21 +243,24 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		default:
 			setState(state, R.drawable.timer_none);
 		}
-
-		final TextView shortText = (TextView) findViewById(R.id.epg_detail_shorttext);
+		}
+		final TextView shortText = (TextView) view
+				.findViewById(R.id.epg_detail_shorttext);
 		shortText.setText(Utils.highlight(formatter.getShortText(), highlight));
 
-		final TextView textView = (TextView) findViewById(R.id.epg_detail_description);
+		final TextView textView = (TextView) view
+				.findViewById(R.id.epg_detail_description);
 		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
 
 		// copy color for separator lines
-		final int color = textView.getTextColors().getDefaultColor();
+		// final int color = textView.getTextColors().getDefaultColor();
 		// ((TextView) findViewById(R.id.epg_detail_separator_1))
 		// .setBackgroundColor(color);
 
 		int p = Utils.getProgress(event);
 
-		((ProgressBar) findViewById(R.id.epg_detail_progress)).setProgress(p);
+		((ProgressBar) view.findViewById(R.id.epg_detail_progress))
+				.setProgress(p);
 		int dm = Utils.getDuration(event);
 		if (Utils.isLive(event)) {
 			int rest = dm - (dm * p / 100);
@@ -198,13 +270,17 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			dura.setText(getString(R.string.epg_duration_template, dm));
 		}
 
-		((TextView) findViewById(R.id.epg_detail_separator_2))
-				.setBackgroundColor(color);
+		// ((TextView) view.findViewById(R.id.epg_detail_separator_2))
+		// .setBackgroundColor(color);
 
 		// register button handler
-		setThisAsOnClickListener(R.id.epg_event_create_timer);
+		if(timerable == null){
+			view.findViewById(R.id.epg_event_create_timer).setVisibility(View.GONE);
+		} else {
+			setThisAsOnClickListener(view, R.id.epg_event_create_timer);
+		}
 
-		View b = findViewById(R.id.epg_event_imdb);
+		View b = view.findViewById(R.id.epg_event_imdb);
 
 		if (Preferences.get().isShowImdbButton() == false) {
 			b.setVisibility(View.GONE);
@@ -213,15 +289,15 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			setThisAsOnClickListener(b);
 		}
 
-		b = findViewById(R.id.epg_event_livetv);
+		b = view.findViewById(R.id.epg_event_livetv);
 		if (Utils.isLive(event) == false) {
 			b.setVisibility(View.GONE);
 		} else {
 			b.setVisibility(View.VISIBLE);
 			setThisAsOnClickListener(b);
 		}
-		setThisAsOnClickListener(R.id.epg_event_left);
-		setThisAsOnClickListener(R.id.epg_event_right);
+		// setThisAsOnClickListener(view, R.id.epg_event_left);
+		// setThisAsOnClickListener(view, R.id.epg_event_right);
 
 		// set button text
 		if (event instanceof Timer) {
@@ -238,8 +314,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	private void setThisAsOnClickListener(int view) {
-		setThisAsOnClickListener(findViewById(view));
+	private void setThisAsOnClickListener(View root, int view) {
+		setThisAsOnClickListener(root.findViewById(view));
 	}
 
 	@Override
@@ -311,7 +387,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 						public void onClick(DialogInterface dialog, int which) {
 							final Timer t;
 							if (timer == null) {
-								t = cEvent.createTimer();
+								t = timerable.createTimer();
 							} else {
 								t = timer;
 							}
@@ -364,12 +440,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			i.setData(Uri.parse(url));
 			startActivity(i);
 			break;
-		case R.id.epg_event_left:
-			prevEPG();
-			break;
-		case R.id.epg_event_right:
-			nextEPG();
-			break;
+
 		// case R.id.epg_event_share:
 		// shareEvent(cEvent);
 		// break;
@@ -401,33 +472,33 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	// EditTimerViewHolder tView = null;
 
-	public void onSwipe(int direction) {
-		switch (direction) {
-		case SimpleGestureFilter.SWIPE_RIGHT:
-			prevEPG();
-			break;
-		case SimpleGestureFilter.SWIPE_LEFT:
-			nextEPG();
-			break;
-		}
-	}
+	// public void onSwipe(int direction) {
+	// switch (direction) {
+	// case SimpleGestureFilter.SWIPE_RIGHT:
+	// // prevEPG();
+	// break;
+	// case SimpleGestureFilter.SWIPE_LEFT:
+	// nextEPG();
+	// break;
+	// }
+	// }
 
-	private void prevEPG() {
-		if(counter  == -1){
-			return;
-		}
-		Event epg;
-		if (counter == 0) {
-			say(R.string.navigae_at_the_start);
-			return;
-		}
-		epg = epgs.get(--counter);
-		publishEPG(epg);
-	}
+	// private void prevEPG() {
+	// if(counter == -1){
+	// return;
+	// }
+	// Event epg;
+	// if (counter == 0) {
+	// say(R.string.navigae_at_the_start);
+	// return;
+	// }
+	// epg = epgs.get(--counter);
+	// publishEPG(epg);
+	// }
 
 	List<Event> epgs = new ArrayList<Event>();
 
-	int counter = 0;
+	// /int counter = 0;
 
 	/*
 	 * public void initEPGs() {
@@ -452,18 +523,18 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	 * (event.getStart().equals(fe.getStart()) == false) { epgs.set(0, event); ;
 	 * } }
 	 */
-	private void nextEPG() {
-		if(counter == -1){
-			return;
-		}
-		if (counter < epgs.size() - 1) {
-			counter++;
-			Event epg = epgs.get(counter);
-			publishEPG(epg);
-		} else {
-			say(R.string.navigae_at_the_end);
-		}
-	}
+	// private void nextEPG() {
+	// if (counter == -1) {
+	// return;
+	// }
+	// if (counter < epgs.size() - 1) {
+	// counter++;
+	// Event epg = epgs.get(counter);
+	// // publishEPG(epg);
+	// } else {
+	// say(R.string.navigae_at_the_end);
+	// }
+	// }
 
 	protected void say(int res) {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
@@ -473,22 +544,30 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 
-	public void onDoubleTap() {
+	// public void onDoubleTap() {
+	//
+	// }
 
-	}
-
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent me) {
-		this.detector.onTouchEvent(me);
-		return super.dispatchTouchEvent(me);
-	}
+	// @Override
+	// public boolean dispatchTouchEvent(MotionEvent me) {
+	// // this.detector.onTouchEvent(me);
+	// return super.dispatchTouchEvent(me);
+	// }
 
 	private static final int MENU_SHARE = 0;
+
+	private static final int MENU_SEARCH_REPEAT = 1;
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuItem item;
+
+		item = menu.add(MENU_SEARCH_REPEAT, MENU_SEARCH_REPEAT, 0,
+				R.string.search_reapt);
+		item.setIcon(android.R.drawable.ic_menu_search);
+		item.setAlphabeticShortcut('r');
+
 		item = menu.add(MENU_SHARE, MENU_SHARE, 0, R.string.share);
 		item.setIcon(android.R.drawable.ic_menu_share);
 		item.setAlphabeticShortcut('s');
@@ -505,18 +584,25 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			shareEvent(cEvent);
 			return true;
 		}
+		if (item.getItemId() == MENU_SEARCH_REPEAT) {
+			Intent intent = new Intent(this, EpgSearchListActivity.class);
+			intent.setAction(Intent.ACTION_SEARCH);
+			intent.putExtra(SearchManager.QUERY, cEvent.getTitle());
+			startActivity(intent);
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	protected void modifyTimer(Timer timer) {
-		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
-			@Override
-			public void finished(SvdrpEvent event) {
-				modifed = true;
-			}
-		};
-		task.start();
-	}
+//	protected void modifyTimer(Timer timer) {
+//		final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
+//			@Override
+//			public void finished(SvdrpEvent event) {
+//				modifed = true;
+//			}
+//		};
+//		task.start();
+//	}
 
 	protected void deleteTimer(final Timer timer) {
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
@@ -537,14 +623,21 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		if (resultCode != RESULT_OK) {
 			return;
 		}
+		
+		
+		pager.getAdapter().notifyDataSetChanged();
+//		View view = pager.getChildAt(current);
+	//	ImageView state = (ImageView) view.findViewById(R.id.epg_timer_state);
+		
 		if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_ADD) {
 			modifed = true;
-			setState(
-					state,
-					Utils.isLive(getApp().getCurrentEvent()) ? R.drawable.timer_recording
-							: R.drawable.timer_active);
+		//	setState(
+			//		state,
+				//	Utils.isLive(getApp().getCurrentEvent()) ? R.drawable.timer_recording
+					//		: R.drawable.timer_active);
 		} else if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT) {
 			modifed = true;
+			
 			// ??
 		}
 	}
@@ -558,7 +651,21 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			super.onBackPressed();
 		}
 	}
-	
-	
-	
+
+	public void onPageScrollStateChanged(int arg0) {
+	}
+
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+	}
+
+	public void onPageSelected(int arg0) {
+		current = arg0;
+		cEvent = epgs.get(current);
+		String cn = cEvent.getChannelName();
+		// View view = pager.getChildAt(arg0);
+		// state = (ImageView) view.findViewById(R.id.epg_timer_state);
+		setTitle(getString(R.string.epg_of_a_channel, cn, current + 1,
+				epgs.size()));
+	}
+
 }
