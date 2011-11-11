@@ -15,17 +15,17 @@ import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
  * 
  * @author bju
  */
-public class Timer extends Event {
+public class Timer extends Event implements Timerable{
 
 	private static final int ENABLED = 1;
 	private static final int INSTANT = 2;
 	private static final int VPS = 4;
 	private static final int RECORDING = 8;
 
-	private final int number;
+	private int number;
 	private int flags;
-	private final int priority;
-	private final int lifetime;
+	private int priority;
+	private int lifetime;
 
 	/**
 	 * Constructs a timer from SvdrpHelper result line
@@ -69,9 +69,26 @@ public class Timer extends Event {
 			this.description = values[11]; // if real description, set it
 		}
 
+		if(values.length > 12 ){
+			this.channelId = values[12];
+		}
+		
+		
 		description = Utils.mapSpecialChars(description);
 	}
 
+	
+	public Timer copy(){
+		Timer t = new Timer(this);
+		t.flags = flags;
+		t.number = number;
+		t.priority = priority;
+		t.lifetime = lifetime;
+		t.start = new Date(start.getTime());
+		t.stop = new Date(stop.getTime());
+		return t;
+	}
+	
 	public Timer(final Event event) {
 		final Preferences prefs = Preferences.getPreferences();
 
@@ -79,6 +96,7 @@ public class Timer extends Event {
 		this.flags = ENABLED;
 		this.channelNumber = event.getChannelNumber();
 		this.channelName = event.getChannelName();
+		this.channelId = event.getChannelId();
 		this.priority = prefs.getTimerDefaultPriority();
 		this.lifetime = prefs.getTimerDefaultLifetime();
 
@@ -91,11 +109,11 @@ public class Timer extends Event {
 		this.description = event.getDescription();
 	}
 
-	public String toCommandLine(TimerOperation op) {
+	public String toCommandLine() {
 
 		final StringBuilder line = new StringBuilder();
 
-		line.append(number).append(":");
+		//line.append(number).append(":");
 		line.append(flags).append(":");
 		line.append(channelNumber).append(":");
 
@@ -172,5 +190,9 @@ public class Timer extends Event {
 
 	public Timer getTimer() {
 		return this;
+	}
+
+	public Timer createTimer() {
+		return new Timer(this);
 	}
 }

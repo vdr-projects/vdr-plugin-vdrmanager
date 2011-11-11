@@ -73,11 +73,11 @@ public class EventListItem extends Event {
 //		this.epg = epg;
 //		this.rec = null;
 //	}
-
-	@Override
-	public TimerState getTimerState() {
-		return event.getTimerState();
-	}
+//
+//	@Override
+//	public TimerState getTimerState() {
+//		return event.getTimerState();
+//	}
 
 	public EventListItem(final String header) {
 		this.header = header;
@@ -130,10 +130,35 @@ public class EventListItem extends Event {
 				.append(formatter.getTime());
 		return text.toString();
 	}
-
+	
+	
 	@Override
-	public Timer getTimer() {
-				return event.getTimer();
+	public long getDuration() {
+		if(event != null){
+			return event.getDuration();
+		}
+		return super.getDuration();
 	}
+	
+	@Override
+	public String getChannelId() {
+		if(event != null){
+			return event.getChannelId();
+		}
+		return null;
+	}
+	
+	@Override
+	public String getStreamId() {
+		if(event == null){
+			return null;
+		}
+		return event.getStreamId();
+	}
+//
+//	@Override
+//	public Timer getTimer() {
+//		return event.getTimer();
+//	}
 
 }

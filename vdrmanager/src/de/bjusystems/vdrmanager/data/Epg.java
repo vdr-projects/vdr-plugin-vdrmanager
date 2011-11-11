@@ -12,7 +12,7 @@ import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
  * Class for EPG events
  * @author bju
  */
-public class Epg extends Event {
+public class Epg extends Event implements Timerable {
 
 	private Timer timer;
 
@@ -25,6 +25,7 @@ public class Epg extends Event {
 		title = mapSpecialChars(words[4]);
 		description = words.length > 5 ? mapSpecialChars(words[5]): "";
 		shortText = words.length > 6 ? mapSpecialChars(words[6]) : "";
+		channelId = words.length > 7 ? mapSpecialChars(words[7]) : "";
 	}
 	
 
@@ -42,5 +43,9 @@ public class Epg extends Event {
 		} else {
 			return timer.getTimerState();
 		}
+	}
+	
+	public Timer createTimer() {
+		return new Timer(this);
 	}
 }

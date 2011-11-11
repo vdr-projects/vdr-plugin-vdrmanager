@@ -22,7 +22,12 @@ public class Recording extends Event{
 		description = mapSpecialChars(words[idx++]);
 		fileName = mapSpecialChars(words[idx++]);
 		fileSize = Integer.valueOf(words[idx++]);
-
+		if(idx < words.length){
+			channelId = words[idx++];
+		}
+		if(idx < words.length){
+			realDuration = Long.parseLong(words[idx++]) * 1000;
+		}
 	}
 	
 	private String fileName;
@@ -30,6 +35,23 @@ public class Recording extends Event{
 	private int fileSize;
 	
 	private int index;
+	
+	private long realDuration = -1;
+
+	/**
+	 * in millis
+	 * @return
+	 */
+	public long getRealDuration() {
+		return realDuration;
+	}
+	
+	public long getDuration(){
+		if(realDuration != -1){
+			return realDuration;
+		}
+		return super.getDuration();
+	}
 
 	public int getIndex() {
 		return index;
@@ -55,18 +77,7 @@ public class Recording extends Event{
 		this.fileName = fileName;
 	}
 
-	public TimerState getTimerState() {
-		return TimerState.Recorded;
-	}
-	
 	public String toCommandLine(){
 		return String.valueOf(index);
 	}
-
-	@Override
-	public Timer getTimer() {
-		return null;
-	}
-	
-
 }

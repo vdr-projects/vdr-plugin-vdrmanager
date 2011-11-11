@@ -13,26 +13,23 @@ import android.text.TextUtils;
 public abstract class Event {
 
 	protected String channelNumber;
+	protected String channelId;
 	protected String channelName;
+
 	protected String title;
 	protected String shortText;
 	protected String description;
 	protected Date start;
 	protected Date stop;
 	
+	
+	public long getDuration(){
+		long millis = getStop().getTime() - getStart().getTime();
+		return millis;
+	}
+	
 	public Event(){
 		
-	}
-
-	public Timer createTimer() {
-		return new Timer(this);
-	}
-	
-	public abstract Timer getTimer();
-
-	
-	public TimerState getTimerState() {
-		return TimerState.None;
 	}
 	
 	public void setChannelNumber(String channelNumber) {
@@ -85,6 +82,11 @@ public abstract class Event {
 		return title;
 	}
 
+	public String getChannelId() {
+		return channelId;
+	}
+
+
 	public String getShortText() {
 		if (TextUtils.isEmpty(shortText) == false) {
 			return shortText;
@@ -110,15 +112,11 @@ public abstract class Event {
 		return stop;
 	}
 
-	
-
-	public enum TimerState {
-		None,
-		Active,
-		Inactive,
-		Recording,
-		Recorded
-		;
+	public String getStreamId(){
+		if(channelId  != null){
+			return channelId;
+		}
+		return channelNumber;
 	}
 	
 }
