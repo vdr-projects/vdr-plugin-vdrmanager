@@ -3,6 +3,7 @@ VDR Plugin 'vdrmanager' Revision History
 2011-11-13: Version 0.5
 -Fixed dereferencing of a null pointer in recordings handler, http://projects.vdr-developer.org/issues/765
 -Switched to safe sprintf, http://projects.vdr-developer.org/issues/801
+-Log to syslog if a method call fails http://projects.vdr-developer.org/issues/802
 
 2011-11-12: Version 0.4
 -Delete recordings properly
