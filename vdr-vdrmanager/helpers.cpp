@@ -126,7 +126,7 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 			}
 
 			// channel
-			sprintf(number, "C%d", channel->Number());
+			snprintf(number, sizeof(number) - 1, "C%d", channel->Number());
 			result += number;
 			result += ":";
 			result += channel->Name();
@@ -460,15 +460,15 @@ string cHelpers::ToText(cRecording * recording) {
 	time_t startTime = event->StartTime();
 	time_t endTime = event->EndTime();
 
-	sprintf(buf, "%d", recording->Index());
+	snprintf(buf, sizeof(buf)-1, "%d", recording->Index());
 	result = buf;
 	result += ":";
 
-	sprintf(buf, "%lu", startTime);
+	snprintf(buf, sizeof(buf)-1, "%lu", startTime);
 	result += buf;
 	result += ":";
 
-	sprintf(buf, "%lu", endTime);
+	snprintf(buf, sizeof(buf)-1, "%lu", endTime);
 	result += buf;
 	result += ":";
 
@@ -479,7 +479,13 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	result += MapSpecialChars(event->Title());
+	if(event->TableID()){
+		result += MapSpecialChars(event->Title());
+	} else if(info->Title()){
+		result += MapSpecialChars(info->Title());
+	} else {
+		result += "<unknown>";
+	}
 	result += ":";
 
 	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
@@ -491,14 +497,14 @@ string cHelpers::ToText(cRecording * recording) {
 	result += MapSpecialChars(recording->FileName());
 	result += ":";
 
-	sprintf(buf, "%d", DirSizeMB(recording->FileName()));
+	snprintf(buf, sizeof(buf)-1, "%d", DirSizeMB(recording->FileName()));
 	result += buf;
 
 	result += ":";
 	result += info->ChannelID().ToString();
 
 	result += ":";
-	sprintf(buf, "%d", RecordingLengthInSeconds(recording));
+	snprintf(buf, sizeof(buf)-1, "%d", RecordingLengthInSeconds(recording));
 	result += buf;
 
 	result += "\r\n";
@@ -529,27 +535,27 @@ string cHelpers::ToText(cTimer * timer) {
 
 	string result;
 	char buf[100];
-	sprintf(buf, "T%d", timer->Index());
+	snprintf(buf, sizeof(buf)-1, "T%d", timer->Index());
 	result = buf;
 	result += ":";
-	sprintf(buf, "%u", timer->Flags());
+	snprintf(buf, sizeof(buf)-1, "%u", timer->Flags());
 	result += buf;
 	result += ":";
-	sprintf(buf, "%d", timer->Channel()->Number());
+	snprintf(buf, sizeof(buf)-1, "%d", timer->Channel()->Number());
 	result += buf;
 	result += ":";
 	result += channelName;
 	result += ":";
-	sprintf(buf, "%lu", timer->StartTime());
+	snprintf(buf, sizeof(buf)-1, "%lu", timer->StartTime());
 	result += buf;
 	result += ":";
-	sprintf(buf, "%lu", timer->StopTime());
+	snprintf(buf, sizeof(buf)-1, "%lu", timer->StopTime());
 	result += buf;
 	result += ":";
-	sprintf(buf, "%d", timer->Priority());
+	snprintf(buf, sizeof(buf)-1, "%d", timer->Priority());
 	result += buf;
 	result += ":";
-	sprintf(buf, "%d", timer->Lifetime());
+	snprintf(buf, sizeof(buf)-1, "%d", timer->Lifetime());
 	result += buf;
 	result += ":";
 	result += MapSpecialChars(timer->File());
@@ -591,15 +597,15 @@ string cHelpers::ToText(const cEvent * event) {
 
 	char buf[100];
 	string result;
-	sprintf(buf, "E%d", channel->Number());
+	snprintf(buf, sizeof(buf)-1, "E%d", channel->Number());
 	result = buf;
 	result += ":";
 	result += channel->Name();
 	result += ":";
-	sprintf(buf, "%lu", event->StartTime());
+	snprintf(buf, sizeof(buf)-1, "%lu", event->StartTime());
 	result += buf;
 	result += ":";
-	sprintf(buf, "%lu", event->StartTime() + event->Duration());
+	snprintf(buf, sizeof(buf)-1, "%lu", event->StartTime() + event->Duration());
 	result += buf;
 	result += ":";
 	result += MapSpecialChars(event->Title());
@@ -713,7 +719,11 @@ string cHelpers::SafeCall(string(*f)()) {
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f();
+
+		} catch(exception &ex){
+			esyslog("vdrmanager: catch an exception: %s", ex.what());
 		} catch (...) {
+			esyslog("vdrmanager: catch an exception");
 			usleep(100);
 		}
 	}
@@ -726,7 +736,10 @@ string cHelpers::SafeCall(string(*f)(string arg), string arg) {
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg);
+		} catch (const std::exception& ex) {
+			esyslog("vdrmanager: catch an exception 1: %s", ex.what());
 		} catch (...) {
+			esyslog("vdrmanager: catch an exception 1");
 			usleep(100);
 		}
 	}
@@ -740,7 +753,10 @@ string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg1, arg2);
+		} catch (exception &ex){
+			esyslog("vdrmanager: catch an exception 2: %s", ex.what());
 		} catch (...) {
+			esyslog("vdrmanager: catch an exception 2");
 			usleep(100);
 		}
 	}
