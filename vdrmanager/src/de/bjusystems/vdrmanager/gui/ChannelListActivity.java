@@ -112,9 +112,9 @@ public class ChannelListActivity extends
 		case MENU_GROUP:
 			ArrayList<String> cgs = ChannelClient.getChannelGroups();
 			adapter.fill(cgs, ChannelClient.getGroupChannels(), groupBy);
-			if (cgs.size() == 1 ) {//one group or first no first group
+			if (cgs.size() == 1) {// one group or first no first group
 				listView.expandGroup(0);
-			} else if ((cgs.size() > 1 && TextUtils.isEmpty(cgs.get(0)))){
+			} else if ((cgs.size() > 1 && TextUtils.isEmpty(cgs.get(0)))) {
 				listView.expandGroup(0);
 			}
 			updateWindowTitle();
@@ -253,6 +253,12 @@ public class ChannelListActivity extends
 				// show live stream
 				Utils.stream(this, channel);
 				break;
+			case R.id.channel_item_menu_hide:
+				//TODO http://projects.vdr-developer.org/issues/722
+				break;
+			case R.id.channel_item_menu_hide_permanent:
+				//TODO http://projects.vdr-developer.org/issues/722
+				break;
 			}
 
 			return true;
@@ -317,24 +323,34 @@ public class ChannelListActivity extends
 		return R.layout.channel_list;
 	}
 
-	private String resolveWindowTitle(){
+	private String resolveWindowTitle() {
 		StringBuilder sb = new StringBuilder();
-		switch(groupBy){
+		switch (groupBy) {
 		case MENU_NAME:
-			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_name_all_channels_group));
+			sb.append(getString(R.string.action_menu_channels))
+					.append(" > ")
+					.append(getString(R.string.groupby_name_all_channels_group));
 			break;
 		case MENU_PROVIDER:
-			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_window_title_templte,getString(R.string.groupby_provider)));
+			sb.append(getString(R.string.action_menu_channels))
+					.append(" > ")
+					.append(getString(R.string.groupby_window_title_templte,
+							getString(R.string.groupby_provider)));
 			break;
 		case MENU_GROUP:
-			sb.append(getString(R.string.action_menu_channels)).append(" > ").append(getString(R.string.groupby_window_title_templte,getString(R.string.groupby_group)));
+			sb.append(getString(R.string.action_menu_channels))
+					.append(" > ")
+					.append(getString(R.string.groupby_window_title_templte,
+							getString(R.string.groupby_group)));
 			break;
 		}
 		return sb.toString();
 	}
-	
-	private void updateWindowTitle(){
-		setTitle(getString(R.string.channels_window_title_count,resolveWindowTitle(), adapter.groups.size(), ChannelClient.getChannels().size()));
+
+	private void updateWindowTitle() {
+		setTitle(getString(R.string.channels_window_title_count,
+				resolveWindowTitle(), adapter.groups.size(), ChannelClient
+						.getChannels().size()));
 	}
 
 	@Override
@@ -358,8 +374,8 @@ public class ChannelListActivity extends
 	protected String getWindowTitle() {
 		return resolveWindowTitle();
 	}
-	
-	protected boolean displayingResults(){
+
+	protected boolean displayingResults() {
 		return ChannelClient.getChannels().isEmpty() == false;
 	}
 
