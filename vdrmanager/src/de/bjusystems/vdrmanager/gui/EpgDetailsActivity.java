@@ -189,7 +189,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				pager.setAdapter(adapter);
 				cEvent = epgs.get(counter);
 				pager.setCurrentItem(counter);
-
+				current = counter;
 				// indicator.setViewPager(pager);
 
 				// publishEPG(epg);
@@ -203,7 +203,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		view.setImageResource(res);
 	}
 
-	public void publishEPG(View view, int position) {
+	public void publishEPG(final View view, int position) {
 
 		Event event = epgs.get(position);
 
@@ -286,7 +286,19 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			b.setVisibility(View.GONE);
 		} else {
 			b.setVisibility(View.VISIBLE);
-			setThisAsOnClickListener(b);
+			b.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View v) {
+					final TextView title = (TextView) view.findViewById(R.id.epg_detail_title);
+					String url = String.format(IMDB_URL,
+							Preferences.get().getImdbUrl(),
+							String.valueOf(title.getText()));
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse(url));
+					startActivity(i);
+				}
+			});
+			//setThisAsOnClickListener(b);
 		}
 
 		b = view.findViewById(R.id.epg_event_livetv);
@@ -431,15 +443,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 					.show();//
 
 			break;
-		case R.id.epg_event_imdb:
-			final TextView title = (TextView) findViewById(R.id.epg_detail_title);
-			String url = String.format(IMDB_URL,
-					Preferences.get().getImdbUrl(),
-					String.valueOf(title.getText()));
-			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse(url));
-			startActivity(i);
-			break;
+		//case R.id.epg_event_imdb:
+			
+//			break;
 
 		// case R.id.epg_event_share:
 		// shareEvent(cEvent);
@@ -447,6 +453,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		}
 	}
 
+	
 	protected void toggleTimer(final Timer timer) {
 		final ToggleTimerTask task = new ToggleTimerTask(this, timer) {
 			@Override
