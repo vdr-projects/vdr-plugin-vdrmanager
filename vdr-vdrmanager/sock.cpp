@@ -216,9 +216,10 @@ void cVdrmanagerClientSocket::Disconnect() {
 }
 
 bool cVdrmanagerClientSocket::PutLine(string line) {
-	// add line to write buffer
+	//TODO http://projects.vdr-developer.org/issues/790
 	string line2 = cHelpers::compress_string(line);
 	isyslog("PutLine, line size is %s, with zlib it would be %s", line.size(), line2.size());
+	// add line to write buffer
 	writebuf += line;
 
 	// data present?
