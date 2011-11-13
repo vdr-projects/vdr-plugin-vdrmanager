@@ -8,7 +8,7 @@ inherit vdr-plugin
 
 DESCRIPTION="Helper plugin for the VDR-Manager android vdr control app"
 HOMEPAGE="http://projects.vdr-developer.org/wiki/androvdr"
-SRC_URI="http://projects.vdr-developer.org/attachments/download/787/${P}.tar.gz"
+SRC_URI="http://projects.vdr-developer.org/attachments/download/803/vdr-vdrmanager-0.5.tar.gz"
 KEYWORDS="~x86 ~amd64"
 SLOT="0"
 LICENSE="GPL-2"
