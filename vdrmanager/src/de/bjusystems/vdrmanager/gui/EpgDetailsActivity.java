@@ -77,12 +77,11 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			return epgs.get(position).getChannelName();
 		}
 
-		@Override
 		public int getCount() {
 			return epgs.size();
 		}
 
-		@Override
+
 		public Object instantiateItem(View pager, int position) {
 			View view = getLayoutInflater().inflate(R.layout.epg_detail, null);
 			// Event e = epgs.get(position);
@@ -92,30 +91,30 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			return view;
 		}
 
-		@Override
+
 		public void destroyItem(View pager, int position, Object view) {
 			((ViewPager) pager).removeView((View) view);
 		}
 
-		@Override
+
 		public boolean isViewFromObject(View view, Object object) {
 			return view.equals(object);
 		}
 
-		@Override
+	
 		public void finishUpdate(View view) {
 		}
 
-		@Override
+
 		public void restoreState(Parcelable p, ClassLoader c) {
 		}
 
-		@Override
+
 		public Parcelable saveState() {
 			return null;
 		}
 
-		@Override
+
 		public void startUpdate(View view) {
 		}
 	}
