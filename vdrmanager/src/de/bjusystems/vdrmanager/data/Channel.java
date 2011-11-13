@@ -104,4 +104,17 @@ public class Channel implements Parcelable {
 			return new Channel[size];
 		}
 	};
+	
+	public boolean equals(Object o) {
+		if(o instanceof Channel == false){
+			return false;
+		}
+		return number == ((Channel)o).getNumber();
+	};
+	
+	@Override
+	public int hashCode() {
+		return number;
+	}
+	
 }
