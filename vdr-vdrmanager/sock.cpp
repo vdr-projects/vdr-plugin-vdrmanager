@@ -126,7 +126,7 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
 				newsocket = NULL;
 			}
 			dsyslog(
-					"[vdrmon] connect from %s, port %hd - %s", inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port), accepted ? "accepted" : "DENIED");
+					"[vdrmanager] connect from %s, port %hd - %s", inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port), accepted ? "accepted" : "DENIED");
 		}
 	} else if (errno != EINTR && errno != EAGAIN
 		)
@@ -218,7 +218,12 @@ void cVdrmanagerClientSocket::Disconnect() {
 bool cVdrmanagerClientSocket::PutLine(string line) {
 	//TODO http://projects.vdr-developer.org/issues/790
 	string line2 = cHelpers::compress_string(line);
-	isyslog("PutLine, line size is %s, with zlib it would be %s", line.size(), line2.size());
+	unsigned long  l =  line.size();
+	unsigned long  l2 = line2.size();
+	if(l2 == 0){
+		l2 = 1;
+	}
+	isyslog("[vdrmanager] PutLine, line size is %lu, with zlib it would be %lu (factor %lu)", l, l2, l/l2);
 	// add line to write buffer
 	writebuf += line;
 
