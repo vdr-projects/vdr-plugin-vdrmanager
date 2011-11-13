@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.InflaterInputStream;
 
 import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
@@ -198,6 +199,8 @@ public abstract class SvdrpClient<Result> {
 		// create streams
 		outputStream = socket.getOutputStream();
 		inputStream = socket.getInputStream();
+		//TODO http://projects.vdr-developer.org/issues/790
+		//inputStream = new InflaterInputStream(socket.getInputStream())
 
 		// password needed?
 		informListener(SvdrpEvent.LOGIN, null);
