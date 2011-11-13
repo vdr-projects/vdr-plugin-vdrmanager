@@ -105,13 +105,20 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				if (event == SvdrpEvent.CACHE_HIT
 						|| event == SvdrpEvent.FINISHED_SUCCESS) {
 					ArrayList<Channel> channels = ChannelClient.getChannels();
+					currentChannel = getApp().getCurrentChannel();
+					boolean found = false;
+					int count = 0;
 					for (final Channel c : channels) {
 						channelSpinnerAdapter.add(c);
+						if(currentChannel != null && !found){
+							if(currentChannel.equals(c)){
+								found = true;
+							} else {
+								count++;
+							}
+						}
 					}
-					currentChannel = getApp().getCurrentChannel();
-					if(currentChannel != null){
-						channelSpinner.setSelection(currentChannel.getNumber() - 1);
-					}
+					channelSpinner.setSelection(count);
 					channelSpinner.setOnItemSelectedListener(EventEpgListActivity.this);
 				} else {
 					noConnection(event);
