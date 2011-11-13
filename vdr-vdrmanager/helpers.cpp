@@ -479,10 +479,10 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	if(event->Title()){
-		result += MapSpecialChars(event->Title());
-	} else if(info->Title()){
+	if(info->Title()){
 		result += MapSpecialChars(info->Title());
+	} else if(event->Title()){
+		result += MapSpecialChars(event->Title());
 	} else {
 		result += "<unknown>";
 	}
