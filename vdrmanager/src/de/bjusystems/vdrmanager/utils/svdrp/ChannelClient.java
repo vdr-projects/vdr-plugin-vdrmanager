@@ -115,12 +115,12 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 			channels.add(c);
 			currentChannels.add(c);
 			String provider = c.getProvider();
-			ArrayList<Channel> channels = providerChannels.get(provider);
-			if (channels == null) {
-				channels = new ArrayList<Channel>();
-				providerChannels.put(provider, channels);
+			ArrayList<Channel> pchannels = providerChannels.get(provider);
+			if (pchannels == null) {
+				pchannels = new ArrayList<Channel>();
+				providerChannels.put(provider, pchannels);
 			}
-			channels.add(c);
+			pchannels.add(c);
 		}
 	}
 
