@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <vdr/plugin.h>
 #include "sock.h"
+#include "helpers.h"
 
 static int clientno = 0;
 
@@ -216,6 +217,8 @@ void cVdrmanagerClientSocket::Disconnect() {
 
 bool cVdrmanagerClientSocket::PutLine(string line) {
 	// add line to write buffer
+	string line2 = cHelpers::compress_string(line);
+	isyslog("PutLine, line size is %s, with zlib it would be %s", line.size(), line2.size());
 	writebuf += line;
 
 	// data present?
