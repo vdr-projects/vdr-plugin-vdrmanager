@@ -5,6 +5,13 @@
 #include <time.h>
 #include <string>
 #include <vdr/epg.h>
+#include <zlib.h>
+#include <stdexcept>
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 
 using namespace std;
 
@@ -22,6 +29,8 @@ public:
   static string ToUpper(string text);
   static string ToLower(string text);
   static string Trim(string text);
+  static string decompress_string(const string& str);
+  static string compress_string(const string& str, int compressionlevel = Z_BEST_COMPRESSION);
 private:
   static string SafeCall(string (*)());
   static string SafeCall(string (*)(string), string arg);

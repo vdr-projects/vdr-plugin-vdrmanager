@@ -256,7 +256,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		Timers.Add(newTimer.get());
 		Timers.SetModified();
-		esyslog( "vdrmanager: timer %s added", *newTimer->ToDescr());
+		dsyslog( "[vdrmanager] timer %s added", *newTimer->ToDescr());
 		newTimer.release();
 		break;
 	}
@@ -266,14 +266,14 @@ string cHelpers::SetTimerIntern(char op, string param) {
 			return Error("Timers are being edited - try again later");
 		}
 
-		esyslog("vdrmanager: try parse %s ", param.c_str());
+		dsyslog("[vdrmanager] try parse %s ", param.c_str());
 
 		auto_ptr<cTimer> timer(new cTimer);
 		if (!timer->Parse(param.c_str())) {
 			return Error("Error in timer settings");
 		}
 
-		esyslog("vdrmanager: timer %s parsed", *timer->ToDescr());
+		dsyslog("[vdrmanager] timer %s parsed", *timer->ToDescr());
 
 		cTimer* oldTimer = Timers.GetTimer(timer.get());
 		if (oldTimer == 0) {
@@ -286,7 +286,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		}
 		Timers.Del(oldTimer);
 		Timers.SetModified();
-		esyslog("vdrmanager: timer %s deleted", *timer->ToDescr());
+		dsyslog("[vdrmanager] timer %s deleted", *timer->ToDescr());
 		break;
 	}
 	case 'M':
@@ -325,8 +325,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		*oldTimer = copy;
 		Timers.SetModified();
-		esyslog(
-				"vdrmanager: timer %s modified (%s)", *oldTimer->ToDescr(), oldTimer->HasFlags(tfActive) ? "active" : "inactive");
+		dsyslog(
+				"[vdrmanager] timer %s modified (%s)", *oldTimer->ToDescr(), oldTimer->HasFlags(tfActive) ? "active" : "inactive");
 
 		break;
 	}
@@ -348,8 +348,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		toggleTimer->OnOff();
 		Timers.SetModified();
-		esyslog(
-				"vdrmanager: timer %s toggled %s", *toggleTimer->ToDescr(), toggleTimer->HasFlags(tfActive) ? "on" : "off");
+		dsyslog(
+				"[vdrmanager] timer %s toggled %s", *toggleTimer->ToDescr(), toggleTimer->HasFlags(tfActive) ? "on" : "off");
 		break;
 	}
 	default:
@@ -721,9 +721,9 @@ string cHelpers::SafeCall(string(*f)()) {
 			return f();
 
 		} catch(exception &ex){
-			esyslog("vdrmanager: catch an exception: %s", ex.what());
+			esyslog("[vdrmanager] catch an exception: %s", ex.what());
 		} catch (...) {
-			esyslog("vdrmanager: catch an exception");
+			esyslog("[vdrmanager] catch an exception");
 			usleep(100);
 		}
 	}
@@ -736,10 +736,10 @@ string cHelpers::SafeCall(string(*f)(string arg), string arg) {
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg);
-		} catch (const std::exception& ex) {
-			esyslog("vdrmanager: catch an exception 1: %s", ex.what());
+		} catch (const exception& ex) {
+			esyslog("[vdrmanager] catch an exception 1: %s", ex.what());
 		} catch (...) {
-			esyslog("vdrmanager: catch an exception 1");
+			esyslog("[vdrmanager] catch an exception 1");
 			usleep(100);
 		}
 	}
@@ -754,9 +754,9 @@ string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
 		try {
 			return f(arg1, arg2);
 		} catch (exception &ex){
-			esyslog("vdrmanager: catch an exception 2: %s", ex.what());
+			esyslog("[vdrmanager] catch an exception 2: %s", ex.what());
 		} catch (...) {
-			esyslog("vdrmanager: catch an exception 2");
+			esyslog("[vdrmanager] catch an exception 2");
 			usleep(100);
 		}
 	}
@@ -821,6 +821,94 @@ int cHelpers::RecordingLengthInSeconds(cRecording* recording)
 #endif
   return -1;
 }
+
+
+
+
+/** Compress a STL string using zlib with given compression level and return
+  * the binary data. */
+string  cHelpers::compress_string(const string& str, int compressionlevel)
+{
+    z_stream zs;                        // z_stream is zlib's control structure
+    memset(&zs, 0, sizeof(zs));
+
+    if (deflateInit(&zs, compressionlevel) != Z_OK)
+        throw(runtime_error("deflateInit failed while compressing."));
+
+    zs.next_in = (Bytef*)str.data();
+    zs.avail_in = str.size();           // set the z_stream's input
+
+    int ret;
+    char outbuffer[32768];
+    string outstring;
+
+    // retrieve the compressed bytes blockwise
+    do {
+        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+        zs.avail_out = sizeof(outbuffer);
+
+        ret = deflate(&zs, Z_FINISH);
+
+        if (outstring.size() < zs.total_out) {
+            // append the block to the output string
+            outstring.append(outbuffer,
+                             zs.total_out - outstring.size());
+        }
+    } while (ret == Z_OK);
+
+    deflateEnd(&zs);
+
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
+        ostringstream oss;
+        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
+        throw(runtime_error(oss.str()));
+    }
+
+    return outstring;
+}
+
+/** Decompress an STL string using zlib and return the original data. */
+string  cHelpers::decompress_string(const string& str)
+{
+    z_stream zs;                        // z_stream is zlib's control structure
+    memset(&zs, 0, sizeof(zs));
+
+    if (inflateInit(&zs) != Z_OK)
+        throw(runtime_error("inflateInit failed while decompressing."));
+
+    zs.next_in = (Bytef*)str.data();
+    zs.avail_in = str.size();
+
+    int ret;
+    char outbuffer[32768];
+    string outstring;
+
+    // get the decompressed bytes blockwise using repeated calls to inflate
+    do {
+        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+        zs.avail_out = sizeof(outbuffer);
+
+        ret = inflate(&zs, 0);
+
+        if (outstring.size() < zs.total_out) {
+            outstring.append(outbuffer,
+                             zs.total_out - outstring.size());
+        }
+
+    } while (ret == Z_OK);
+
+    inflateEnd(&zs);
+
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
+        ostringstream oss;
+        oss << "Exception during zlib decompression: (" << ret << ") "
+            << zs.msg;
+        throw(runtime_error(oss.str()));
+    }
+
+    return outstring;
+}
+
 
 
 
