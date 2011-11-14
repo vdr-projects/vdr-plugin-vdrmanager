@@ -47,7 +47,7 @@
 			<meta-data android:name="android.app.default_searchable"
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
-		<activity android:name=".gui.EpgDetailsActivity" 
+		<activity android:name=".gui.EpgDetailsActivity"  android:launchMode="singleTask"
 			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
