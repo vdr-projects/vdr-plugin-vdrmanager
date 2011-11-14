@@ -148,6 +148,13 @@ public class Preferences {
 	 */
 	private int timeout;
 
+	private String encoding = "utf-8";
+	
+	
+	public String getEncoding() {
+		return encoding;
+	}
+
 	public int getConnectionTimeout() {
 		return connectionTimeout;
 	}
@@ -587,6 +594,8 @@ public class Preferences {
 		prefs.streamingUsername = getString(context, R.string.streaming_username_key, "");
 		
 		prefs.streamingPassword = getString(context, R.string.streaming_password_key, "");
+		
+		prefs.encoding  = getString(context, R.string.vdr_encoding_key, "utf-8");
 		
 		thePrefs = prefs;
 	}
