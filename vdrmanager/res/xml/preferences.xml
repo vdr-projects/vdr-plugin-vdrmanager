@@ -2,8 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceScreen
+        android:enabled="false"
         android:summary="@string/vdr_devices_summary"
-        android:title="@string/vdr_devices" android:enabled="false">
+        android:title="@string/vdr_devices" >
 
         <intent
             android:action="android.intent.action.MAIN"
@@ -22,8 +23,8 @@
 
         <EditTextPreference
             android:defaultValue="@string/vdr_port_default"
-            android:key="@string/vdr_port_key"
             android:inputType="number"
+            android:key="@string/vdr_port_key"
             android:summary="@string/vdr_port_summary"
             android:title="@string/vdr_port_title" />
 
@@ -34,11 +35,14 @@
             android:title="@string/vdr_password_title" />
 
         <CheckBoxPreference
+            android:enabled="false"
             android:key="@string/vdr_ssl_key"
             android:summary="@string/vdr_ssl_summary"
-            android:title="@string/vdr_ssl_title" android:enabled="false" />
+            android:title="@string/vdr_ssl_title" />
 
-        <PreferenceScreen android:title="@string/vdr_advanced_preferences" >
+        <PreferenceScreen
+            android:summary="@string/vdr_advanced_preferences_summary"
+            android:title="@string/vdr_advanced_preferences" >
 
             <EditTextPreference
                 android:defaultValue="10"
@@ -60,6 +64,12 @@
                 android:key="@string/vdr_timeout_key"
                 android:summary="@string/vdr_timeout_sum"
                 android:title="@string/vdr_timeout_title" />
+
+            <EditTextPreference
+                android:defaultValue="utf-8"
+                android:key="@string/vdr_encoding_key"
+                android:summary="@string/vdr_encoding_summary"
+                android:title="@string/vdr_encoding_title" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -216,18 +226,17 @@
             android:key="streamingport"
             android:summary="@string/settings_livetv_port_summary"
             android:title="@string/settings_livetv_port" />
-        
-         <EditTextPreference
+
+        <EditTextPreference
             android:key="@string/streaming_username_key"
             android:summary="@string/streaming_username_sum"
             android:title="@string/streaming_username_title" />
-         
-         <EditTextPreference
-            android:password="true"
+
+        <EditTextPreference
             android:key="@string/streaming_password_key"
+            android:password="true"
             android:summary="@string/streaming_password_sum"
             android:title="@string/streaming_password_title" />
-         
 
         <ListPreference
             android:defaultValue="TS"

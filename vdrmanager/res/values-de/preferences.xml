@@ -95,6 +95,7 @@
     </string-array>
 
     <string name="vdr_advanced_preferences">Erweitert</string>
+    <string name="vdr_advanced_preferences_summary">Erweiterte Einstellungen</string>
 
     <string name="vdr_conntimeout_title">Anmeldezeitlimit</string>
     <string name="vdr_conntimeout_sum">Wie lang (in Sekunden) warten bis eine Verbindung hergestellt ist?</string>
@@ -107,9 +108,11 @@
         
                 
     <string name="streaming_password_title">Streamdev Passwort</string>
-    <string name="streaming_password_sum">Streamdev Server Passwort, gesetzt mit der Option "-a \'user:pass\'". wird so aufgerufen: http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
+    <string name="streaming_password_sum">Streamdev Server Passwort, gesetzt mit der Option "-a \'user:pass\'". wird so aufgerufen: http://user:pass@vdr:3000. In der Regel nicht gesetzt.</string>
 
     <string name="streaming_username_title">Streamdev Benutzername</string>
     <string name="streaming_username_sum">Streamdev Server Benutzername, gesetzt mit der Option "-a \'user:pass\'". wird so http://user:pass@vdr:3000. In der Regel nicht gesetzt</string>
-	    
+	
+	<string name="vdr_encoding_title">Zeichenkodierung</string>
+    <string name="vdr_encoding_summary">Zeichenkodierung vom VDR Gerät. Vorgabe ist Android Zeichenkodierung (utf-8).</string>
 </resources>

@@ -130,6 +130,7 @@
     </string-array>
 
     <string name="vdr_advanced_preferences">Advanced</string>
+    <string name="vdr_advanced_preferences_summary">Advanced settings</string>
         
     <string name="vdr_conntimeout_key">key_conntimeout_key</string>
     <string name="vdr_conntimeout_title">Connection Timeout</string>
@@ -148,5 +149,8 @@
     <string name="streaming_username_title">Streamdev username</string>
     <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
     <string name="streaming_username_key">key_streaming_username</string>
-        
+    
+    <string name="vdr_encoding_key">key_vdr_encoding</string>
+    <string name="vdr_encoding_title">Character encoding</string>
+    <string name="vdr_encoding_summary">Character encoding of your VDR device. Default is utf-8.</string>
 </resources>
