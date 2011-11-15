@@ -101,10 +101,12 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 	}
 
 	ArrayList<Channel> currentChannels = new ArrayList<Channel>();
-
+	String currentGroup;
+	
 	private void received(Channel c) {
 		if (c.isGroupSeparator()) {
-			channelGroups.add(c.getName());
+			currentGroup = c.getName();
+			channelGroups.add(currentGroup);
 			currentChannels = new ArrayList<Channel>();
 			groupChannels.put(c.getName(), currentChannels);
 		} else {
@@ -112,6 +114,8 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 				channelGroups.add("");
 				groupChannels.put("", currentChannels);
 			}
+			
+			c.setGroup(currentGroup);
 			channels.add(c);
 			currentChannels.add(c);
 			String provider = c.getProvider();

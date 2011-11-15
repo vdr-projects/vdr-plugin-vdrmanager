@@ -14,6 +14,15 @@ public class Channel implements Parcelable {
 	private String name;
 	private String provider;
 	private String rawAudio;
+	private String group;
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
 
 	public String getRawAudio() {
 		return rawAudio;

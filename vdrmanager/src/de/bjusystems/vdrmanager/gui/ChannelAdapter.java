@@ -100,10 +100,12 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		}
 		itemHolder.name.setText(name);
 
-		if (groupBy != ChannelListActivity.MENU_PROVIDER) {
+		if (groupBy == ChannelListActivity.MENU_PROVIDER) {
+			itemHolder.aux.setText(item.getGroup());
+		} else if(groupBy == ChannelListActivity.MENU_GROUP) {
 			itemHolder.aux.setText(item.getProvider());
 		} else {
-			itemHolder.aux.setText("");
+			itemHolder.aux.setText(item.getProvider());
 		}
 
 		return view;
