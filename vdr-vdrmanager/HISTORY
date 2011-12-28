@@ -1,5 +1,8 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
+2011-12-28: Version 0.6
+-Bug fix on checking recording's event title
+
 2011-11-13: Version 0.5
 -Fixed dereferencing of a null pointer in recordings handler, http://projects.vdr-developer.org/issues/765
 -Switched to safe sprintf, http://projects.vdr-developer.org/issues/801
