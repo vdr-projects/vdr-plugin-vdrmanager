@@ -137,7 +137,7 @@
             android:defaultValue="255.255.255.255"
             android:dependency="@string/wakeup_enabled_key"
             android:key="@string/wakeup_wol_custom_broadcast_key"
-            android:summaryOn="@string/wakeup_wol_custom_boradcast_summary"
+            android:summary="@string/wakeup_wol_custom_boradcast_summary"
             android:title="@string/wakeup_wol_custom_boradcast_title" />
     </PreferenceCategory>
 

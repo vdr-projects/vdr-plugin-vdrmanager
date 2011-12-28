@@ -42,9 +42,8 @@
 		<item>WOL</item>
 	</string-array>
 
-    <string name="wakeup_wol_custom_boradcast_title">Eigene WOL-Netzwerkadresse</string>
+    <string name="wakeup_wol_custom_boradcast_title">Ziel IP-Adresse</string>
     <string name="wakeup_wol_custom_boradcast_summary">Eine WOL-Netzwerkadresse von 255.255.255.255 abweichend. Zum Beispiel sinnvoll für VPN Verbindungen.</string>
-    <string name="wakeup_wol_custom_boradcast_summary_on">Broadcast </string>
 	
 	
     <string name="wakeup_wol_mac_title">MAC-Adresse</string>
@@ -85,13 +84,21 @@
 	<string name="qui_imdb_url_summary">Welche IMDb Seite für die Suche verwenden.</string>
 	<string name="gui_custom_locale_title">Andere Sprache</string>
 	<string name="gui_custom_locale_sum">Eine andere Sprache aktivieren.</string>
-
+    <string-array name="lang_values">
+        <!-- 
+        <item>DEFAULT</item>
+        -->
+        <item>de</item>
+        <item>en</item>
+        <item>it</item>
+    </string-array>
     <string-array name="lang">
         <!-- 
         <item>Voreinstellung</item>
         -->
-        <item>Englisch</item>
         <item>Deutsch</item>
+        <item>Englisch</item>
+        <item>Italienisch</item>
     </string-array>
 
     <string name="vdr_advanced_preferences">Erweitert</string>
