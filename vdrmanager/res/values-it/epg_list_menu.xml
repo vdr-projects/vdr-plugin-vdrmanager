@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="epg_menu_search">Ricerca EPG</string>
+  <string name="epg_menu_times">Numero ricerche</string>
+  
+  <string name="epg_item_menu_timer_add">Crea timer</string>
+  <string name="epg_item_menu_timer_delete">Elimina timer</string>
+  <string name="epg_item_menu_timer_modify">Modifica timer</string>
+  <string name="epg_item_menu_timer_enable">Abilita timer</string>
+  <string name="epg_item_menu_timer_disable">Disabilita timer</string>
+  <string name="epg_no_items">Nessun risultato trovato...</string>
+  <string name="epg_client_errors">Si è verificato un errore, verifica il registro...</string>
+  
+</resources>

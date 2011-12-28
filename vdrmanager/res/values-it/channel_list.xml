@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="channel_item_menu_epg">Mostra EPG</string>
+  <string name="channel_item_menu_stream">Mostra trasmissione</string>
+  <string name="channel_item_menu_hide">Nascondi</string>
+  <string name="channel_item_menu_hide_permanent">Nascondi sempre</string>
+  
+  <string name="channel_group_menu_hide">Nascondi</string>
+  <string name="channel_group_menu_hide_permanent">Nascondi sempre</string>
+  
+  <string name="menu_groupby">Gruppo da</string>
+  <string name="groupby_group">Gruppo</string>
+  <string name="groupby_provider">Emittente</string>
+  <string name="groupby_name">Nome</string>
+  <string name="groupby_name_all_channels_group">Tutti i canali</string>
+  <string name="groupby_window_title_templte">Gruppo da %1$s</string>
+</resources>

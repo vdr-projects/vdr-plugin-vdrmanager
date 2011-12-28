@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="livetv">Trasmissione dal vivo</string>
+	<string name="settings_livetv_summary">Sono necessari "streamdev-server" nella VDR e un riproduttore esterno come VPlayer</string>
+	<string name="settings_livetv_streamformat">Formato trasmissione</string>
+	<string name="settings_livetv_port">Porta trasmissione</string>
+	<string name="settings_livetv_port_summary">Predefinita 3000. L\'accesso deve essere abilitato in "streamdevhosts.conf".</string>
+	<string-array name="livetv_streamformat">
+		<item>TS</item>
+		<item>PES</item>
+		<item>ES</item>
+		<item>PS</item>
+	</string-array>
+	<string-array name="livetv_streamformat_values">
+		<item>TS</item>
+		<item>PES</item>
+		<item>ES</item>
+		<item>PS</item>
+	</string-array>
+	<string name="key_remux_enable">remux_enable</string>
+	<string name="key_remux_command">remux_command</string>
+	<string name="key_remux_parameter">remux_parameter</string>
+	
+	<string name="stream_via_as">Trasmissione</string>
+	<string name="stream_via">tramite %s</string>
+	<string name="stream_as">come %s</string>
+	<string name="remux_title">Remux</string>
+	<string name="remux_enable_title">Abilita Remux</string>
+	<string name="remux_enable_summary">Abilita trasmissione tramite remux (es. externremux.sh)</string>
+	
+	<string name="remux_command_title">Comando</string>
+	<string name="remux_command_summary">Di solito EXT o Extern (es. http://vdr:3000/Extern/1)</string>
+	
+	<string name="remux_parameter_title">Parametro</string>
+	<string name="remux_parameter_summary">Controllo qualità trasmissione (es. http://vdr:3000/Extern;DSL1000/1)</string>
+	
+</resources>
