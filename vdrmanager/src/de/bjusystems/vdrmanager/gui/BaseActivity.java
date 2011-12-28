@@ -64,7 +64,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 
 	@Override
 	protected void onResume() {
-		Preferences.init(this);
+		Preferences.setLocale(this);
+		//Preferences.init(this);
 		super.onResume();
 	}
 	

@@ -58,8 +58,8 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		
-		Preferences.init(this);
+		Preferences.setLocale(this);
+		//Preferences.init(this);
 		
 		super.onCreate(savedInstanceState);
 

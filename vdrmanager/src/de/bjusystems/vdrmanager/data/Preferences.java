@@ -17,6 +17,8 @@ import de.bjusystems.vdrmanager.R;
 public class Preferences {
 
 	public static final String DEFAULT_LANGUAGE_VALUE = "DEFAULT";
+	
+	public static final String PREFERENCE_FILE_NAME = "VDR-Manager";
 
 	private boolean ssl;
 	/** SVDRP host name or ip */
@@ -447,7 +449,7 @@ public class Preferences {
 	 * @return filename
 	 */
 	public static String getPreferenceFile(final Context context) {
-		return context.getString(R.string.app_name);
+		return PREFERENCE_FILE_NAME;
 	}
 
 	/**
@@ -706,13 +708,16 @@ public class Preferences {
 	public static void setLocale(final Context context) {
 		String lc = getString(context, R.string.gui_custom_locale_key, DEFAULT_LANGUAGE_VALUE);
 		Locale locale = null;
+		//TODO lado this is very bad.
 		if (lc.equals(DEFAULT_LANGUAGE_VALUE)) {
 			String lang = Locale.getDefault().toString();
 			if (lang.startsWith("de")) {
 				locale = Locale.GERMAN;
+			} else if(lang.startsWith("it")){
+				locale = Locale.ITALIAN;
 			} else {
 				locale = Locale.ENGLISH;
-			}
+			} 
 		} else {
 			locale = new Locale(lc);
 		}

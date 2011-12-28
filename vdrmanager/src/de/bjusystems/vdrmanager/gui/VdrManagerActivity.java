@@ -18,11 +18,12 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		Preferences.setLocale(this);
+		setTitle(getString(R.string.app_name));
 		// attach view
 		setContentView(R.layout.vdrmanager);
 
+		
 		// Preferences.loadPreferences(this);
 
 		findViewById(R.id.action_menu_channels).setOnClickListener(this);
@@ -48,6 +49,12 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onResume() {
+		Preferences.setLocale(this);
+		super.onResume();
 	}
 
 	@Override

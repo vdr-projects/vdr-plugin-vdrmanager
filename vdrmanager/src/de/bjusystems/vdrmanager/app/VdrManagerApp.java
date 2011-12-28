@@ -2,9 +2,11 @@ package de.bjusystems.vdrmanager.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.LocalActivityManager;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
@@ -24,6 +26,8 @@ public class VdrManagerApp extends Application {
 	private Event currentEvent;
 	private Timer currentTimer;
 	private Channel currentChannel;
+	
+	public static final Locale SYSTEM_LOCALE = Locale.getDefault() ;
 	
 	private VDR currentVDR;
 	
