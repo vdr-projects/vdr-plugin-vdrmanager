@@ -33,7 +33,6 @@
     <string name="wakeup_user_summary">Utente per accensione remota</string>
     <string name="wakeup_password_title">Password accensione</string>
     <string name="wakeup_password_summary">Password per accensione remota</string>
-    <string name="wakeup_method_key">key_wakeup_method</string>
     <string name="wakeup_method_title">Metodo accensione</string>
     <string name="wakeup_method_summary">Scegli un metodo per accendere VDR</string>
 
@@ -47,11 +46,9 @@
     </string-array>
 
     <string name="default_wakeup_method">url</string>
-    <string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
     <string name="wakeup_wol_custom_boradcast_title">Indirizzo trasmissione</string>
     <string name="wakeup_wol_custom_boradcast_summary">Inserisci un indirizzo di trasmissione personalizzato piuttosto che 255.255.255.255. Ad esempio, utile per una connessione VPN.</string>
     <string name="wakeup_wol_custom_boradcast_summary_on">Trasmissione</string>
-    <string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
     <string name="wakeup_wol_mac_title">Indirizzo MAC</string>
     <string name="wakeup_wol_mac_summary">Indirizzo MAC di VDR. Usa \':\' o \'-\' o uno spazio come separatore.</string>
 
@@ -70,25 +67,19 @@
 
     <!-- GUI -->
     <string name="gui_preferences">Impostazioni GUI</string>
-    <string name="gui_enable_24h_format_key">key_enable_24h</string>
     <string name="gui_enable_24h_format_title">Usa formato 24 ore</string>
     <string name="gui_enable_24h_format_summary_on">13:00</string>
     <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
-    <string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
     <string name="gui_channels_show_channel_numbers_title">Mostra numero canali</string>
     <string name="gui_channels_show_channel_numbers_summary">Mostra il numero di canali nella lista canali</string>
-    <string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
     <string name="gui_quit_on_back_title">Esci con tasto Indietro</string>
     <string name="gui_quit_on_back_summary_on">Il tasto Indietro chiude VDR-Manager</string>
     <string name="gui_quit_on_back_summary_off">Il tasto Indietro non chiude VDR-Manager</string>
-    <string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
     <string name="qui_show_imdb_button_title">Mostra tasto IMDB</string>
     <string name="qui_show_imdb_button_summary_on">Mostra il tasto IMDB</string>
     <string name="qui_show_imdb_button_summary_off">Non mostrare il tasto IMDB</string>
-    <string name="qui_imdb_url_key">key_qui_imdb_url</string>
     <string name="qui_imdb_url_title">Sito IMDB</string>
     <string name="qui_imdb_url_summary">Sito IMDB da usare</string>
-    <string name="gui_custom_locale_key">key_gui_custom_locale</string>
 	<string name="gui_custom_locale_title">Lingua</string>
 	<string name="gui_custom_locale_sum">Seleziona una lingua</string>
         
@@ -112,35 +103,26 @@
         <item>imdb.it</item>
         <item>imdb.pt</item>
     </string-array>
-    <string-array name="lang_values">
-        <item>en</item>
-        <item>it</item>
-        <item>de</item>
-    </string-array>
+
     <string-array name="lang">
         <item>Inglese</item>
+       	<item>Tedesco</item>
         <item>Italiano</item>
-        <item>Tedesco</item>
     </string-array>
 
     <string name="vdr_advanced_preferences">Avanzate</string>
         
-    <string name="vdr_conntimeout_key">key_conntimeout_key</string>
     <string name="vdr_conntimeout_title">Durata connessione</string>
     <string name="vdr_conntimeout_sum">Tempo (in secondi) da aspettare prima che la connessione venga stabilita</string>
-    <string name="vdr_readtimeout_key">key_vdr_readtimeout</string>
     <string name="vdr_readtimeout_title">Durata lettura</string>
     <string name="vdr_readtimeout_sum">Tempo (in secondi) da apsettare per ogni operazione di lettura</string>
-    <string name="vdr_timeout_key">key_vdr_timeout</string>
     <string name="vdr_timeout_title">Durata totale</string>
     <string name="vdr_timeout_sum">Tempo (in secondi) da aspettare per un\'intera operazione di I/O prima di essere terminata</string>
     
     <string name="streaming_password_title">Password streamdev</string>
     <string name="streaming_password_sum">Imposta la password del server streamdev (es. -a \'nomeutente:password\')</string>
-    <string name="streaming_password_key">key_streaming_password</string>
 
     <string name="streaming_username_title">Nome utente streamdev</string>
     <string name="streaming_username_sum">Imposta il nome utente del server streamdev (es. -a \'nomeutente:password\')</string>
-    <string name="streaming_username_key">key_streaming_username</string>
         
 </resources>
