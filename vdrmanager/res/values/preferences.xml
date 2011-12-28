@@ -48,9 +48,8 @@
 
     <string name="default_wakeup_method">url</string>
     <string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
-    <string name="wakeup_wol_custom_boradcast_title">Custom broadcast address</string>
-    <string name="wakeup_wol_custom_boradcast_summary">Enter custom broadcast address rather then 255.255.255.255. Useful for VPN connection as example.</string>
-    <string name="wakeup_wol_custom_boradcast_summary_on">Broadcast </string>
+    <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
+    <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of broadcast address.</string>
     <string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
     <string name="wakeup_wol_mac_title">MAC-Address</string>
     <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
@@ -120,6 +119,7 @@
         -->
         <item>en</item>
         <item>de</item>
+        <item>it</item>
     </string-array>
     <string-array name="lang">
         <!-- 
@@ -127,6 +127,7 @@
         -->
         <item>English</item>
         <item>German</item>
+        <item>Italian</item>
     </string-array>
 
     <string name="vdr_advanced_preferences">Advanced</string>
