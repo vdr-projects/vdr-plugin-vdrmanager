@@ -104,10 +104,15 @@
         <item>imdb.pt</item>
     </string-array>
 
+    <string-array name="lang_values">
+        <item>en</item>
+        <item>it</item>
+        <item>de</item>
+    </string-array>
     <string-array name="lang">
         <item>Inglese</item>
-       	<item>Tedesco</item>
         <item>Italiano</item>
+       	<item>Tedesco</item>
     </string-array>
 
     <string name="vdr_advanced_preferences">Avanzate</string>

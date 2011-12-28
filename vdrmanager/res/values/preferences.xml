@@ -114,9 +114,6 @@
         <item>imdb.pt</item>
     </string-array>
     <string-array name="lang_values">
-        <!-- 
-        <item>DEFAULT</item>
-        -->
         <item>en</item>
         <item>de</item>
         <item>it</item>
