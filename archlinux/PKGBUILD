@@ -1,0 +1,36 @@
+_pkgname=vdrmanager
+pkgname=vdr-plugin-$_pkgname
+pkgver=0.6
+pkgrel=1
+revision=
+arch=(i686 x86_64)
+pkgdesc="VDR-Plugin that is required by the VDRManager Android-App"
+url="http://projects.vdr-developer.org/projects/vdr-manager"
+license="GPL"
+makedepends=('vdr')
+depends=('vdr')
+backup=()
+source=(http://projects.vdr-developer.org/attachments/download/828/vdr-${_pkgname}-${pkgver}.tar.gz)
+
+md5sums=('c179ba237e0eaafc27deadab1a5651d0')
+
+build() {
+  unset CXXFLAGS
+
+  cd ${srcdir}/vdr-$_pkgname-${pkgver}
+
+  mkdir -p $pkgdir/usr/lib/vdr/plugins/ || return 1
+
+  make VDRDIR=/usr/include/vdr \
+       LIBDIR=. \
+       LOCALEDIR="$startdir/pkg/usr/share/locale/" all || return 1
+
+  mkdir -p $pkgdir/usr/lib/vdr/plugins                                          || return 1
+  install -m 755 libvdr-*.so.*          $pkgdir/usr/lib/vdr/plugins/            || return 1
+  
+  mkdir -p $pkgdir/etc/vdr/plugins/												|| return 1
+  install -m 644 examples/plugin.vdrmanager.conf $pkgdir/etc/vdr/plugins/		|| return 1
+  
+}
+
+
