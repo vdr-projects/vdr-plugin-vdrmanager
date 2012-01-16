@@ -1,5 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +40,6 @@ import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.Timerable;
 import de.bjusystems.vdrmanager.data.Timerable.TimerState;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
-import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
@@ -51,6 +52,8 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 public class EpgDetailsActivity extends Activity implements OnClickListener,
 		OnPageChangeListener {
 
+	public static final String TAG = "EpgDetailsActivity";
+	
 	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
 
 	private String highlight = null;
@@ -201,6 +204,15 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		view.setVisibility(View.VISIBLE);
 		view.setImageResource(res);
 	}
+	
+	private static String encode(String str, String enc){
+		try{
+		return URLEncoder.encode(str, enc);
+		}catch(Exception ex){
+			Log.w(TAG, ex);
+			return URLEncoder.encode(str);
+		}
+	}
 
 	public void publishEPG(final View view, int position) {
 
@@ -292,6 +304,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 					String url = String.format(IMDB_URL,
 							Preferences.get().getImdbUrl(),
 							String.valueOf(title.getText()));
+					encode(url,"utf-8");
 					Intent i = new Intent(Intent.ACTION_VIEW);
 					i.setData(Uri.parse(url));
 					startActivity(i);
