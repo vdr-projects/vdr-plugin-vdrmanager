@@ -2,7 +2,6 @@ package de.bjusystems.vdrmanager.utils.wakeup;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Canvas.VertexMode;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
