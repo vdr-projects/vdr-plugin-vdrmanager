@@ -6,13 +6,12 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Application;
-import android.app.LocalActivityManager;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
-import de.bjusystems.vdrmanager.data.VDR;
+import de.bjusystems.vdrmanager.data.Vdr;
 
 public class VdrManagerApp extends Application {
 
@@ -29,13 +28,13 @@ public class VdrManagerApp extends Application {
 	
 	public static final Locale SYSTEM_LOCALE = Locale.getDefault() ;
 	
-	private VDR currentVDR;
+	private Vdr currentVDR;
 	
-	public VDR getCurrentVDR() {
+	public Vdr getCurrentVDR() {
 		return currentVDR;
 	}
 
-	public void setCurrentVDR(VDR currentVDR) {
+	public void setCurrentVDR(Vdr currentVDR) {
 		this.currentVDR = currentVDR;
 	}
 

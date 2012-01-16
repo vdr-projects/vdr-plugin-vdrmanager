@@ -1,7 +1,6 @@
 package de.bjusystems.vdrmanager.tasks;
 
 import android.app.Activity;
-import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 

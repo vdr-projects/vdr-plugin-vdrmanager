@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.bjusystems.vdrmanager" android:versionName="0.3.3"
-	android:versionCode="303">
+	package="de.bjusystems.vdrmanager" android:versionName="0.3.4"
+	android:versionCode="34">
 	<application android:icon="@drawable/app_logo"
 		android:label="@string/app_name" android:debuggable="false"
 		android:name=".app.VdrManagerApp">
@@ -85,8 +85,6 @@
 		<activity android:name=".gui.VdrListActivity" 	android:configChanges="orientation|locale"/>
 		<activity android:name=".gui.VdrPreferencesActivity" 	android:configChanges="orientation|locale"/>
 
-		<provider android:name=".data.db.DataProvider"
-			android:authorities="de.bjusystems.vdrmanager.provider" />
 
 	</application>
 

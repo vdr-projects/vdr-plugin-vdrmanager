@@ -5,7 +5,6 @@ import java.util.Locale;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.text.TextUtils;
 import de.bjusystems.vdrmanager.R;
 
 /**

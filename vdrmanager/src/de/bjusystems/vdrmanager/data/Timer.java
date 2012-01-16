@@ -8,7 +8,6 @@ import java.util.GregorianCalendar;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.gui.Utils;
-import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 
 /**
  * Class for timer data

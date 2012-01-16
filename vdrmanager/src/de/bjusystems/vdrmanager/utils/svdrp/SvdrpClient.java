@@ -17,6 +17,7 @@ import java.util.zip.InflaterInputStream;
 import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.utils.crypt.NativeDES;
 
 /**
  * Class for SVDRP communication
@@ -50,6 +51,8 @@ public abstract class SvdrpClient<Result> {
 	// }
 
 	private Timer watchDog = new Timer();
+	
+	private NativeDES crypt  = new NativeDES();
 
 	public boolean isConnected() {
 		if (socket == null) {
@@ -241,8 +244,11 @@ public abstract class SvdrpClient<Result> {
 	 */
 	protected void writeLine(final String line) throws IOException {
 
-		final String command = line + "\r\n";
-		final byte[] bytes = command.getBytes();
+		String command = line + "\r\n";
+		if(Preferences.get().isSSL()){
+			command = crypt.encrypt(command, Preferences.get().getPassword());
+		}
+		final byte[] bytes = command.getBytes("utf-8");
 		outputStream.write(bytes);
 		outputStream.flush();
 	}
@@ -288,6 +294,9 @@ public abstract class SvdrpClient<Result> {
 		} catch(UnsupportedEncodingException usex){
 			Log.w(TAG, usex);
 			line = lineBytes.toString();
+		}
+		if(Preferences.get().isSSL()){
+			line = crypt.decrypt(line, Preferences.get().getPassword());
 		}
 		return line;
 	}

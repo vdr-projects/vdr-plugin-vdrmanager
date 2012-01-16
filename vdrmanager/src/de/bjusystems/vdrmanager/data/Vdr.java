@@ -1,6 +1,6 @@
 package de.bjusystems.vdrmanager.data;
 
-public class VDR {
+public class Vdr {
 	
 	/**
 	 * Use secure channel 

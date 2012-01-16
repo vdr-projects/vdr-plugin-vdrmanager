@@ -1,7 +1,7 @@
 package de.bjusystems.vdrmanager;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class StringUtils {
@@ -38,7 +38,7 @@ public class StringUtils {
         if (len == 0) {
             return EMPTY_STRING_ARRAY;
         }
-        List list = new ArrayList();
+        ArrayList<String> list = new ArrayList<String>();
         int sizePlus1 = 1;
         int i = 0, start = 0;
         boolean match = false;
