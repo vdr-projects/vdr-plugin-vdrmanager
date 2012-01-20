@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
 import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Preferences;
-import de.bjusystems.vdrmanager.utils.crypt.NativeDES;
 
 /**
  * Class for SVDRP communication
@@ -50,8 +52,8 @@ public abstract class SvdrpClient<Result> {
 	// }
 
 	private Timer watchDog = new Timer();
-	
-	private NativeDES crypt  = new NativeDES();
+
+	//private NativeDES crypt = new NativeDES();
 
 	public boolean isConnected() {
 		if (socket == null) {
@@ -154,7 +156,17 @@ public abstract class SvdrpClient<Result> {
 		try {
 			// connect
 			informListener(SvdrpEvent.CONNECTING, null);
-			socket = new Socket();
+
+			if (Preferences.get().isSecure() || true) {
+
+				SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory
+						.getDefault(); // Erzeugt eine SSLSocketFactory mit
+										// Standartkonfiguration
+				socket = (SSLSocket) factory.createSocket();
+			} else {
+				socket = new Socket();
+			}
+
 			socket.connect(
 					new InetSocketAddress(prefs.getSvdrpHost(), prefs
 							.getSvdrpPort()),
@@ -202,8 +214,8 @@ public abstract class SvdrpClient<Result> {
 		// create streams
 		outputStream = socket.getOutputStream();
 		inputStream = socket.getInputStream();
-		//TODO http://projects.vdr-developer.org/issues/790
-		//inputStream = new InflaterInputStream(socket.getInputStream())
+		// TODO http://projects.vdr-developer.org/issues/790
+		// inputStream = new InflaterInputStream(socket.getInputStream())
 
 		// password needed?
 		informListener(SvdrpEvent.LOGIN, null);
@@ -244,9 +256,9 @@ public abstract class SvdrpClient<Result> {
 	protected void writeLine(final String line) throws IOException {
 
 		String command = line + "\r\n";
-		if(false && Preferences.get().isSecure()){
-			command = crypt.encrypt(command, Preferences.get().getPassword());
-		}
+		//if (false && Preferences.get().isSecure()) {
+			//command = crypt.encrypt(command, Preferences.get().getPassword());
+		//}
 		final byte[] bytes = command.getBytes("utf-8");
 		outputStream.write(bytes);
 		outputStream.flush();
@@ -286,17 +298,17 @@ public abstract class SvdrpClient<Result> {
 			// remember char
 			lineBytes.write(c);
 		}
-		
+
 		String line = null;
-		try{
+		try {
 			line = lineBytes.toString(Preferences.get().getEncoding());
-		} catch(UnsupportedEncodingException usex){
+		} catch (UnsupportedEncodingException usex) {
 			Log.w(TAG, usex);
 			line = lineBytes.toString();
 		}
-		if(false && Preferences.get().isSecure()){
-			line = crypt.decrypt(line, Preferences.get().getPassword());
-		}
+		//if (false && Preferences.get().isSecure()) {
+			//line = crypt.decrypt(line, Preferences.get().getPassword());
+		//}
 		return line;
 	}
 
