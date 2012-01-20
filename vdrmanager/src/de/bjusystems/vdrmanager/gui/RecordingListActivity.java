@@ -85,6 +85,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 			// set menu title
 			final EventListItem item = adapter.getItem(info.position);
+			if(item.isHeader()){
+				return;
+			}
 			final EventFormatter formatter = new EventFormatter(item);
 			menu.setHeaderTitle(formatter.getTitle());
 
