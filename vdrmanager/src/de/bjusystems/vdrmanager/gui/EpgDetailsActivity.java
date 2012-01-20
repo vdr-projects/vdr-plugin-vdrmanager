@@ -4,12 +4,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -122,6 +124,37 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		public void startUpdate(View view) {
 		}
 	}
+	
+	public void initActionBar() {
+		int api = Build.VERSION.SDK_INT;
+		if (api < 11) {
+			return;
+		}
+
+		ActionBar actionBar = getActionBar();
+		actionBar.setHomeButtonEnabled(true);
+		// actionBar.setDisplayShowHomeEnabled(false);
+		// actionBar.setDisplayShowTitleEnabled(false);
+		// View actionBarView =
+		// getLayoutInflater().inflate(R.layout.action_bar_custom_view, null);
+		// actionBar.setCustomView(actionBarView);
+		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		// ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<String>(this,
+		// android.R.layout.simple_spinner_dropdown_item);
+		// mSpinnerAdapter.add("A");
+		// actionBar.setListNavigationCallbacks(mSpinnerAdapter, new
+		// OnNavigationListener() {
+
+		// public boolean onNavigationItemSelected(int itemPosition, long
+		// itemId) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		// });
+
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -132,13 +165,16 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		Intent i = getIntent();
 
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
-
+		
+		initActionBar();
+		
 		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
 		// R.layout.titlebar);
 
 		// Attach view
 		setContentView(R.layout.epgdetails);
+
 
 		// detector = new SimpleGestureFilter(this, this);
 
@@ -190,9 +226,11 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 				// TitlePageIndicator indicator = (TitlePageIndicator)
 				// findViewById(R.id.indicator);
 				pager.setAdapter(adapter);
-				cEvent = epgs.get(counter);
-				pager.setCurrentItem(counter);
-				current = counter;
+				if(counter < epgs.size()){
+					cEvent = epgs.get(counter);
+					pager.setCurrentItem(counter);
+					current = counter;
+				}
 				// indicator.setViewPager(pager);
 
 				// publishEPG(epg);

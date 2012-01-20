@@ -225,10 +225,13 @@ public class ChannelListActivity extends
 			menu.setHeaderTitle(item.getName());
 			inflater.inflate(R.menu.channel_list_item_menu, menu);
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-			Channel grp = (Channel) adapter.getGroup(group);
+			/*
+			 * http://projects.vdr-developer.org/issues/722
+			String grp =  adapter.getGroup(group);
 			final MenuInflater infl = getMenuInflater();
-			menu.setHeaderTitle(grp.getName());
+			menu.setHeaderTitle(grp);
 			infl.inflate(R.menu.channel_list_group_menu, menu);
+			*/
 		}
 	}
 

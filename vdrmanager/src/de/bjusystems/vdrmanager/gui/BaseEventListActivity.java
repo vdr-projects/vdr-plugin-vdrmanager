@@ -191,6 +191,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// set menu title
 		final EventListItem item = adapter.getItem(info.position);
 
+		if(item.isHeader()){
+			return;
+		}
+		
 		MenuItem mi = menu.findItem(R.id.epg_item_menu_live_tv);
 		if (item.isLive() && item.getStreamId() != null) {
 			mi.setVisible(true);

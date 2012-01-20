@@ -117,7 +117,7 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 		return channels.size();
 	}
 
-	public Object getGroup(int groupPosition) {
+	public String getGroup(int groupPosition) {
 		return groups.get(groupPosition);
 	}
 
