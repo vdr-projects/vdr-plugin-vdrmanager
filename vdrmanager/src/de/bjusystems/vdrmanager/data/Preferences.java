@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.text.TextUtils;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
@@ -622,6 +623,9 @@ public class Preferences {
 	private static int getInt(final Context context, final int resId,
 			final int defValue) {
 		final String value = getString(context, resId, String.valueOf(defValue));
+		if(TextUtils.isEmpty(value) || !TextUtils.isDigitsOnly(value)){
+			return 0;
+		}
 		return Integer.parseInt(value);
 	}
 
