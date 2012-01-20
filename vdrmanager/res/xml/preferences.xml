@@ -21,6 +21,7 @@
 			android:title="@string/gui_channels_show_channel_numbers_title" />
 
 		<CheckBoxPreference android:key="@string/gui_enable_24h_format_key"
+			android:defaultValue="true"
 			android:summaryOff="@string/gui_enable_24h_format_summary_off"
 			android:summaryOn="@string/gui_enable_24h_format_summary_on"
 			android:title="@string/gui_enable_24h_format_title" />
