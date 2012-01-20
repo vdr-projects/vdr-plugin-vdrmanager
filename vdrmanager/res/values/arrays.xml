@@ -5,16 +5,25 @@
         <item>url</item>
         <item>wol</item>
     </string-array>
-    
     <string-array name="lang_values">
         <item>en</item>
         <item>de</item>
         <item>it</item>
     </string-array>
-    
     <string-array name="remux_entry_values">
         <item>EXT</item>
         <item>EXTERN</item>
+    </string-array>
+    
+    <string-array name="imdb_urls_values">
+        <item>akas.imdb.com</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
     </string-array>
 
 </resources>

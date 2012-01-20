@@ -4,5 +4,8 @@
   <string name="main_menu_preferences">Preferences</string>
   <string name="main_menu_info">Info</string>
   <string name="main_menu_exit">Exit</string>   
-  
+  <string name="main_menu_goto">Switch Device</string>
+  <string name="main_menu_goto_title">Switch to…</string>
+  <string name="main_menu_goto_no_vdr">Can not load selected device :(</string>
+  <string name="main_menu_switched_to">Switched to %1$s</string>
 </resources>

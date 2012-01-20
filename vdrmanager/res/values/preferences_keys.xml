@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="vdr_host_key">svdrp_host</string>
-  <string name="vdr_port_key">svdrp_port </string>
-  <string name="vdr_password_key">svdrp_password</string>
-  <string name="vdr_ssl_key">svdrp_ssl</string>
-  <string name="vdr_stream_format">stream_format</string>
-  <string name="vdr_stream_port">stream_port</string>
-  
-  <string name="alive_check_enabled_key">alive_check_enabled</string>
-  <string name="alive_check_interval_key">alive_check_interval</string>
-  
-  <string name="channel_filter_filter_key">limit_channels</string>
-  <string name="channel_filter_last_key">last_channel</string>
-  
-  <string name="wakeup_enabled_key">wakeup_enabled</string>
-  
-  <string name="wakeup_url_key">wakeup_url</string>
-  <string name="wakeup_user_key">wakeup_user</string>
-  <string name="wakeup_password_key">wakeup_password</string>
-  
-  <string name="timer_pre_start_buffer_key">timer_pre_start_buffer</string>
-  <string name="timer_post_end_buffer_key">timer_post_end_buffer</string>
-  <string name="timer_default_priority_key">timer_default_priority</string>
-  <string name="timer_default_primary_limit_key">timer_default_primary_limit</string>
-  <string name="timer_default_lifetime_key">timer_default_lifetime</string>
-  
-  <string name="epg_search_times_key">epg_search_times</string>
-  
+	<string name="vdr_host_key">vdr_host</string>
+	<string name="vdr_name_key">vdr_name</string>
+	<string name="vdr_port_key">vdr_port </string>
+	<string name="vdr_password_key">vdr_password</string>
+	<string name="vdr_ssl_key">vdr_secure</string>
+	<string name="vdr_stream_format">stream_format</string>
+	<string name="vdr_stream_port">stream_port</string>
+
+	<string name="alive_check_enabled_key">alive_check_enabled</string>
+	<string name="alive_check_interval_key">alive_check_interval</string>
+
+	<string name="channel_filter_filter_key">limit_channels</string>
+	<string name="channel_filter_last_key">last_channel</string>
+
+	
+	<string name="timer_pre_start_buffer_key">timer_pre_start_buffer</string>
+	<string name="timer_post_end_buffer_key">timer_post_end_buffer</string>
+	<string name="timer_default_priority_key">timer_default_priority</string>
+	<string name="timer_default_primary_limit_key">timer_default_primary_limit</string>
+	<string name="timer_default_lifetime_key">timer_default_lifetime</string>
+
+	<string name="epg_search_times_key">epg_search_times</string>
+	<string name="current_vdr_id_key">key_current_vdr_id</string>
+
+
+	<string name="streaming_password_key">key_streaming_password</string>
+	<string name="streaming_username_key">key_streaming_username</string>
+	<string name="vdr_encoding_key">key_vdr_encoding</string>
+	
+	<string name="wakeup_enabled_key">key_wakeup_enabled</string>
+	<string name="wakeup_url_key">key_wakeup_url</string>
+	<string name="wakeup_user_key">key_wakeup_user</string>
+	<string name="wakeup_password_key">key_wakeup_password</string>
+	<string name="wakeup_method_key">key_wakeup_method</string>
+	<string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
+	<string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
+	
+	
+	<string name="gui_enable_24h_format_key">key_enable_24h</string>
+	<string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
+	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
+	<string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
+	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
+	<string name="gui_custom_locale_key">key_gui_custom_locale</string>
+	
+	
+	<string name="vdr_conntimeout_key">key_conntimeout_key</string>
+	<string name="vdr_readtimeout_key">key_vdr_readtimeout</string>
+	<string name="vdr_timeout_key">key_vdr_timeout</string>
 </resources>

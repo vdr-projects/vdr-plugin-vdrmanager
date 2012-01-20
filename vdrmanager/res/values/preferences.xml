@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="vdr_devices_summary">Define one or more VDR Devices. (comming soon)</string>
+    <string name="vdr_devices_summary">Define one or more VDR Devices.</string>
     <string name="vdr_devices">VDR Devices</string>
 
     <!-- VDR plugin preferences -->
@@ -33,7 +33,6 @@
     <string name="wakeup_user_summary">User for remote wakeup</string>
     <string name="wakeup_password_title">Wakeup password</string>
     <string name="wakeup_password_summary">Password for remote wakeup</string>
-    <string name="wakeup_method_key">key_wakeup_method</string>
     <string name="wakeup_method_title">Wakeup method</string>
     <string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
 
@@ -41,16 +40,13 @@
         <item>Call a URL</item>
         <item>WOL</item>
     </string-array>
-    <string-array name="wakeup_methods_values">
-        <item>url</item>
-        <item>wol</item>
-    </string-array>
+
 
     <string name="default_wakeup_method">url</string>
-    <string name="wakeup_wol_custom_broadcast_key">key_wol_custom_broadcast</string>
+   
     <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
     <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of broadcast address.</string>
-    <string name="wakeup_wol_mac_key">key_wakeup_wol_mac</string>
+  
     <string name="wakeup_wol_mac_title">MAC-Address</string>
     <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
 
@@ -71,39 +67,29 @@
 
     <!-- GUI -->
     <string name="gui_preferences">GUI Settings</string>
-    <string name="gui_enable_24h_format_key">key_enable_24h</string>
+
     <string name="gui_enable_24h_format_title">Use 24-hour format</string>
     <string name="gui_enable_24h_format_summary_on">13:00</string>
     <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
-    <string name="gui_channels_show_channel_numbers_key">key_channels_show_channel_numbers</string>
+ 
     <string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
     <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
-    <string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
+  
     <string name="gui_quit_on_back_title">Quit on back button</string>
     <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
     <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
-    <string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
+  
     <string name="qui_show_imdb_button_title">Show IMDB Button</string>
     <string name="qui_show_imdb_button_summary_on">IMDB Button is shown</string>
     <string name="qui_show_imdb_button_summary_off">IMDB Button is not shown</string>
-    <string name="qui_imdb_url_key">key_qui_imdb_url</string>
+  
     <string name="qui_imdb_url_title">IMDb Site</string>
     <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
-    <string name="gui_custom_locale_key">key_gui_custom_locale</string>
+ 
 	<string name="gui_custom_locale_title">Custom language</string>
 	<string name="gui_custom_locale_sum">Set a custom language.</string>
-        
+
     <string-array name="imdb_urls">
-        <item>akas.imdb.com</item>
-        <item>imdb.com</item>
-        <item>uk.imdb.com</item>
-        <item>imdb.de</item>
-        <item>imdb.es</item>
-        <item>imdb.fr</item>
-        <item>imdb.it</item>
-        <item>imdb.pt</item>
-    </string-array>
-    <string-array name="imdb_urls_values">
         <item>International</item>
         <item>imdb.com</item>
         <item>uk.imdb.com</item>
@@ -113,11 +99,7 @@
         <item>imdb.it</item>
         <item>imdb.pt</item>
     </string-array>
-    <string-array name="lang_values">
-        <item>en</item>
-        <item>de</item>
-        <item>it</item>
-    </string-array>
+
     <string-array name="lang">
         <!-- 
         <item>Default language</item>
@@ -127,28 +109,41 @@
         <item>Italian</item>
     </string-array>
 
+    <string-array name="remux_entries">
+        <item>EXT</item>
+        <item>EXTERN (deprecated)</item>
+    </string-array>
+
     <string name="vdr_advanced_preferences">Advanced</string>
     <string name="vdr_advanced_preferences_summary">Advanced settings</string>
         
-    <string name="vdr_conntimeout_key">key_conntimeout_key</string>
+
     <string name="vdr_conntimeout_title">Connection Timeout</string>
     <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
-    <string name="vdr_readtimeout_key">key_vdr_readtimeout</string>
+
     <string name="vdr_readtimeout_title">Read Timeout</string>
     <string name="vdr_readtimeout_sum">How long (in seconds) to wait for every read line operation?</string>
-    <string name="vdr_timeout_key">key_vdr_timeout</string>
+
     <string name="vdr_timeout_title">Total timeout</string>
     <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?</string>
     
     <string name="streaming_password_title">Streamdev password</string>
     <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
-    <string name="streaming_password_key">key_streaming_password</string>
+  
 
     <string name="streaming_username_title">Streamdev username</string>
     <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
-    <string name="streaming_username_key">key_streaming_username</string>
-    
-    <string name="vdr_encoding_key">key_vdr_encoding</string>
+   
     <string name="vdr_encoding_title">Character encoding</string>
     <string name="vdr_encoding_summary">Character encoding of your VDR device. Default is utf-8.</string>
+    
+    
+    <string name="new_vdr">New VDR</string>
+    <string name="no_vdr">No VDR Devices</string>
+    <string name="vdr_devices_category">VDR devices</string>
+    <string name="vdr_prefs_category">Device</string>
+    
+    <string name="vdr_name_title">Name</string>
+    <string name="vdr_name_summary">A name for this device</string>
+    <string name="vdr_device_delete_qeustion">Delete this device?</string>
 </resources>

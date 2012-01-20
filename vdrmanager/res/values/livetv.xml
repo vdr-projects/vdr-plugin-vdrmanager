@@ -31,9 +31,9 @@
 	<string name="remux_enable_summary">Enable streaming via remux (e.g. externremux.sh)</string>
 	
 	<string name="remux_command_title">Command</string>
-	<string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/Extern/1</string>
+	<string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/EXT/1</string>
 	
 	<string name="remux_parameter_title">Parameter</string>
-	<string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/Extern;DSL1000/1</string>
+	<string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/EXT;DSL1000/1</string>
 	
 </resources>
