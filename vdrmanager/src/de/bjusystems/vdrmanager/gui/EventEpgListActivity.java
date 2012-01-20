@@ -38,8 +38,9 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	private final static ArrayList<Event> CACHE = new ArrayList<Event>();
 
-	private static final String TAG = EventEpgListActivity.class.getSimpleName();
-	
+	private static final String TAG = EventEpgListActivity.class
+			.getSimpleName();
+
 	protected static Date nextForceCache = null;
 
 	private static Channel cachedChannel = null;
@@ -49,6 +50,13 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	View switcher;
 
 	ArrayAdapter<Channel> channelSpinnerAdapter;
+
+	@Override
+	public void reset() {
+		CACHE.clear();
+		ChannelClient.clearCache();
+		super.reset();
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -62,7 +70,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		channelSpinner = (Spinner) findViewById(R.id.epg_list_channel_spinner);
 		channelSpinner.setAdapter(channelSpinnerAdapter);
-	
+
 		switcher = findViewById(R.id.switch_epg_view);
 		switcher.setOnClickListener(this);
 
@@ -72,7 +80,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// show needed items
 
 		adapter = new ChannelEventAdapter(this);
-
 
 		// if (currentChannel != null) {
 
@@ -90,17 +97,17 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 		// register EPG item click
 		listView.setOnItemClickListener(this);
-		
-		if(checkInternetConnection() == false){
+
+		if (checkInternetConnection() == false) {
 			return;
 		}
 
 		startQuery();
-		
+
 	}
 
-	private void startQuery(){
-		new ChannelsTask(this, new ChannelClient()){
+	private void startQuery() {
+		new ChannelsTask(this, new ChannelClient(true)) {
 			public void finished(SvdrpEvent event) {
 				if (event == SvdrpEvent.CACHE_HIT
 						|| event == SvdrpEvent.FINISHED_SUCCESS) {
@@ -110,8 +117,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 					int count = 0;
 					for (final Channel c : channels) {
 						channelSpinnerAdapter.add(c);
-						if(currentChannel != null && !found){
-							if(currentChannel.equals(c)){
+						if (currentChannel != null && !found) {
+							if (currentChannel.equals(c)) {
 								found = true;
 							} else {
 								count++;
@@ -119,11 +126,13 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 						}
 					}
 					channelSpinner.setSelection(count);
-					channelSpinner.setOnItemSelectedListener(EventEpgListActivity.this);
+					channelSpinner
+							.setOnItemSelectedListener(EventEpgListActivity.this);
 				} else {
 					noConnection(event);
 				}
-			}}.start();
+			}
+		}.start();
 
 	}
 
@@ -147,7 +156,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// update search
 		startEpgQuery(false);
 	}
-
 
 	public void onNothingSelected(final AdapterView<?> arg0) {
 		// startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
@@ -174,7 +182,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		return true;
 	}
 
-
 	@Override
 	public void onClick(View view) {
 		if (view == switcher) {
@@ -188,7 +195,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
-	 private void startEpgQuery(final boolean force) {
+	private void startEpgQuery(final boolean force) {
 		if (useCache() && !force) {
 			Calendar cal = Calendar.getInstance();
 			int day = -1;
@@ -229,11 +236,11 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		task.run();
 	}
 
-		
-		@Override
-		protected SvdrpClient<Epg> getClient() {
-			return this.epgClient;
-		}
+	@Override
+	protected SvdrpClient<Epg> getClient() {
+		return this.epgClient;
+	}
+
 	/*
 	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
 	 * cache hit
@@ -241,7 +248,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
-	synchronized protected boolean  finishedSuccessImpl() {
+	synchronized protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		CACHE.clear();
 		Date now = new Date();
@@ -324,9 +331,9 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
-//	@Override
-//	protected void timerModified() {
-//		cachedChannel = null;
-//	}
+	// @Override
+	// protected void timerModified() {
+	// cachedChannel = null;
+	// }
 
 }

@@ -17,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -304,7 +305,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 					String url = String.format(IMDB_URL,
 							Preferences.get().getImdbUrl(),
 							String.valueOf(title.getText()));
-					encode(url,"utf-8");
+					url = encode(url,"utf-8");
 					Intent i = new Intent(Intent.ACTION_VIEW);
 					i.setData(Uri.parse(url));
 					startActivity(i);
@@ -573,23 +574,19 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 	// return super.dispatchTouchEvent(me);
 	// }
 
-	private static final int MENU_SHARE = 0;
-
-	private static final int MENU_SEARCH_REPEAT = 1;
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		MenuItem item;
+		
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.epg_details, menu);
 
-		item = menu.add(MENU_SEARCH_REPEAT, MENU_SEARCH_REPEAT, 0,
-				R.string.search_reapt);
-		item.setIcon(android.R.drawable.ic_menu_search);
-		item.setAlphabeticShortcut('r');
+		
+		//mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.epg_details_menu_share).getActionProvider();
+        //mShareActionProvider.setShareIntent(getDefaultShareIntent());
 
-		item = menu.add(MENU_SHARE, MENU_SHARE, 0, R.string.share);
-		item.setIcon(android.R.drawable.ic_menu_share);
-		item.setAlphabeticShortcut('s');
+		
 		return true;
 	}
 
@@ -599,11 +596,11 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == MENU_SHARE) {
+		if (item.getItemId() == R.id.epg_details_menu_share) {
 			shareEvent(cEvent);
 			return true;
 		}
-		if (item.getItemId() == MENU_SEARCH_REPEAT) {
+		if (item.getItemId() == R.id.epg_details_menu_search_repeat) {
 			Intent intent = new Intent(this, EpgSearchListActivity.class);
 			intent.setAction(Intent.ACTION_SEARCH);
 			intent.putExtra(SearchManager.QUERY, cEvent.getTitle());
@@ -686,5 +683,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		setTitle(getString(R.string.epg_of_a_channel, cn, current + 1,
 				epgs.size()));
 	}
+	
+	//private ShareActionProvider mShareActionProvider;
+
 
 }

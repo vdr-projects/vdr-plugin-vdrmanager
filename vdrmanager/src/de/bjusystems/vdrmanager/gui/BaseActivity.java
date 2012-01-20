@@ -1,15 +1,25 @@
 package de.bjusystems.vdrmanager.gui;
 
+import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import de.bjusystems.vdrmanager.R;
@@ -22,7 +32,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 public abstract class BaseActivity<Result, T extends ListView> extends Activity
-		implements OnClickListener, SvdrpAsyncListener<Result> {
+		implements OnClickListener, SvdrpAsyncListener<Result>, Cache {
 
 	public static final String TAG = BaseActivity.class.getName();
 
@@ -35,9 +45,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	protected ViewFlipper flipper;
 
 	private Button retry;
-	
+
 	private ProgressDialog progress;
-	//protected SvdrpProgressDialog progress;
+
+	// protected SvdrpProgressDialog progress;
 
 	abstract protected String getWindowTitle();
 
@@ -48,6 +59,20 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	}
 
 	abstract protected boolean displayingResults();
+
+	protected boolean isForceRefresh() {
+		if (forceRefresh == false) {
+			return false;
+		}
+		forceRefresh = false;
+		return true;
+	}
+
+	protected boolean forceRefresh = false;
+
+	public void reset() {
+
+	}
 
 	protected void switchNoConnection() {
 		if (flipper == null) {
@@ -65,10 +90,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	@Override
 	protected void onResume() {
 		Preferences.setLocale(this);
-		//Preferences.init(this);
+		// Preferences.init(this);
 		super.onResume();
 	}
-	
+
 	protected void initFlipper() {
 		this.flipper = (ViewFlipper) findViewById(R.id.flipper);
 		retry = (Button) findViewById(R.id.retry_button);
@@ -99,34 +124,91 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	// setTitle(title);
 	// }
 
+	public void initActionBar() {
+		int api = Build.VERSION.SDK_INT;
+		if (api < 11) {
+			return;
+		}
+
+		ActionBar actionBar = getActionBar();
+		actionBar.setHomeButtonEnabled(true);
+		// actionBar.setDisplayShowHomeEnabled(false);
+		// actionBar.setDisplayShowTitleEnabled(false);
+		// View actionBarView =
+		// getLayoutInflater().inflate(R.layout.action_bar_custom_view, null);
+		// actionBar.setCustomView(actionBarView);
+		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		// ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<String>(this,
+		// android.R.layout.simple_spinner_dropdown_item);
+		// mSpinnerAdapter.add("A");
+		// actionBar.setListNavigationCallbacks(mSpinnerAdapter, new
+		// OnNavigationListener() {
+
+		// public boolean onNavigationItemSelected(int itemPosition, long
+		// itemId) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		// });
+
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
+		getApp().addActivityToFinish(this);
+		initActionBar();
+
+		// your logic for click listner
+		// setListenerForActionBarCustomView(actionBarView);
+
+		// private void setListenerForActionBarCustomView(View actionBarView) {
+		// ActionBarCustomViewOnClickListener actionBarCustomViewOnClickListener
+		// = new ActionBarCustomViewOnClickListener();
+		// actionBarView.findViewById(R.id.text_view_title).setOnClickListener(actionBarCustomViewOnClickListener);
+		// }
+
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		MenuItem item;
-		item = menu.add(MENU_GROUP_REFRESH, MENU_REFRESH, 0, R.string.refresh);
-		item.setIcon(R.drawable.ic_menu_refresh);
-		item.setAlphabeticShortcut('r');
+
+		// MenuItem item;
+		// item = menu.add(MENU_GROUP_REFRESH, MENU_REFRESH, 0,
+		// R.string.refresh);
+		// item.setIcon(R.drawable.ic_menu_refresh);
+		// item.setAlphabeticShortcut('r');
+		MenuInflater inf = getMenuInflater();
+		inf.inflate(R.menu.refresh_menu, menu);
+
+		// SearchView searchView = (SearchView)
+		// menu.findItem(R.id.menu_search).getActionView();
+		// searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
 		return true;
 	}
 
 	abstract protected void refresh();
 
 	abstract protected void retry();
-	
+
 	abstract protected SvdrpClient<Result> getClient();
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_REFRESH:
+		case R.id.list_refresh:
 			backupViewSelection();
 			refresh();
+			return true;
+		case android.R.id.home:
+			Intent intent = new Intent(this, VdrManagerActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 			return true;
 		default:
 			return false;
@@ -205,7 +287,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	int top;
 
 	protected boolean checkInternetConnection() {
-		if(Utils.checkInternetConnection(this)){
+		if (Utils.checkInternetConnection(this)) {
 			return true;
 		}
 		noInternetConnection();
@@ -240,9 +322,9 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 			break;
 		case ERROR:
 			alert(R.string.epg_client_errors);
-			 progress.dismiss();
+			progress.dismiss();
 			break;
-	
+
 		case CONNECTED:
 			connected();
 			break;
@@ -278,7 +360,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	}
 
 	protected boolean finishedSuccess = false;
-	
+
 	protected void cacheHit() {
 
 	}
@@ -298,14 +380,14 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	}
 
 	public void svdrpException(final SvdrpException exception) {
-//		svdrpException(exception);
+		// svdrpException(exception);
 		// Log.w(TAG, exception);
 		alert(getString(R.string.vdr_error_text, exception.getMessage()));
 	}
-	
+
 	@Override
 	protected void onDestroy() {
-		if(progress.isShowing()){
+		if (progress.isShowing()) {
 			progress.dismiss();
 		}
 		super.onDestroy();

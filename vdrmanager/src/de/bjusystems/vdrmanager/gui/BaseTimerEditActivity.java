@@ -1,9 +1,5 @@
 package de.bjusystems.vdrmanager.gui;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -36,8 +32,8 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		BaseEventListActivity<T> implements OnClickListener // SvdrpAsyncListener<Timer>,
 {
 
-	private static final ScheduledExecutorService worker = Executors
-			.newSingleThreadScheduledExecutor();
+	//private static final ScheduledExecutorService worker = Executors
+			//.newSingleThreadScheduledExecutor();
 
 	// /@Override
 	// public boolean onPrepareOptionsMenu(Menu menu) {

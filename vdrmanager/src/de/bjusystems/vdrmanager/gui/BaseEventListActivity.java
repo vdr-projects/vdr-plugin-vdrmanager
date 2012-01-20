@@ -155,6 +155,12 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
+		switch(item.getItemId()){
+		case R.id.epg_list_menu_channels:
+			startActivity(new Intent(this, ChannelListActivity.class));
+			return true;
+		}
+		
 		// switch (item.getItemId()) {
 		// case R.id.epg_menu_search:
 		// startSearchManager();

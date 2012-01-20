@@ -3,11 +3,16 @@ package de.bjusystems.vdrmanager.data.db;
 import java.sql.SQLException;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.j256.ormlite.android.AndroidCompiledStatement;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -80,7 +85,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	 * Returns the Database Access Object (DAO) for our Label class. It will create it or just give the cached
 	 * value.
 	 */
-	public RuntimeExceptionDao<Vdr, Integer> getVDRDAO() {
+	public RuntimeExceptionDao<Vdr, Integer> getVdrDAO() {
 		if (vdrDAO == null) {
 			vdrDAO = getRuntimeExceptionDao(Vdr.class);
 		}
@@ -94,5 +99,17 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void close() {
 		super.close();
 		vdrDAO = null;
+	}
+
+	public Cursor getVdrCursor() throws SQLException {
+		QueryBuilder<Vdr, Integer> qb = getVdrDAO().queryBuilder();
+
+		PreparedQuery<Vdr> preparedQuery = qb.prepare();
+
+		AndroidCompiledStatement compiledStatement = (AndroidCompiledStatement) preparedQuery
+				.compile(getConnectionSource()
+						.getReadOnlyConnection(), StatementType.SELECT);
+
+		return compiledStatement.getCursor();
 	}
 }

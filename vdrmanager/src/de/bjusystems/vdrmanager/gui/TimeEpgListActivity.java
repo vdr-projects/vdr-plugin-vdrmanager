@@ -56,6 +56,13 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	int selectedIndex = 0;
 
 
+	@Override
+	public void reset() {
+		CACHE.clear();
+		cachedTime = null;
+		super.reset();
+	}
+	
 	
 	@Override
 	protected SvdrpClient<Epg> getClient() {

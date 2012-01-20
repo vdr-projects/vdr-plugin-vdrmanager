@@ -244,7 +244,7 @@ public abstract class SvdrpClient<Result> {
 	protected void writeLine(final String line) throws IOException {
 
 		String command = line + "\r\n";
-		if(false && Preferences.get().isSSL()){
+		if(false && Preferences.get().isSecure()){
 			command = crypt.encrypt(command, Preferences.get().getPassword());
 		}
 		final byte[] bytes = command.getBytes("utf-8");
@@ -294,7 +294,7 @@ public abstract class SvdrpClient<Result> {
 			Log.w(TAG, usex);
 			line = lineBytes.toString();
 		}
-		if(false && Preferences.get().isSSL()){
+		if(false && Preferences.get().isSecure()){
 			line = crypt.decrypt(line, Preferences.get().getPassword());
 		}
 		return line;

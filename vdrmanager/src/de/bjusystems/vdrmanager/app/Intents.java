@@ -8,4 +8,8 @@ public interface Intents {
 	public static final int EDIT_TIMER = 0;
 	public static final int ADD_TIMER = 1;
 	
+	public static final String VDR_ID = "VDR_ID";  
+	
+	public static final int EDIT_VDR = 2;
+	
 }

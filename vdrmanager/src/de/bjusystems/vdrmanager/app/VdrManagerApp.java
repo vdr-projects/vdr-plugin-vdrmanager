@@ -12,24 +12,23 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.Vdr;
+import de.bjusystems.vdrmanager.gui.Cache;
 
 public class VdrManagerApp extends Application {
 
 	public enum EpgListState {
-		EPG_TIME,
-		EPG_CHANNEL,
-		EPG_SEARCH
+		EPG_TIME, EPG_CHANNEL, EPG_SEARCH
 	}
 
 	private EpgListState epgListState;
 	private Event currentEvent;
 	private Timer currentTimer;
 	private Channel currentChannel;
-	
-	public static final Locale SYSTEM_LOCALE = Locale.getDefault() ;
-	
+
+	public static final Locale SYSTEM_LOCALE = Locale.getDefault();
+
 	private Vdr currentVDR;
-	
+
 	public Vdr getCurrentVDR() {
 		return currentVDR;
 	}
@@ -39,7 +38,7 @@ public class VdrManagerApp extends Application {
 	}
 
 	private List<Event> currentEpgList = new ArrayList<Event>();
-	
+
 	public List<Event> getCurrentEpgList() {
 		return currentEpgList;
 	}
@@ -58,7 +57,7 @@ public class VdrManagerApp extends Application {
 		super.onCreate();
 		Preferences.init(this);
 	}
-	
+
 	public void clear() {
 		this.currentEvent = null;
 		this.currentTimer = null;
@@ -93,7 +92,6 @@ public class VdrManagerApp extends Application {
 		this.currentChannel = currentChannel;
 		this.epgListState = EpgListState.EPG_CHANNEL;
 	}
-
 
 	public EpgSearchParams getCurrentSearch() {
 		return currentSearch;
@@ -130,7 +128,10 @@ public class VdrManagerApp extends Application {
 	}
 
 	public void finishActivities() {
-		for(final Activity activity : activitiesToFinish) {
+		for (final Activity activity : activitiesToFinish) {
+			if (activity instanceof Cache) {
+				((Cache) activity).reset();
+			}
 			activity.finish();
 		}
 		activitiesToFinish.clear();

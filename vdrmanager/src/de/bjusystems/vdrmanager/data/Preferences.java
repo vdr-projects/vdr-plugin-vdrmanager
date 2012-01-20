@@ -1,11 +1,16 @@
 package de.bjusystems.vdrmanager.data;
 
+import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
+import de.bjusystems.vdrmanager.gui.VdrListActivity;
 
 /**
  * Class for all preferences
@@ -16,108 +21,33 @@ import de.bjusystems.vdrmanager.R;
 public class Preferences {
 
 	public static final String DEFAULT_LANGUAGE_VALUE = "DEFAULT";
-	
+
 	public static final String PREFERENCE_FILE_NAME = "VDR-Manager";
 
-	private boolean ssl;
-	/** SVDRP host name or ip */
-	private String svdrpHost;
-	/** SVDRP port */
-	private int svdrpPort;
-	/** Password */
-	private String password;
-	/** should channels be filtered? */
-	private boolean filterChannels;
-	/** last channel to retrieve */
-	private String channels;
-	/** Enable remote wakeup */
-	private boolean wakeupEnabled;
-	/** URL of the wakeup script */
-	private String wakeupUrl;
-	/** User for wakeup */
-	private String wakeupUser;
-	/** Password for wakeup */
-	private String wakeupPassword;
-	/**
-	 * vdr mac for wol
-	 * 
-	 * @since 0.2
-	 */
-	private String vdrMac;
-	/**
-	 * which wakeup method to use
-	 * 
-	 * @since 0.2
-	 * 
-	 */
-	private String wakeupMethod;
-	/** Check for running VDR is enabled */
-	private boolean aliveCheckEnabled;
-	/** Intervall for alive test */
-	private int aliveCheckInterval;
-	/** Buffer before event */
-	private int timerPreMargin;
-	/** Buffer after event */
-	private int timerPostMargin;
-	/** Default priority */
-	private int timerDefaultPriority;
-	/** Default lifetime */
-	private int timerDefaultLifetime;
+	private static Vdr current;
+
+	private static OrmDatabaseHelper db;
+
+	public static OrmDatabaseHelper getDatabaseHelper() {
+		return db;
+	}
+
+	public static void setCurrentVdr(Context context, Vdr vdr) {
+		setCurrentInternal(context, vdr);
+	}
+
+	public Vdr getCurrentVdr() {
+		return current;
+	}
+
 	/** user defined epg search times */
 	private String epgSearchTimes;
-	/**
-	 * Which port to use for streaming
-	 * 
-	 * @since 0.2
-	 */
-	private int streamPort = 3000;
-	
-	private String streamingUsername = "";
-	
-	private String streamingPassword = ""; 
-
-	/**
-	 * Which format to use for streaming
-	 * 
-	 * @since 0.2
-	 */
-	private String streamFormat = "TS";
-
 	/**
 	 * format times AM/PM or 24H
 	 * 
 	 * @since 0.2
 	 */
 	private boolean use24hFormat;
-
-	/**
-	 * Do not send broadcasts, send directly to the host (router problem)
-	 * 
-	 * @since 0.2
-	 */
-	private String wolCustomBroadcast = "";
-
-	/**
-	 * Whether to show channel numbers in the overviews
-	 * 
-	 * @since 0.2
-	 */
-	private boolean showChannelNumbers = false;
-
-	/**
-	 * Use remux ?
-	 */
-	private boolean enableRemux;
-
-	/**
-	 * Remux command
-	 */
-	private String remuxCommand;
-
-	/**
-	 * Remux command Parameter
-	 */
-	private String remuxParameter;
 
 	/**
 	 * Quits the app on back button
@@ -134,50 +64,22 @@ public class Preferences {
 	 */
 	private String imdbUrl = "akas.imdb.com";
 
-	/**
-	 * Connection timeout
-	 */
-	private int connectionTimeout;
+	private boolean showChannelNumbers = false;
 
-	/**
-	 * Read Timeout
-	 */
-	private int readTimeout;
-
-	/**
-	 * Timeout for a whole command run
-	 */
-	private int timeout;
-
-	private String encoding = "utf-8";
-	
-	
 	public String getEncoding() {
-		return encoding;
+		return getCurrentVdr().getEncoding();
 	}
 
 	public int getConnectionTimeout() {
-		return connectionTimeout;
+		return getCurrentVdr().getConnectionTimeout();
 	}
 
 	public int getReadTimeout() {
-		return readTimeout;
+		return getCurrentVdr().getReadTimeout();
 	}
 
 	public int getTimeout() {
-		return timeout;
-	}
-
-	public void setConnectionTimeout(int connectionTimeout) {
-		this.connectionTimeout = connectionTimeout;
-	}
-
-	public void setReadTimeout(int readTimeout) {
-		this.readTimeout = readTimeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
+		return getCurrentVdr().getTimeout();
 	}
 
 	public String getImdbUrl() {
@@ -195,13 +97,12 @@ public class Preferences {
 		return showImdbButton;
 	}
 
-
 	public String getStreamingUsername() {
-		return streamingUsername;
+		return getCurrentVdr().getStreamingUsername();
 	}
 
 	public String getStreamingPassword() {
-		return streamingPassword;
+		return getCurrentVdr().getStreamingPassword();
 	}
 
 	/** Properties singleton */
@@ -215,7 +116,7 @@ public class Preferences {
 	 * @since 0.2
 	 */
 	public String getWolCustomBroadcast() {
-		return wolCustomBroadcast;
+		return getCurrentVdr().getWolCustomBroadcast();
 	}
 
 	/**
@@ -233,8 +134,8 @@ public class Preferences {
 	 * 
 	 * @return true, if use SSL connections
 	 */
-	public boolean isSSL() {
-		return ssl;
+	public boolean isSecure() {
+		return getCurrentVdr().isSecure();
 	}
 
 	/**
@@ -243,7 +144,7 @@ public class Preferences {
 	 * @return true, if channels will be filtered
 	 */
 	public boolean isFilterChannels() {
-		return filterChannels;
+		return getCurrentVdr().isFilterChannels();
 	}
 
 	/**
@@ -252,7 +153,7 @@ public class Preferences {
 	 * @return channel number
 	 */
 	public String getChannels() {
-		return filterChannels ? channels : "";
+		return isFilterChannels() ? getCurrentVdr().getChannelFilter() : "";
 	}
 
 	/**
@@ -261,7 +162,7 @@ public class Preferences {
 	 * @return SVDRP host
 	 */
 	public String getSvdrpHost() {
-		return svdrpHost;
+		return getCurrentVdr().getHost();
 	}
 
 	/**
@@ -270,7 +171,7 @@ public class Preferences {
 	 * @return SVDRP port
 	 */
 	public int getSvdrpPort() {
-		return svdrpPort;
+		return getCurrentVdr().getPort();
 	}
 
 	/**
@@ -279,7 +180,7 @@ public class Preferences {
 	 * @return SVDRO password
 	 */
 	public String getPassword() {
-		return password;
+		return getCurrentVdr().getPassword();
 	}
 
 	/**
@@ -288,7 +189,9 @@ public class Preferences {
 	 * @return true, if remote wakeup is enabled
 	 */
 	public boolean isWakeupEnabled() {
-		return wakeupEnabled;
+		return true;
+		// TODO
+		// return getCurrentVdr().isWakeupEnabled();
 	}
 
 	/**
@@ -297,7 +200,7 @@ public class Preferences {
 	 * @return wakeup url
 	 */
 	public String getWakeupUrl() {
-		return wakeupUrl;
+		return getCurrentVdr().getWakeupUrl();
 	}
 
 	/**
@@ -306,7 +209,7 @@ public class Preferences {
 	 * @return user name
 	 */
 	public String getWakeupUser() {
-		return wakeupUser;
+		return getCurrentVdr().getWakeupUser();
 	}
 
 	/**
@@ -315,7 +218,7 @@ public class Preferences {
 	 * @return password
 	 */
 	public String getWakeupPassword() {
-		return wakeupPassword;
+		return getCurrentVdr().getWakeupPassword();
 	}
 
 	/**
@@ -324,7 +227,7 @@ public class Preferences {
 	 * @return true, if enabled
 	 */
 	public boolean isAliveCheckEnabled() {
-		return aliveCheckEnabled;
+		return getCurrentVdr().isAliveCheckEnabled();
 	}
 
 	/**
@@ -333,7 +236,7 @@ public class Preferences {
 	 * @return time in seconds
 	 */
 	public int getAliveCheckInterval() {
-		return aliveCheckInterval;
+		return getCurrentVdr().getAliveCheckInterval();
 	}
 
 	/**
@@ -342,7 +245,7 @@ public class Preferences {
 	 * @return pre event buffer
 	 */
 	public int getTimerPreMargin() {
-		return timerPreMargin;
+		return getCurrentVdr().getTimerPreMargin();
 	}
 
 	/**
@@ -351,7 +254,7 @@ public class Preferences {
 	 * @return post event buffer
 	 */
 	public int getTimerPostMargin() {
-		return timerPostMargin;
+		return getCurrentVdr().getTimerPostMargin();
 	}
 
 	/**
@@ -360,7 +263,7 @@ public class Preferences {
 	 * @return default priority
 	 */
 	public int getTimerDefaultPriority() {
-		return timerDefaultPriority;
+		return getCurrentVdr().getTimerDefaultPriority();
 	}
 
 	/**
@@ -369,7 +272,7 @@ public class Preferences {
 	 * @return default lifetime
 	 */
 	public int getTimerDefaultLifetime() {
-		return timerDefaultLifetime;
+		return getCurrentVdr().getTimerDefaultLifetime();
 	}
 
 	/**
@@ -388,7 +291,7 @@ public class Preferences {
 	 * @since 0.2
 	 */
 	public String getVdrMac() {
-		return vdrMac;
+		return getCurrentVdr().getMac();
 	}
 
 	/**
@@ -398,7 +301,7 @@ public class Preferences {
 	 * @since 0.2
 	 */
 	public String getWakeupMethod() {
-		return wakeupMethod;
+		return getCurrentVdr().getWakeupMethod();
 	}
 
 	/**
@@ -408,9 +311,9 @@ public class Preferences {
 	 * @since 02.
 	 */
 	public int getStreamPort() {
-		return streamPort;
+		return getCurrentVdr().getStreamPort();
 	}
-	
+
 	/**
 	 * Getter for selected streaming format
 	 * 
@@ -418,7 +321,7 @@ public class Preferences {
 	 * @since 0.2
 	 */
 	public String getStreamFormat() {
-		return streamFormat;
+		return getCurrentVdr().getStreamFormat();
 	}
 
 	/**
@@ -467,7 +370,7 @@ public class Preferences {
 	 * @return
 	 */
 	public boolean isEnableRemux() {
-		return enableRemux;
+		return getCurrentVdr().isEnableRemux();
 	}
 
 	/**
@@ -476,7 +379,7 @@ public class Preferences {
 	 * @return
 	 */
 	public String getRemuxCommand() {
-		return remuxCommand;
+		return getCurrentVdr().getRemuxCommand();
 	}
 
 	/**
@@ -485,7 +388,7 @@ public class Preferences {
 	 * @return
 	 */
 	public String getRemuxParameter() {
-		return remuxParameter;
+		return getCurrentVdr().getRemuxParameter();
 	}
 
 	/**
@@ -519,65 +422,69 @@ public class Preferences {
 	private static void initInternal(final Context context) {
 
 		final Preferences prefs = new Preferences();
-
-		prefs.svdrpHost = getString(context, R.string.vdr_host_key, "0.0.0.0");
-		prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6420);
-		prefs.password = getString(context, R.string.vdr_password_key, "");
-		prefs.ssl = getBoolean(context, R.string.vdr_ssl_key, false);
-		prefs.streamPort = getInt(context, R.string.vdr_stream_port, 3000);
-		prefs.streamFormat = getString(context, R.string.vdr_stream_format,
-				"TS");
-
-		prefs.aliveCheckEnabled = getBoolean(context,
-				R.string.alive_check_enabled_key, false);
-		prefs.aliveCheckInterval = getInt(context,
-				R.string.alive_check_interval_key, 60);
-
-		prefs.channels = getString(context, R.string.channel_filter_last_key,
-				"").replace(" ", "");
-		prefs.filterChannels = getBoolean(context,
-				R.string.channel_filter_filter_key, false);
-
-		prefs.wakeupEnabled = getBoolean(context, R.string.wakeup_enabled_key,
-				false);
-		prefs.wakeupUrl = getString(context, R.string.wakeup_url_key, "");
-		prefs.wakeupUser = getString(context, R.string.wakeup_user_key, "");
-		prefs.wakeupPassword = getString(context, R.string.wakeup_password_key,
-				"");
-
-		prefs.timerPreMargin = getInt(context,
-				R.string.timer_pre_start_buffer_key, 5);
-		prefs.timerPostMargin = getInt(context,
-				R.string.timer_post_end_buffer_key, 30);
-		prefs.timerDefaultPriority = getInt(context,
-				R.string.timer_default_priority_key, 99);
-		prefs.timerDefaultLifetime = getInt(context,
-				R.string.timer_default_lifetime_key, 99);
-
+		//
+		// prefs.svdrpHost = getString(context, R.string.vdr_host_key,
+		// "0.0.0.0");
+		// prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6420);
+		// prefs.password = getString(context, R.string.vdr_password_key, "");
+		// prefs.ssl = getBoolean(context, R.string.vdr_ssl_key, false);
+		// prefs.streamPort = getInt(context, R.string.vdr_stream_port, 3000);
+		// prefs.streamFormat = getString(context, R.string.vdr_stream_format,
+		// "TS");
+		//
+		// prefs.aliveCheckEnabled = getBoolean(context,
+		// R.string.alive_check_enabled_key, false);
+		// prefs.aliveCheckInterval = getInt(context,
+		// R.string.alive_check_interval_key, 60);
+		//
+		// prefs.channels = getString(context, R.string.channel_filter_last_key,
+		// "").replace(" ", "");
+		// prefs.filterChannels = getBoolean(context,
+		// R.string.channel_filter_filter_key, false);
+		//
+		// prefs.wakeupEnabled = getBoolean(context,
+		// R.string.wakeup_enabled_key,
+		// false);
+		// prefs.wakeupUrl = getString(context, R.string.wakeup_url_key, "");
+		// prefs.wakeupUser = getString(context, R.string.wakeup_user_key, "");
+		// prefs.wakeupPassword = getString(context,
+		// R.string.wakeup_password_key,
+		// "");
+		//
+		// prefs.timerPreMargin = getInt(context,
+		// R.string.timer_pre_start_buffer_key, 5);
+		// prefs.timerPostMargin = getInt(context,
+		// R.string.timer_post_end_buffer_key, 30);
+		// prefs.timerDefaultPriority = getInt(context,
+		// R.string.timer_default_priority_key, 99);
+		// prefs.timerDefaultLifetime = getInt(context,
+		// R.string.timer_default_lifetime_key, 99);
+		//
 		prefs.epgSearchTimes = getString(context,
 				R.string.epg_search_times_key, "");
-
-		prefs.vdrMac = getString(context, R.string.wakeup_wol_mac_key, "");
-		prefs.wakeupMethod = getString(context, R.string.wakeup_method_key,
-				"url");
-
-		prefs.use24hFormat = getBoolean(context,
-				R.string.gui_enable_24h_format_key, true);
-
-		prefs.wolCustomBroadcast = getString(context,
-				R.string.wakeup_wol_custom_broadcast_key, "");
-
+		//
+		// prefs.vdrMac = getString(context, R.string.wakeup_wol_mac_key, "");
+		// prefs.wakeupMethod = getString(context, R.string.wakeup_method_key,
+		// "url");
+		//
+		// prefs.use24hFormat = getBoolean(context,
+		// R.string.gui_enable_24h_format_key, true);
+		//
+		// prefs.wolCustomBroadcast = getString(context,
+		// R.string.wakeup_wol_custom_broadcast_key, "");
+		//
 		prefs.showChannelNumbers = getBoolean(context,
 				R.string.gui_channels_show_channel_numbers_key, false);
-
-		prefs.enableRemux = getBoolean(context, R.string.key_remux_enable,
-				false);
-
-		prefs.remuxCommand = getString(context, R.string.key_remux_command,
-				"EXT");
-
-		prefs.remuxParameter = getString(context, R.string.key_remux_parameter,
-				"");
+		//
+		// prefs.enableRemux = getBoolean(context, R.string.key_remux_enable,
+		// false);
+		//
+		// prefs.remuxCommand = getString(context, R.string.key_remux_command,
+		// "EXT");
+		//
+		// prefs.remuxParameter = getString(context,
+		// R.string.key_remux_parameter,
+		// "");
 
 		prefs.quiteOnBackButton = getBoolean(context,
 				R.string.qui_quit_on_back_key, true);
@@ -586,18 +493,23 @@ public class Preferences {
 				R.string.qui_show_imdb_button_key, true);
 
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
-
-		prefs.connectionTimeout = getInt(context, R.string.vdr_conntimeout_key,
-				10);
-		prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key, 10);
-		prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
-
-		prefs.streamingUsername = getString(context, R.string.streaming_username_key, "");
-		
-		prefs.streamingPassword = getString(context, R.string.streaming_password_key, "");
-		
-		prefs.encoding  = getString(context, R.string.vdr_encoding_key, "utf-8");
-		
+		//
+		// prefs.connectionTimeout = getInt(context,
+		// R.string.vdr_conntimeout_key,
+		// 10);
+		// prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key,
+		// 10);
+		// prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
+		//
+		// prefs.streamingUsername = getString(context,
+		// R.string.streaming_username_key, "");
+		//
+		// prefs.streamingPassword = getString(context,
+		// R.string.streaming_password_key, "");
+		//
+		// prefs.encoding = getString(context, R.string.vdr_encoding_key,
+		// "utf-8");
+		//
 		thePrefs = prefs;
 	}
 
@@ -613,10 +525,12 @@ public class Preferences {
 	 * @return Preferences
 	 */
 	public static void init(final Context context) {
-
 		// if (thePrefs != null) {
 		// return;
 		// }
+		if (db == null) {
+			db = new OrmDatabaseHelper(context);
+		}
 
 		synchronized (Preferences.class) {
 			// if (thePrefs != null) {
@@ -626,6 +540,130 @@ public class Preferences {
 			setLocale(context);
 		}
 
+		// if (current != null) {
+		// return;
+		// }
+
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		int id = sharedPrefs.getInt(
+				context.getString(R.string.current_vdr_id_key), -1);
+
+		Vdr vdr = null;
+		if (id != -1) {
+			vdr = db.getVdrDAO().queryForId(id);
+		}
+
+		if (vdr != null) {
+			setCurrentInternal(context, vdr);
+			return;
+		}
+
+		List<Vdr> list = db.getVdrDAO().queryForAll();
+		if (list != null && list.isEmpty() == false) {
+			vdr = list.get(0);
+			setCurrentInternal(context, vdr);
+			return;
+		}
+		if (initFromOldVersion(context) == false) {
+			Intent intent = new Intent();
+			intent.setClass(context, VdrListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(intent);
+			Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	private static void setCurrentInternal(Context context, Vdr vdr) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		current = vdr;
+		sharedPrefs
+				.edit()
+				.putInt(context.getString(R.string.current_vdr_id_key),
+						current.getId()).commit();
+	}
+
+	private static boolean initFromOldVersion(Context context) {
+		int version = -1;
+		try {
+			version = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0).versionCode;
+		} catch (Exception ex) {
+			return false;
+		}
+
+		if (version != 40) {
+			return false;
+		}
+
+		Vdr vdr = new Vdr();
+
+		vdr.setHost(getString(context, R.string.vdr_host_key, "0.0.0.0"));
+		vdr.setName("Default");
+		vdr.setPort(getInt(context, R.string.vdr_port_key, 6420));
+		vdr.setPassword(getString(context, R.string.vdr_password_key, ""));
+		vdr.setSecure(getBoolean(context, R.string.vdr_ssl_key, false));
+		vdr.setStreamPort(getInt(context, R.string.vdr_stream_port, 3000));
+		vdr.setStreamFormat(getString(context, R.string.vdr_stream_format, "TS"));
+
+		vdr.setAliveCheckEnabled(getBoolean(context,
+				R.string.alive_check_enabled_key, false));
+		vdr.setAliveCheckInterval(getInt(context,
+				R.string.alive_check_interval_key, 60));
+
+		vdr.setChannelFilter(getString(context,
+				R.string.channel_filter_last_key, "").replace(" ", ""));
+		vdr.setFilterChannels(getBoolean(context,
+				R.string.channel_filter_filter_key, false));
+		vdr.setWakeupEnabled(getBoolean(context, R.string.wakeup_enabled_key,
+				false));
+		vdr.setWakeupUrl(getString(context, R.string.wakeup_url_key, ""));
+		vdr.setWakeupUser(getString(context, R.string.wakeup_user_key, ""));
+		vdr.setWakeupPassword(getString(context, R.string.wakeup_password_key,
+				""));
+
+		vdr.setTimerPreMargin(getInt(context,
+				R.string.timer_pre_start_buffer_key, 5));
+		vdr.setTimerPostMargin(getInt(context,
+				R.string.timer_post_end_buffer_key, 30));
+
+		vdr.setTimerDefaultPriority(getInt(context,
+				R.string.timer_default_priority_key, 99));
+
+		vdr.setTimerDefaultLifetime(getInt(context,
+				R.string.timer_default_lifetime_key, 99));
+
+		vdr.setEpgSearchTimes(getString(context, R.string.epg_search_times_key,
+				""));
+
+		vdr.setMac(getString(context, R.string.wakeup_wol_mac_key, ""));
+
+		vdr.setWakeupMethod(getString(context, R.string.wakeup_method_key,
+				"url"));
+
+		vdr.setWolCustomBroadcast(getString(context,
+				R.string.wakeup_wol_custom_broadcast_key, ""));
+
+		vdr.setConnectionTimeout(getInt(context, R.string.vdr_conntimeout_key,
+				10));
+		vdr.setReadTimeout(getInt(context, R.string.vdr_readtimeout_key, 10));
+		vdr.setTimeout(getInt(context, R.string.vdr_timeout_key, 120));
+
+		vdr.setStreamingUsername(getString(context,
+				R.string.streaming_username_key, ""));
+
+		vdr.setStreamingPassword(getString(context,
+				R.string.streaming_password_key, ""));
+
+		vdr.setEncoding(getString(context, R.string.vdr_encoding_key, "utf-8"));
+
+		if (db.getVdrDAO().create(vdr) != 1) {
+			return false;
+		}
+
+		setCurrentInternal(context, vdr);
+
+		return true;
 	}
 
 	/**
@@ -705,18 +743,19 @@ public class Preferences {
 	 *            {@link Context}
 	 */
 	public static void setLocale(final Context context) {
-		String lc = getString(context, R.string.gui_custom_locale_key, DEFAULT_LANGUAGE_VALUE);
+		String lc = getString(context, R.string.gui_custom_locale_key,
+				DEFAULT_LANGUAGE_VALUE);
 		Locale locale = null;
-		//TODO lado this is very bad.
+		// TODO lado this is very bad.
 		if (lc.equals(DEFAULT_LANGUAGE_VALUE)) {
 			String lang = Locale.getDefault().toString();
 			if (lang.startsWith("de")) {
 				locale = Locale.GERMAN;
-			} else if(lang.startsWith("it")){
+			} else if (lang.startsWith("it")) {
 				locale = Locale.ITALIAN;
 			} else {
 				locale = Locale.ENGLISH;
-			} 
+			}
 		} else {
 			locale = new Locale(lc);
 		}

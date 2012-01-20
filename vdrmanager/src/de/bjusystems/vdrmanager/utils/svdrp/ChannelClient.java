@@ -36,7 +36,7 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		addSvdrpListener(this);
 	}
 
-	private void clearCache() {
+	public static void clearCache() {
 		channelGroups.clear();
 		groupChannels.clear();
 		providerChannels.clear();
@@ -70,10 +70,10 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 	 * @param ssl
 	 *            use ssl
 	 */
-	public ChannelClient() {
-		this(true);
-
-	}
+//	public ChannelClient() {
+//		this(true);
+//
+//	}
 
 	/**
 	 * Starts the EPG request

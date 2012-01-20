@@ -107,6 +107,11 @@ public class ChannelListActivity extends
 		task.run();
 	}
 
+	@Override
+	public void reset() {
+		channelClient.clearCache();
+	}
+
 	private void fillAdapter() {
 		switch (groupBy) {
 		case MENU_GROUP:

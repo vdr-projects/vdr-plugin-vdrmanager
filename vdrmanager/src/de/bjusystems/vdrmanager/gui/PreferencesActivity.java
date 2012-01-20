@@ -5,17 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.DialogPreference;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -42,10 +35,6 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 		this.addPreferencesFromResource(R.xml.preferences);
 
 		updateChildPreferences();
-
-		findPreference(getString(R.string.wakeup_wol_mac_key))
-				.setOnPreferenceClickListener(this);
-
 	}
 
 	// /** Return a properly configured SharedPreferences instance */
@@ -70,46 +59,10 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 
 	}
 
-	private void enableWolPreferences() {
-		findPreference(getString(R.string.wakeup_wol_mac_key)).setEnabled(true);
-		findPreference(getString(R.string.wakeup_wol_custom_broadcast_key))
-		.setEnabled(true);
-	}
 
-	private void disableWolPreferences() {
-		findPreference(getString(R.string.wakeup_wol_mac_key))
-				.setEnabled(false);
-		findPreference(getString(R.string.wakeup_wol_custom_broadcast_key))
-		.setEnabled(false);
-
-	}
-
-	private void disableWakeupUrlPreferences() {
-		findPreference(getString(R.string.wakeup_url_key)).setEnabled(false);
-		findPreference(getString(R.string.wakeup_password_key)).setEnabled(
-				false);
-		findPreference(getString(R.string.wakeup_user_key)).setEnabled(false);
-	}
-
-	private void enableWakeupUrlPrefenreces() {
-		findPreference(getString(R.string.wakeup_url_key)).setEnabled(true);
-		findPreference(getString(R.string.wakeup_password_key))
-				.setEnabled(true);
-		findPreference(getString(R.string.wakeup_user_key)).setEnabled(true);
-	}
 
 	private void updateChildPreferences() {
 		SharedPreferences sp = Preferences.getSharedPreferences(this);
-		String wakup = sp.getString(getString(R.string.wakeup_method_key),
-				"wol");
-
-		if (wakup.equals("url")) {
-			disableWolPreferences();
-			enableWakeupUrlPrefenreces();
-		} else {// remote url
-			disableWakeupUrlPreferences();
-			enableWolPreferences();
-		}
 
 		for (String key : sp.getAll().keySet()) {
 			Preference p = findPreference(key);
@@ -127,6 +80,7 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 		app.addActivityToFinish(this);
 		app.finishActivities();
 
+		Preferences.init(this);
 		// restart main activity because
 		// the buttons needs refreshing
 		final Intent intent = new Intent();
