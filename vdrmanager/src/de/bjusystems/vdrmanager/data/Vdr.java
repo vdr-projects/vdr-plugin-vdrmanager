@@ -539,7 +539,7 @@ public class Vdr {
 		streamFormat = get(map, "livetv_streamformat");
 		remuxCommand = get(map, "remux_command");
 		remuxParameter = get(map, "remux_parameter");
-		enableRemux = get(map, "remux_enable");
+		enableRemux = getBoolean(map, "remux_enable");
 
 	}
 
