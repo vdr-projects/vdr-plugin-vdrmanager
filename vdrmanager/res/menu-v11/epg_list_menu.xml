@@ -12,4 +12,9 @@
 	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_times"/>
     -->
+    	<item
+	  android:id="@+id/epg_list_menu_channels"
+	  android:icon="@drawable/ic_menu_moreoverflow"
+	  android:showAsAction="ifRoom"
+	  android:title="@string/action_menu_channels"/>
 </menu>
