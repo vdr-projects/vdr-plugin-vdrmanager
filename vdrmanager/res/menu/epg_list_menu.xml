@@ -6,10 +6,10 @@
 	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_search"/>
 -->
-<!-- 
+<!--  -->
 	<item
-	  android:id="@+id/epg_menu_times"
-	  android:icon="@android:drawable/ic_menu_search"
-	  android:title="@string/epg_menu_times"/>
-    -->
+	  android:id="@+id/epg_list_menu_channels"
+	  android:icon="@android:drawable/ic_menu_agenda"
+	  android:title="@string/action_menu_channels"/>
+
 </menu>

@@ -17,4 +17,11 @@
 	  android:icon="@android:drawable/ic_menu_close_clear_cancel"
 	  />
     
+	<item android:id="@+id/main_menu_goto" android:title="@string/main_menu_goto"
+		android:icon="@drawable/ic_menu_goto"
+		android:showAsAction="ifRoom"/>
+	<item android:id="@+id/menu_search"
+		 android:title="Search"
+		android:icon="@android:drawable/ic_menu_search" android:showAsAction="ifRoom|collapseActionView"
+		android:actionViewClass="android.widget.SearchView" />
 </menu>
