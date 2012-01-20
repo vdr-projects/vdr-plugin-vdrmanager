@@ -32,7 +32,8 @@
 
 		<ListPreference android:defaultValue="akas.imdb.com"
 			android:dependency="@string/qui_show_imdb_button_key"
-			android:entries="@array/imdb_urls" android:entryValues="@arrays/imdb_urls_velues"
+			android:entries="@array/imdb_urls"
+		    android:entryValues="@array/imdb_urls_velues"
 			android:key="@string/qui_imdb_url_key" android:summaryOn="@string/qui_imdb_url_summary"
 			android:title="@string/qui_imdb_url_title" />
 
