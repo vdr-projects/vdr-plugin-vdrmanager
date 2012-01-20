@@ -1,199 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:key="vdr_preferences"
-        android:title="@string/vdr_preferences" >
+	<PreferenceCategory android:title="@string/vdr_prefs_category">
 
-        <EditTextPreference
-            android:key="@string/vdr_host_key"
-            android:summary="@string/vdr_host_summary"
-            android:title="@string/vdr_host_title" />
+		<EditTextPreference android:inputType="textCapWords"
+			android:key="@string/vdr_name_key" android:summary="@string/vdr_name_summary"
+			android:title="@string/vdr_name_title" />
 
-        <EditTextPreference
-            android:defaultValue="@string/vdr_port_default"
-            android:key="@string/vdr_port_key"
-            android:summary="@string/vdr_port_summary"
-            android:title="@string/vdr_port_title" />
+	</PreferenceCategory>
 
-        <EditTextPreference
-            android:key="@string/vdr_password_key"
-            android:password="true"
-            android:summary="@string/vdr_password_summary"
-            android:title="@string/vdr_password_title" />
+	<PreferenceCategory android:key="vdr_preferences"
+		android:title="@string/vdr_preferences">
 
-        <CheckBoxPreference
-            android:key="@string/vdr_ssl_key"
-            android:summary="@string/vdr_ssl_summary"
-            android:title="@string/vdr_ssl_title" />
+		<EditTextPreference android:inputType="textNoSuggestions"
+			android:key="@string/vdr_host_key" android:summary="@string/vdr_host_summary"
+			android:title="@string/vdr_host_title" />
 
-        <PreferenceScreen android:title="Advanced" >
+		<EditTextPreference android:defaultValue="@string/vdr_port_default"
+			android:key="@string/vdr_port_key" android:inputType="number"
+			android:summary="@string/vdr_port_summary" android:title="@string/vdr_port_title" />
 
-            <EditTextPreference
-                android:defaultValue="10"
-                android:inputType="number"
-                android:key="@string/vdr_conntimeout_key"
-                android:summary="@string/vdr_conntimeout_sum"
-                android:title="@string/vdr_conntimeout_title" />
+		<EditTextPreference android:key="@string/vdr_password_key"
+			android:password="true" android:summary="@string/vdr_password_summary"
+			android:title="@string/vdr_password_title" />
 
-            <EditTextPreference
-                android:defaultValue="10"
-                android:inputType="number"
-                android:key="@string/vdr_readtimeout_key"
-                android:summary="@string/vdr_readtimeout_sum"
-                android:title="@string/vdr_readtimeout_title" />
+		<CheckBoxPreference android:key="@string/vdr_ssl_key" android:defaultValue="false"
+		    android:enabled="false"
+			android:summary="@string/vdr_ssl_summary" android:title="@string/vdr_ssl_title" />
 
-            <EditTextPreference
-                android:defaultValue="120"
-                android:inputType="number"
-                android:key="@string/vdr_timeout_key"
-                android:summary="@string/vdr_timeout_sum"
-                android:title="@string/vdr_timeout_title" />
-        </PreferenceScreen>
-    </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="filter_preferences"
-        android:title="@string/channel_filter_preferences" >
+	</PreferenceCategory>
 
-        <CheckBoxPreference
-            android:key="@string/channel_filter_filter_key"
-            android:summary="@string/channel_filter_filter_summary"
-            android:title="@string/channel_filter_filter_title" />
+	<PreferenceCategory android:key="filter_preferences"
+		android:title="@string/channel_filter_preferences">
 
-        <EditTextPreference
-            android:defaultValue="1"
-            android:dependency="@string/channel_filter_filter_key"
-            android:key="@string/channel_filter_last_key"
-            android:summary="@string/channel_filter_last_summary"
-            android:title="@string/channel_filter_last_title" />
-    </PreferenceCategory>
+		<CheckBoxPreference android:key="@string/channel_filter_filter_key"
+			 android:defaultValue="false"
+			android:summary="@string/channel_filter_filter_summary"
+			android:title="@string/channel_filter_filter_title" />
 
-    <PreferenceCategory
-        android:key="wakeup_preferences"
-        android:title="@string/wakeup_preferences" >
+		<EditTextPreference android:defaultValue="1-100"
+			android:dependency="@string/channel_filter_filter_key" android:key="@string/channel_filter_last_key"
+			android:summary="@string/channel_filter_last_summary" android:title="@string/channel_filter_last_title" />
+	</PreferenceCategory>
+	
+	
 
-        <CheckBoxPreference
-            android:key="@string/wakeup_enabled_key"
-            android:summary="@string/wakeup_enabled_summary"
-            android:title="@string/wakeup_enabled_title" />
+	<PreferenceCategory android:key="wakeup_preferences"
+		android:title="@string/wakeup_preferences">
 
-        <ListPreference
-            android:defaultValue="@string/default_wakeup_method"
-            android:dependency="@string/wakeup_enabled_key"
-            android:entries="@array/wakeup_methods"
-            android:entryValues="@array/wakeup_methods_values"
-            android:key="@string/wakeup_method_key"
-            android:summary="@string/wakeup_method_summary"
-            android:title="@string/wakeup_method_title" />
+		<CheckBoxPreference android:key="@string/wakeup_enabled_key"
+			android:summary="@string/wakeup_enabled_summary" android:title="@string/wakeup_enabled_title" />
 
-        <EditTextPreference
-            android:dependency="@string/wakeup_enabled_key"
-            android:key="@string/wakeup_url_key"
-            android:summary="@string/wakeup_url_summary"
-            android:title="@string/wakeup_url_title" />
+		<ListPreference android:defaultValue="@string/default_wakeup_method"
+			android:dependency="@string/wakeup_enabled_key" android:entries="@array/wakeup_methods"
+			android:entryValues="@array/wakeup_methods_values" android:key="@string/wakeup_method_key"
+			android:summary="@string/wakeup_method_summary" android:title="@string/wakeup_method_title" />
 
-        <EditTextPreference
-            android:dependency="@string/wakeup_enabled_key"
-            android:key="@string/wakeup_user_key"
-            android:summary="@string/wakeup_user_summary"
-            android:title="@string/wakeup_user_title" />
+		<EditTextPreference android:dependency="@string/wakeup_enabled_key"
+			android:key="@string/wakeup_url_key" android:summary="@string/wakeup_url_summary"
+			android:title="@string/wakeup_url_title" />
 
-        <EditTextPreference
-            android:dependency="@string/wakeup_enabled_key"
-            android:key="@string/wakeup_password_key"
-            android:password="true"
-            android:summary="@string/wakeup_password_summary"
-            android:title="@string/wakeup_password_title" />
+		<EditTextPreference android:dependency="@string/wakeup_enabled_key"
+			android:key="@string/wakeup_user_key" android:summary="@string/wakeup_user_summary"
+			android:title="@string/wakeup_user_title" />
 
-        <EditTextPreference
-            android:dependency="@string/wakeup_enabled_key"
-            android:key="@string/wakeup_wol_mac_key"
-            android:summary="@string/wakeup_wol_mac_summary"
-            android:title="@string/wakeup_wol_mac_title" />
+		<EditTextPreference android:dependency="@string/wakeup_enabled_key"
+			android:key="@string/wakeup_password_key" android:password="true"
+			android:summary="@string/wakeup_password_summary" android:title="@string/wakeup_password_title" />
 
-        <EditTextPreference
-            android:defaultValue="255.255.255.255"
-            android:dependency="@string/wakeup_enabled_key"
-            android:key="@string/wakeup_wol_custom_broadcast_key"
-            android:summaryOn="@string/wakeup_wol_custom_boradcast_summary"
-            android:title="@string/wakeup_wol_custom_boradcast_title" />
-    </PreferenceCategory>
+		<EditTextPreference android:dependency="@string/wakeup_enabled_key"
+			android:key="@string/wakeup_wol_mac_key" android:summary="@string/wakeup_wol_mac_summary"
+			android:title="@string/wakeup_wol_mac_title" />
 
-    <PreferenceCategory
-        android:key="timer_preferences"
-        android:title="@string/timer_preferences" >
+		<EditTextPreference android:defaultValue="255.255.255.255"
+			android:dependency="@string/wakeup_enabled_key" android:key="@string/wakeup_wol_custom_broadcast_key"
+			android:summaryOn="@string/wakeup_wol_custom_boradcast_summary"
+			android:title="@string/wakeup_wol_custom_boradcast_title" />
+	</PreferenceCategory>
 
-        <EditTextPreference
-            android:defaultValue="5"
-            android:key="@string/timer_pre_start_buffer_key"
-            android:summary="@string/timer_pre_start_buffer_summary"
-            android:title="@string/timer_pre_start_buffer_title" />
+	<PreferenceCategory android:key="timer_preferences"
+		android:title="@string/timer_preferences">
 
-        <EditTextPreference
-            android:defaultValue="30"
-            android:key="@string/timer_post_end_buffer_key"
-            android:summary="@string/timer_post_end_buffer_summary"
-            android:title="@string/timer_post_end_buffer_title" />
+		<EditTextPreference android:defaultValue="5"
+			android:key="@string/timer_pre_start_buffer_key" android:summary="@string/timer_pre_start_buffer_summary"
+			android:title="@string/timer_pre_start_buffer_title" />
 
-        <EditTextPreference
-            android:defaultValue="99"
-            android:key="@string/timer_default_lifetime_key"
-            android:summary="@string/timer_default_lifetime_summary"
-            android:title="@string/timer_default_lifetime_title" />
+		<EditTextPreference android:defaultValue="30"
+			android:key="@string/timer_post_end_buffer_key" android:summary="@string/timer_post_end_buffer_summary"
+			android:title="@string/timer_post_end_buffer_title" />
 
-        <EditTextPreference
-            android:defaultValue="50"
-            android:key="@string/timer_default_priority_key"
-            android:summary="@string/timer_default_priority_summary"
-            android:title="@string/timer_default_priority_title" />
-    </PreferenceCategory>
+		<EditTextPreference android:defaultValue="99"
+			android:key="@string/timer_default_lifetime_key" android:summary="@string/timer_default_lifetime_summary"
+			android:title="@string/timer_default_lifetime_title" />
 
-    <PreferenceCategory android:title="@string/livetv" >
+		<EditTextPreference android:defaultValue="50"
+			android:key="@string/timer_default_priority_key" android:summary="@string/timer_default_priority_summary"
+			android:title="@string/timer_default_priority_title" />
+	</PreferenceCategory>
 
-        <EditTextPreference
-            android:defaultValue="3000"
-            android:inputType="number"
-            android:key="streamingport"
-            android:summary="@string/settings_livetv_port_summary"
-            android:title="@string/settings_livetv_port" />
+	<PreferenceCategory android:title="@string/livetv">
 
-        <EditTextPreference
-            android:key="@string/streaming_username_key"
-            android:summary="@string/streaming_username_sum"
-            android:title="@string/streaming_username_title" />
+		<EditTextPreference android:defaultValue="3000"
+			android:inputType="number" android:key="streamingport"
+			android:summary="@string/settings_livetv_port_summary" android:title="@string/settings_livetv_port" />
 
-        <EditTextPreference
-            android:key="@string/streaming_password_key"
-            android:password="true"
-            android:summary="@string/streaming_password_sum"
-            android:title="@string/streaming_password_title" />
+		<EditTextPreference android:key="@string/streaming_username_key"
+			android:summary="@string/streaming_username_sum" android:title="@string/streaming_username_title" />
 
-        <ListPreference
-            android:defaultValue="TS"
-            android:entries="@array/livetv_streamformat"
-            android:entryValues="@array/livetv_streamformat_values"
-            android:key="livetv_streamformat"
-            android:title="@string/settings_livetv_streamformat" />
+		<EditTextPreference android:key="@string/streaming_password_key"
+			android:password="true" android:summary="@string/streaming_password_sum"
+			android:title="@string/streaming_password_title" />
 
-        <CheckBoxPreference
-            android:key="remux_enable"
-            android:summary="@string/remux_enable_summary"
-            android:title="@string/remux_enable_title" />
+		<ListPreference android:defaultValue="TS"
+			android:entries="@array/livetv_streamformat" android:entryValues="@array/livetv_streamformat_values"
+			android:key="livetv_streamformat" android:title="@string/settings_livetv_streamformat" />
 
-        <EditTextPreference
-            android:defaultValue="EXT"
-            android:dependency="remux_enable"
-            android:key="remux_command"
-            android:summary="@string/remux_command_summary"
-            android:title="@string/remux_command_title" />
+		<CheckBoxPreference android:key="remux_enable"
+			android:summary="@string/remux_enable_summary" android:title="@string/remux_enable_title" />
 
-        <EditTextPreference
-            android:defaultValue="QUALITY=DSL1000"
-            android:dependency="remux_enable"
-            android:key="remux_parameter"
-            android:summary="@string/remux_parameter_summary"
-            android:title="@string/remux_parameter_title" />
-    </PreferenceCategory>
+		<ListPreference android:defaultValue="EXT"
+			android:entries="@array/remux_entries" android:entryValues="@array/remux_entry_values"
+			android:dependency="remux_enable" android:key="remux_command"
+			android:summary="@string/remux_command_summary" android:title="@string/remux_command_title" />
+
+		<EditTextPreference android:defaultValue="QUALITY=DSL1000"
+			android:dependency="remux_enable" android:key="remux_parameter"
+			android:summary="@string/remux_parameter_summary" android:title="@string/remux_parameter_title" />
+	</PreferenceCategory>
+
+
+	<PreferenceScreen android:title="Advanced">
+
+		<EditTextPreference android:defaultValue="10"
+			android:inputType="number" android:key="@string/vdr_conntimeout_key"
+			android:summary="@string/vdr_conntimeout_sum" android:title="@string/vdr_conntimeout_title" />
+
+		<EditTextPreference android:defaultValue="10"
+			android:inputType="number" android:key="@string/vdr_readtimeout_key"
+			android:summary="@string/vdr_readtimeout_sum" android:title="@string/vdr_readtimeout_title" />
+
+		<EditTextPreference android:defaultValue="120"
+			android:inputType="number" android:key="@string/vdr_timeout_key"
+			android:summary="@string/vdr_timeout_sum" android:title="@string/vdr_timeout_title" />
+
+
+		<EditTextPreference android:defaultValue="utf-8"
+			android:key="@string/vdr_encoding_key" android:summary="@string/vdr_encoding_summary"
+			android:title="@string/vdr_encoding_title" />
+
+	</PreferenceScreen>
 
 </PreferenceScreen>
