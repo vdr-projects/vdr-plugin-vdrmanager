@@ -422,69 +422,15 @@ public class Preferences {
 	private static void initInternal(final Context context) {
 
 		final Preferences prefs = new Preferences();
-		//
-		// prefs.svdrpHost = getString(context, R.string.vdr_host_key,
-		// "0.0.0.0");
-		// prefs.svdrpPort = getInt(context, R.string.vdr_port_key, 6420);
-		// prefs.password = getString(context, R.string.vdr_password_key, "");
-		// prefs.ssl = getBoolean(context, R.string.vdr_ssl_key, false);
-		// prefs.streamPort = getInt(context, R.string.vdr_stream_port, 3000);
-		// prefs.streamFormat = getString(context, R.string.vdr_stream_format,
-		// "TS");
-		//
-		// prefs.aliveCheckEnabled = getBoolean(context,
-		// R.string.alive_check_enabled_key, false);
-		// prefs.aliveCheckInterval = getInt(context,
-		// R.string.alive_check_interval_key, 60);
-		//
-		// prefs.channels = getString(context, R.string.channel_filter_last_key,
-		// "").replace(" ", "");
-		// prefs.filterChannels = getBoolean(context,
-		// R.string.channel_filter_filter_key, false);
-		//
-		// prefs.wakeupEnabled = getBoolean(context,
-		// R.string.wakeup_enabled_key,
-		// false);
-		// prefs.wakeupUrl = getString(context, R.string.wakeup_url_key, "");
-		// prefs.wakeupUser = getString(context, R.string.wakeup_user_key, "");
-		// prefs.wakeupPassword = getString(context,
-		// R.string.wakeup_password_key,
-		// "");
-		//
-		// prefs.timerPreMargin = getInt(context,
-		// R.string.timer_pre_start_buffer_key, 5);
-		// prefs.timerPostMargin = getInt(context,
-		// R.string.timer_post_end_buffer_key, 30);
-		// prefs.timerDefaultPriority = getInt(context,
-		// R.string.timer_default_priority_key, 99);
-		// prefs.timerDefaultLifetime = getInt(context,
-		// R.string.timer_default_lifetime_key, 99);
-		//
+
 		prefs.epgSearchTimes = getString(context,
 				R.string.epg_search_times_key, "");
-		//
-		// prefs.vdrMac = getString(context, R.string.wakeup_wol_mac_key, "");
-		// prefs.wakeupMethod = getString(context, R.string.wakeup_method_key,
-		// "url");
-		//
-		// prefs.use24hFormat = getBoolean(context,
-		// R.string.gui_enable_24h_format_key, true);
-		//
-		// prefs.wolCustomBroadcast = getString(context,
-		// R.string.wakeup_wol_custom_broadcast_key, "");
-		//
+
+		 prefs.use24hFormat = getBoolean(context,
+		 R.string.gui_enable_24h_format_key, true);
+
 		prefs.showChannelNumbers = getBoolean(context,
 				R.string.gui_channels_show_channel_numbers_key, false);
-		//
-		// prefs.enableRemux = getBoolean(context, R.string.key_remux_enable,
-		// false);
-		//
-		// prefs.remuxCommand = getString(context, R.string.key_remux_command,
-		// "EXT");
-		//
-		// prefs.remuxParameter = getString(context,
-		// R.string.key_remux_parameter,
-		// "");
 
 		prefs.quiteOnBackButton = getBoolean(context,
 				R.string.qui_quit_on_back_key, true);
@@ -493,23 +439,7 @@ public class Preferences {
 				R.string.qui_show_imdb_button_key, true);
 
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
-		//
-		// prefs.connectionTimeout = getInt(context,
-		// R.string.vdr_conntimeout_key,
-		// 10);
-		// prefs.readTimeout = getInt(context, R.string.vdr_readtimeout_key,
-		// 10);
-		// prefs.timeout = getInt(context, R.string.vdr_timeout_key, 120);
-		//
-		// prefs.streamingUsername = getString(context,
-		// R.string.streaming_username_key, "");
-		//
-		// prefs.streamingPassword = getString(context,
-		// R.string.streaming_password_key, "");
-		//
-		// prefs.encoding = getString(context, R.string.vdr_encoding_key,
-		// "utf-8");
-		//
+	
 		thePrefs = prefs;
 	}
 
