@@ -97,11 +97,21 @@ public class Utils {
 				&& now < event.getStop().getTime();
 	}
 
+	private static String trimToEmpty(String str){
+		if(str == null){
+			return "";
+		}
+		if(TextUtils.isEmpty(str)){
+			return "";
+		}
+		return str;
+	}
+	
 	private static String getBaseUrl() {
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
-		String auth = p.getStreamingUsername().trim() + ":"
-				+ p.getStreamingPassword();
+		String auth = trimToEmpty(p.getStreamingUsername()) + ":"
+				+ trimToEmpty(p.getStreamingPassword());
 		if (auth.length() == 1) {
 			auth = "";
 		} else {
