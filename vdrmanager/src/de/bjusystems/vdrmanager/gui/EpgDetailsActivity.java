@@ -57,7 +57,13 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 
 	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
 	
+	public static String OMDB_URL = "http://www.omdb.org/search?search[text]=%s";
+	
 	private static final String IMDB_URL_ENCODING = "ISO-8859-1";
+	
+	private static final String OMDB_URL_ENCODING = "UTF-8";
+	
+
 
 	private String highlight = null;
 
@@ -308,24 +314,28 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			b.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
-					final TextView title = (TextView) view
-							.findViewById(R.id.epg_detail_title);
-					String url = String.format(IMDB_URL, Preferences.get()
-							.getImdbUrl(), encode(String.valueOf(title.getText()), IMDB_URL_ENCODING));
-					//url = encode(url, "utf-8");
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse(url));
-                    i.addCategory(Intent.CATEGORY_BROWSABLE);
-					try{
-						startActivity(i);
-					}catch(ActivityNotFoundException anfe){
-						Log.w(TAG, anfe);
-						say(anfe.getLocalizedMessage());
-					}
+					startFilmDatabaseBrowseIntent(String.format(IMDB_URL, Preferences.get().getImdbUrl()), view, IMDB_URL_ENCODING);	
 				}
 			});
-			// setThisAsOnClickListener(b);
 		}
+
+		
+			b = view.findViewById(R.id.epg_event_omdb);
+
+			if (Preferences.get().isShowOmdbButton() == false) {
+				b.setVisibility(View.GONE);
+			} else {
+				b.setVisibility(View.VISIBLE);
+				b.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						startFilmDatabaseBrowseIntent(OMDB_URL, view, OMDB_URL_ENCODING);
+					}
+				});
+			}
+			
+			
+		
 
 		b = view.findViewById(R.id.epg_event_livetv);
 		if (Utils.isLive(event) == false) {
@@ -344,6 +354,21 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			// timeButton.setText(R.string.epg_event_modify_timer_text);
 		}
 
+	}
+	
+	private void startFilmDatabaseBrowseIntent(String url, View view, String encoding){
+		final TextView title = (TextView) view
+				.findViewById(R.id.epg_detail_title);
+		url = String.format(url, encode(String.valueOf(title.getText()), encoding));
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+        i.addCategory(Intent.CATEGORY_BROWSABLE);
+		try{
+			startActivity(i);
+		}catch(ActivityNotFoundException anfe){
+			Log.w(TAG, anfe);
+			say(anfe.getLocalizedMessage());
+		}
 	}
 
 	private void setThisAsOnClickListener(View v) {

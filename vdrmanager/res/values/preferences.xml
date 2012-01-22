@@ -79,13 +79,17 @@
     <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
     <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
   
-    <string name="qui_show_imdb_button_title">Show IMDB Button</string>
-    <string name="qui_show_imdb_button_summary_on">IMDB Button is shown</string>
-    <string name="qui_show_imdb_button_summary_off">IMDB Button is not shown</string>
+    <string name="qui_show_imdb_button_title">Show IMDb Button</string>
+    <string name="qui_show_imdb_button_summary_on">IMDb Button is shown</string>
+    <string name="qui_show_imdb_button_summary_off">IMDb Button is not shown</string>
   
     <string name="qui_imdb_url_title">IMDb Site</string>
     <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
  
+    <string name="qui_show_omdb_button_title">Show OMDB Button</string>
+    <string name="qui_show_omdb_button_summary_on">OMDB Button is shown</string>
+    <string name="qui_show_omdb_button_summary_off">OMDB Button is not shown</string>
+  
 	<string name="gui_custom_locale_title">Custom language</string>
 	<string name="gui_custom_locale_sum">Set a custom language.</string>
 

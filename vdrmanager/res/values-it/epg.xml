@@ -11,7 +11,8 @@
   
   <!-- create timer -->
   <string name="epg_event_share_text">Condividi</string>
-  <string name="epg_event_imdb_text">Ricerca IMDB</string>
+  <string name="epg_event_imdb_text">Ricerca IMDb</string>
+  <string name="epg_event_omdb_text">Ricerca OMDB</string>
   <string name="epg_eent_livetv_text">Trasmissione</string>
   <string name="epg_event_create_timer_text">Aggiungi timer</string>
   <string name="epg_event_modify_timer_text">Modifica timer</string>

@@ -76,11 +76,14 @@
     <string name="gui_quit_on_back_title">Esci con tasto Indietro</string>
     <string name="gui_quit_on_back_summary_on">Il tasto Indietro chiude VDR-Manager</string>
     <string name="gui_quit_on_back_summary_off">Il tasto Indietro non chiude VDR-Manager</string>
-    <string name="qui_show_imdb_button_title">Mostra tasto IMDB</string>
-    <string name="qui_show_imdb_button_summary_on">Mostra il tasto IMDB</string>
-    <string name="qui_show_imdb_button_summary_off">Non mostrare il tasto IMDB</string>
-    <string name="qui_imdb_url_title">Sito IMDB</string>
-    <string name="qui_imdb_url_summary">Sito IMDB da usare</string>
+    <string name="qui_show_imdb_button_title">Mostra tasto IMDb</string>
+    <string name="qui_show_imdb_button_summary_on">Mostra il tasto IMDb</string>
+    <string name="qui_show_imdb_button_summary_off">Non mostrare il tasto IMDb</string>
+    <string name="qui_show_omdb_button_title">Mostra tasto OMDB</string>
+    <string name="qui_show_omdb_button_summary_on">Mostra il tasto OMDB</string>
+    <string name="qui_show_omdb_button_summary_off">Non mostrare il tasto OMDB</string>
+    <string name="qui_imdb_url_title">Sito IMDb</string>
+    <string name="qui_imdb_url_summary">Sito IMDb da usare</string>
 	<string name="gui_custom_locale_title">Lingua</string>
 	<string name="gui_custom_locale_sum">Seleziona una lingua</string>
         

@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
 import de.bjusystems.vdrmanager.gui.VdrListActivity;
 
@@ -65,6 +66,15 @@ public class Preferences {
 	 * Show IMDB buttons, where possible (e.g. EPG Details)
 	 */
 	private boolean showImdbButton = true;
+
+	/**
+	 * Show OMDB button in epg details
+	 */
+	private boolean showOmdbButton = true;
+	
+	public boolean isShowOmdbButton() {
+		return showOmdbButton;
+	}
 
 	/**
 	 * On Which imdb site to search?
@@ -443,6 +453,10 @@ public class Preferences {
 		prefs.showImdbButton = getBoolean(context,
 				R.string.qui_show_imdb_button_key, true);
 
+		prefs.showOmdbButton = getBoolean(context,
+				R.string.qui_show_omdb_button_key, true);
+
+
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
 	
 		thePrefs = prefs;
@@ -504,6 +518,7 @@ public class Preferences {
 			Intent intent = new Intent();
 			intent.setClass(context, VdrListActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
 			context.startActivity(intent);
 			Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 		}

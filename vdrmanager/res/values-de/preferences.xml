@@ -54,9 +54,12 @@
   <string name="gui_quit_on_back_title">Beenden mit Zurück Button</string>
   <string name="gui_quit_on_back_summary_on">Zurück Button schließt den VDR-Manager</string>
   <string name="gui_quit_on_back_summary_off">Zurück Button beendet den VDR-Manager nicht</string>
-  <string name="qui_show_imdb_button_title">Zeige IMDB Button</string>
-  <string name="qui_show_imdb_button_summary_on">IMDB Button anzeigen</string>
-  <string name="qui_show_imdb_button_summary_off">IMDB Button nicht anzeigen</string>
+  <string name="qui_show_imdb_button_title">Zeige IMDb Button</string>
+  <string name="qui_show_imdb_button_summary_on">IMDb Button anzeigen</string>
+  <string name="qui_show_imdb_button_summary_off">IMDb Button nicht anzeigen</string>
+  <string name="qui_show_omdb_button_title">Zeige OMDB Button</string>
+  <string name="qui_show_omdb_button_summary_on">OMDB Button anzeigen</string>
+  <string name="qui_show_omdb_button_summary_off">OMDB Button nicht anzeigen</string>
   <string name="qui_imdb_url_title">IMDb Seite</string>
   <string name="qui_imdb_url_summary">Welche IMDb Seite für die Suche verwenden.</string>
   <string name="gui_custom_locale_title">Andere Sprache</string>
