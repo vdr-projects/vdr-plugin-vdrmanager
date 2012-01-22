@@ -12,4 +12,6 @@ public interface Intents {
 	
 	public static final int EDIT_VDR = 2;
 	
+	public static final String EMPTY_CONFIG = "EMPTY_CONFIG";
+	
 }

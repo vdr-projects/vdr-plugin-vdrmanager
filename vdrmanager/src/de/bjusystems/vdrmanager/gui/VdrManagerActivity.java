@@ -33,6 +33,10 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(Preferences.get().getCurrentVdr() == null){
+			finish();
+			return;
+		}
 		Preferences.setLocale(this);
 		// this.getActionBar().setDisplayShowCustomEnabled(true);
 		// this.getActionBar().setDisplayShowTitleEnabled(false);
