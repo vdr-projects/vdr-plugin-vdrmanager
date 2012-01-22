@@ -338,7 +338,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		
 
 		b = view.findViewById(R.id.epg_event_livetv);
-		if (Utils.isLive(event) == false) {
+		if (Utils.isLive(event) == false && (event instanceof Recording == false || Preferences.get().isEnableRecStream() == false)) {
 			b.setVisibility(View.GONE);
 		} else {
 			b.setVisibility(View.VISIBLE);
@@ -424,7 +424,11 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	public void onClick(final View v) {
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
-			Utils.stream(this, cEvent.getChannelNumber());
+			if(cEvent instanceof Recording){
+				Utils.streamRecording(this, (Recording)cEvent);
+			} else {
+				Utils.stream(this, cEvent.getChannelNumber());
+			}
 			break;
 		case R.id.epg_event_create_timer:
 			final ArrayAdapter<Wrapper> ada = new ArrayAdapter<Wrapper>(this,

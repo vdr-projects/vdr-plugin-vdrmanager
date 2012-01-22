@@ -244,7 +244,15 @@ public class Preferences {
 	public boolean isAliveCheckEnabled() {
 		return getCurrentVdr().isAliveCheckEnabled();
 	}
+	
+	public boolean isEnableRecStream(){
+		return getCurrentVdr().isEnableRecStreaming();
+	}
 
+	public int getLivePort(){
+		return getCurrentVdr().getLivePort();
+	}
+	
 	/**
 	 * Gets the time between alive checks
 	 * 

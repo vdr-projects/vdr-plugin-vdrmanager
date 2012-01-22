@@ -26,5 +26,11 @@
         <item>imdb.it</item>
         <item>imdb.pt</item>
     </string-array>
+    
+    
+    <string-array name="recstream_entry_values">
+        <item>vdr-live</item>
+    </string-array>
+    
 
 </resources>

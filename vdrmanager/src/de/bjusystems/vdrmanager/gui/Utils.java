@@ -1,11 +1,14 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,16 +21,21 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.Recording;
 
 public class Utils {
 
+	public static final String TAG = Utils.class.getName();
+	
 	public static final List EMPTY_LIST = new ArrayList(0);
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
 			Color.RED);
@@ -191,11 +199,39 @@ public class Utils {
 	}
 
 	public static void startStream(Activity activity, String url) {
+		try{
 		final Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse(url.toString()), "video/*");
 		activity.startActivityForResult(intent, 1);
+		}catch(ActivityNotFoundException anfe){
+			Log.w(TAG,anfe);
+			Toast.makeText(activity, anfe.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+		}
 	}
 
+	public static final String md5(final String s) {
+	    try {
+	        // Create MD5 Hash
+	        MessageDigest digest = java.security.MessageDigest
+	                .getInstance("MD5");
+	        digest.update(s.getBytes());
+	        byte messageDigest[] = digest.digest();
+	 
+	        // Create Hex String
+	        StringBuffer hexString = new StringBuffer();
+	        for (int i = 0; i < messageDigest.length; i++) {
+	            String h = Integer.toHexString(0xFF & messageDigest[i]);
+	            while (h.length() < 2)
+	                h = "0" + h;
+	            hexString.append(h);
+	        }
+	        return hexString.toString();
+	 
+	    } catch (NoSuchAlgorithmException e) {
+	    	Log.w(TAG,e);
+	    }
+	    return "";
+	}
 	public static int getDuration(Event event) {
 		long millis = event.getDuration();
 		int minuts = (int) (millis / 1000 / 60);
@@ -260,5 +296,19 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void streamRecording(Activity ctx, Recording rec){
+		
+		StringBuilder url = new StringBuilder();
+		url.append("http://")
+		.append(Preferences.get().getSvdrpHost())//
+		.append(":")
+		.append(Integer.valueOf(Preferences.get().getLivePort()))//
+		.append("/recstream.html?recid=recording_").append(Utils.md5(rec.getFileName()));
+		//http://192.168.1.119:8008/b0cdedeed2d36508dfd924f0876a851b
+		String urlstring = url.toString();
+		Log.d(TAG, "try stream: " + urlstring);
+		Utils.startStream(ctx, url.toString());
 	}
 }

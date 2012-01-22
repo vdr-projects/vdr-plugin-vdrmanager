@@ -150,4 +150,18 @@
     <string name="vdr_name_title">Name</string>
     <string name="vdr_name_summary">A name for this device</string>
     <string name="vdr_device_delete_qeustion">Delete this device?</string>
+    
+    <string name="recstream">Streaming of recordings</string>
+    <string name="recstream_enable_title">Streaming of recordings</string>
+    <string name="recstream_enable_summary">Enable Streaming of recordings</string>
+        
+    
+    <string-array name="recstream_entries">
+        <item>VDR live plugin</item>
+    </string-array>
+    
+    <string name="recstream_method_title">Streaming method</string>
+    <string name="recstream_method_summary">Currently Streaming over VDR live plugin is supported</string>
+    <string name="settings_live_port">VDR live plugin port</string>
+	<string name="settings_live_port_summary">VDR live plugin has default port 8008.</string>
 </resources>

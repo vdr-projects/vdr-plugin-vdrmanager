@@ -3,6 +3,7 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.Calendar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
@@ -92,9 +94,14 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			menu.setHeaderTitle(formatter.getTitle());
 
 			inflater.inflate(R.menu.recording_list_item_menu, menu);
+			if(Preferences.get().isEnableRecStream() == false){
+				menu.removeItem(R.id.recording_item_menu_stream);
+			}
+
 		}
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
+	
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
@@ -116,7 +123,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			break;
 		}
 		case R.id.recording_item_menu_stream: {
-			say("Sorry, not yet. It would be. File -> " + rec.getFileName());
+			Utils.streamRecording(this, rec);
+			//say("Sorry, not yet. It would be. File -> " + rec.getFileName());
 			break;
 		}
 

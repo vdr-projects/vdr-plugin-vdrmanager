@@ -54,4 +54,5 @@
 			android:key="@string/gui_custom_locale_key" android:summary="@string/gui_custom_locale_sum"
 			android:title="@string/gui_custom_locale_title" />
 	</PreferenceCategory>
+	
 </PreferenceScreen>

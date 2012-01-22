@@ -173,6 +173,41 @@ public class Vdr {
 
 	@DatabaseField
 	private String streamingPassword;
+	
+	@DatabaseField
+	private int livePort;
+	
+	@DatabaseField
+	private String recStreamMethod;
+	
+	@DatabaseField
+	private boolean enableRecStreaming = false;
+
+	
+	public String getRecStreamMethod() {
+		return recStreamMethod;
+	}
+
+	public void setRecStreamMethod(String recStreamMethod) {
+		this.recStreamMethod = recStreamMethod;
+	}
+
+	public int getLivePort() {
+		return livePort;
+	}
+
+	public void setLivePort(int livePort) {
+		this.livePort = livePort;
+	}
+
+	public boolean isEnableRecStreaming() {
+		return enableRecStreaming;
+	}
+
+	public void setEnableRecStreaming(boolean enableRecStreaming) {
+		this.enableRecStreaming = enableRecStreaming;
+	}
+
 
 	public String getStreamingPassword() {
 		return streamingPassword;
@@ -505,7 +540,9 @@ public class Vdr {
 		map.put("remux_command", remuxCommand);
 		map.put("remux_parameter", remuxParameter);
 		map.put("remux_enable", enableRemux);
-
+		map.put("key_rec_stream_enable", enableRecStreaming);
+		map.put("key_live_port", livePort);
+		map.put("key_recstream_method", recStreamMethod );
 		return map;
 	}
 
@@ -544,6 +581,10 @@ public class Vdr {
 		remuxCommand = get(map, "remux_command");
 		remuxParameter = get(map, "remux_parameter");
 		enableRemux = getBoolean(map, "remux_enable");
+		
+		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
+		livePort = getInteger(map, "key_live_port");
+		recStreamMethod = get(map, "key_recstream_method");
 
 	}
 
