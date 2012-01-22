@@ -16,6 +16,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	Vdr vdr;
 	VdrSharedPreferences pref;
 
+	int id = -1;
+
 	@Override
 	public SharedPreferences getSharedPreferences(String name, int mode) {
 		return this.pref;
@@ -27,8 +29,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	}
 
 	private void initVDR() {
-		Integer id = getIntent().getExtras().getInt(Intents.VDR_ID);
-		if (id == null) {// new vdr
+		id = getIntent().getIntExtra(Intents.VDR_ID, -1);
+		if (id == -1) {// new vdr
 			vdr = new Vdr();
 			pref = new VdrSharedPreferences();
 			pref.instance = vdr;
@@ -41,6 +43,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 				vdr = new Vdr();
 				pref = new VdrSharedPreferences();
 				pref.instance = vdr;
+				id = -1;
 			}
 		}
 	}
@@ -90,13 +93,12 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	private void enableWolPreferences() {
 		Preference p = findPreference(getString(R.string.wakeup_wol_mac_key));
-		if(p != null)
-				
-				p.setEnabled(true);
-		p = 
-		findPreference(getString(R.string.wakeup_wol_custom_broadcast_key));
-		if(p!=null){
-				p.setEnabled(true);
+		if (p != null)
+
+			p.setEnabled(true);
+		p = findPreference(getString(R.string.wakeup_wol_custom_broadcast_key));
+		if (p != null) {
+			p.setEnabled(true);
 		}
 	}
 
@@ -128,17 +130,17 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	}
 
 	private void enableWakeupUrlPrefenreces() {
-		Preference p = 	findPreference(getString(R.string.wakeup_url_key));
-		if(p!=null){
+		Preference p = findPreference(getString(R.string.wakeup_url_key));
+		if (p != null) {
 			p.setEnabled(true);
 		}
-		
+
 		p = findPreference(getString(R.string.wakeup_password_key));
-				if(p != null){
-				p.setEnabled(true);
-				}
+		if (p != null) {
+			p.setEnabled(true);
+		}
 		p = findPreference(getString(R.string.wakeup_user_key));
-		if(p != null){
+		if (p != null) {
 			p.setEnabled(true);
 		}
 	}
@@ -169,8 +171,18 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	@Override
 	public void onBackPressed() {
-		setResult(RESULT_OK);
-		finish();
+		if (id != -1) {// no new devices
+			setResult(RESULT_OK);
+			finish();
+			return;
+		}
+		if (pref.commits < 2) {// user has not changed anything
+			getHelper().getVdrDAO().delete(pref.instance);
+			finish();
+			return;
+		}
+		
+		super.onBackPressed();
 	}
-	
+
 }

@@ -15,6 +15,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
 
 public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper> implements OnItemClickListener, OnItemLongClickListener {
@@ -106,6 +107,12 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper> 
 		
 	}
 	
+	
+	@Override
+	public void onBackPressed() {
+		Preferences.init(this);
+		super.onBackPressed();
+	}
 
 	/**
 	 * Refresh the list
