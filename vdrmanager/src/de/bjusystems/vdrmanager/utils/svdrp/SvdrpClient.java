@@ -157,7 +157,7 @@ public abstract class SvdrpClient<Result> {
 			// connect
 			informListener(SvdrpEvent.CONNECTING, null);
 
-			if (Preferences.get().isSecure() || true) {
+			if (false && Preferences.get().isSecure()) {
 
 				SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory
 						.getDefault(); // Erzeugt eine SSLSocketFactory mit
