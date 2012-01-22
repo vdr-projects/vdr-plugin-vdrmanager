@@ -3,7 +3,7 @@
 
 	<PreferenceCategory android:title="@string/vdr_prefs_category">
 
-		<EditTextPreference android:inputType="textCapWords"
+		<EditTextPreference android:inputType="textCapWords" android:defaultValue="-"
 			android:key="@string/vdr_name_key" android:summary="@string/vdr_name_summary"
 			android:title="@string/vdr_name_title" />
 
@@ -13,6 +13,7 @@
 		android:title="@string/vdr_preferences">
 
 		<EditTextPreference android:inputType="textNoSuggestions"
+			android:defaultValue="0.0.0.0"
 			android:key="@string/vdr_host_key" android:summary="@string/vdr_host_summary"
 			android:title="@string/vdr_host_title" />
 
@@ -49,7 +50,8 @@
 	<PreferenceCategory android:key="wakeup_preferences"
 		android:title="@string/wakeup_preferences">
 
-		<CheckBoxPreference android:key="@string/wakeup_enabled_key"
+		<CheckBoxPreference android:key="@string/wakeup_enabled_key" 
+			android:defaultValue="false"
 			android:summary="@string/wakeup_enabled_summary" android:title="@string/wakeup_enabled_title" />
 
 		<ListPreference android:defaultValue="@string/default_wakeup_method"
@@ -117,6 +119,7 @@
 			android:key="livetv_streamformat" android:title="@string/settings_livetv_streamformat" />
 
 		<CheckBoxPreference android:key="remux_enable"
+			android:defaultValue="false"
 			android:summary="@string/remux_enable_summary" android:title="@string/remux_enable_title" />
 
 		<ListPreference android:defaultValue="EXT"

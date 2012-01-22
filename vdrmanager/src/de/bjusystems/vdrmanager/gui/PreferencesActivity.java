@@ -74,13 +74,17 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 
 	@Override
 	public void onBackPressed() {
+		
+		
+		//Preferences.getSharedPreferences(this)
+		//.registerOnSharedPreferenceChangeListener(this);
 
 		// finish this activity
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.addActivityToFinish(this);
 		app.finishActivities();
 
-		Preferences.init(this);
+		//Preferences.init(this);
 		// restart main activity because
 		// the buttons needs refreshing
 		final Intent intent = new Intent();

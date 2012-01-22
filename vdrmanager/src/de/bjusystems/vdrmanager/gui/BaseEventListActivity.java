@@ -205,7 +205,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 	}
-
+	
 	/**
 	 * @param parent
 	 * @param view
@@ -225,8 +225,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		prepareDetailsViewData(item);
 
 		// show details
-		final Intent intent = new Intent();
-		intent.setClass(this, EpgDetailsActivity.class);
+		final Intent intent = new Intent(this, EpgDetailsActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (highlight != null) {

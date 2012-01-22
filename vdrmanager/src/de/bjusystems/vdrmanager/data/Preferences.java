@@ -34,8 +34,14 @@ public class Preferences {
 	}
 
 	public static void setCurrentVdr(Context context, Vdr vdr) {
-		setCurrentInternal(context, vdr);
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		current = vdr;
+		sharedPrefs
+				.edit()
+				.putInt(context.getString(R.string.current_vdr_id_key),
+						current.getId()).commit();
 	}
+
 
 	public Vdr getCurrentVdr() {
 		return current;
@@ -190,9 +196,7 @@ public class Preferences {
 	 * @return true, if remote wakeup is enabled
 	 */
 	public boolean isWakeupEnabled() {
-		return true;
-		// TODO
-		// return getCurrentVdr().isWakeupEnabled();
+		 return getCurrentVdr().isWakeupEnabled();
 	}
 
 	/**
@@ -447,7 +451,8 @@ public class Preferences {
 	public static void reset() {
 		thePrefs = null;
 	}
-
+	
+		
 	/**
 	 * Loads all preferences
 	 * 
@@ -471,9 +476,9 @@ public class Preferences {
 			setLocale(context);
 		}
 
-		// if (current != null) {
-		// return;
-		// }
+		// 	if (current != null) {
+		// 		return;
+		// 	}
 
 		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		int id = sharedPrefs.getInt(
@@ -485,14 +490,14 @@ public class Preferences {
 		}
 
 		if (vdr != null) {
-			setCurrentInternal(context, vdr);
+			setCurrentVdr(context, vdr);
 			return;
 		}
 
 		List<Vdr> list = db.getVdrDAO().queryForAll();
 		if (list != null && list.isEmpty() == false) {
 			vdr = list.get(0);
-			setCurrentInternal(context, vdr);
+			setCurrentVdr(context, vdr);
 			return;
 		}
 		if (initFromOldVersion(context) == false) {
@@ -505,31 +510,15 @@ public class Preferences {
 
 	}
 
-	private static void setCurrentInternal(Context context, Vdr vdr) {
-		final SharedPreferences sharedPrefs = getSharedPreferences(context);
-		current = vdr;
-		sharedPrefs
-				.edit()
-				.putInt(context.getString(R.string.current_vdr_id_key),
-						current.getId()).commit();
-	}
-
 	private static boolean initFromOldVersion(Context context) {
-		int version = -1;
-		try {
-			version = context.getPackageManager().getPackageInfo(
-					context.getPackageName(), 0).versionCode;
-		} catch (Exception ex) {
-			return false;
-		}
-
-		if (version != 40) {
-			return false;
-		}
 
 		Vdr vdr = new Vdr();
 
-		vdr.setHost(getString(context, R.string.vdr_host_key, "0.0.0.0"));
+		String host = getString(context, R.string.vdr_host_key, null);
+		if(host == null){
+			return false;
+		}
+		vdr.setHost(host);
 		vdr.setName("Default");
 		vdr.setPort(getInt(context, R.string.vdr_port_key, 6420));
 		vdr.setPassword(getString(context, R.string.vdr_password_key, ""));
@@ -592,7 +581,7 @@ public class Preferences {
 			return false;
 		}
 
-		setCurrentInternal(context, vdr);
+		setCurrentVdr(context, vdr);
 
 		return true;
 	}

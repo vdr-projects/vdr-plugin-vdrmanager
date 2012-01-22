@@ -16,7 +16,7 @@ public class Vdr {
 	private Integer id;
 
 	@DatabaseField(columnName = "name")
-	private String name;
+	private String name = "-";
 
 	/**
 	 * Use secure channel
@@ -439,6 +439,10 @@ public class Vdr {
 	}
 
 	private static <T> T get(Map<String, Object> map, String key) {
+		return get(map, key, null);
+	}
+
+	private static <T> T get(Map<String, Object> map, String key, Object def) {
 		return (T) map.get(key);
 	}
 
@@ -506,8 +510,8 @@ public class Vdr {
 	}
 
 	public void init(Map<String, Object> map) {
-		name = get(map, "vdr_name");
-		host = get(map, "vdr_host");
+		name = get(map, "vdr_name", name);
+		host = get(map, "vdr_host" );
 		port = getInteger(map, "vdr_port");
 		password = get(map, "vdr_password");
 		secure = getBoolean(map, "vdr_secure");
@@ -516,12 +520,12 @@ public class Vdr {
 		channelFilter = get(map, "last_channel");
 
 		wakeupEnabled = getBoolean(map, "key_wakeup_enabled");
-		wakeupUrl = get(map, "key_wakeup_url");
-		wakeupUser = get(map, "key_wakeup_user");
-		wakeupPassword = get(map, "key_wakeup_password");
-		wakeupMethod = get(map, "key_wakeup_method");
-		wolCustomBroadcast = get(map, "key_wol_custom_broadcast");
-		mac = get(map, "key_wakeup_wol_mac");
+		wakeupUrl = get(map, "key_wakeup_url", "0.0.0.0");
+		wakeupUser = get(map, "key_wakeup_user","");
+		wakeupPassword = get(map, "key_wakeup_password","");
+		wakeupMethod = get(map, "key_wakeup_method","wol");
+		wolCustomBroadcast = get(map, "key_wol_custom_broadcast","");
+		mac = get(map, "key_wakeup_wol_mac","");
 
 		connectionTimeout = getInteger(map, "key_conntimeout_key");
 		readTimeout = getInteger(map, "key_vdr_readtimeout");

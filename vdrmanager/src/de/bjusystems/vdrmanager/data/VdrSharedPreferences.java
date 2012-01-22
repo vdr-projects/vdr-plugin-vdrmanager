@@ -15,6 +15,8 @@ public class VdrSharedPreferences implements SharedPreferences {
 
 	private static final String EMPTY_STRING = "";
 	
+	public int commits  = 0;
+	
 	public RuntimeExceptionDao<Vdr, Integer> dao;
 	
 	public Vdr instance;
@@ -107,6 +109,8 @@ public class VdrSharedPreferences implements SharedPreferences {
 
 			if(status == false)
 				return false;
+			
+			++commits;
 			
 			// and update any listeners
 			for (OnSharedPreferenceChangeListener listener : listeners) {

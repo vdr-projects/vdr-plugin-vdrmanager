@@ -4,15 +4,12 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -53,12 +50,14 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * 
  * @author bju
  */
-public class EpgDetailsActivity extends Activity implements OnClickListener,
+public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListener,
 		OnPageChangeListener {
 
 	public static final String TAG = "EpgDetailsActivity";
 
 	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
+	
+	private static final String IMDB_URL_ENCODING = "ISO-8859-1";
 
 	private String highlight = null;
 
@@ -117,37 +116,6 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 
 		public void startUpdate(View view) {
 		}
-	}
-
-	public void initActionBar() {
-		int api = Build.VERSION.SDK_INT;
-		if (api < 11) {
-			return;
-		}
-
-		ActionBar actionBar = getActionBar();
-		actionBar.setHomeButtonEnabled(true);
-		// actionBar.setDisplayShowHomeEnabled(false);
-		// actionBar.setDisplayShowTitleEnabled(false);
-		// View actionBarView =
-		// getLayoutInflater().inflate(R.layout.action_bar_custom_view, null);
-		// actionBar.setCustomView(actionBarView);
-		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		// ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<String>(this,
-		// android.R.layout.simple_spinner_dropdown_item);
-		// mSpinnerAdapter.add("A");
-		// actionBar.setListNavigationCallbacks(mSpinnerAdapter, new
-		// OnNavigationListener() {
-
-		// public boolean onNavigationItemSelected(int itemPosition, long
-		// itemId) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		// });
-
 	}
 
 	@Override
@@ -343,8 +311,8 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 					final TextView title = (TextView) view
 							.findViewById(R.id.epg_detail_title);
 					String url = String.format(IMDB_URL, Preferences.get()
-							.getImdbUrl(), String.valueOf(title.getText()));
-					url = encode(url, "utf-8");
+							.getImdbUrl(), encode(String.valueOf(title.getText()), IMDB_URL_ENCODING));
+					//url = encode(url, "utf-8");
 					Intent i = new Intent(Intent.ACTION_VIEW);
 					i.setData(Uri.parse(url));
                     i.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -435,7 +403,7 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 			break;
 		case R.id.epg_event_create_timer:
 			final ArrayAdapter<Wrapper> ada = new ArrayAdapter<Wrapper>(this,
-					R.layout.timer_operation_list_item);
+					android.R.layout.simple_dropdown_item_1line);
 			final Timer timer = getTimer(cEvent);
 			// remove unneeded menu items
 			if (timer != null) {
@@ -534,71 +502,9 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		task.start();
 	}
 
-	// EditTimerViewHolder tView = null;
 
-	// public void onSwipe(int direction) {
-	// switch (direction) {
-	// case SimpleGestureFilter.SWIPE_RIGHT:
-	// // prevEPG();
-	// break;
-	// case SimpleGestureFilter.SWIPE_LEFT:
-	// nextEPG();
-	// break;
-	// }
-	// }
+	private List<Event> epgs = new ArrayList<Event>();
 
-	// private void prevEPG() {
-	// if(counter == -1){
-	// return;
-	// }
-	// Event epg;
-	// if (counter == 0) {
-	// say(R.string.navigae_at_the_start);
-	// return;
-	// }
-	// epg = epgs.get(--counter);
-	// publishEPG(epg);
-	// }
-
-	List<Event> epgs = new ArrayList<Event>();
-
-	// /int counter = 0;
-
-	/*
-	 * public void initEPGs() {
-	 * 
-	 * if (epgs != null) { return; } epgs = new ArrayList<Event>();
-	 * 
-	 * final VdrManagerApp app = (VdrManagerApp) getApplication(); final Event
-	 * event = app.getCurrentEvent(); EpgClient c = new EpgClient(new Channel()
-	 * {
-	 * 
-	 * @Override public String getName() { return event.getChannelName(); }
-	 * 
-	 * @Override public int getNumber() { return
-	 * Integer.valueOf(event.getChannelNumber()); } });
-	 * 
-	 * try { c.run(); } catch (SvdrpException e) { // TODO Auto-generated catch
-	 * block e.printStackTrace(); }
-	 * 
-	 * List<Epg> e = c.getResults(); if (e == null || e.isEmpty()) { return; }
-	 * 
-	 * epgs.addAll(e); Event fe = epgs.get(0); if
-	 * (event.getStart().equals(fe.getStart()) == false) { epgs.set(0, event); ;
-	 * } }
-	 */
-	// private void nextEPG() {
-	// if (counter == -1) {
-	// return;
-	// }
-	// if (counter < epgs.size() - 1) {
-	// counter++;
-	// Event epg = epgs.get(counter);
-	// // publishEPG(epg);
-	// } else {
-	// say(R.string.navigae_at_the_end);
-	// }
-	// }
 
 	protected void say(int res) {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
@@ -608,15 +514,6 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 
-	// public void onDoubleTap() {
-	//
-	// }
-
-	// @Override
-	// public boolean dispatchTouchEvent(MotionEvent me) {
-	// // this.detector.onTouchEvent(me);
-	// return super.dispatchTouchEvent(me);
-	// }
 
 	@Override
 	public final boolean onCreateOptionsMenu(final Menu menu) {
@@ -652,15 +549,6 @@ public class EpgDetailsActivity extends Activity implements OnClickListener,
 		return super.onOptionsItemSelected(item);
 	}
 
-	// protected void modifyTimer(Timer timer) {
-	// final ModifyTimerTask task = new ModifyTimerTask(this, timer) {
-	// @Override
-	// public void finished(SvdrpEvent event) {
-	// modifed = true;
-	// }
-	// };
-	// task.start();
-	// }
 
 	protected void deleteTimer(final Timer timer) {
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {

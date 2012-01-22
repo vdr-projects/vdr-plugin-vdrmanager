@@ -1,25 +1,16 @@
 package de.bjusystems.vdrmanager.gui;
 
-import android.app.ActionBar;
-import android.app.ActionBar.OnNavigationListener;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import de.bjusystems.vdrmanager.R;
@@ -31,7 +22,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
-public abstract class BaseActivity<Result, T extends ListView> extends Activity
+public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseActivity
 		implements OnClickListener, SvdrpAsyncListener<Result>, Cache {
 
 	public static final String TAG = BaseActivity.class.getName();
@@ -124,36 +115,6 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 	// setTitle(title);
 	// }
 
-	public void initActionBar() {
-		int api = Build.VERSION.SDK_INT;
-		if (api < 11) {
-			return;
-		}
-
-		ActionBar actionBar = getActionBar();
-		actionBar.setHomeButtonEnabled(true);
-		// actionBar.setDisplayShowHomeEnabled(false);
-		// actionBar.setDisplayShowTitleEnabled(false);
-		// View actionBarView =
-		// getLayoutInflater().inflate(R.layout.action_bar_custom_view, null);
-		// actionBar.setCustomView(actionBarView);
-		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		// ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<String>(this,
-		// android.R.layout.simple_spinner_dropdown_item);
-		// mSpinnerAdapter.add("A");
-		// actionBar.setListNavigationCallbacks(mSpinnerAdapter, new
-		// OnNavigationListener() {
-
-		// public boolean onNavigationItemSelected(int itemPosition, long
-		// itemId) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		// });
-
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +122,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends Activity
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
 		getApp().addActivityToFinish(this);
+		
 		initActionBar();
 
 		// your logic for click listner
