@@ -38,8 +38,9 @@
 			android:key="@string/qui_imdb_url_key" android:summaryOn="@string/qui_imdb_url_summary"
 			android:title="@string/qui_imdb_url_title" />
 
-		<CheckBoxPreference android:defaultValue="false"
-			android:key="@string/qui_show_omdb_button_key" android:summaryOff="@string/qui_show_omdb_button_summary_off"
+		<CheckBoxPreference android:defaultValue="true"
+			android:key="@string/qui_show_omdb_button_key"
+			android:summaryOff="@string/qui_show_omdb_button_summary_off"
 			android:summaryOn="@string/qui_show_omdb_button_summary_on"
 			android:title="@string/qui_show_omdb_button_title" />
 		

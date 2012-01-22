@@ -70,7 +70,7 @@ public class Preferences {
 	/**
 	 * Show OMDB button in epg details
 	 */
-	private boolean showOmdbButton = true;
+	private boolean showOmdbButton = false;
 	
 	public boolean isShowOmdbButton() {
 		return showOmdbButton;
