@@ -128,6 +128,10 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 	
 	@Override
 	public void onBackPressed() {
+		if(cursor.getCount() == 0){
+			finish();
+			return;
+		}
 		Preferences.init(this);
 		if (emptyConfig) {
 			Intent intent = new Intent(this, VdrManagerActivity.class);
