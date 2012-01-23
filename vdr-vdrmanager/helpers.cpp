@@ -91,7 +91,7 @@ string cHelpers::GetTimersIntern() {
 string cHelpers::GetRecordingsIntern() {
 
 	string result = "START\r\n";
-	// iterate through all recordings
+	//iterate through all recordings
 	cRecording* recording = NULL;
 	for (int i = 0; i < Recordings.Count(); i++) {
 		recording = Recordings.Get(i);
@@ -473,7 +473,7 @@ string cHelpers::ToText(cRecording * recording) {
 	result += ":";
 
 	if (info->ChannelName()) {
-		result += info->ChannelName();
+		result += MapSpecialChars(info->ChannelName());
 	} else {
 		result += "<unknown>";
 	}
@@ -501,7 +501,7 @@ string cHelpers::ToText(cRecording * recording) {
 	result += buf;
 
 	result += ":";
-	result += info->ChannelID().ToString();
+	result += MapSpecialChars(info->ChannelID().ToString());
 
 	result += ":";
 	snprintf(buf, sizeof(buf)-1, "%d", RecordingLengthInSeconds(recording));
@@ -544,7 +544,7 @@ string cHelpers::ToText(cTimer * timer) {
 	snprintf(buf, sizeof(buf)-1, "%d", timer->Channel()->Number());
 	result += buf;
 	result += ":";
-	result += channelName;
+	result += MapSpecialChars(channelName);
 	result += ":";
 	snprintf(buf, sizeof(buf)-1, "%lu", timer->StartTime());
 	result += buf;
@@ -573,7 +573,7 @@ string cHelpers::ToText(cTimer * timer) {
 		result += "::";
 	}
 	result += ":";
-	result += timer->Channel()->GetChannelID().ToString();
+	result += MapSpecialChars(timer->Channel()->GetChannelID().ToString());
 
 	result += "\r\n";
 
@@ -600,7 +600,7 @@ string cHelpers::ToText(const cEvent * event) {
 	snprintf(buf, sizeof(buf)-1, "E%d", channel->Number());
 	result = buf;
 	result += ":";
-	result += channel->Name();
+	result += MapSpecialChars(channel->Name());
 	result += ":";
 	snprintf(buf, sizeof(buf)-1, "%lu", event->StartTime());
 	result += buf;
@@ -614,7 +614,7 @@ string cHelpers::ToText(const cEvent * event) {
 	result += ":";
 	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
 	result += ":";
-	result += channel->GetChannelID().ToString();
+	result += MapSpecialChars(channel->GetChannelID().ToString());
 	result += "\r\n";
 
 	if (eventTimer) {
@@ -763,10 +763,18 @@ string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
 
 	return "";
 }
+string cHelpers::MapSpecialChars(cString text) {
 
-string cHelpers::MapSpecialChars(string text) {
+	return MapSpecialChars((const char *)text);
+}
 
-	const char * p = text.c_str();
+string cHelpers::MapSpecialChars(const string text) {
+	return MapSpecialChars(text.c_str());
+}
+
+string cHelpers::MapSpecialChars(const char * p) {
+
+	//const char * p = text.c_str();
 	string result = "";
 	while (*p) {
 		switch (*p) {
