@@ -3,9 +3,9 @@
 
 	<PreferenceCategory android:title="@string/vdr_prefs_category">
 
-		<EditTextPreference android:inputType="textCapWords" android:defaultValue="-"
-			android:key="@string/vdr_name_key" android:summary="@string/vdr_name_summary"
-			android:title="@string/vdr_name_title" />
+		<EditTextPreference android:inputType="textCapWords"
+			android:defaultValue="-" android:key="@string/vdr_name_key"
+			android:summary="@string/vdr_name_summary" android:title="@string/vdr_name_title" />
 
 	</PreferenceCategory>
 
@@ -13,9 +13,8 @@
 		android:title="@string/vdr_preferences">
 
 		<EditTextPreference android:inputType="textNoSuggestions"
-			android:defaultValue="0.0.0.0"
-			android:key="@string/vdr_host_key" android:summary="@string/vdr_host_summary"
-			android:title="@string/vdr_host_title" />
+			android:defaultValue="0.0.0.0" android:key="@string/vdr_host_key"
+			android:summary="@string/vdr_host_summary" android:title="@string/vdr_host_title" />
 
 		<EditTextPreference android:defaultValue="@string/vdr_port_default"
 			android:key="@string/vdr_port_key" android:inputType="number"
@@ -25,8 +24,8 @@
 			android:password="true" android:summary="@string/vdr_password_summary"
 			android:title="@string/vdr_password_title" />
 
-		<CheckBoxPreference android:key="@string/vdr_ssl_key" android:defaultValue="false"
-		    android:enabled="false"
+		<CheckBoxPreference android:key="@string/vdr_ssl_key"
+			android:defaultValue="false" android:enabled="false"
 			android:summary="@string/vdr_ssl_summary" android:title="@string/vdr_ssl_title" />
 
 	</PreferenceCategory>
@@ -35,23 +34,22 @@
 		android:title="@string/channel_filter_preferences">
 
 		<CheckBoxPreference android:key="@string/channel_filter_filter_key"
-			 android:defaultValue="false"
-			android:summary="@string/channel_filter_filter_summary"
+			android:defaultValue="false" android:summary="@string/channel_filter_filter_summary"
 			android:title="@string/channel_filter_filter_title" />
 
 		<EditTextPreference android:defaultValue="1-100"
 			android:dependency="@string/channel_filter_filter_key" android:key="@string/channel_filter_last_key"
 			android:summary="@string/channel_filter_last_summary" android:title="@string/channel_filter_last_title" />
 	</PreferenceCategory>
-	
-	
+
+
 
 	<PreferenceCategory android:key="wakeup_preferences"
 		android:title="@string/wakeup_preferences">
 
-		<CheckBoxPreference android:key="@string/wakeup_enabled_key" 
-			android:defaultValue="false"
-			android:summary="@string/wakeup_enabled_summary" android:title="@string/wakeup_enabled_title" />
+		<CheckBoxPreference android:key="@string/wakeup_enabled_key"
+			android:defaultValue="false" android:summary="@string/wakeup_enabled_summary"
+			android:title="@string/wakeup_enabled_title" />
 
 		<ListPreference android:defaultValue="@string/default_wakeup_method"
 			android:dependency="@string/wakeup_enabled_key" android:entries="@array/wakeup_methods"
@@ -118,8 +116,8 @@
 			android:key="livetv_streamformat" android:title="@string/settings_livetv_streamformat" />
 
 		<CheckBoxPreference android:key="remux_enable"
-			android:defaultValue="false"
-			android:summary="@string/remux_enable_summary" android:title="@string/remux_enable_title" />
+			android:defaultValue="false" android:summary="@string/remux_enable_summary"
+			android:title="@string/remux_enable_title" />
 
 		<ListPreference android:defaultValue="EXT"
 			android:entries="@array/remux_entries" android:entryValues="@array/remux_entry_values"
@@ -131,23 +129,23 @@
 			android:summary="@string/remux_parameter_summary" android:title="@string/remux_parameter_title" />
 	</PreferenceCategory>
 
-<PreferenceCategory android:title="@string/recstream">
-		
-		<CheckBoxPreference android:key="key_rec_stream_enable"
-			android:defaultValue="false"
-			android:summary="@string/recstream_enable_summary" android:title="@string/recstream_enable_title" />
-		
-		<ListPreference android:defaultValue="vdr-live" android:dependency="key_rec_stream_enable" 
-			android:entries="@array/recstream_entries" android:entryValues="@array/recstream_entry_values"
-			android:key="key_recstream_method"
-			android:summary="@string/recstream_method_summary" android:title="@string/recstream_method_title" />
-			
-		<EditTextPreference android:defaultValue="8008" 
-			android:dependency="key_rec_stream_enable" 
-			android:inputType="number" android:key="key_live_port"
-			android:summary="@string/settings_live_port_summary" android:title="@string/settings_live_port" />
+	<PreferenceCategory android:title="@string/recstream">
 
-</PreferenceCategory>
+		<CheckBoxPreference android:key="key_rec_stream_enable"
+			android:defaultValue="false" android:summary="@string/recstream_enable_summary"
+			android:title="@string/recstream_enable_title" />
+
+		<ListPreference android:defaultValue="vdr-live"
+			android:dependency="key_rec_stream_enable" android:entries="@array/recstream_entries"
+			android:entryValues="@array/recstream_entry_values" android:key="key_recstream_method"
+			android:summary="@string/recstream_method_summary" android:title="@string/recstream_method_title" />
+
+		<EditTextPreference android:defaultValue="8008"
+			android:dependency="key_rec_stream_enable" android:inputType="number"
+			android:key="key_live_port" android:summary="@string/settings_live_port_summary"
+			android:title="@string/settings_live_port" />
+
+	</PreferenceCategory>
 
 	<PreferenceScreen android:title="Advanced">
 

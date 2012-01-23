@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-	<item android:id="@+id/main_menu_goto" android:title="@string/main_menu_goto_title"
+	<item android:id="@+id/main_menu_goto" android:title="@string/main_menu_goto"
 		android:icon="@drawable/ic_menu_goto"
 		android:showAsAction="ifRoom"/>
 	<item android:id="@+id/menu_search"
@@ -13,6 +13,7 @@
 	<item android:id="@+id/main_menu_preferences" android:title="@string/main_menu_preferences"
 		android:showAsAction="ifRoom" 
 		android:icon="@android:drawable/ic_menu_preferences" />
+	
 	<item android:id="@+id/main_menu_info" android:title="@string/main_menu_info"
 		android:icon="@android:drawable/ic_menu_info_details" />
 	

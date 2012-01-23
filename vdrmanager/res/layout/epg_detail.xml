@@ -150,6 +150,17 @@
             android:background="@android:drawable/list_selector_background"
             android:src="@drawable/omdb"
             android:text="@string/epg_event_omdb_text" />
+            
+                  
+        <ImageButton
+            android:id="@+id/epg_event_tmdb"
+            style="?android:attr/buttonStyleSmall"
+        	android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/tmdb"
+            android:text="@string/epg_event_tmdb_text" />
 
         <ImageButton
             android:id="@+id/epg_event_create_timer"

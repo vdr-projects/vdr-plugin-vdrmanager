@@ -55,7 +55,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 
 	public static final String TAG = "EpgDetailsActivity";
 
-	public static String IMDB_URL = "http://%s/find?s=all&q=%s";
+	public static String IMDB_BASE_URL = "http://%s";
+	
+	public static String IMDB_URL_QUERY = "/find?s=all&q=%s";
 	
 	public static String OMDB_URL = "http://www.omdb.org/search?search[text]=%s";
 	
@@ -63,7 +65,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	
 	private static final String OMDB_URL_ENCODING = "UTF-8";
 	
-
+	private static final String TMDB_URL_ENCODING = "UTF-8";
+	
+	public static String TMDB_URL = "http://www.themoviedb.org/search?search=%s";
 
 	private String highlight = null;
 
@@ -314,7 +318,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			b.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
-					startFilmDatabaseBrowseIntent(String.format(IMDB_URL, Preferences.get().getImdbUrl()), view, IMDB_URL_ENCODING);	
+					startFilmDatabaseBrowseIntent(String.format(IMDB_BASE_URL, Preferences.get().getImdbUrl()) + IMDB_URL_QUERY, view, IMDB_URL_ENCODING);	
 				}
 			});
 		}
@@ -334,6 +338,22 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 				});
 			}
 			
+			b = view.findViewById(R.id.epg_event_tmdb);
+
+			if (Preferences.get().isShowTmdbButton() == false) {
+				b.setVisibility(View.GONE);
+			} else {
+				b.setVisibility(View.VISIBLE);
+				b.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						startFilmDatabaseBrowseIntent(TMDB_URL, view, TMDB_URL_ENCODING);
+					}
+				});
+			}
+			
+			
+
 			
 		
 

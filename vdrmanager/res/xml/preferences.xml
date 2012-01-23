@@ -44,6 +44,13 @@
 			android:summaryOn="@string/qui_show_omdb_button_summary_on"
 			android:title="@string/qui_show_omdb_button_title" />
 		
+		
+		<CheckBoxPreference android:defaultValue="true"
+			android:key="@string/qui_show_tmdb_button_key"
+			android:summaryOff="@string/qui_show_tmdb_button_summary_off"
+			android:summaryOn="@string/qui_show_tmdb_button_summary_on"
+			android:title="@string/qui_show_tmdb_button_title" />
+		
 
 		<CheckBoxPreference android:defaultValue="true"
 			android:key="@string/qui_quit_on_back_key" android:summaryOff="@string/gui_quit_on_back_summary_off"

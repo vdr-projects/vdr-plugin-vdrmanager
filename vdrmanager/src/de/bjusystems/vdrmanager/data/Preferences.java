@@ -71,7 +71,17 @@ public class Preferences {
 	 * Show OMDB button in epg details
 	 */
 	private boolean showOmdbButton = false;
+
+	/**
+	 * Show TMDb button in epg details
+	 */
+	private boolean showTmdbButton = false;
+
 	
+	public boolean isShowTmdbButton() {
+		return showTmdbButton;
+	}
+
 	public boolean isShowOmdbButton() {
 		return showOmdbButton;
 	}
@@ -465,7 +475,11 @@ public class Preferences {
 				R.string.qui_show_omdb_button_key, true);
 
 
-		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "imdb.de");
+		prefs.showTmdbButton = getBoolean(context,
+				R.string.qui_show_tmdb_button_key, true);
+
+
+		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "akas.imdb.com");
 	
 		thePrefs = prefs;
 	}
