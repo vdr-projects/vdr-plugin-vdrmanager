@@ -1,5 +1,8 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
+2012-01-23: Version 0.7
+-Escape also Channel Name and Channel ID (may contain ':')
+
 2011-12-28: Version 0.6
 -Bug fix on checking recording's event title
 
