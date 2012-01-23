@@ -44,6 +44,7 @@
 	<string name="qui_quit_on_back_key">key_gui_quit_on_back</string>
 	<string name="qui_show_imdb_button_key">key_qui_show_imdb_button</string>
 	<string name="qui_show_omdb_button_key">key_qui_show_omdb_button</string>
+	<string name="qui_show_tmdb_button_key">key_qui_show_tmdb_button</string>
 	<string name="qui_imdb_url_key">key_qui_imdb_url</string>
 	<string name="gui_custom_locale_key">key_gui_custom_locale</string>
 	

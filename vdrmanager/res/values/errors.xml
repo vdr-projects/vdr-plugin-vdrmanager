@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-  <string name="vdr_error_text">The communication with VDR has caused an error: %1$s</string>
-  
-</resources>

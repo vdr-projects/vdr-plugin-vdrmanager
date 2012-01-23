@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_menu_channels">Channels</string>
+    <string name="action_menu_timers">Timers</string>
+    <string name="action_menu_recordings">Recordings</string>
+    <string name="action_menu_epg">EPG list</string>
+    <string name="action_menu_search">EPG search</string>
+    <string name="action_menu_wakeup">Wakeup</string>
+    <string name="app_name">VDR-Manager</string>
+    <string name="channel_item_menu_epg">Show EPG</string>
+    <string name="channel_item_menu_stream">Show live stream</string>
+    <string name="channel_item_menu_hide">Hide</string>
+    <string name="channel_item_menu_hide_permanent">Hide permanent</string>
+    <string name="channel_group_menu_hide">Hide</string>
+    <string name="channel_group_menu_hide_permanent">Hide permanent</string>
+    <string name="menu_groupby">Group by</string>
+    <string name="groupby_group">Group</string>
+    <string name="groupby_provider">Provider</string>
+    <string name="groupby_name">Name</string>
+    <string name="groupby_name_all_channels_group">All Channels</string>
+    <string name="groupby_window_title_templte">Group by %1$s</string>
+    <string name="common_delete">Delete</string>
+    <string name="prefs_current_value">Current:</string>
+    <string name="prefs_current_value_template">\nCurrent: %1$s</string>
+    <string name="prefs_current_value_not_set">&lt;not set></string>
+    <string name="no_connection">No connection</string>
+    <string name="aborted">Connection aborted.</string>
+    <string name="no_connection_retry">Retry</string>
+    <string name="refresh">Refresh</string>
+    <string name="done">Done</string>
+    <string name="share">Share</string>
+    <string name="search_reapt">Reruns</string>
+    <string name="share_chooser">Share EPG Entry</string>
+    <string name="about_text">
+        About "VDR-Manager" Software for Android\n 
+		This is Version %1$s\n
+        If you have a VDR at home reachable
+         over the internet and own a mobile phone running Android then you possibly find this program useful.
+         For further details visit http://projects.vdr-developer.org/projects/vdr-manager/wiki.
+         Author:\n
+          bju&lt;herrlado@gmail.com>
+          herrlado&lt;herrlado@gmail.com>
+    </string>
+    <string name="about_title">About</string>
+    <string name="no_internet_connection">No data connection</string>
+    <string name="update_will_start_in">Update will start in one second</string>
+    <string name="epg_menu_search">Search EPG</string>
+    <string name="epg_menu_times">Search times</string>
+    <string name="epg_item_menu_timer_add">Create timer</string>
+    <string name="epg_item_menu_timer_delete">Delete timer</string>
+    <string name="epg_item_menu_timer_modify">Modify timer</string>
+    <string name="epg_item_menu_timer_enable">Enable timer</string>
+    <string name="epg_item_menu_timer_disable">Disable timer</string>
+    <string name="epg_no_items">Nothing found…</string>
+    <string name="epg_client_errors">An error occurred, check logs…</string>
+    <string name="navigae_at_the_end">End</string>
+    <string name="navigae_at_the_start">Beginning</string>
+    <string name="epg_search_times_add">Add time</string>
+    <string name="epg_search_times_window">Custom times</string>
+
+    <!-- What's on display -->
+    <string name="epg_list_time_label">What\'s on at</string>
+    <string name="epg_list_time_now">Now</string>
+    <string name="epg_list_time_next">Next</string>
+    <string name="epg_list_time_adhoc">Ad Hoc</string>
+    <string name="epg_list_channel_spinner">Channel</string>
+    <string name="epg_list_search_label">Search results</string>
+
+    <!-- create timer -->
+    <string name="epg_event_share_text">Share</string>
+    <string name="epg_event_imdb_text">IMDb Search</string>
+    <string name="epg_event_omdb_text">OMDB Search</string>
+    <string name="epg_event_tmdb_text">TMDb Search</string>
+    <string name="epg_eent_livetv_text">Stream</string>
+    <string name="epg_event_create_timer_text">Add timer</string>
+    <string name="epg_event_modify_timer_text">Modify timer</string>
+
+    <!-- search -->
+    <string name="epg_search_button">Search</string>
+    <string name="epg_duration_template">%1$s min</string>
+    <string name="epg_duration_template_live">%1$s/%2$s min</string>
+    <string name="epg_of_a_channel">EPG -> %1$s,  %2$s/%3$s</string>
+    <string name="epg_by_channel">EPG by channel</string>
+    <string name="epg_by_search">EPG Search</string>
+    <string name="epg_by_search_param">EPG Search: \'%1$s\'</string>
+    <string name="epg_by_time">EPG by time</string>
+    <string name="epg_by_time_args">EPG by time: \'%1$s\'</string>
+    <string name="search_epg_hint">Search EPG</string>
+    <string name="epg_search_settings_description">Search VDR EPG</string>
+    <string name="epg_window_title_count">%1$s,  %2$s items</string>
+    <string name="channels_window_title_count">%1$s,  %2$s/%3$s</string>
+    <string name="new_timer">New timer</string>
+    <string name="vdr_error_text">The communication with VDR has caused an error: %1$s</string>
+    <string name="livetv">Live TV</string>
+    <string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
+		player such as VPlayer</string>
+    <string name="settings_livetv_streamformat">Streamformat</string>
+    <string name="settings_livetv_port">Streaming Port</string>
+    <string name="settings_livetv_port_summary">Default 3000. The access must be enabled in
+		streamdevhosts.conf.</string>
+
+    <string-array name="livetv_streamformat">
+        <item>TS</item>
+        <item>PES</item>
+        <item>ES</item>
+        <item>PS</item>
+    </string-array>
+    <string-array name="livetv_streamformat_values">
+        <item>TS</item>
+        <item>PES</item>
+        <item>ES</item>
+        <item>PS</item>
+    </string-array>
+
+    <string name="key_remux_enable">remux_enable</string>
+    <string name="key_remux_command">remux_command</string>
+    <string name="key_remux_parameter">remux_parameter</string>
+    <string name="stream_via_as">Stream</string>
+    <string name="stream_via">via %s</string>
+    <string name="stream_as">as %s</string>
+    <string name="remux_title">Remux</string>
+    <string name="remux_enable_title">Enable Remux</string>
+    <string name="remux_enable_summary">Enable streaming via remux (e.g. externremux.sh)</string>
+    <string name="remux_command_title">Command</string>
+    <string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/EXT/1</string>
+    <string name="remux_parameter_title">Parameter</string>
+    <string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/EXT;DSL1000/1</string>
+    <string name="main_menu_preferences">Preferences</string>
+    <string name="main_menu_info">Info</string>
+    <string name="main_menu_exit">Exit</string>
+    <string name="main_menu_goto">Switch Device</string>
+    <string name="main_menu_goto_title">Switch to…</string>
+    <string name="main_menu_goto_no_vdr">Can not load selected device :(</string>
+    <string name="main_menu_switched_to">Switched to %1$s</string>
+    <string name="vdr_devices_summary">Define one or more VDR Devices.</string>
+    <string name="vdr_devices">VDR Devices</string>
+
+    <!-- VDR plugin preferences -->
+    <string name="vdr_preferences">Network settings</string>
+    <string name="vdr_host_title">VDR host</string>
+    <string name="vdr_host_summary">Host running VDR</string>
+    <string name="vdr_port_title">VDR plugin port </string>
+    <string name="vdr_port_summary">Port for connections to VDR plugin</string>
+    <string name="vdr_port_default">6420</string>
+    <string name="vdr_password_title">VDR plugin password</string>
+    <string name="vdr_password_summary">Password for the VDR plugin</string>
+    <string name="vdr_ssl_title">Secure connect</string>
+    <string name="vdr_ssl_summary">Use SSL for connections (currently not supported)</string>
+
+    <!-- channel filter preferences -->
+    <string name="channel_filter_preferences">Channel settings</string>
+    <string name="channel_filter_filter_title">Limit channels</string>
+    <string name="channel_filter_filter_summary">Use only given channels</string>
+    <string name="channel_filter_last_title">Channel filter</string>
+    <string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10</string>
+
+    <!-- wakeup -->
+    <string name="wakeup_preferences">Remote VDR host wakeup</string>
+    <string name="wakeup_enabled_title">Can remote wakeup VDR</string>
+    <string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
+    <string name="wakeup_url_title">URL for remote wakeup</string>
+    <string name="wakeup_url_summary">URL for a request doing the wakeup</string>
+    <string name="wakeup_user_title">Wakeup user</string>
+    <string name="wakeup_user_summary">User for remote wakeup</string>
+    <string name="wakeup_password_title">Wakeup password</string>
+    <string name="wakeup_password_summary">Password for remote wakeup</string>
+    <string name="wakeup_method_title">Wakeup method</string>
+    <string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
+
+    <string-array name="wakeup_methods">
+        <item>Call a URL</item>
+        <item>WOL</item>
+    </string-array>
+
+    <string name="default_wakeup_method">wol</string>
+    <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
+    <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of broadcast address.</string>
+    <string name="wakeup_wol_mac_title">MAC-Address</string>
+    <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
+
+    <!-- timer -->
+    <string name="timer_preferences">Timer defaults</string>
+    <string name="timer_pre_start_buffer_title">Margin at start</string>
+    <string name="timer_pre_start_buffer_summary">Minutes recording starts before the beginning of
+		the broadcast</string>
+    <string name="timer_post_end_buffer_title">Margin at stop</string>
+    <string name="timer_post_end_buffer_summary">Minutes recording stops after the end of the
+		broadcast</string>
+    <string name="timer_default_priority_title">Default priority</string>
+    <string name="timer_default_priority_summary">Default priority</string>
+    <string name="timer_default_primary_limit_title">Default primary limit</string>
+    <string name="timer_default_primary_limit_summary">Default primary limit</string>
+    <string name="timer_default_lifetime_title">Default lifetime</string>
+    <string name="timer_default_lifetime_summary">Default lifetime</string>
+
+    <!-- GUI -->
+    <string name="gui_preferences">GUI Settings</string>
+    <string name="gui_enable_24h_format_title">Use 24-hour format</string>
+    <string name="gui_enable_24h_format_summary_on">13:00</string>
+    <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
+    <string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
+    <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
+    <string name="gui_quit_on_back_title">Quit on back button</string>
+    <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
+    <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
+    <string name="qui_show_imdb_button_title">Show IMDb Button</string>
+    <string name="qui_show_imdb_button_summary_on">IMDb Button is shown</string>
+    <string name="qui_show_imdb_button_summary_off">IMDb Button is not shown</string>
+    <string name="qui_imdb_url_title">IMDb Site</string>
+    <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
+    
+    <string name="qui_show_omdb_button_title">Show OMDB Button</string>
+    <string name="qui_show_omdb_button_summary_on">OMDB Button is shown</string>
+    <string name="qui_show_omdb_button_summary_off">OMDB Button is not shown</string>
+    
+    <string name="qui_show_tmdb_button_title">Show TMDb Button</string>
+    <string name="qui_show_tmdb_button_summary_on">TMDb Button is shown</string>
+    <string name="qui_show_tmdb_button_summary_off">TMDb Button is not shown</string>
+    
+
+    <string name="gui_custom_locale_title">Custom language</string>
+    <string name="gui_custom_locale_sum">Set a custom language.</string>
+
+    <string-array name="imdb_urls">
+        <item>International</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+    </string-array>
+    <string-array name="lang">
+
+<!--         <item>Default language</item> -->
+        <item>English</item>
+        <item>German</item>
+        <item>Italian</item>
+    </string-array>
+    <string-array name="remux_entries">
+        <item>EXT</item>
+        <item>EXTERN (deprecated)</item>
+    </string-array>
+
+    <string name="vdr_advanced_preferences">Advanced</string>
+    <string name="vdr_advanced_preferences_summary">Advanced settings</string>
+    <string name="vdr_conntimeout_title">Connection Timeout</string>
+    <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
+    <string name="vdr_readtimeout_title">Read Timeout</string>
+    <string name="vdr_readtimeout_sum">How long (in seconds) to wait for every read line operation?</string>
+    <string name="vdr_timeout_title">Total timeout</string>
+    <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?</string>
+    <string name="streaming_password_title">Streamdev password</string>
+    <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
+    <string name="streaming_username_title">Streamdev username</string>
+    <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
+    <string name="vdr_encoding_title">Character encoding</string>
+    <string name="vdr_encoding_summary">Character encoding of your VDR device. Default is utf-8.</string>
+    <string name="new_vdr">New VDR</string>
+    <string name="no_vdr">No VDR Devices</string>
+    <string name="vdr_devices_category">VDR devices</string>
+    <string name="vdr_prefs_category">Device</string>
+    <string name="vdr_name_title">Name</string>
+    <string name="vdr_name_summary">A name for this device</string>
+    <string name="vdr_device_delete_qeustion">Delete this device?</string>
+    <string name="recstream">Streaming of recordings</string>
+    <string name="recstream_enable_title">Streaming of recordings</string>
+    <string name="recstream_enable_summary">Enable Streaming of recordings</string>
+
+    <string-array name="recstream_entries">
+        <item>VDR live plugin</item>
+    </string-array>
+
+    <string name="recstream_method_title">Streaming method</string>
+    <string name="recstream_method_summary">Currently Streaming over VDR live plugin is supported</string>
+    <string name="settings_live_port">VDR live plugin port</string>
+    <string name="settings_live_port_summary">VDR live plugin has default port 8008.</string>
+
+    <!-- progress -->
+    <string name="progress_connect">Connecting…</string>
+    <string name="progress_connect_error">Connection failed!</string>
+    <string name="progress_connect_timeout">Connection timeout!</string>
+    <string name="progress_login">Login.</string>
+    <string name="progress_login_error">Login failed.</string>
+    <string name="progress_whatson_loading">Loading EPG…</string>
+    <string name="progress_timers_loading">Loading timers…</string>
+    <string name="progress_recordings_loading">Loading recordings…</string>
+    <string name="progress_channels_loading">Loading channels…</string>
+    <string name="progress_disconnect">Disconnecting…</string>
+    <string name="progress_wakeup_sending">Initiating wakeup request…</string>
+    <string name="progress_wakeup_sent">Wakeup request sent</string>
+    <string name="progress_wakeup_error">Error sending wakeup request: %1$s</string>
+    <string name="progress_timer_save">Saving timer…</string>
+    <string name="progress_timer_delete">Deleting timer…</string>
+    <string name="progress_recording_delete">Deleting recording…</string>
+    <string name="progress_timer_enable">Enabling timer…</string>
+    <string name="progress_timer_modify">Updating timer…</string>
+    <string name="progress_timer_disable">Disabling timer…</string>
+    <string name="progress_connect_finished_abnormal">Connection finished abnormal</string>
+    <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
+    <string name="progress_cache_hit">Loaded from cache.</string>
+    <string name="recording_item_menu_delete">Delete</string>
+    <string name="recording_item_menu_stream">Stream</string>
+
+</resources>
