@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -193,11 +194,13 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	// }
 
 	protected void say(int res) {
-		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
+		say(this.getString(res));
 	}
 
 	protected void say(String msg) {
-		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		Toast t = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+		t.setGravity(Gravity.CENTER, 0, 0);
+		t.show();
 	}
 
 	protected boolean noConnection(SvdrpEvent event) {
