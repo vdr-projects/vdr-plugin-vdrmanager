@@ -52,4 +52,6 @@
 	<string name="vdr_conntimeout_key">key_conntimeout_key</string>
 	<string name="vdr_readtimeout_key">key_vdr_readtimeout</string>
 	<string name="vdr_timeout_key">key_vdr_timeout</string>
+	
+	<string name="gui_max_recent_channels_key">key_gui_max_recent_channels</string>
 </resources>

@@ -303,5 +303,7 @@
     <string name="progress_cache_hit">Loaded from cache.</string>
     <string name="recording_item_menu_delete">Delete</string>
     <string name="recording_item_menu_stream">Stream</string>
+    <string name="recent_channels">Recent channels</string>
+	<string name="recent_channels_no_history">No history…</string>    
 
 </resources>
