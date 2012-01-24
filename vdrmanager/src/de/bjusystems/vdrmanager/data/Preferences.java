@@ -77,8 +77,15 @@ public class Preferences {
 	 * Show TMDb button in epg details
 	 */
 	private boolean showTmdbButton = false;
+	
+	
+	private int maxRecentChannels = 10;
 
 	
+	public int getMaxRecentChannels() {
+		return maxRecentChannels;
+	}
+
 	public boolean isShowTmdbButton() {
 		return showTmdbButton;
 	}
@@ -486,6 +493,8 @@ public class Preferences {
 
 		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "akas.imdb.com");
 	
+		prefs.maxRecentChannels = getInt(context, R.string.gui_max_recent_channels_key, 10);
+		
 		thePrefs = prefs;
 	}
 
