@@ -20,7 +20,7 @@ cVdrmanagerSocket::~cVdrmanagerSocket() {
 }
 
 void cVdrmanagerSocket::Close() {
-	if (socket >= 0) {
+	if (sock >= 0) {
 		close(sock);
 		sock = -1;
 	}
