@@ -2,6 +2,7 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.Calendar;
 
+import android.content.ClipData.Item;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -81,25 +82,31 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
 
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		final EventListItem item = adapter.getItem(info.position);
+		if(item.isHeader()){
+			return;
+		}
+
 		if (v.getId() == R.id.recording_list) {
 			final MenuInflater inflater = getMenuInflater();
-			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
 			// set menu title
-			final EventListItem item = adapter.getItem(info.position);
-			if(item.isHeader()){
-				return;
-			}
 			final EventFormatter formatter = new EventFormatter(item);
 			menu.setHeaderTitle(formatter.getTitle());
 
 			inflater.inflate(R.menu.recording_list_item_menu, menu);
 			if(Preferences.get().isEnableRecStream() == false){
 				menu.removeItem(R.id.recording_item_menu_stream);
-			}
+			} 
 
 		}
+		
 		super.onCreateContextMenu(menu, v, menuInfo);
+		//
+//		http://projects.vdr-developer.org/issues/863
+		if(Utils.isLive(item)){
+			menu.removeItem(R.id.epg_item_menu_live_tv);				
+		}
 	}
 	
 
