@@ -118,6 +118,10 @@ public class Channel implements Parcelable {
 		if(o instanceof Channel == false){
 			return false;
 		}
+		if(o == this){
+			return true;
+		}
+
 		return number == ((Channel)o).getNumber();
 	};
 	
