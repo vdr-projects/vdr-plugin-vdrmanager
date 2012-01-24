@@ -2,7 +2,11 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,14 +19,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
@@ -43,6 +51,8 @@ public class ChannelListActivity extends
 	ChannelAdapter adapter;
 
 	Preferences prefs;
+
+	private static final LinkedList<Channel> RECENT = new LinkedList<Channel>();
 
 	public static final int MENU_GROUP = 0;
 	public static final int MENU_PROVIDER = 1;
@@ -107,6 +117,54 @@ public class ChannelListActivity extends
 		task.run();
 	}
 
+	static RecentChannelsAdapter RECENT_ADAPTER = null;
+
+	
+	static class RecentChannelsAdapter extends ArrayAdapter<Channel>{
+		private Activity context;
+		
+		public RecentChannelsAdapter(Activity context, List<Channel> list) {
+			super(context,	android.R.layout.simple_list_item_1, list);
+			this.context = context;
+			showChannelNumbers = Preferences.get().isShowChannelNumbers();
+		}
+		
+		public boolean showChannelNumbers;
+		
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// recycle view?
+			TextView text1;
+			View view = convertView;
+			if (view == null) {
+				view = this.context.getLayoutInflater().inflate(
+						android.R.layout.simple_list_item_1, null);
+				text1 = (TextView) view.findViewById(android.R.id.text1);
+				view.setTag(text1);
+			} else {
+				text1 = (TextView) view.getTag();
+			}
+
+			Channel c = getItem(position);
+			String text = showChannelNumbers ? text = c.toString() : c.getName();
+			text1.setText(text);
+			return view;
+
+		}
+	}
+
+	private ArrayAdapter<Channel> getRecentAdapter() {
+		if (RECENT_ADAPTER != null)
+		{
+			RECENT_ADAPTER.showChannelNumbers = Preferences.get().isShowChannelNumbers();
+			RECENT_ADAPTER.notifyDataSetChanged();
+			return RECENT_ADAPTER;
+		}
+		
+		RECENT_ADAPTER = new RecentChannelsAdapter(this, RECENT);
+		return RECENT_ADAPTER;
+
+	}
+
 	@Override
 	public void reset() {
 		channelClient.clearCache();
@@ -157,10 +215,9 @@ public class ChannelListActivity extends
 	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		MenuItem item;
-		item = menu.add(MENU_GROUP, MENU_GROUP, 0, R.string.menu_groupby);
-		item.setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-		item.setAlphabeticShortcut('g');
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.channellist, menu);
+
 		return true;
 	}
 
@@ -180,7 +237,7 @@ public class ChannelListActivity extends
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case MENU_GROUP:
+		case R.id.channels_groupby:
 			// case MENU_PROVIDER:
 			// case MENU_NAME:
 			if (groupByDialog == null) {
@@ -200,6 +257,22 @@ public class ChannelListActivity extends
 
 			groupByDialog.show();
 
+			return true;
+		case R.id.channels_recent_channels:
+			if (RECENT.isEmpty()) {
+				say(R.string.recent_channels_no_history);
+				return true;
+			}
+
+			new AlertDialog.Builder(this)
+					.setAdapter(getRecentAdapter(), new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							Channel c = RECENT.get(which);
+							startChannelEPG(c);
+						}
+					})//
+					.create().show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -226,12 +299,11 @@ public class ChannelListActivity extends
 			inflater.inflate(R.menu.channel_list_item_menu, menu);
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			/*
-			 * http://projects.vdr-developer.org/issues/722
-			String grp =  adapter.getGroup(group);
-			final MenuInflater infl = getMenuInflater();
-			menu.setHeaderTitle(grp);
-			infl.inflate(R.menu.channel_list_group_menu, menu);
-			*/
+			 * http://projects.vdr-developer.org/issues/722 String grp =
+			 * adapter.getGroup(group); final MenuInflater infl =
+			 * getMenuInflater(); menu.setHeaderTitle(grp);
+			 * infl.inflate(R.menu.channel_list_group_menu, menu);
+			 */
 		}
 	}
 
@@ -262,10 +334,10 @@ public class ChannelListActivity extends
 				Utils.stream(this, channel);
 				break;
 			case R.id.channel_item_menu_hide:
-				//TODO http://projects.vdr-developer.org/issues/722
+				// TODO http://projects.vdr-developer.org/issues/722
 				break;
 			case R.id.channel_item_menu_hide_permanent:
-				//TODO http://projects.vdr-developer.org/issues/722
+				// TODO http://projects.vdr-developer.org/issues/722
 				break;
 			}
 
@@ -293,7 +365,29 @@ public class ChannelListActivity extends
 		return true;
 	}
 
-	private void startChannelEPG(Channel channel) {
+	private void startChannelEPG(final Channel channel) {
+		new VoidAsyncTask() {
+
+			@Override
+			protected Void doInBackground(Void... arg0) {
+				Iterator<Channel> i = RECENT.iterator();
+				while (i.hasNext()) {
+					Channel c = i.next();
+					if (c.equals(channel)) {
+						i.remove();
+						break;
+					}
+				}
+
+				if (RECENT.size() >= Preferences.get().getMaxRecentChannels()) {
+					RECENT.removeLast();
+
+				}
+				RECENT.addFirst(channel);
+				return (Void) null;
+			}
+		}.execute((Void) null);
+		// for(int i = 0; i < recent)
 		// find and remember item
 		// final Channel channel = adapter.getItem(position);
 		// final VdrManagerApp app = (VdrManagerApp) getApplication();
