@@ -1,3 +1,4 @@
+
 package de.bjusystems.vdrmanager;
 
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ public class StringUtils {
      * An empty immutable <code>String</code> array.
      */
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    
+
+	public static final String EMPTY_STRING = "";
 
     
     /**

@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
 import de.bjusystems.vdrmanager.gui.VdrListActivity;
@@ -207,7 +208,11 @@ public class Preferences {
 	 * @return SVDRO password
 	 */
 	public String getPassword() {
-		return getCurrentVdr().getPassword();
+		 String pwd = getCurrentVdr().getPassword();
+		 if(pwd == null){
+			 return StringUtils.EMPTY_STRING;
+		 }
+		return pwd;
 	}
 
 	/**
