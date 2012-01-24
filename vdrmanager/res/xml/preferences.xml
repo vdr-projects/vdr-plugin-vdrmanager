@@ -20,11 +20,20 @@
 			android:summary="@string/gui_channels_show_channel_numbers_summary"
 			android:title="@string/gui_channels_show_channel_numbers_title" />
 
+		
+		<EditTextPreference android:defaultValue="10"
+			android:key="@string/gui_max_recent_channels_key" android:inputType="number"
+			android:summary="@string/gui_max_recent_channels_summary"
+			android:title="@string/gui_max_recent_channels_title" />
+			
+
 		<CheckBoxPreference android:key="@string/gui_enable_24h_format_key"
 			android:defaultValue="true"
 			android:summaryOff="@string/gui_enable_24h_format_summary_off"
 			android:summaryOn="@string/gui_enable_24h_format_summary_on"
 			android:title="@string/gui_enable_24h_format_title" />
+
+
 
 		<CheckBoxPreference android:defaultValue="true"
 			android:key="@string/qui_show_imdb_button_key" android:summaryOff="@string/qui_show_imdb_button_summary_off"

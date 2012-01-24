@@ -264,6 +264,12 @@ public class ChannelListActivity extends
 				return true;
 			}
 
+			if(Preferences.get().getMaxRecentChannels() <= 0){
+				RECENT.clear();
+				say(R.string.recent_channels_no_history);
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
 					.setAdapter(getRecentAdapter(), new DialogInterface.OnClickListener() {
 
@@ -370,6 +376,10 @@ public class ChannelListActivity extends
 
 			@Override
 			protected Void doInBackground(Void... arg0) {
+				int max = Preferences.get().getMaxRecentChannels();
+				if(max <= 0){
+					return null;
+				}
 				Iterator<Channel> i = RECENT.iterator();
 				while (i.hasNext()) {
 					Channel c = i.next();

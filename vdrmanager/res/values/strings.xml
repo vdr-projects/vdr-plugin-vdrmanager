@@ -304,6 +304,7 @@
     <string name="recording_item_menu_delete">Delete</string>
     <string name="recording_item_menu_stream">Stream</string>
     <string name="recent_channels">Recent channels</string>
-	<string name="recent_channels_no_history">No history…</string>    
-
+	<string name="recent_channels_no_history">No history…</string>
+	<string name="gui_max_recent_channels_title">Max. recent channels</string>
+	<string name="gui_max_recent_channels_summary">How many channels should be kept in the recent channels?</string>
 </resources>
