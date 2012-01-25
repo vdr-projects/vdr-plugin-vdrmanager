@@ -271,6 +271,7 @@ public class ChannelListActivity extends
 			}
 			
 			new AlertDialog.Builder(this)
+					.setTitle(R.string.recent_channels)
 					.setAdapter(getRecentAdapter(), new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
