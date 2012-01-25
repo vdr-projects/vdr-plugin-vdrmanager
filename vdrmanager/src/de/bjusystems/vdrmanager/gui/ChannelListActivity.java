@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextMenu;
@@ -122,11 +123,18 @@ public class ChannelListActivity extends
 	
 	static class RecentChannelsAdapter extends ArrayAdapter<Channel>{
 		private Activity context;
+		int resId;
 		
 		public RecentChannelsAdapter(Activity context, List<Channel> list) {
 			super(context,	android.R.layout.simple_list_item_1, list);
 			this.context = context;
 			showChannelNumbers = Preferences.get().isShowChannelNumbers();
+			
+			if (Build.VERSION.SDK_INT < 11) {
+				resId = android.R.layout.select_dialog_item;
+			} else {
+				resId = 	android.R.layout.simple_list_item_1;
+			}
 		}
 		
 		public boolean showChannelNumbers;
@@ -137,7 +145,7 @@ public class ChannelListActivity extends
 			View view = convertView;
 			if (view == null) {
 				view = this.context.getLayoutInflater().inflate(
-						android.R.layout.simple_list_item_1, null);
+						resId, null);
 				text1 = (TextView) view.findViewById(android.R.id.text1);
 				view.setTag(text1);
 			} else {
