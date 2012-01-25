@@ -13,6 +13,9 @@ public abstract class ICSBaseActivity extends Activity{
 		}
 
 		ActionBar actionBar = getActionBar();
+		if(actionBar == null){
+			return;
+		}
 		//this is since 14 enabled
 		actionBar.setHomeButtonEnabled(true);
 	}
