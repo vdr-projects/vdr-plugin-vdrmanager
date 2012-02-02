@@ -36,8 +36,8 @@ public class Preferences {
 	}
 
 	public static void setCurrentVdr(Context context, Vdr vdr) {
-		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		current = vdr;
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		sharedPrefs
 				.edit()
 				.putInt(context.getString(R.string.current_vdr_id_key),
@@ -502,37 +502,13 @@ public class Preferences {
 		thePrefs = null;
 	}
 	
-		
-	/**
-	 * Loads all preferences
-	 * 
-	 * @param context
-	 *            Context
-	 * @return Preferences
-	 */
-	public static void init(final Context context) {
-		// if (thePrefs != null) {
-		// return;
-		// }
-		if (db == null) {
-			db = new OrmDatabaseHelper(context);
-		}
-
-		synchronized (Preferences.class) {
-			// if (thePrefs != null) {
-			// return;
-			// }
-			initInternal(context);
-			setLocale(context);
-		}
-
+	
+	public static void initVDR(final Context context){
 		// 	if (current != null) {
 		// 		return;
 		// 	}
 
-		final SharedPreferences sharedPrefs = getSharedPreferences(context);
-		int id = sharedPrefs.getInt(
-				context.getString(R.string.current_vdr_id_key), -1);
+		int id = getInteger(context, R.string.current_vdr_id_key, -1);
 
 		Vdr vdr = null;
 		if (id != -1) {
@@ -558,7 +534,31 @@ public class Preferences {
 			context.startActivity(intent);
 			Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 		}
+		
+	}
+		
+	/**
+	 * Loads all preferences
+	 * 
+	 * @param context
+	 *            Context
+	 * @return Preferences
+	 */
+	public static void init(final Context context) {
+		// if (thePrefs != null) {
+		// return;
+		// }
+		if (db == null) {
+			db = new OrmDatabaseHelper(context);
+		}
 
+		synchronized (Preferences.class) {
+			// if (thePrefs != null) {
+			// return;
+			// }
+			initInternal(context);
+			setLocale(context);
+		}
 	}
 
 	private static boolean initFromOldVersion(Context context) {
@@ -703,6 +703,13 @@ public class Preferences {
 		return sharedPrefs.getString(context.getString(resId), defValue);
 	}
 
+	private static int getInteger(final Context context, final int resId,
+			final int defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		return sharedPrefs.getInt(context.getString(resId), defValue);
+	}
+
+	
 	public String getTimeFormat() {
 		if (isUse24hFormat()) {
 			return "HH:mm";

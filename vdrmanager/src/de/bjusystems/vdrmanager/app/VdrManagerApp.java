@@ -56,6 +56,7 @@ public class VdrManagerApp extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Preferences.init(this);
+		Preferences.initVDR(this);
 	}
 
 	public void clear() {
