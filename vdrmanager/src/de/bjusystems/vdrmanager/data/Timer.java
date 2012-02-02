@@ -85,6 +85,7 @@ public class Timer extends Event implements Timerable{
 		t.lifetime = lifetime;
 		t.start = new Date(start.getTime());
 		t.stop = new Date(stop.getTime());
+		t.title = title;
 		return t;
 	}
 	
