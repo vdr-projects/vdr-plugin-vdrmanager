@@ -148,8 +148,8 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	}
 
 	@Override
-	protected boolean refreshOnResume() {
-		return false;
+	protected boolean notifyDataSetChangedOnResume() {
+		return true;
 	}
 	@Override
 	protected String getWindowTitle() {
