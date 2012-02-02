@@ -178,11 +178,13 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			break;
 		}
 		case R.id.timer_details_modify:
+			timer.setTitle(tView.title.getText().toString());
 			modifyTimer(timer);
 			//say(R.string.done);
 			break;
 
 		case R.id.timer_details_save: {
+			timer.setTitle(tView.title.getText().toString());
 			createTimer(timer);
 			//say(R.string.done);
 			break;
