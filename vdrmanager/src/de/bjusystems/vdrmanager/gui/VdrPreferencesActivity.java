@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.VdrSharedPreferences;
 
@@ -89,6 +90,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		super.onPause();
 		// Unregister the listener whenever a key changes
 		pref.unregisterOnSharedPreferenceChangeListener(this);
+		Preferences.reloadVDR();
 	}
 
 	private void enableWolPreferences() {
@@ -181,7 +183,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			finish();
 			return;
 		}
-		
 		super.onBackPressed();
 	}
 
