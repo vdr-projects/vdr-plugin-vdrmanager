@@ -355,10 +355,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 	default:
 		return Error("unknown timer command");
 	}
-
-	Timers.Save();
 	return "START\r\nEND\r\n";
-
 }
 
 string cHelpers::SetTimerIntern(string args) {
