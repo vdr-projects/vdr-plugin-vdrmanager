@@ -2,8 +2,11 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.Calendar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
@@ -145,6 +148,10 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	}
 
 	@Override
+	protected boolean refreshOnResume() {
+		return false;
+	}
+	@Override
 	protected String getWindowTitle() {
 		return getString(R.string.action_menu_timers);
 	}
@@ -164,11 +171,43 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		refresh();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
+	 * .view.MenuItem)
+	 */
+	public boolean onOptionsItemSelected(final MenuItem item) {
+
+		switch(item.getItemId()){
+		case R.id.timer_menu_add:
+			say("Comming soon...");
+			return true;
+		}
+		
+		// switch (item.getItemId()) {
+		// case R.id.epg_menu_search:
+		// startSearchManager();
+		// super.onSearchRequested();
+		// break;
+		// case R.id.epg_menu_times:
+		// intent = new Intent();
+		// /intent.setClass(this, EpgSearchTimesListActivity.class);
+		// startActivity(intent);
+		// break;
+		// }
+		return super.onOptionsItemSelected(item);
+	}
+
 	public boolean onCreateOptionsMenu(final Menu menu) {
 	//	MenuItem item;
 		//item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0, R.string.new_timer);
 		//item.setIcon(android.R.drawable.ic_menu_add);;
 //		/item.setAlphabeticShortcut('r');
+
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.timer_list_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
