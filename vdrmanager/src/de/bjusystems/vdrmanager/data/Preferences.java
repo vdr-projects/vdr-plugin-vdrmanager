@@ -503,6 +503,13 @@ public class Preferences {
 	}
 	
 	
+	public static void reloadVDR(){
+		if(current == null){
+			return;
+		}
+		db.getVdrDAO().refresh(current);
+	}
+	
 	public static void initVDR(final Context context){
 		// 	if (current != null) {
 		// 		return;
