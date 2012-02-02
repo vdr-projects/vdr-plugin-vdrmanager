@@ -80,12 +80,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// .getParcelableExtra(Intents.CURRENT_CHANNEL);
 	}
 
-	private boolean refreshViewOnResume = false;
-
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (refreshViewOnResume) {
+		if (notifyDataSetChangedOnResume()) {
 			adapter.notifyDataSetChanged();
 		}
 	}
@@ -235,10 +233,13 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				TimerDetailsActivity.REQUEST_CODE_TIMER_MODIFIED);
 	}
 
+	protected boolean notifyDataSetChangedOnResume(){
+		return true;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		refreshViewOnResume = true;
 		// if (epgClient != null) {
 		// epgClient.abort();
 		// }
