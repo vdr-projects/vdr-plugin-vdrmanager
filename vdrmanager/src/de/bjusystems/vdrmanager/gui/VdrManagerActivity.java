@@ -50,7 +50,10 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		findViewById(R.id.action_menu_recordings).setOnClickListener(this);
 		findViewById(R.id.action_menu_timers).setOnClickListener(this);
 		findViewById(R.id.action_menu_epg).setOnClickListener(this);
-		findViewById(R.id.action_menu_search).setOnClickListener(this);
+		View v = findViewById(R.id.action_menu_search);
+		if(v != null){
+			v.setOnClickListener(this);
+		}
 		findViewById(R.id.main_logo).setOnClickListener(this);
 		if (Preferences.get().isWakeupEnabled() == false) {
 			findViewById(R.id.action_menu_wakeup).setVisibility(View.GONE);
