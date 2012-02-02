@@ -108,8 +108,8 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 			return;
 		}
 		
-		final EventFormatter formatter = new EventFormatter(item);
-		menu.setHeaderTitle(formatter.getTitle());
+		//final EventFormatter formatter = new EventFormatter(item);
+		menu.setHeaderTitle(item.getTitle());
 
 		inflater.inflate(R.menu.epg_list_item_menu, menu);
 		Timer timer = getTimer(item);
@@ -195,6 +195,10 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		//worker.schedule(task, 1000, TimeUnit.MILLISECONDS);
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
