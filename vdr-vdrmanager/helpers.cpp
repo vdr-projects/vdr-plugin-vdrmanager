@@ -356,6 +356,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		return Error("unknown timer command");
 	}
 
+	Timers.Save();
 	return "START\r\nEND\r\n";
 
 }
@@ -391,7 +392,7 @@ string cHelpers::SetTimerIntern(string args) {
 }
 
 string cHelpers::Error(const string& msg) {
-	return "!ERROR:" + msg + "\r\n";
+	return "START\r\n!ERROR:" + msg + "\r\nEND\r\n";
 }
 
 string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
@@ -504,7 +505,10 @@ string cHelpers::ToText(cRecording * recording) {
 	result += MapSpecialChars(info->ChannelID().ToString());
 
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%d", RecordingLengthInSeconds(recording));
+
+	int length = RecordingLengthInSeconds(recording);
+
+	snprintf(buf, sizeof(buf)-1, "%d", length);
 	result += buf;
 
 	result += "\r\n";
@@ -820,6 +824,10 @@ string cHelpers::UnMapSpecialChars(string text) {
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording)
 {
+#if APIVERSNUM < 10721
+	return -1;
+#endif
+
   int nf = recording->NumFrames();
   if (nf >= 0)
 #if APIVERSNUM >= 10703
