@@ -1,6 +1,7 @@
 package de.bjusystems.vdrmanager.gui;
 
-import java.util.Currency;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,11 +16,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SimpleCursorAdapter.CursorToStringConverter;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 
@@ -34,28 +36,30 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 
 	private static final String TAG = VdrListActivity.class.getName();
 	
-	SimpleCursorAdapter adapter = null;
+	List<Vdr> list = new ArrayList<Vdr>();
+	
+	ArrayAdapter<Vdr> adapter = null;
 
-	Cursor cursor;
+	//Cursor cursor;
 
 	String[] listItems = {};
 
 	private boolean emptyConfig = false;
 
-	private void initCursor() {
-
-		//if (cursor != null) {
-			//if (!cursor.isClosed()) {
-				//cursor.close();
-//			}
-		//}
-		try {
-			cursor = getHelper().getVdrCursor();
-			startManagingCursor(cursor);
-		} catch (Exception ex) {
-			Log.w(TAG,ex);
-		}
-	}
+//	private void initCursor() {
+//
+//		//if (cursor != null) {
+//			//if (!cursor.isClosed()) {
+//				//cursor.close();
+////			}
+//		//}
+//		try {
+//			cursor = getHelper().getVdrCursor();
+//			//startManagingCursor(cursor);
+//		} catch (Exception ex) {
+//			Log.w(TAG,ex);
+//		}
+//	}
 
 	private void populateIntent(){
 		emptyConfig = getIntent().getBooleanExtra(Intents.EMPTY_CONFIG, Boolean.FALSE);
@@ -82,37 +86,74 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 					}
 				});
 
-		initCursor();
+//		initCursor();
 		final Vdr cur = Preferences.get().getCurrentVdr();
-		adapter = new SimpleCursorAdapter(this,
-				android.R.layout.simple_list_item_2, cursor, new String[] {
-						"name", "host" }, new int[] { android.R.id.text1,
-						android.R.id.text2}) {
-							@Override
-							public void bindView(View view, Context context,
-									Cursor cursor) {
-								
-								TextView text1 = (TextView)view.findViewById(android.R.id.text1);
-								TextView text2 = (TextView)view.findViewById(android.R.id.text2);
-								int id = cursor.getInt(cursor.getColumnIndex("_id"));
-								String name = cursor.getString(cursor.getColumnIndex("name"));
-								String host = cursor.getString(cursor.getColumnIndex("host"));
-								text2.setText(host);
+		adapter = new ArrayAdapter<Vdr>(this, android.R.layout.simple_list_item_2 , list) {
+			
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				// recycle view?
+				Holder holder = null;
+				View view = convertView;
+				if (view == null) {
+					view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, null);
+					holder = new Holder();
 
-								if(cur != null && cur.getId() == id) {
-									 SpannableString content = new SpannableString(name);
-									 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-									text1.setText(content);
-									//text1.setText(text1.getText());
-								} else {
-									text1.setTypeface(Typeface.DEFAULT);
-									text1.setText(name);
-								}
-								
-								
-							}
+					holder.text1 = (TextView)view.findViewById(android.R.id.text1);
+					holder.text2 = (TextView)view.findViewById(android.R.id.text2);
+					view.setTag(holder);
+				} else {
+					holder = (Holder) view.getTag();
+				}
+				
+				Vdr vdr = getItem(position);
+				String name = vdr.getName();
+				String host = vdr.getHost();
+				holder.text2.setText(host);
+
+				if(cur != null && cur.getId() == vdr.getId()) {
+					 SpannableString content = new SpannableString(name);
+					 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+					holder.text1.setText(content);
+					//text1.setText(text1.getText());
+				} else {
+					holder.text1.setTypeface(Typeface.DEFAULT);
+					holder.text1.setText(name);
+				}
+				return view;
+			}
+			
 			
 		};
+		
+		//adapter = new ArrayAdapter<Vdr>( 
+//						"name", "host" }, new int[] { android.R.id.text1,
+//						android.R.id.text2}) {
+//							@Override
+//							public void bindView(View view, Context context,
+//									Cursor cursor) {
+//								
+//								TextView text1 = (TextView)view.findViewById(android.R.id.text1);
+//								TextView text2 = (TextView)view.findViewById(android.R.id.text2);
+//								int id = cursor.getInt(cursor.getColumnIndex("_id"));
+//								String name = cursor.getString(cursor.getColumnIndex("name"));
+//								String host = cursor.getString(cursor.getColumnIndex("host"));
+//								text2.setText(host);
+//
+//								if(cur != null && cur.getId() == id) {
+//									 SpannableString content = new SpannableString(name);
+//									 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+//									text1.setText(content);
+//									//text1.setText(text1.getText());
+//								} else {
+//									text1.setTypeface(Typeface.DEFAULT);
+//									text1.setText(name);
+//								}
+//								
+//								
+//							}
+//			
+//		};
 		setListAdapter(adapter);
 		registerForContextMenu(getListView());
 		getListView().setOnItemClickListener(this);
@@ -164,30 +205,35 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 
 	@Override
 	protected void onResume() {
+		refresh();
 		super.onResume();
 	}
 	
 	@Override
 	public void onBackPressed() {
-		if(cursor.getCount() == 0){
+		if(list.isEmpty()){
 			finish();
 			return;
 		}
 		if (emptyConfig) {
 			Intent intent = new Intent(this, VdrManagerActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 			finish();
 		} else {
 			super.onBackPressed();
 		}
 	}
+	
+	
 
 	/**
 	 * Refresh the list
 	 */
 	private void refresh() {
-		initCursor();
-		adapter.changeCursor(cursor);
+		list.clear();
+		list.addAll(getHelper().getVdrDAO().queryForAll());
+		adapter.notifyDataSetChanged();
 	}
 
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
@@ -201,6 +247,9 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 									int which) {
 								if (getHelper().getVdrDAO()
 										.deleteById((int) id) > 0) {
+									if(Preferences.get().getCurrentVdrContext(VdrListActivity.this) == id){
+										Preferences.setCurrentVdr(VdrListActivity.this, null);
+									}
 									refresh();
 								}
 
