@@ -75,6 +75,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		updateChildPreferences();
 		Preference p = findPreference(key);
 		updateSummary(p);
+		Preferences.reloadVDR();
 	}
 
 	@Override
@@ -90,7 +91,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		super.onPause();
 		// Unregister the listener whenever a key changes
 		pref.unregisterOnSharedPreferenceChangeListener(this);
-		Preferences.reloadVDR();
 	}
 
 	private void enableWolPreferences() {
