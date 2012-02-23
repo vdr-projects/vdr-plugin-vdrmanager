@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.util.Pair;
 
 import com.j256.ormlite.android.AndroidCompiledStatement;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
