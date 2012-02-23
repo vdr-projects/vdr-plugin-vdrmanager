@@ -18,6 +18,8 @@
     <string name="groupby_group">Group</string>
     <string name="groupby_provider">Provider</string>
     <string name="groupby_name">Name</string>
+    <string name="groupby_channel">By Channel</string>
+    <string name="groupby_date">By Date</string>
     <string name="groupby_name_all_channels_group">All Channels</string>
     <string name="groupby_window_title_templte">Group by %1$s</string>
     <string name="common_delete">Delete</string>
