@@ -31,15 +31,20 @@
 				android:background="@android:drawable/list_selector_background"
 				 android:textColor="#FFF" 
 				/>
-				
-			<Button android:text="@string/action_menu_timers"
-				xmlns:android="http://schemas.android.com/apk/res/android"  android:padding="3dip"
-				android:drawableTop="@drawable/btn_timer" android:layout_width="wrap_content"
-				android:id="@+id/action_menu_timers" android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:cacheColorHint="?android:attr/colorBackground"
-				android:background="@android:drawable/list_selector_background"
-				android:textColor="#FFF" />
+
+			<Button
+			    xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:id="@+id/action_menu_timers"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="1"
+			    android:background="@android:drawable/list_selector_background"
+			    android:cacheColorHint="?android:attr/colorBackground"
+			    android:drawableTop="@drawable/btn_timer"
+			    android:padding="3dip"
+			    android:text="@string/action_menu_timers"
+			    android:textColor="#FFF" />
+
 		</LinearLayout>
 		<LinearLayout android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" android:orientation="horizontal">
