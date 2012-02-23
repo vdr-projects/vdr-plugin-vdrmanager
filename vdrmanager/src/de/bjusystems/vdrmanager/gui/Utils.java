@@ -37,6 +37,9 @@ public class Utils {
 	public static final String TAG = Utils.class.getName();
 	
 	public static final List EMPTY_LIST = new ArrayList(0);
+	
+	public static final String[] EMPTY = new String[] {};
+	
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
 			Color.RED);
 
