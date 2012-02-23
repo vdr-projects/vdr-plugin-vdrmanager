@@ -481,6 +481,18 @@ public class Vdr {
 		return (T) map.get(key);
 	}
 
+	private static Integer getInteger(Map<String, Object> map, String key, Integer def) {
+		if (map.containsKey(key) == false) {
+			return def;
+		}
+
+		Object obj = get(map, key);
+		if (obj instanceof Integer) {
+			return (Integer) obj;
+		}
+		return Integer.valueOf(String.valueOf(obj));
+	}
+
 	private static Integer getInteger(Map<String, Object> map, String key) {
 		if (map.containsKey(key) == false) {
 			return Integer.valueOf(0);
@@ -568,8 +580,8 @@ public class Vdr {
 		readTimeout = getInteger(map, "key_vdr_readtimeout");
 		timeout = getInteger(map, "key_vdr_timeout");
 
-		timerPreMargin = getInteger(map, "timer_pre_start_buffer");
-		timerPostMargin = getInteger(map, "timer_post_end_buffer");
+		timerPreMargin = getInteger(map, "timer_pre_start_buffer", 5);
+		timerPostMargin = getInteger(map, "timer_post_end_buffer", 30);
 		timerDefaultPriority = getInteger(map, "timer_default_priority");
 		timerDefaultLifetime = getInteger(map, "timer_default_lifetime");
 

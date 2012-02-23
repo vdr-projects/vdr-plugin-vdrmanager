@@ -169,7 +169,7 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 	 */
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		editVdr(Long.valueOf(id).intValue());
+		editVdr(adapter.getItem(position).getId());
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 							public void onClick(DialogInterface dialog,
 									int which) {
 								if (getHelper().getVdrDAO()
-										.deleteById((int) id) > 0) {
+										.deleteById(adapter.getItem(position).getId()) > 0) {
 									if(Preferences.get().getCurrentVdrContext(VdrListActivity.this) == id){
 										Preferences.setCurrentVdr(VdrListActivity.this, null);
 									}

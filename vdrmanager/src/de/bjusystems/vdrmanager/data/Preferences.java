@@ -41,14 +41,17 @@ public class Preferences {
 		sharedPrefs
 				.edit()
 				.putInt(context.getString(R.string.current_vdr_id_key),
-						current.getId()).commit();
+						current != null ? current.getId() : -1 ).commit();
 	}
-
 
 	public Vdr getCurrentVdr() {
 		return current;
 	}
 
+	public int getCurrentVdrContext(Context context){
+		return getInteger(context, R.string.current_vdr_id_key, -1);
+	}
+	
 	/** user defined epg search times */
 	private String epgSearchTimes;
 	/**
@@ -77,11 +80,9 @@ public class Preferences {
 	 * Show TMDb button in epg details
 	 */
 	private boolean showTmdbButton = false;
-	
-	
+
 	private int maxRecentChannels = 10;
 
-	
 	public int getMaxRecentChannels() {
 		return maxRecentChannels;
 	}
@@ -215,10 +216,10 @@ public class Preferences {
 	 * @return SVDRO password
 	 */
 	public String getPassword() {
-		 String pwd = getCurrentVdr().getPassword();
-		 if(pwd == null){
-			 return StringUtils.EMPTY_STRING;
-		 }
+		String pwd = getCurrentVdr().getPassword();
+		if (pwd == null) {
+			return StringUtils.EMPTY_STRING;
+		}
 		return pwd;
 	}
 
@@ -228,7 +229,7 @@ public class Preferences {
 	 * @return true, if remote wakeup is enabled
 	 */
 	public boolean isWakeupEnabled() {
-		 return getCurrentVdr().isWakeupEnabled();
+		return getCurrentVdr().isWakeupEnabled();
 	}
 
 	/**
@@ -266,15 +267,15 @@ public class Preferences {
 	public boolean isAliveCheckEnabled() {
 		return getCurrentVdr().isAliveCheckEnabled();
 	}
-	
-	public boolean isEnableRecStream(){
+
+	public boolean isEnableRecStream() {
 		return getCurrentVdr().isEnableRecStreaming();
 	}
 
-	public int getLivePort(){
+	public int getLivePort() {
 		return getCurrentVdr().getLivePort();
 	}
-	
+
 	/**
 	 * Gets the time between alive checks
 	 * 
@@ -471,8 +472,8 @@ public class Preferences {
 		prefs.epgSearchTimes = getString(context,
 				R.string.epg_search_times_key, "");
 
-		 prefs.use24hFormat = getBoolean(context,
-		 R.string.gui_enable_24h_format_key, true);
+		prefs.use24hFormat = getBoolean(context,
+				R.string.gui_enable_24h_format_key, true);
 
 		prefs.showChannelNumbers = getBoolean(context,
 				R.string.gui_channels_show_channel_numbers_key, false);
@@ -486,34 +487,34 @@ public class Preferences {
 		prefs.showOmdbButton = getBoolean(context,
 				R.string.qui_show_omdb_button_key, true);
 
-
 		prefs.showTmdbButton = getBoolean(context,
 				R.string.qui_show_tmdb_button_key, true);
 
+		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key,
+				"akas.imdb.com");
 
-		prefs.imdbUrl = getString(context, R.string.qui_imdb_url_key, "akas.imdb.com");
-	
-		prefs.maxRecentChannels = getInt(context, R.string.gui_max_recent_channels_key, 10);
-		
+		prefs.maxRecentChannels = getInt(context,
+				R.string.gui_max_recent_channels_key, 10);
+
 		thePrefs = prefs;
 	}
 
 	public static void reset() {
 		thePrefs = null;
 	}
-	
-	
-	public static void reloadVDR(){
-		if(current == null){
+
+	public static void reloadVDR() {
+		if (current == null) {
 			return;
 		}
 		db.getVdrDAO().refresh(current);
 	}
-	
-	public static void initVDR(final Context context){
-		// 	if (current != null) {
-		// 		return;
-		// 	}
+
+	public static boolean initVDR(final Context context) {
+		
+		if (current != null) {
+			return true;
+		}
 
 		int id = getInteger(context, R.string.current_vdr_id_key, -1);
 
@@ -522,28 +523,28 @@ public class Preferences {
 			vdr = db.getVdrDAO().queryForId(id);
 		}
 
+		setCurrentVdr(context, vdr);		
+		
 		if (vdr != null) {
-			setCurrentVdr(context, vdr);
-			return;
+			return true;
 		}
 
 		List<Vdr> list = db.getVdrDAO().queryForAll();
 		if (list != null && list.isEmpty() == false) {
 			vdr = list.get(0);
 			setCurrentVdr(context, vdr);
-			return;
-		}
-		if (initFromOldVersion(context) == false) {
-			Intent intent = new Intent();
-			intent.setClass(context, VdrListActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
-			context.startActivity(intent);
-			Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
+			return true;
 		}
 		
+		return initFromOldVersion(context);
+		//Intent intent = new Intent();
+		//intent.setClass(context, VdrListActivity.class);
+		//intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		//intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
+		//context.startActivity(intent);
+		//Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 	}
-		
+
 	/**
 	 * Loads all preferences
 	 * 
@@ -573,7 +574,7 @@ public class Preferences {
 		Vdr vdr = new Vdr();
 
 		String host = getString(context, R.string.vdr_host_key, null);
-		if(host == null){
+		if (host == null) {
 			return false;
 		}
 		vdr.setHost(host);
@@ -670,7 +671,7 @@ public class Preferences {
 	private static int getInt(final Context context, final int resId,
 			final int defValue) {
 		final String value = getString(context, resId, String.valueOf(defValue));
-		if(TextUtils.isEmpty(value) || !TextUtils.isDigitsOnly(value)){
+		if (TextUtils.isEmpty(value) || !TextUtils.isDigitsOnly(value)) {
 			return 0;
 		}
 		return Integer.parseInt(value);
@@ -716,7 +717,6 @@ public class Preferences {
 		return sharedPrefs.getInt(context.getString(resId), defValue);
 	}
 
-	
 	public String getTimeFormat() {
 		if (isUse24hFormat()) {
 			return "HH:mm";
