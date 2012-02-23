@@ -2,8 +2,6 @@ package de.bjusystems.vdrmanager.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,9 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.SearchView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
@@ -33,11 +31,34 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(Preferences.get().getCurrentVdr() == null){
+
+		//Preferences.initVDR(this);
+		
+		//if(Preferences.get().getCurrentVdr() == null){
+			//finish();
+			//return;
+		//}
+		
+		
+		if (Preferences.initVDR(this) == false) {
+			Intent intent = new Intent();
+			intent.setClass(this, VdrListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
+			startActivity(intent);
+			Toast.makeText(this, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
-		}
+		} 
+		
+	
+		
+		
 		Preferences.setLocale(this);
+		
+		
+		
+		
 		// this.getActionBar().setDisplayShowCustomEnabled(true);
 		// this.getActionBar().setDisplayShowTitleEnabled(false);
 		// setTitle(getString(R.string.app_name));
@@ -61,6 +82,7 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			findViewById(R.id.action_menu_wakeup).setOnClickListener(this);
 		}
 
+
 		// add and register buttons
 		// createButtons();
 	}
@@ -74,12 +96,12 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 
 		int api = Build.VERSION.SDK_INT; 
 		if ( api >= 11){
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search)
-				.getActionView();
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
-		searchView.setIconifiedByDefault(false); // Do not iconify the widget;
+//		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search)
+//				.getActionView();
+//		searchView.setSearchableInfo(searchManager
+//				.getSearchableInfo(getComponentName()));
+//		searchView.setIconifiedByDefault(false); // Do not iconify the widget;
 
 		} 
 		return true;
@@ -114,12 +136,13 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			finish();
 			break;
 		}
-		case R.id.menu_search: {
-			if(Build.VERSION.SDK_INT <11){ 
-				onSearchRequested();
-			}
-			break;
-		}
+		
+//		case R.id.menu_search: {
+	//		if(Build.VERSION.SDK_INT <11){ 
+		//		onSearchRequested();
+			//}
+			//break;
+		//}
 		case R.id.main_menu_goto: {
 			try {
 				final Cursor cursor = Preferences.getDatabaseHelper()
