@@ -38,11 +38,11 @@ public class Vdr {
 
 	/** should channels be filtered? */
 	@DatabaseField
-	private boolean filterChannels;
+	private boolean filterChannels = false;
 
 	/** last channel to retrieve */
 	@DatabaseField
-	private String channelFilter;
+	private String channelFilter = "";
 
 	/** Enable remote wakeup */
 	@DatabaseField
@@ -528,7 +528,7 @@ public class Vdr {
 		map.put("key_vdr_timeout", timeout);
 
 		map.put("timer_pre_start_buffer", timerPreMargin);
-		map.put("timer_post_end_buffer", timerPreMargin);
+		map.put("timer_post_end_buffer", timerPostMargin);
 		map.put("timer_default_priority", timerDefaultPriority);
 		map.put("timer_default_lifetime", timerDefaultLifetime);
 
@@ -569,7 +569,7 @@ public class Vdr {
 		timeout = getInteger(map, "key_vdr_timeout");
 
 		timerPreMargin = getInteger(map, "timer_pre_start_buffer");
-		timerPreMargin = getInteger(map, "timer_post_end_buffer");
+		timerPostMargin = getInteger(map, "timer_post_end_buffer");
 		timerDefaultPriority = getInteger(map, "timer_default_priority");
 		timerDefaultLifetime = getInteger(map, "timer_default_lifetime");
 
