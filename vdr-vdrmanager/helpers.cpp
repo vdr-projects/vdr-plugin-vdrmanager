@@ -817,7 +817,7 @@ string cHelpers::UnMapSpecialChars(string text) {
 }
 
 /**
- * taken from vdr-restfulapi
+ * base on vdr-restfulapi's RecordingLengthInSeconds
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording)
 {
