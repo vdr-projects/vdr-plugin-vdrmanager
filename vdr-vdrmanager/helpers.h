@@ -58,8 +58,8 @@ private:
   static string Error(const string &error);
   static string SetTimerIntern(char c, string params);
   static int RecordingLengthInSeconds(cRecording* recording);
-  static std::string cHelpers::ConvertWeekdays(int v);
-  static int cHelpers::ConvertWeekdays(std::string v);
-  static std::stack<int> cHelpers::ConvertToBinary(int v);
+  static string ConvertWeekdays(int v);
+  static int ConvertWeekdays(string v);
+  static stack<int> ConvertToBinary(int v);
 
 };
