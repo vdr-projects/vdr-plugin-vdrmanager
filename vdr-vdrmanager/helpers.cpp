@@ -578,7 +578,7 @@ string cHelpers::ToText(cTimer * timer) {
 
 	result += ":";
 
-	result += timer->WeekDays();
+	result += ConvertWeekdays(timer->WeekDays());
 
 	result += "\r\n";
 
@@ -926,6 +926,60 @@ string  cHelpers::decompress_string(const string& str)
     return outstring;
 }
 
+//These three methodes were stolen from vdr-restfulapi project. Thanks!
+std::stack<int> cHelpers::ConvertToBinary(int v)
+{
+   int b;
+   std::stack <int> res;
 
+   while ( v != 0) {
+     b = v % 2;
+     res.push(b);
+     v = (v-b) / 2;
+   }
+   return res;
+}
+
+
+
+std::string cHelpers::ConvertWeekdays(int v)
+{
+  std::stack<int> b = cHelpers::ConvertToBinary(v);
+  int counter = 0;
+  std::ostringstream res;
+  while ( !b.empty() && counter < 7 ) {
+     int val = b.top();
+     switch(counter) {
+       case 0: res << (val == 1 ? 'M' : '-'); break;
+       case 1: res << (val == 1 ? 'T' : '-'); break;
+       case 2: res << (val == 1 ? 'W' : '-'); break;
+       case 3: res << (val == 1 ? 'T' : '-'); break;
+       case 4: res << (val == 1 ? 'F' : '-'); break;
+       case 5: res << (val == 1 ? 'S' : '-'); break;
+       case 6: res << (val == 1 ? 'S' : '-'); break;
+     }
+     b.pop();
+     counter++;
+  }
+  while ( counter < 7 ) {
+     res << '-';
+     counter++;
+  }
+  return res.str();
+}
+
+int cHelpers::ConvertWeekdays(std::string v)
+{
+  const char* str = v.c_str();
+  int res = 0;
+  if ( str[0] == 'M' ) res += 64;
+  if ( str[1] == 'T' ) res += 32;
+  if ( str[2] == 'W' ) res += 16;
+  if ( str[3] == 'T' ) res += 8;
+  if ( str[4] == 'F' ) res += 4;
+  if ( str[5] == 'S' ) res += 2;
+  if ( str[6] == 'S' ) res += 1;
+  return res;
+}
 
 
