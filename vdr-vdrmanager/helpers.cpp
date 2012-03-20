@@ -576,6 +576,10 @@ string cHelpers::ToText(cTimer * timer) {
 	result += ":";
 	result += MapSpecialChars(timer->Channel()->GetChannelID().ToString());
 
+	result += ":";
+
+	result += timer->WeekDays();
+
 	result += "\r\n";
 
 	return result;
@@ -817,7 +821,7 @@ string cHelpers::UnMapSpecialChars(string text) {
 }
 
 /**
- * base on vdr-restfulapi's RecordingLengthInSeconds
+ * based on vdr-restfulapi's RecordingLengthInSeconds
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording)
 {
