@@ -35,6 +35,7 @@ import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -60,6 +61,8 @@ public class ChannelListActivity extends
 	public static final int MENU_NAME = 2;
 
 	private int groupBy = MENU_GROUP;
+	
+	private int groupByInverse = 0;
 
 	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(1);
 
@@ -106,8 +109,16 @@ public class ChannelListActivity extends
 			return;
 		}
 
-		// get channel task
-		channelClient = new ChannelClient(useCache);
+		if(channelClient == null){
+			// get channel task
+			channelClient = new ChannelClient();
+		} else {
+			channelClient.removeSvdrpListener(this);
+		}
+		
+		if(useCache == false){
+			ChannelClient.clearCache();
+		}
 
 		// create background task
 		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(
@@ -503,6 +514,10 @@ public class ChannelListActivity extends
 	@Override
 	protected SvdrpClient<Channel> getClient() {
 		return channelClient;
+	}
+	
+	public void svdrpEvent(SvdrpEvent event, Channel result){
+		super.svdrpEvent(event, result);
 	}
 
 }

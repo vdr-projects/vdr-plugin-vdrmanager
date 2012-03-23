@@ -42,6 +42,9 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
 
 	public void svdrpEvent(final SvdrpEvent event, final Result result) {
 		publishProgress(event, result);
+		if(event == SvdrpEvent.FINISHED_SUCCESS || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
+			client.removeSvdrpListener(this);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

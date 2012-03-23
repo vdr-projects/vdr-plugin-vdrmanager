@@ -1,19 +1,26 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -30,29 +37,36 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 public class TimerDetailsActivity extends Activity implements OnClickListener,
 		OnDateSetListener, OnTimeSetListener {
 
-
 	public static final int REQUEST_CODE_TIMER_MODIFIED = 34;
 
 	public static final int REQUEST_CODE_TIMER_EDIT = 35;
-	
+
 	public static final int REQUEST_CODE_TIMER_ADD = 36;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		View view = getLayoutInflater().inflate(R.layout.timer_detail, null);
 		tView = new EditTimerViewHolder();
 		tView.view = view;
 		tView.title = (TextView) view.findViewById(R.id.timer_detail_title);
 		tView.channel = (TextView) view.findViewById(R.id.timer_detail_channel);
 		tView.dateField = (Button) view.findViewById(R.id.timer_detail_day);
-		tView.startField = (Button) view
-				.findViewById(R.id.timer_detail_start);
+		tView.startField = (Button) view.findViewById(R.id.timer_detail_start);
 		tView.endField = (Button) view.findViewById(R.id.timer_detail_end);
 		tView.saveButton = (Button) view.findViewById(R.id.timer_details_save);
 		tView.modifyButton = (Button) view
 				.findViewById(R.id.timer_details_modify);
+
+		tView.repeat = (Button) view.findViewById(R.id.timer_detail_repeat);
+
+		tView.vps = (CheckBox) view.findViewById(R.id.timer_detail_vps);
+
+		tView.priority = (EditText) view
+				.findViewById(R.id.timer_detail_priority);
+
+		tView.lifecycle = (EditText) view
+				.findViewById(R.id.timer_detail_lifetime);
 
 		view.findViewById(R.id.timer_details_cancel).setOnClickListener(this);
 		tView.dateField.setOnClickListener(this);
@@ -60,6 +74,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.endField.setOnClickListener(this);
 		tView.saveButton.setOnClickListener(this);
 		tView.modifyButton.setOnClickListener(this);
+		tView.repeat.setOnClickListener(this);
 		setContentView(view);
 		timer = getApp().getCurrentTimer();
 		original = timer.copy();
@@ -89,6 +104,10 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		Button endField;
 		Button saveButton;
 		Button modifyButton;
+		CheckBox vps;
+		Button repeat;
+		EditText priority;
+		EditText lifecycle;
 	}
 
 	EditTimerViewHolder tView = null;
@@ -98,7 +117,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 	// SetTimerClient setTimerClient;
 
 	Timer timer;
-	
+
 	Timer original;
 
 	private void updateDisplay(TimerOperation op) {
@@ -122,10 +141,17 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		EventFormatter f = new EventFormatter(timer, true);
 		tView.channel.setText(timer.getChannelNumber() + " "
 				+ timer.getChannelName());
+		// tView.title.setText(timer.isVps() ?
+		// getString(R.string.timer_detail_title_vps, f.getTitle()) :
+		// f.getTitle());
 		tView.title.setText(f.getTitle());
 		tView.dateField.setText(f.getDate());
 		tView.startField.setText(f.getTime());
 		tView.endField.setText(f.getStop());
+		tView.vps.setChecked(timer.isVps());
+		tView.priority.setText(String.valueOf(timer.getPriority()));
+		tView.lifecycle.setText(String.valueOf(timer.getLifetime()));
+		tView.repeat.setText(getSelectedItems().toString(this, true));
 	}
 
 	protected VdrManagerApp getApp() {
@@ -173,24 +199,94 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			break;
 		}
 		case R.id.timer_details_cancel: {
-//			finishActivity(REQUEST_CODE_TIMER_EDIT);
+			// finishActivity(REQUEST_CODE_TIMER_EDIT);
 			finish();
 			break;
 		}
 		case R.id.timer_details_modify:
 			timer.setTitle(tView.title.getText().toString());
+			timer.setVps(tView.vps.isChecked());
+			timer.setPriority(getIntOr0(tView.priority));
+			timer.setLifetime(getIntOr0(tView.lifecycle));
+
 			modifyTimer(timer);
-			//say(R.string.done);
+			// say(R.string.done);
 			break;
 
 		case R.id.timer_details_save: {
 			timer.setTitle(tView.title.getText().toString());
+
 			createTimer(timer);
-			//say(R.string.done);
+			// say(R.string.done);
 			break;
 		}
-	
+
+		case R.id.timer_detail_repeat: {
+
+			String[] weekdays = new DateFormatSymbols().getWeekdays();
+			String[] values = new String[] { weekdays[Calendar.MONDAY],
+					weekdays[Calendar.TUESDAY], weekdays[Calendar.WEDNESDAY],
+					weekdays[Calendar.THURSDAY], weekdays[Calendar.FRIDAY],
+					weekdays[Calendar.SATURDAY], weekdays[Calendar.SUNDAY], };
+
+			final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(0);
+
+			final AlertDialog b = new AlertDialog.Builder(this)
+					.setMultiChoiceItems(values, getSelectedItems().getBooleanArray(),
+							new DialogInterface.OnMultiChoiceClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which, boolean isChecked) {
+									mNewDaysOfWeek.set(which, isChecked);
+								}
+							})
+					.setNegativeButton(android.R.string.cancel, null)
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									StringBuilder sb = new StringBuilder(7);
+									sb.append(mNewDaysOfWeek.isSet(0) ? 'M' : '-');
+									sb.append(mNewDaysOfWeek.isSet(1) ? 'T' : '-');
+									sb.append(mNewDaysOfWeek.isSet(2) ? 'W' : '-');
+									sb.append(mNewDaysOfWeek.isSet(3) ? 'T' : '-');
+									sb.append(mNewDaysOfWeek.isSet(4) ? 'F' : '-');
+									sb.append(mNewDaysOfWeek.isSet(5) ? 'S' : '-');
+									sb.append(mNewDaysOfWeek.isSet(6) ? 'S' : '-');
+									timer.setWeekdays(sb.toString());
+									tView.repeat.setText(mNewDaysOfWeek.toString(TimerDetailsActivity.this, true));
+								}
+							}).create();
+
+			b.show();
 		}
+		}
+	}
+
+	DaysOfWeek getSelectedItems() {
+		String str = timer.getWeekdays();
+
+		DaysOfWeek dow = new DaysOfWeek(0);
+		if (str.length() != 7) {
+			return dow;
+		}
+
+		
+		dow.set(0, str.charAt(0) == 'M'); 
+		dow.set(1, str.charAt(1) == 'T');
+		dow.set(2, str.charAt(2) == 'W');
+		dow.set(3, str.charAt(3) == 'T');
+		dow.set(4, str.charAt(4) == 'F');
+		dow.set(5, str.charAt(5) == 'S');
+		dow.set(6, str.charAt(6) == 'S');
+
+		return dow;
+	}
+
+	private int getIntOr0(EditText text) {
+		if (TextUtils.isEmpty(text.getText().toString())) {
+			return 0;
+		}
+		return Integer.valueOf(text.getText().toString());
 	}
 
 	protected void say(int res) {
@@ -273,4 +369,95 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		task.start();
 	}
 
+	/*
+	 * Days of week code as a single int. 0x00: no day 0x01: Monday 0x02:
+	 * Tuesday 0x04: Wednesday 0x08: Thursday 0x10: Friday 0x20: Saturday 0x40:
+	 * Sunday
+	 */
+	static final class DaysOfWeek {
+
+		private static int[] DAY_MAP = new int[] { Calendar.MONDAY,
+				Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
+				Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY, };
+
+		// Bitmask of all repeating days
+		private int mDays;
+
+		DaysOfWeek(int days) {
+			mDays = days;
+		}
+
+		public String toString(Context context, boolean showNever) {
+			StringBuilder ret = new StringBuilder();
+
+			// no days
+			if (mDays == 0) {
+				return showNever ? context.getText(R.string.never).toString()
+						: "";
+			}
+
+			// every day
+			if (mDays == 0x7f) {
+				return context.getText(R.string.every_day).toString();
+			}
+
+			// count selected days
+			int dayCount = 0, days = mDays;
+			while (days > 0) {
+				if ((days & 1) == 1)
+					dayCount++;
+				days >>= 1;
+			}
+
+			// short or long form?
+			DateFormatSymbols dfs = new DateFormatSymbols();
+			String[] dayList = (dayCount > 1) ? dfs.getShortWeekdays() : dfs
+					.getWeekdays();
+
+			// selected days
+			for (int i = 0; i < 7; i++) {
+				if ((mDays & (1 << i)) != 0) {
+					ret.append(dayList[DAY_MAP[i]]);
+					dayCount -= 1;
+					if (dayCount > 0)
+						ret.append(context.getText(R.string.day_concat));
+				}
+			}
+			return ret.toString();
+		}
+
+		private boolean isSet(int day) {
+			return ((mDays & (1 << day)) > 0);
+		}
+
+		public void set(int day, boolean set) {
+			if (set) {
+				mDays |= (1 << day);
+			} else {
+				mDays &= ~(1 << day);
+			}
+		}
+
+		public void set(DaysOfWeek dow) {
+			mDays = dow.mDays;
+		}
+
+		public int getCoded() {
+			return mDays;
+		}
+
+		// Returns days of week encoded in an array of booleans.
+		public boolean[] getBooleanArray() {
+			boolean[] ret = new boolean[7];
+			for (int i = 0; i < 7; i++) {
+				ret[i] = isSet(i);
+			}
+			return ret;
+		}
+
+		public boolean isRepeatSet() {
+			return mDays != 0;
+		}
+
+	}
 }

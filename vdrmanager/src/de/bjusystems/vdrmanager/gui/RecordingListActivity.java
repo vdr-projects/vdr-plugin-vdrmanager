@@ -1,12 +1,16 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.content.ClipData.Item;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +41,18 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	RecordingClient recordingClient;
 
+	public static final int MENU_DATE = 0;
+	public static final int MENU_NAME = 1;
+	public static final int MENU_CHANNEL = 2;
+
+	public static final int ASC = 0;
+	
+	public static final int DESC = 1;
+	
+	private int groupBy = MENU_DATE;
+	
+	private int ASC_DESC = ASC;
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,6 +76,64 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		startRecordingQuery();
 	}
 	
+
+	private String[] getAvailableGroupByEntries() {
+		ArrayList<String> entries = new ArrayList<String>(2);
+		entries.add(getString(R.string.groupby_date));
+		entries.add(getString(R.string.groupby_name));
+		entries.add(getString(R.string.groupby_channel));
+		return entries.toArray(Utils.EMPTY);
+	}
+
+	AlertDialog groupByDialog = null;
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.menu_groupby:
+			// case MENU_PROVIDER:
+			// case MENU_NAME:
+			if (groupByDialog == null) {
+				groupByDialog = new AlertDialog.Builder(this)
+						.setTitle(R.string.menu_groupby)
+						.setIcon(android.R.drawable.ic_menu_sort_alphabetically)
+						.setSingleChoiceItems(getAvailableGroupByEntries(),
+								groupBy, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										if(groupBy == which){
+											ASC_DESC =  ASC_DESC == ASC ? DESC : ASC;
+										} else {
+											groupBy = which;
+											ASC_DESC = ASC;
+										}
+										//fillAdapter();
+										groupByDialog.dismiss();
+									}
+								}).create();
+			}
+
+			groupByDialog.show();
+
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
+	 * .view.Menu)
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.recording_list_menu, menu);
+		return 	super.onCreateOptionsMenu(menu);
+	}
 
 	
 	@Override

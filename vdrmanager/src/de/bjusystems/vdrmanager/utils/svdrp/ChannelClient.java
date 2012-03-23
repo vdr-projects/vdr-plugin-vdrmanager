@@ -28,11 +28,11 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 
 	private static boolean inited = false;
 
-	public ChannelClient(boolean useCache) {
+	public ChannelClient() {
 		super();
-		if (useCache == false) {
-			clearCache();
-		}
+//		if (useCache == false) {
+//			clearCache();
+//		}
 		addSvdrpListener(this);
 	}
 
@@ -86,7 +86,7 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 		if (inited == true) {
 			informListener(SvdrpEvent.CACHE_HIT, null);
 		} else {
-			runCommand("channels " + Preferences.getPreferences().getChannels());
+			runCommand("channels " + Preferences.get().getChannels());
 		}
 	}
 

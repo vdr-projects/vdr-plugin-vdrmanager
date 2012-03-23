@@ -227,6 +227,9 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	}
 
 	protected void alert(String msg) {
+		if(isFinishing()){
+			return;
+		}
 		new AlertDialog.Builder(this)//
 				.setMessage(msg)//
 				.setPositiveButton(android.R.string.ok, null)//

@@ -107,7 +107,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	private void startQuery() {
-		new ChannelsTask(this, new ChannelClient(true)) {
+		new ChannelsTask(this, new ChannelClient()) {
 			public void finished(SvdrpEvent event) {
 				if (event == SvdrpEvent.CACHE_HIT
 						|| event == SvdrpEvent.FINISHED_SUCCESS) {

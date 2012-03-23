@@ -15,8 +15,14 @@ import de.bjusystems.vdrmanager.gui.Utils;
  * @author bju
  */
 public class Timer extends Event implements Timerable{
-
-	private static final int ENABLED = 1;
+	
+	  
+//			 tfActive    = 0x0001,
+//             tfInstant   = 0x0002,
+//             tfVps       = 0x0004,
+//             tfRecording = 0x0008,
+//             tfAll       = 0xFFFF,
+	private static final int ACTIVE = 1;
 	private static final int INSTANT = 2;
 	private static final int VPS = 4;
 	private static final int RECORDING = 8;
@@ -25,6 +31,27 @@ public class Timer extends Event implements Timerable{
 	private int flags;
 	private int priority;
 	private int lifetime;
+	private String weekdays = "-------";
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+
+	public void setLifetime(int lifetime) {
+		this.lifetime = lifetime;
+	}
+
+
+	public String getWeekdays() {
+		return weekdays;
+	}
+
+
+	public void setWeekdays(String weekdays) {
+		this.weekdays = weekdays;
+	}
+
 
 	/**
 	 * Constructs a timer from SvdrpHelper result line
@@ -72,6 +99,10 @@ public class Timer extends Event implements Timerable{
 			this.channelId = values[12];
 		}
 		
+		if(values.length > 13) {
+			this.weekdays = values[13];
+		}
+		
 		
 		description = Utils.mapSpecialChars(description);
 	}
@@ -86,6 +117,7 @@ public class Timer extends Event implements Timerable{
 		t.start = new Date(start.getTime());
 		t.stop = new Date(stop.getTime());
 		t.title = title;
+		t.weekdays = weekdays;
 		return t;
 	}
 	
@@ -93,7 +125,7 @@ public class Timer extends Event implements Timerable{
 		final Preferences prefs = Preferences.getPreferences();
 
 		this.number = 0;
-		this.flags = ENABLED;
+		this.flags = ACTIVE;
 		this.channelNumber = event.getChannelNumber();
 		this.channelName = event.getChannelName();
 		this.channelId = event.getChannelId();
@@ -119,7 +151,7 @@ public class Timer extends Event implements Timerable{
 
 		final Calendar cal = new GregorianCalendar();
 		cal.setTime(start);
-		line.append(String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
+		line.append((weekdays.equals("-------") == false ? weekdays + "@" : "") + String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
 				cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH)));
 		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY),
 				cal.get(Calendar.MINUTE)));
@@ -157,7 +189,7 @@ public class Timer extends Event implements Timerable{
 	}
 
 	public boolean isEnabled() {
-		return (flags & ENABLED) == ENABLED;
+		return (flags & ACTIVE) == ACTIVE;
 	}
 
 	public boolean isInstant() {
@@ -180,11 +212,19 @@ public class Timer extends Event implements Timerable{
 		this.stop = stop;
 	}
 
+	public void setVps(boolean useVps){
+		if(useVps){
+			flags = flags | VPS;
+		} else {
+			flags = flags & ~VPS;
+		}
+	}
+	
 	public void setEnabled(final boolean enabled) {
 		if (enabled) {
-			flags = flags | ENABLED;
+			flags = flags | ACTIVE;
 		} else {
-			flags = flags & ~ENABLED;
+			flags = flags & ~ACTIVE;
 		}
 	}
 

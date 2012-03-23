@@ -309,4 +309,29 @@
 	<string name="recent_channels_no_history">No history…</string>
 	<string name="gui_max_recent_channels_title">Max. recent channels</string>
 	<string name="gui_max_recent_channels_summary">How many channels should be kept in the recent channels?</string>
+	<string name="timer_detail_day_title">Day</string>
+	
+    <!-- Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to repeat every day -->
+    <string name="every_day">Every day</string>
+
+    <!-- Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to never repeat -->
+    <string name="never">Never</string>
+
+    <!-- Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: concatenate days with
+         this character, i.e. "Mon, Tue, Wed" -->
+    <string name="day_concat">", "</string>
+    <string name="timer_detail_repeat_title">Repeat</string>
+    <string name="timer_detail_use_vps">Use VPS:</string>
+    <string name="timer_detail_priority">Priority:</string>
+    <string name="timer_detail_lifetime">Lifetime:</string>
+    <string name="timer_detail_lifetime_hint">e.g. 99</string>
+    <string name="timer_detail_priority_hint">e.g. 50</string>
+    
+    
+    <string name="timer_detail_title_vps">%1$s (VPS)</string>
 </resources>

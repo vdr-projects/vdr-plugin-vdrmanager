@@ -4,16 +4,12 @@ import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.text.TextUtils;
-import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
-import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
-import de.bjusystems.vdrmanager.gui.VdrListActivity;
 
 /**
  * Class for all preferences
