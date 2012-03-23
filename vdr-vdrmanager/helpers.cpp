@@ -225,10 +225,9 @@ string cHelpers::DelRecordingIntern(string args) {
 	int index = atoi(args.c_str());
 
 	cRecording * r;
-	if (index < 0 || index >= Recordings.Count()
-			|| (r = Recordings.Get(index)) == NULL) {
-		return "!ERROR:DelRecording;Wrong recording index -> " + args + "\r\n";
-	}
+	if (index < 0|| index >= Recordings.Count()
+	|| (r = Recordings.Get(index)) == NULL) {return "!ERROR:DelRecording;Wrong recording index -> " + args + "\r\n";
+}
 
 	if (r->Delete()) {
 		Recordings.DelByName(r->FileName());
@@ -296,7 +295,6 @@ string cHelpers::SetTimerIntern(char op, string param) {
 			return Error("Timers are being edited - try again later");
 		}
 
-
 		string sep = string(TIMER_SEP);
 
 		size_t idx = param.find(sep);
@@ -307,11 +305,10 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		string newt = param.substr(0, idx);
 		string oldt = param.substr(idx + sep.size());
 
-
 		auto_ptr<cTimer> otimer(new cTimer);
-				if (!otimer->Parse(oldt.c_str())) {
-					return Error("Error in timer settings");
-				}
+		if (!otimer->Parse(oldt.c_str())) {
+			return Error("Error in timer settings");
+		}
 
 		cTimer* oldTimer = Timers.GetTimer(otimer.get());
 		if (oldTimer == 0) {
@@ -458,15 +455,15 @@ string cHelpers::ToText(cRecording * recording) {
 	time_t startTime = event->StartTime();
 	time_t endTime = event->EndTime();
 
-	snprintf(buf, sizeof(buf)-1, "%d", recording->Index());
+	snprintf(buf, sizeof(buf) - 1, "%d", recording->Index());
 	result = buf;
 	result += ":";
 
-	snprintf(buf, sizeof(buf)-1, "%lu", startTime);
+	snprintf(buf, sizeof(buf) - 1, "%lu", startTime);
 	result += buf;
 	result += ":";
 
-	snprintf(buf, sizeof(buf)-1, "%lu", endTime);
+	snprintf(buf, sizeof(buf) - 1, "%lu", endTime);
 	result += buf;
 	result += ":";
 
@@ -477,9 +474,9 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	if(info->Title()){
+	if (info->Title()) {
 		result += MapSpecialChars(info->Title());
-	} else if(event->Title()){
+	} else if (event->Title()) {
 		result += MapSpecialChars(event->Title());
 	} else {
 		result += "<unknown>";
@@ -495,7 +492,7 @@ string cHelpers::ToText(cRecording * recording) {
 	result += MapSpecialChars(recording->FileName());
 	result += ":";
 
-	snprintf(buf, sizeof(buf)-1, "%d", DirSizeMB(recording->FileName()));
+	snprintf(buf, sizeof(buf) - 1, "%d", DirSizeMB(recording->FileName()));
 	result += buf;
 
 	result += ":";
@@ -505,7 +502,7 @@ string cHelpers::ToText(cRecording * recording) {
 
 	int length = RecordingLengthInSeconds(recording);
 
-	snprintf(buf, sizeof(buf)-1, "%d", length);
+	snprintf(buf, sizeof(buf) - 1, "%d", length);
 	result += buf;
 
 	result += "\r\n";
@@ -536,33 +533,59 @@ string cHelpers::ToText(cTimer * timer) {
 
 	string result;
 	char buf[100];
-	snprintf(buf, sizeof(buf)-1, "T%d", timer->Index());
+	snprintf(buf, sizeof(buf) - 1, "T%d", timer->Index());
 	result = buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%u", timer->Flags());
+	snprintf(buf, sizeof(buf) - 1, "%u", timer->Flags());
 	result += buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%d", timer->Channel()->Number());
+	snprintf(buf, sizeof(buf) - 1, "%d", timer->Channel()->Number());
 	result += buf;
 	result += ":";
 	result += MapSpecialChars(channelName);
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%lu", timer->StartTime());
+	snprintf(buf, sizeof(buf) - 1, "%lu", timer->StartTime());
 	result += buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%lu", timer->StopTime());
+	snprintf(buf, sizeof(buf) - 1, "%lu", timer->StopTime());
 	result += buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%d", timer->Priority());
+	snprintf(buf, sizeof(buf) - 1, "%d", timer->Priority());
 	result += buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%d", timer->Lifetime());
+	snprintf(buf, sizeof(buf) - 1, "%d", timer->Lifetime());
 	result += buf;
 	result += ":";
 	result += MapSpecialChars(timer->File());
 	result += ":";
 	result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
 	const cEvent * event = timer->Event();
+	dsyslog("[vdrmanager] timer's event is NULL. Try find it");
+	if (!event) {
+		cChannel * channel = Channels.GetByChannelID(
+				timer->Channel()->GetChannelID());
+		if (channel) {
+			cSchedulesLock schedulesLock;
+			const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+			const cSchedule * schedule = schedules->GetSchedule(
+					channel->GetChannelID());
+			if (schedule) {
+				const cList<cEvent> * events = schedule->Events();
+				for (cEvent * ev = events->First(); event;
+						ev = events->Next(ev)) {
+					if (timer->StartTime() <= ev->StartTime()
+							&& timer->StopTime()
+									>= ev->StartTime() + ev->Duration()) {
+						event = ev;
+						dsyslog(
+								"[vdrmanager] timer's event was NULL, but found via time!");
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	if (event) {
 		result += ":";
 		result += event->ShortText() ? MapSpecialChars(event->ShortText()) : "";
@@ -573,6 +596,7 @@ string cHelpers::ToText(cTimer * timer) {
 	} else {
 		result += "::";
 	}
+
 	result += ":";
 	result += MapSpecialChars(timer->Channel()->GetChannelID().ToString());
 
@@ -595,22 +619,24 @@ string cHelpers::ToText(const cEvent * event) {
 	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
 		if (timer->Channel() == channel
 				&& timer->StartTime() <= event->StartTime()
-				&& timer->StopTime() >= event->StartTime() + event->Duration()) {
+				&& timer->StopTime()
+						>= event->StartTime() + event->Duration()) {
 			eventTimer = timer;
 		}
 	}
 
 	char buf[100];
 	string result;
-	snprintf(buf, sizeof(buf)-1, "E%d", channel->Number());
+	snprintf(buf, sizeof(buf) - 1, "E%d", channel->Number());
 	result = buf;
 	result += ":";
 	result += MapSpecialChars(channel->Name());
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%lu", event->StartTime());
+	snprintf(buf, sizeof(buf) - 1, "%lu", event->StartTime());
 	result += buf;
 	result += ":";
-	snprintf(buf, sizeof(buf)-1, "%lu", event->StartTime() + event->Duration());
+	snprintf(buf, sizeof(buf) - 1, "%lu",
+			event->StartTime() + event->Duration());
 	result += buf;
 	result += ":";
 	result += MapSpecialChars(event->Title());
@@ -719,13 +745,13 @@ string cHelpers::Trim(string str) {
 	return str.substr(a, (b - a) + 1);
 }
 
-string cHelpers::SafeCall(string(*f)()) {
+string cHelpers::SafeCall(string (*f)()) {
 	// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f();
 
-		} catch(exception &ex){
+		} catch (exception &ex) {
 			esyslog("[vdrmanager] catch an exception: %s", ex.what());
 		} catch (...) {
 			esyslog("[vdrmanager] catch an exception");
@@ -736,7 +762,7 @@ string cHelpers::SafeCall(string(*f)()) {
 	return "";
 }
 
-string cHelpers::SafeCall(string(*f)(string arg), string arg) {
+string cHelpers::SafeCall(string (*f)(string arg), string arg) {
 	// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
@@ -752,13 +778,13 @@ string cHelpers::SafeCall(string(*f)(string arg), string arg) {
 	return "";
 }
 
-string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
+string cHelpers::SafeCall(string (*f)(string arg1, string arg2), string arg1,
 		string arg2) {
 	// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg1, arg2);
-		} catch (exception &ex){
+		} catch (exception &ex) {
 			esyslog("[vdrmanager] catch an exception 2: %s", ex.what());
 		} catch (...) {
 			esyslog("[vdrmanager] catch an exception 2");
@@ -770,7 +796,7 @@ string cHelpers::SafeCall(string(*f)(string arg1, string arg2), string arg1,
 }
 string cHelpers::MapSpecialChars(cString text) {
 
-	return MapSpecialChars((const char *)text);
+	return MapSpecialChars((const char *) text);
 }
 
 string cHelpers::MapSpecialChars(const string text) {
@@ -823,163 +849,170 @@ string cHelpers::UnMapSpecialChars(string text) {
 /**
  * based on vdr-restfulapi's RecordingLengthInSeconds
  */
-int cHelpers::RecordingLengthInSeconds(cRecording* recording)
-{
+int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
 #if APIVERSNUM < 10721
 	return -1;
 #endif
 
-  int nf = recording->NumFrames();
-  if (nf >= 0)
+	int nf = recording->NumFrames();
+	if (nf >= 0)
 #if APIVERSNUM >= 10703
-     return int(((double)nf / recording->FramesPerSecond()));
+		return int(((double) nf / recording->FramesPerSecond()));
 #else
-     return int((double)nf / FRAMESPERSEC));
+	return int((double)nf / FRAMESPERSEC));
 #endif
-  return -1;
+	return -1;
 }
 
-
-
-
 /** Compress a STL string using zlib with given compression level and return
-  * the binary data. */
-string  cHelpers::compress_string(const string& str, int compressionlevel)
-{
-    z_stream zs;                        // z_stream is zlib's control structure
-    memset(&zs, 0, sizeof(zs));
+ * the binary data. */
+string cHelpers::compress_string(const string& str, int compressionlevel) {
+	z_stream zs; // z_stream is zlib's control structure
+	memset(&zs, 0, sizeof(zs));
 
-    if (deflateInit(&zs, compressionlevel) != Z_OK)
-        throw(runtime_error("deflateInit failed while compressing."));
+	if (deflateInit(&zs, compressionlevel) != Z_OK)
+		throw(runtime_error("deflateInit failed while compressing."));
 
-    zs.next_in = (Bytef*)str.data();
-    zs.avail_in = str.size();           // set the z_stream's input
+	zs.next_in = (Bytef*) str.data();
+	zs.avail_in = str.size(); // set the z_stream's input
 
-    int ret;
-    char outbuffer[32768];
-    string outstring;
+	int ret;
+	char outbuffer[32768];
+	string outstring;
 
-    // retrieve the compressed bytes blockwise
-    do {
-        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
-        zs.avail_out = sizeof(outbuffer);
+	// retrieve the compressed bytes blockwise
+	do {
+		zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+		zs.avail_out = sizeof(outbuffer);
 
-        ret = deflate(&zs, Z_FINISH);
+		ret = deflate(&zs, Z_FINISH);
 
-        if (outstring.size() < zs.total_out) {
-            // append the block to the output string
-            outstring.append(outbuffer,
-                             zs.total_out - outstring.size());
-        }
-    } while (ret == Z_OK);
+		if (outstring.size() < zs.total_out) {
+			// append the block to the output string
+			outstring.append(outbuffer, zs.total_out - outstring.size());
+		}
+	} while (ret == Z_OK);
 
-    deflateEnd(&zs);
+	deflateEnd(&zs);
 
-    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-        ostringstream oss;
-        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
-        throw(runtime_error(oss.str()));
-    }
+	if (ret != Z_STREAM_END) { // an error occurred that was not EOF
+		ostringstream oss;
+		oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
+		throw(runtime_error(oss.str()));
+	}
 
-    return outstring;
+	return outstring;
 }
 
 /** Decompress an STL string using zlib and return the original data. */
-string  cHelpers::decompress_string(const string& str)
-{
-    z_stream zs;                        // z_stream is zlib's control structure
-    memset(&zs, 0, sizeof(zs));
+string cHelpers::decompress_string(const string& str) {
+	z_stream zs; // z_stream is zlib's control structure
+	memset(&zs, 0, sizeof(zs));
 
-    if (inflateInit(&zs) != Z_OK)
-        throw(runtime_error("inflateInit failed while decompressing."));
+	if (inflateInit(&zs) != Z_OK)
+		throw(runtime_error("inflateInit failed while decompressing."));
 
-    zs.next_in = (Bytef*)str.data();
-    zs.avail_in = str.size();
+	zs.next_in = (Bytef*) str.data();
+	zs.avail_in = str.size();
 
-    int ret;
-    char outbuffer[32768];
-    string outstring;
+	int ret;
+	char outbuffer[32768];
+	string outstring;
 
-    // get the decompressed bytes blockwise using repeated calls to inflate
-    do {
-        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
-        zs.avail_out = sizeof(outbuffer);
+	// get the decompressed bytes blockwise using repeated calls to inflate
+	do {
+		zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+		zs.avail_out = sizeof(outbuffer);
 
-        ret = inflate(&zs, 0);
+		ret = inflate(&zs, 0);
 
-        if (outstring.size() < zs.total_out) {
-            outstring.append(outbuffer,
-                             zs.total_out - outstring.size());
-        }
+		if (outstring.size() < zs.total_out) {
+			outstring.append(outbuffer, zs.total_out - outstring.size());
+		}
 
-    } while (ret == Z_OK);
+	} while (ret == Z_OK);
 
-    inflateEnd(&zs);
+	inflateEnd(&zs);
 
-    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-        ostringstream oss;
-        oss << "Exception during zlib decompression: (" << ret << ") "
-            << zs.msg;
-        throw(runtime_error(oss.str()));
-    }
+	if (ret != Z_STREAM_END) { // an error occurred that was not EOF
+		ostringstream oss;
+		oss << "Exception during zlib decompression: (" << ret << ") "
+				<< zs.msg;
+		throw(runtime_error(oss.str()));
+	}
 
-    return outstring;
+	return outstring;
 }
 
 //These three methodes were stolen from vdr-restfulapi project. Thanks!
-std::stack<int> cHelpers::ConvertToBinary(int v)
-{
-   int b;
-   std::stack <int> res;
+std::queue<int> cHelpers::ConvertToBinary(int v) {
+	int b;
+	std::queue<int> res;
 
-   while ( v != 0) {
-     b = v % 2;
-     res.push(b);
-     v = (v-b) / 2;
-   }
-   return res;
+	while (v != 0) {
+		b = v % 2;
+		res.push(b);
+		v = (v - b) / 2;
+	}
+	return res;
 }
 
-
-
-std::string cHelpers::ConvertWeekdays(int v)
-{
-  std::stack<int> b = cHelpers::ConvertToBinary(v);
-  int counter = 0;
-  std::ostringstream res;
-  while ( !b.empty() && counter < 7 ) {
-     int val = b.top();
-     switch(counter) {
-       case 0: res << (val == 1 ? 'M' : '-'); break;
-       case 1: res << (val == 1 ? 'T' : '-'); break;
-       case 2: res << (val == 1 ? 'W' : '-'); break;
-       case 3: res << (val == 1 ? 'T' : '-'); break;
-       case 4: res << (val == 1 ? 'F' : '-'); break;
-       case 5: res << (val == 1 ? 'S' : '-'); break;
-       case 6: res << (val == 1 ? 'S' : '-'); break;
-     }
-     b.pop();
-     counter++;
-  }
-  while ( counter < 7 ) {
-     res << '-';
-     counter++;
-  }
-  return res.str();
+std::string cHelpers::ConvertWeekdays(int v) {
+	std::queue<int> b = cHelpers::ConvertToBinary(v);
+	int counter = 0;
+	std::ostringstream res;
+	while (!b.empty() && counter < 7) {
+		int val = b.front();
+		switch (counter) {
+		case 0:
+			res << (val == 1 ? 'M' : '-');
+			break;
+		case 1:
+			res << (val == 1 ? 'T' : '-');
+			break;
+		case 2:
+			res << (val == 1 ? 'W' : '-');
+			break;
+		case 3:
+			res << (val == 1 ? 'T' : '-');
+			break;
+		case 4:
+			res << (val == 1 ? 'F' : '-');
+			break;
+		case 5:
+			res << (val == 1 ? 'S' : '-');
+			break;
+		case 6:
+			res << (val == 1 ? 'S' : '-');
+			break;
+		}
+		b.pop();
+		counter++;
+	}
+	while (counter < 7) {
+		res << '-';
+		counter++;
+	}
+	return res.str();
 }
 
-int cHelpers::ConvertWeekdays(std::string v)
-{
-  const char* str = v.c_str();
-  int res = 0;
-  if ( str[0] == 'M' ) res += 64;
-  if ( str[1] == 'T' ) res += 32;
-  if ( str[2] == 'W' ) res += 16;
-  if ( str[3] == 'T' ) res += 8;
-  if ( str[4] == 'F' ) res += 4;
-  if ( str[5] == 'S' ) res += 2;
-  if ( str[6] == 'S' ) res += 1;
-  return res;
+int cHelpers::ConvertWeekdays(std::string v) {
+	const char* str = v.c_str();
+	int res = 0;
+	if (str[0] == 'M')
+		res += 64;
+	if (str[1] == 'T')
+		res += 32;
+	if (str[2] == 'W')
+		res += 16;
+	if (str[3] == 'T')
+		res += 8;
+	if (str[4] == 'F')
+		res += 4;
+	if (str[5] == 'S')
+		res += 2;
+	if (str[6] == 'S')
+		res += 1;
+	return res;
 }
-
 

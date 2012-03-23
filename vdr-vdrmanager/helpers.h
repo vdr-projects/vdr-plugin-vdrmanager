@@ -11,7 +11,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <stack>
+#include <queue>
 
 
 using namespace std;
@@ -60,6 +60,6 @@ private:
   static int RecordingLengthInSeconds(cRecording* recording);
   static string ConvertWeekdays(int v);
   static int ConvertWeekdays(string v);
-  static stack<int> ConvertToBinary(int v);
+  static queue<int> ConvertToBinary(int v);
 
 };
