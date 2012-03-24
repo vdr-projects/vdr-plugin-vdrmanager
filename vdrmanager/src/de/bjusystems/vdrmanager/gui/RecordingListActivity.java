@@ -110,6 +110,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 										}
 										//fillAdapter();
 										groupByDialog.dismiss();
+										say("Comming soon...");
 									}
 								}).create();
 			}
