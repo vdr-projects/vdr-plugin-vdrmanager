@@ -22,6 +22,7 @@ public:
   static string GetTimers(string args);
   static string GetChannels(string args);
   static string GetChannelEvents(string args);
+  static string SetChannel(string args);
   static string GetTimeEvents(string args);
   static string GetRecordings(string args);
   static string DelRecording(string args);
@@ -39,6 +40,7 @@ private:
   static string GetTimersIntern();
   static string GetRecordingsIntern();
   static string GetChannelsIntern(string wantedChannels);
+  static string SetChannelIntern(string wantedChannel);
   static string GetEventsIntern(string wantedChannels, string when);
   static string DelRecordingIntern(string index);
   static string SetTimerIntern(string args);

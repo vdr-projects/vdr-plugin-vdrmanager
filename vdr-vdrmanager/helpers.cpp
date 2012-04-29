@@ -34,6 +34,10 @@ string cHelpers::GetChannelEvents(string args) {
 	return SafeCall(GetEventsIntern, Trim(args), "");
 }
 
+string cHelpers::SetChannel(string args) {
+	return SafeCall(SetChannelIntern, args);
+}
+
 string cHelpers::GetTimeEvents(string args) {
 
 	args = Trim(args);
@@ -142,6 +146,31 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 	}
 
 	return result + "END\r\n";
+}
+
+string cHelpers::SetChannelIntern(string args) {
+
+	if (args.size() == 0) {
+		return "!ERROR:SetChannel;empty args\r\n";
+	}
+	
+	int nr = atoi(args.c_str());
+	string result;
+	ostringstream outStream;
+	
+	cChannel *channel = Channels.GetByNumber(nr);
+	
+	if (channel) {
+	    if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true)) {
+	        outStream << channel->Number();
+	        result = "!ERROR:SetChannel;Error switching to channel " + outStream.str() + "\r\n";
+	        return result;
+	    } else {
+	        return "START\r\nEND\r\n";
+	    }
+	} else {
+	    return "!ERROR:SetChannel;Unable to find channel " + args + "\r\n";
+	}
 }
 
 string cHelpers::GetAudioTracks(const cChannel* channel) {
@@ -851,10 +880,14 @@ string cHelpers::UnMapSpecialChars(string text) {
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
 #if APIVERSNUM < 10721
-	return -1;
-#endif
-
+	int nf=cIndexFile::Length(recording->FileName(), recording->IsPesRecording());
+	//esyslog("[vdrmanager] length of record %s: %d", recording->FileName(), length);
+	//if (length >= 0)
+    	//    return int(length / SecondsToFrames(60, recording->FramesPerSecond()));
+	//return -1;
+#else
 	int nf = recording->NumFrames();
+#endif
 	if (nf >= 0)
 #if APIVERSNUM >= 10703
 		return int(((double) nf / recording->FramesPerSecond()));
