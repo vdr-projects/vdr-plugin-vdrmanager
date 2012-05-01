@@ -63,5 +63,4 @@ private:
   static string ConvertWeekdays(int v);
   static int ConvertWeekdays(string v);
   static queue<int> ConvertToBinary(int v);
-
 };

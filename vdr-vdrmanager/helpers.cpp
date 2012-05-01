@@ -148,29 +148,47 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 	return result + "END\r\n";
 }
 
-string cHelpers::SetChannelIntern(string args) {
+string cHelpers::SetChannelIntern(const string args) {
 
 	if (args.size() == 0) {
 		return "!ERROR:SetChannel;empty args\r\n";
 	}
 	
-	int nr = atoi(args.c_str());
+
+	cChannel *channel;
+	bool isnum = true;
+	 for (int i = 0; i < (int)args.length(); i++) {
+	       if (!std::isdigit(args[i])){
+	    	   isnum = false;
+	    	   break;
+	       }
+
+	   }
+
+	if(isnum){
+		int nr = atoi(args.c_str());
+		channel = Channels.GetByNumber(nr);
+	}  else {
+		tChannelID chid = tChannelID::FromString(args.c_str());
+		channel = Channels.GetByChannelID(chid);
+	}
+
+
+	if (!channel) {
+		return "!ERROR:SetChannel;Unable to find channel " + args + "\r\n";
+	}
+
 	string result;
 	ostringstream outStream;
-	
-	cChannel *channel = Channels.GetByNumber(nr);
-	
-	if (channel) {
-	    if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true)) {
+
+	if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true)) {
 	        outStream << channel->Number();
 	        result = "!ERROR:SetChannel;Error switching to channel " + outStream.str() + "\r\n";
 	        return result;
-	    } else {
-	        return "START\r\nEND\r\n";
-	    }
-	} else {
-	    return "!ERROR:SetChannel;Unable to find channel " + args + "\r\n";
 	}
+
+	return "START\r\nEND\r\n";
+
 }
 
 string cHelpers::GetAudioTracks(const cChannel* channel) {
@@ -447,8 +465,9 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 
 string cHelpers::ToText(cRecording * recording) {
 	const cRecordingInfo * info = recording->Info();
+#if APIVERSNUM >= 10705
 	const cEvent * event = info->GetEvent();
-
+#endif
 	/**
 	 tChannelID ChannelID(void) const;
 	 const cSchedule *Schedule(void) const { return schedule; }
@@ -481,9 +500,13 @@ string cHelpers::ToText(cRecording * recording) {
 	char buf[100];
 	string result = "";
 
+#if APIVERSNUM >= 10705
 	time_t startTime = event->StartTime();
 	time_t endTime = event->EndTime();
-
+#else
+	time_t startTime = 0L;
+	time_t endTime = 1L;
+#endif
 	snprintf(buf, sizeof(buf) - 1, "%d", recording->Index());
 	result = buf;
 	result += ":";
@@ -505,17 +528,19 @@ string cHelpers::ToText(cRecording * recording) {
 
 	if (info->Title()) {
 		result += MapSpecialChars(info->Title());
+#if APIVERSNUM > 10600
 	} else if (event->Title()) {
 		result += MapSpecialChars(event->Title());
+#endif
 	} else {
 		result += "<unknown>";
 	}
 	result += ":";
 
-	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
+	result += MapSpecialChars(info->ShortText() ?  info->ShortText() : "");
 	result += ":";
 
-	result += MapSpecialChars(event->Description() ? event->Description() : "");
+	result += MapSpecialChars(info->Description() ? info->Description() : "");
 	result += ":";
 
 	result += MapSpecialChars(recording->FileName());
@@ -879,22 +904,34 @@ string cHelpers::UnMapSpecialChars(string text) {
  * based on vdr-restfulapi's RecordingLengthInSeconds
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
-#if APIVERSNUM < 10721
-	int nf=cIndexFile::Length(recording->FileName(), recording->IsPesRecording());
+
+int nf = -1;
+#if APIVERSNUM >= 10721
+ nf = recording->NumFrames();
+#endif
+
+#if APIVERSNUM == 10720
+ nf = cIndexFile::Length(recording->FileName(), recording->IsPesRecording());
+#endif
+
+#if APIVERSNUM < 10720
+	//TODO find out
 	//esyslog("[vdrmanager] length of record %s: %d", recording->FileName(), length);
 	//if (length >= 0)
     	//    return int(length / SecondsToFrames(60, recording->FramesPerSecond()));
-	//return -1;
-#else
-	int nf = recording->NumFrames();
+	nf =  -1;
 #endif
-	if (nf >= 0)
-#if APIVERSNUM >= 10703
-		return int(((double) nf / recording->FramesPerSecond()));
-#else
-	return int((double)nf / FRAMESPERSEC));
-#endif
+
+if(nf == -1){
 	return -1;
+}
+
+#if APIVERSNUM >= 10703
+	return int(((double) nf / recording->FramesPerSecond()));
+#else
+	return int((double)nf / FRAMESPERSEC);
+#endif
+
 }
 
 /** Compress a STL string using zlib with given compression level and return
@@ -1048,4 +1085,5 @@ int cHelpers::ConvertWeekdays(std::string v) {
 		res += 1;
 	return res;
 }
+
 
