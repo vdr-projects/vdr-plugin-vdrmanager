@@ -217,13 +217,13 @@ void cVdrmanagerClientSocket::Disconnect() {
 
 bool cVdrmanagerClientSocket::PutLine(string line) {
 	//TODO http://projects.vdr-developer.org/issues/790
-	string line2 = cHelpers::compress_string(line);
-	unsigned long  l =  line.size();
-	unsigned long  l2 = line2.size();
-	if(l2 == 0){
-		l2 = 1;
-	}
-	isyslog("[vdrmanager] PutLine, line size is %lu, with zlib it would be %lu (factor %lu)", l, l2, l/l2);
+	//string line2 = cHelpers::compress_string(line);
+	//unsigned long  l =  line.size();
+	//unsigned long  l2 = line2.size();
+	//if(l2 == 0){
+		//l2 = 1;
+	//}
+	//dsyslog("[vdrmanager] PutLine, line size is %lu, with zlib it would be %lu (factor %lu)", l, l2, l/l2);
 	// add line to write buffer
 	writebuf += line;
 
