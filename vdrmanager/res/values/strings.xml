@@ -289,6 +289,7 @@
     <string name="progress_whatson_loading">Loading EPG…</string>
     <string name="progress_timers_loading">Loading timers…</string>
     <string name="progress_recordings_loading">Loading recordings…</string>
+    <string name="progress_switching">Switching…</string>
     <string name="progress_channels_loading">Loading channels…</string>
     <string name="progress_disconnect">Disconnecting…</string>
     <string name="progress_wakeup_sending">Initiating wakeup request…</string>
@@ -334,4 +335,8 @@
     
     
     <string name="timer_detail_title_vps">%1$s (VPS)</string>
+    
+    <string name="channel_item_menu_switch">Switch to</string>
+    <string name="switching_success">Switched to %s</string>
+    <string name="switching_failed">Switching to %1$s failed: %2$s</string>
 </resources>

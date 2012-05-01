@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -33,9 +34,12 @@ import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -365,7 +369,30 @@ public class ChannelListActivity extends
 			case R.id.channel_item_menu_hide_permanent:
 				// TODO http://projects.vdr-developer.org/issues/722
 				break;
+			
+			case R.id.channel_item_menu_switch:
+				final String name = channel.getName();
+				final SwitchChannelClient scc = new SwitchChannelClient(channel.getId());
+				SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(scc);
+				task.addListener(new SvdrpAsyncListener<String>() {
+					public void svdrpEvent(SvdrpEvent event, String result) {
+						if(event == SvdrpEvent.FINISHED_SUCCESS){
+							say(getString(R.string.switching_success, name));
+						} else if(event == SvdrpEvent.CONNECT_ERROR || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
+							say(getString(R.string.switching_failed, name, event.name()));
+						}
+						
+					}
+					
+					public void svdrpException(SvdrpException e) {
+						Log.w(TAG, e.getMessage(), e);
+						say(e.getMessage());
+					}
+				});
+				task.run();
 			}
+			
+
 
 			return true;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
