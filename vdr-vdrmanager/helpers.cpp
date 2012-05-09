@@ -178,16 +178,14 @@ string cHelpers::SetChannelIntern(const string args) {
 		return "!ERROR:SetChannel;Unable to find channel " + args + "\r\n";
 	}
 
-	string result;
 	ostringstream outStream;
 
 	if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true)) {
 	        outStream << channel->Number();
-	        result = "!ERROR:SetChannel;Error switching to channel " + outStream.str() + "\r\n";
-	        return result;
+	        return "!ERROR:SetChannel;Error switching to channel " + outStream.str() + "\r\n";
 	}
-
-	return "START\r\n"+channel->GetChannelID()+"\r\nEND\r\n";
+        
+        return "START\r\n" + MapSpecialChars(channel->GetChannelID().ToString()) + "\r\nEND\r\n";
 }
 
 string cHelpers::GetAudioTracks(const cChannel* channel) {
@@ -909,16 +907,29 @@ int nf = -1;
  nf = recording->NumFrames();
 #endif
 
-#if APIVERSNUM == 10720
- nf = cIndexFile::Length(recording->FileName(), recording->IsPesRecording());
+#if APIVERSNUM <= 10720
+	struct tIndexTs {
+	    uint64_t offset:40;
+	    int reserved:7;
+	    int independent:1;
+	    uint16_t number:16;
+	    tIndexTs(off_t Offset, bool Independent, uint16_t Number) {
+		offset = Offset;
+		reserved = 0;
+		independent = Independent;
+		number = Number;
+	}
+	};
+ 
+	struct stat buf;
+#if APIVERSNUM >= 10703
+	cString fullname = cString::sprintf("%s%s", recording->FileName(), recording->IsPesRecording() ? "/index" ".vdr" : "/index");
+#else
+        cString fullname = cString::sprintf("%s%s", recording->FileName(), "/index" ".vdr");
 #endif
-
-#if APIVERSNUM < 10720
-	//TODO find out
-	//esyslog("[vdrmanager] length of record %s: %d", recording->FileName(), length);
-	//if (length >= 0)
-    	//    return int(length / SecondsToFrames(60, recording->FramesPerSecond()));
-	nf =  -1;
+        
+	if (recording->FileName() && *fullname && access(fullname, R_OK) == 0 && stat(fullname, &buf) == 0)
+	    nf = buf.st_size ? (buf.st_size - 1) / sizeof(tIndexTs) + 1 : 0;
 #endif
 
 if(nf == -1){
@@ -1084,5 +1095,3 @@ int cHelpers::ConvertWeekdays(std::string v) {
 		res += 1;
 	return res;
 }
-
-
