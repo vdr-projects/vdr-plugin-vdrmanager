@@ -187,8 +187,7 @@ string cHelpers::SetChannelIntern(const string args) {
 	        return result;
 	}
 
-	return "START\r\nEND\r\n";
-
+	return "START\r\n"+channel->GetChannelID()+"\r\nEND\r\n";
 }
 
 string cHelpers::GetAudioTracks(const cChannel* channel) {
