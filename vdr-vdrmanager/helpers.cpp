@@ -525,7 +525,7 @@ string cHelpers::ToText(cRecording * recording) {
 
 	if (info->Title()) {
 		result += MapSpecialChars(info->Title());
-#if APIVERSNUM > 10600
+#if APIVERSNUM >= 10705
 	} else if (event->Title()) {
 		result += MapSpecialChars(event->Title());
 #endif
