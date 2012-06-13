@@ -24,5 +24,7 @@
         android:id="@+id/epg_item_menu_live_tv"
         android:title="@string/livetv"
         android:visible="false"/>
-
+	
+	<item android:id="@+id/epg_item_menu_switchto" 	   android:title="@string/switch_to_channel" android:visible="true" />
+    
 </menu>

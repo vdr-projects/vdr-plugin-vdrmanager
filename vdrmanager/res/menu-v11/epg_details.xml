@@ -12,5 +12,9 @@
         android:id="@+id/epg_details_menu_share"
         android:icon="@android:drawable/ic_menu_share"
         android:title="@string/share"/>
-
+ 	
+ 	<item
+        android:id="@+id/epg_details_menu_switch"
+        android:icon="@drawable/ic_menu_goto"
+        android:title="@string/switch_to_channel"/>
 </menu>
