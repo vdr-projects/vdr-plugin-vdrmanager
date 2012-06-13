@@ -1,13 +1,14 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
 2012-06-213: Version 0.7
-- Bug #861: Escape Channelnames too, because some channels have (sky select?) ":" in names and it is used as separator
-- Bug #869: Error on Timer Mofiication should be wellformed (add START/END)
-- Bug #950: Bugfix in getting recording length
-- Feature #870: make vdr-plugin compatibel for vdr < 10721
-- Feature #914: Support VPS and Recurring Timers
-- Feature #916: If not timer->Event() then find over all timer's channel events
-- Feature #951: Switch Channel Support
+-Bug #861: Escape Channelnames too, because some channels have (sky select?) ":" in names and it is used as separator
+-Bug #869: Error on Timer Mofiication should be wellformed (add START/END)
+-Bug #950: Bugfix in getting recording length
+-Bug #1008: Plugin does not listen on socket
+-Feature #870: make vdr-plugin compatibel for vdr < 10721
+-Feature #914: Support VPS and Recurring Timers
+-Feature #916: If not timer->Event() then find over all timer's channel events
+-Feature #951: Switch Channel Support
 
 2011-12-28: Version 0.6
 -Bug fix on checking recording's event title
