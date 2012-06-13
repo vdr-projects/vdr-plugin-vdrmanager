@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<item android:id="@+id/recording_item_menu_delete" android:title="@string/recording_item_menu_delete"/>
-	<item android:id="@+id/recording_item_menu_stream"    android:title="@string/recording_item_menu_stream"/>
-	<item android:id="@+id/epg_item_menu_live_tv" 	   android:title="@string/livetv" android:visible="false" />
+    <item
+        android:id="@+id/epg_details_menu_search_repeat"
+        android:icon="@drawable/ic_menu_view"
+        android:title="@string/search_reapt"/>
+
+    <item
+        android:id="@+id/epg_details_menu_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="@string/share"/>
+    
+ 	
+ 	<item
+        android:id="@+id/epg_details_menu_switch"
+        android:icon="@drawable/ic_menu_goto"
+        android:title="@string/switch_to_channel"/>
+
 </menu>

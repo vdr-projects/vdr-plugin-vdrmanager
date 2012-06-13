@@ -5,7 +5,6 @@
         android:id="@+id/list_refresh"
         android:alphabeticShortcut="r"
         android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom"
         android:title="@string/refresh"/>
 
 </menu>
