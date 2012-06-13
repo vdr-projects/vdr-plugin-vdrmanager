@@ -1,6 +1,6 @@
 _pkgname=vdrmanager
 pkgname=vdr-plugin-$_pkgname
-pkgver=0.6
+pkgver=0.7
 pkgrel=1
 revision=
 arch=(i686 x86_64)
@@ -10,9 +10,10 @@ license="GPL"
 makedepends=('vdr')
 depends=('vdr')
 backup=()
-source=(http://projects.vdr-developer.org/attachments/download/828/vdr-${_pkgname}-${pkgver}.tar.gz)
+source=(http://projects.vdr-developer.org/projects/vdr-manager/repository/revisions/master/raw/release/vdr-${_pkgname}-${pkgver}.tar.gz)
 
-md5sums=('c179ba237e0eaafc27deadab1a5651d0')
+
+md5sums=('92c1b8f65321b0fd88eb4473edb310cc')
 
 build() {
   unset CXXFLAGS
