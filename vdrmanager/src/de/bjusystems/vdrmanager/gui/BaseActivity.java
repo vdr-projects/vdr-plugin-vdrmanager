@@ -3,6 +3,7 @@ package de.bjusystems.vdrmanager.gui;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -79,6 +80,11 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		Preferences.setLocale(this);
+		super.onConfigurationChanged(newConfig);
+	}
 	@Override
 	protected void onResume() {
 		Preferences.setLocale(this);

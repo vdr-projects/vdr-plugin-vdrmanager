@@ -7,7 +7,7 @@
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	    
+ 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
     
@@ -94,6 +94,11 @@
 		<activity android:name=".gui.VdrListActivity" 	        android:configChanges="orientation|locale"/>
 		<activity android:name=".gui.VdrPreferencesActivity" 	android:configChanges="orientation|locale"/>
 
+		
+		<activity android:name=".backup.BackupActivity"   android:configChanges="orientation|locale"/>
+        <activity android:name=".backup.RestoreActivity"  android:configChanges="orientation|locale" />
+        <activity android:name=".backup.RestoreChooserActivity"  android:configChanges="orientation|locale" />
+        <activity android:name=".backup.BackupSettingsActivity"  android:configChanges="orientation|locale"/>
 
 	</application>
 

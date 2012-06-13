@@ -31,7 +31,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String TAG = OrmDatabaseHelper.class.getName();
 	// name of the database file for your application -- change to something
 	// appropriate for your app
-	private static final String DATABASE_NAME = "vdrmanager.db";
+	public static final String DATABASE_NAME = "vdrmanager.db";
 	// any time you make changes to your database objects, you may have to
 	// increase the database version
 	private static final int DATABASE_VERSION = 2;
@@ -42,6 +42,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
+	
+	public static String getDataBaseFile(){
+		return "/data/data/de.bjusystems.vdrmanager/databases/" + DATABASE_NAME;
+	}
 	/**
 	 * This is called when the database is first created. Usually you should
 	 * call createTable statements here to create the tables that will store

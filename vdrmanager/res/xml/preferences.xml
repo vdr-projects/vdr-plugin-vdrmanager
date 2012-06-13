@@ -72,4 +72,11 @@
 			android:title="@string/gui_custom_locale_title" />
 	</PreferenceCategory>
 	
+	
+    <Preference
+        android:key="@string/settings_backup_key"
+        android:persistent="false"
+        android:summary="@string/settings_backup_summary"
+        android:title="@string/settings_backup" />
+	
 </PreferenceScreen>

@@ -11,6 +11,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
 import de.bjusystems.vdrmanager.data.Preferences;
 
 public class PreferencesActivity extends BasePreferencesActivity implements
@@ -34,6 +35,18 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 				Preferences.getPreferenceFile(this));
 		this.addPreferencesFromResource(R.xml.preferences);
 
+		
+	    Preference backupPreference = findPreference(getString(R.string.settings_backup_key));
+	    backupPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+	        @Override
+	      public boolean onPreferenceClick(Preference preference) {
+	        Intent intent = new Intent(PreferencesActivity.this, BackupSettingsActivity.class);
+	        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+	        startActivity(intent);
+	        return true;
+	      }
+	    });
+		
 		updateChildPreferences();
 	}
 

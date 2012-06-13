@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Pair;
@@ -354,4 +355,17 @@ public class Utils {
 		t.setGravity(Gravity.CENTER, 0, 0);
 		t.show();
 	}
+
+	  /**
+	   * Formats the date and time based on user's phone date/time preferences.
+	   * 
+	   * @param context the context
+	   * @param time the time in milliseconds
+	   */
+
+	public static String formatDateTime(Context context, long time) {
+	    return android.text.format.DateFormat.getDateFormat(context).format(time) + " "
+	        + DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_TIME).toString();
+	  }
+
 }
