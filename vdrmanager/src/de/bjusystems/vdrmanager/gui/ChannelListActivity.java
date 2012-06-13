@@ -371,25 +371,8 @@ public class ChannelListActivity extends
 				break;
 			
 			case R.id.channel_item_menu_switch:
-				final String name = channel.getName();
-				final SwitchChannelClient scc = new SwitchChannelClient(channel.getId());
-				SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(scc);
-				task.addListener(new SvdrpAsyncListener<String>() {
-					public void svdrpEvent(SvdrpEvent event, String result) {
-						if(event == SvdrpEvent.FINISHED_SUCCESS){
-							say(getString(R.string.switching_success, name));
-						} else if(event == SvdrpEvent.CONNECT_ERROR || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
-							say(getString(R.string.switching_failed, name, event.name()));
-						}
-						
-					}
-					
-					public void svdrpException(SvdrpException e) {
-						Log.w(TAG, e.getMessage(), e);
-						say(e.getMessage());
-					}
-				});
-				task.run();
+				Utils.switchTo(this, channel);
+				break;
 			}
 			
 

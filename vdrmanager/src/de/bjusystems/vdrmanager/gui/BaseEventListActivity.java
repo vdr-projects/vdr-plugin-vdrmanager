@@ -137,6 +137,12 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			Utils.shareEvent(this, event);
 			break;
 		}
+		
+		case R.id.epg_item_menu_switchto: {
+			Utils.switchTo(this, event.getChannelId(), event.getChannelName());
+			break;
+		}
+				
 		default:
 			return super.onContextItemSelected(item);
 		}

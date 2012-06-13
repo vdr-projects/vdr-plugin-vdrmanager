@@ -594,6 +594,11 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			intent.putExtra(SearchManager.QUERY, cEvent.getTitle());
 			startActivity(intent);
 			return true;
+		} 
+		
+		if(item.getItemId() == R.id.epg_details_menu_switch){
+			Utils.switchTo(this, cEvent.getChannelId(), cEvent.getChannelName());
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
