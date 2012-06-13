@@ -198,9 +198,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	}
 
 	protected void say(String msg) {
-		Toast t = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
-		t.setGravity(Gravity.CENTER, 0, 0);
-		t.show();
+		Utils.say(this, msg);
 	}
 
 	protected boolean noConnection(SvdrpEvent event) {
