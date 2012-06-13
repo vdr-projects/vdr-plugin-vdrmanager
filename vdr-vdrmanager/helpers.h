@@ -4,7 +4,7 @@
 
 #include <time.h>
 #include <string>
-#include <vdr/epg.h>
+//#include <vdr/epg.h>
 #include <zlib.h>
 #include <stdexcept>
 #include <string>

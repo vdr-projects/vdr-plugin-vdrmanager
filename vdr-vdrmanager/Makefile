@@ -67,7 +67,7 @@ $(DEPFILE): Makefile
 all: libvdr-$(PLUGIN).so
 
 libvdr-$(PLUGIN).so: $(OBJS)
-	$(CXX) -g $(CXXFLAGS) -shared $(OBJS) -o $@ -lz
+	$(CXX) -g $(CXXFLAGS) -shared $(OBJS) -o $@
 	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
 
 dist: clean
