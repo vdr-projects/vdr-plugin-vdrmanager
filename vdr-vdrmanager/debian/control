@@ -1,12 +1,12 @@
 Source: vdr-plugin-vdrmanager
 Section: video
 Priority: extra
-Maintainer: root <root@unknown>
-Build-Depends: cdbs, debhelper (>= 7.0.50~), vdr-dev (>= 1.7.21-4yavdr1~natty), gettext
+Maintainer: lado <herrlado@gmail.com>
+Build-Depends: cdbs, debhelper (>= 7), vdr-dev (>= 1.6.0), gettext, liblz-dev, zlib1g-dev
 Standards-Version: 3.8.4
 Vcs-Svn: svn://svn.debian.org/pkg-vdr-dvb/vdr/vdr-plugin-vdrmanager/trunk/
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-vdr-dvb/vdr/vdr-plugin-vdrmanager/trunk/
-Homepage: <url://example.com>
+Homepage: http://projects.vdr-developer.org/projects/vdr-manager
 
 Package: vdr-plugin-vdrmanager
 Architecture: any
