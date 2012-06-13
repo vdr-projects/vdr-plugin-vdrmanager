@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +30,8 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
+import de.bjusystems.vdrmanager.backup.IntentUtils;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
@@ -35,50 +40,51 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 		implements OnItemClickListener, OnItemLongClickListener {
 
 	private static final String TAG = VdrListActivity.class.getName();
-	
+
 	List<Vdr> list = new ArrayList<Vdr>();
-	
+
 	ArrayAdapter<Vdr> adapter = null;
 
-	//Cursor cursor;
+	// Cursor cursor;
 
 	String[] listItems = {};
 
 	private boolean emptyConfig = false;
 
-//	private void initCursor() {
-//
-//		//if (cursor != null) {
-//			//if (!cursor.isClosed()) {
-//				//cursor.close();
-////			}
-//		//}
-//		try {
-//			cursor = getHelper().getVdrCursor();
-//			//startManagingCursor(cursor);
-//		} catch (Exception ex) {
-//			Log.w(TAG,ex);
-//		}
-//	}
+	// private void initCursor() {
+	//
+	// //if (cursor != null) {
+	// //if (!cursor.isClosed()) {
+	// //cursor.close();
+	// // }
+	// //}
+	// try {
+	// cursor = getHelper().getVdrCursor();
+	// //startManagingCursor(cursor);
+	// } catch (Exception ex) {
+	// Log.w(TAG,ex);
+	// }
+	// }
 
-	private void populateIntent(){
-		emptyConfig = getIntent().getBooleanExtra(Intents.EMPTY_CONFIG, Boolean.FALSE);
+	private void populateIntent() {
+		emptyConfig = getIntent().getBooleanExtra(Intents.EMPTY_CONFIG,
+				Boolean.FALSE);
 	}
-	
-	static class Holder{
+
+	static class Holder {
 		public TextView text1;
-		public TextView  text2;
+		public TextView text2;
 	}
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		populateIntent();
-		
+
 		setContentView(R.layout.vdr_list_add_delete);
-		
+
 		findViewById(R.id.add_item).setOnClickListener(
 				new View.OnClickListener() {
 					public void onClick(View v) {
@@ -86,74 +92,77 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 					}
 				});
 
-//		initCursor();
+		// initCursor();
 		final Vdr cur = Preferences.get().getCurrentVdr();
-		adapter = new ArrayAdapter<Vdr>(this, android.R.layout.simple_list_item_2 , list) {
-			
+		adapter = new ArrayAdapter<Vdr>(this,
+				android.R.layout.simple_list_item_2, list) {
+
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				// recycle view?
 				Holder holder = null;
 				View view = convertView;
 				if (view == null) {
-					view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, null);
+					view = getLayoutInflater().inflate(
+							android.R.layout.simple_list_item_2, null);
 					holder = new Holder();
 
-					holder.text1 = (TextView)view.findViewById(android.R.id.text1);
-					holder.text2 = (TextView)view.findViewById(android.R.id.text2);
+					holder.text1 = (TextView) view
+							.findViewById(android.R.id.text1);
+					holder.text2 = (TextView) view
+							.findViewById(android.R.id.text2);
 					view.setTag(holder);
 				} else {
 					holder = (Holder) view.getTag();
 				}
-				
+
 				Vdr vdr = getItem(position);
 				String name = vdr.getName();
 				String host = vdr.getHost();
 				holder.text2.setText(host);
 
-				if(cur != null && cur.getId() == vdr.getId()) {
-					 SpannableString content = new SpannableString(name);
-					 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+				if (cur != null && cur.getId() == vdr.getId()) {
+					SpannableString content = new SpannableString(name);
+					content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 					holder.text1.setText(content);
-					//text1.setText(text1.getText());
+					// text1.setText(text1.getText());
 				} else {
 					holder.text1.setTypeface(Typeface.DEFAULT);
 					holder.text1.setText(name);
 				}
 				return view;
 			}
-			
-			
+
 		};
-		
-		//adapter = new ArrayAdapter<Vdr>( 
-//						"name", "host" }, new int[] { android.R.id.text1,
-//						android.R.id.text2}) {
-//							@Override
-//							public void bindView(View view, Context context,
-//									Cursor cursor) {
-//								
-//								TextView text1 = (TextView)view.findViewById(android.R.id.text1);
-//								TextView text2 = (TextView)view.findViewById(android.R.id.text2);
-//								int id = cursor.getInt(cursor.getColumnIndex("_id"));
-//								String name = cursor.getString(cursor.getColumnIndex("name"));
-//								String host = cursor.getString(cursor.getColumnIndex("host"));
-//								text2.setText(host);
-//
-//								if(cur != null && cur.getId() == id) {
-//									 SpannableString content = new SpannableString(name);
-//									 content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-//									text1.setText(content);
-//									//text1.setText(text1.getText());
-//								} else {
-//									text1.setTypeface(Typeface.DEFAULT);
-//									text1.setText(name);
-//								}
-//								
-//								
-//							}
-//			
-//		};
+
+		// adapter = new ArrayAdapter<Vdr>(
+		// "name", "host" }, new int[] { android.R.id.text1,
+		// android.R.id.text2}) {
+		// @Override
+		// public void bindView(View view, Context context,
+		// Cursor cursor) {
+		//
+		// TextView text1 = (TextView)view.findViewById(android.R.id.text1);
+		// TextView text2 = (TextView)view.findViewById(android.R.id.text2);
+		// int id = cursor.getInt(cursor.getColumnIndex("_id"));
+		// String name = cursor.getString(cursor.getColumnIndex("name"));
+		// String host = cursor.getString(cursor.getColumnIndex("host"));
+		// text2.setText(host);
+		//
+		// if(cur != null && cur.getId() == id) {
+		// SpannableString content = new SpannableString(name);
+		// content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+		// text1.setText(content);
+		// //text1.setText(text1.getText());
+		// } else {
+		// text1.setTypeface(Typeface.DEFAULT);
+		// text1.setText(name);
+		// }
+		//
+		//
+		// }
+		//
+		// };
 		setListAdapter(adapter);
 		registerForContextMenu(getListView());
 		getListView().setOnItemClickListener(this);
@@ -208,10 +217,10 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 		refresh();
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-		if(list.isEmpty()){
+		if (list.isEmpty()) {
 			finish();
 			return;
 		}
@@ -224,8 +233,6 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 			super.onBackPressed();
 		}
 	}
-	
-	
 
 	/**
 	 * Refresh the list
@@ -245,10 +252,12 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								if (getHelper().getVdrDAO()
-										.deleteById(adapter.getItem(position).getId()) > 0) {
-									if(Preferences.get().getCurrentVdrContext(VdrListActivity.this) == id){
-										Preferences.setCurrentVdr(VdrListActivity.this, null);
+								if (getHelper().getVdrDAO().deleteById(
+										adapter.getItem(position).getId()) > 0) {
+									if (Preferences.get().getCurrentVdrContext(
+											VdrListActivity.this) == id) {
+										Preferences.setCurrentVdr(
+												VdrListActivity.this, null);
 									}
 									refresh();
 								}
@@ -259,5 +268,27 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 				.create()//
 				.show();
 		return false;
+	}
+
+	@Override
+	public final boolean onCreateOptionsMenu(final Menu menu) {
+		super.onCreateOptionsMenu(menu);
+
+		final MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.vdrlist, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.main_menu_vdrlist_restore) {
+
+			Intent intent = IntentUtils.newIntent(this,
+					BackupSettingsActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
