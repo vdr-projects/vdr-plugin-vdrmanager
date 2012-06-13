@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.C;
@@ -31,6 +32,11 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 
 public class Utils {
 
@@ -39,8 +45,8 @@ public class Utils {
 	public static final List EMPTY_LIST = new ArrayList(0);
 	
 	public static final String[] EMPTY = new String[] {};
-	
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
+	
 			Color.RED);
 
 	public static CharSequence highlight(String where, String what) {
@@ -313,5 +319,39 @@ public class Utils {
 		String urlstring = url.toString();
 		Log.d(TAG, "try stream: " + urlstring);
 		Utils.startStream(ctx, url.toString());
+	}
+
+	public static void switchTo(final Context ctx , final Channel channel){
+		switchTo(ctx, channel.getId(), channel.getName());
+	}
+	/**
+	 * @param ctx
+	 * @param id
+	 * @param name Optional für die Anzeige
+	 */
+	public static void switchTo(final Context ctx , final String id, final String name){
+		
+		final SwitchChannelClient scc = new SwitchChannelClient(id);
+		SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(scc);
+		task.addListener(new SvdrpAsyncListener<String>() {
+			public void svdrpEvent(SvdrpEvent event, String result) {
+				if(event == SvdrpEvent.FINISHED_SUCCESS){
+					Utils.say(ctx, ctx.getString(R.string.switching_success, (name != null ? name : id )));
+				} else if(event == SvdrpEvent.CONNECT_ERROR || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
+					Utils.say(ctx, ctx.getString(R.string.switching_failed, (name != null ? name : id ), event.name()));
+				}
+			}
+			public void svdrpException(SvdrpException e) {
+				Log.w(TAG, e.getMessage(), e);
+				Utils.say(ctx, e.getMessage());
+			}
+		});
+		task.run();
+	}
+
+	public static void say(Context ctx, String msg) {
+		Toast t = Toast.makeText(ctx, msg, Toast.LENGTH_SHORT);
+		t.setGravity(Gravity.CENTER, 0, 0);
+		t.show();
 	}
 }
