@@ -240,6 +240,7 @@
         <item>English</item>
         <item>German</item>
         <item>Italian</item>
+        <item>Ukrainian</item>
     </string-array>
     <string-array name="remux_entries">
         <item>EXT</item>
