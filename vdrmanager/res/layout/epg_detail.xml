@@ -111,95 +111,72 @@
         android:layout_width="fill_parent"
         android:layout_height="4sp" />
 
-    <HorizontalScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-
-        <TableLayout    android:layout_weight="1"
-            android:id="@+id/root"
-            style="@android:style/ButtonBar"
-            android:layout_width="fill_parent"
+  <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" 
+      android:id="@+id/root"
+      android:stretchColumns="*"
+      style="@android:style/ButtonBar">
+      
+  <TableRow android:layout_margin="0dip"
+         android:id="@+id/first_row">
+        <ImageButton
+            android:id="@+id/epg_event_livetv"
+            style="?android:attr/buttonStyleSmall"
+           android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:stretchColumns="*" >
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/tv"
+            android:text="@string/epg_eent_livetv_text" />
 
-            <TableRow    android:layout_weight="1"
-                android:id="@+id/first_row"
-                android:layout_margin="0dip" >
+        <ImageButton
+            android:id="@+id/epg_event_imdb"
+            style="?android:attr/buttonStyleSmall"
+        	android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/imdb"
+            android:text="@string/epg_event_imdb_text" />
+            
+        <ImageButton
+            android:id="@+id/epg_event_omdb"
+            style="?android:attr/buttonStyleSmall"
+        	android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/omdb"
+            android:text="@string/epg_event_omdb_text" />
+            
+                  
+        <ImageButton
+            android:id="@+id/epg_event_tmdb"
+            style="?android:attr/buttonStyleSmall"
+        	android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/tmdb"
+            android:text="@string/epg_event_tmdb_text" />
 
-                <ImageButton
-                    android:id="@+id/epg_event_livetv"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"
-                    android:background="@android:drawable/list_selector_background"
-                    android:src="@drawable/tv"
-                    android:text="@string/epg_eent_livetv_text" />
+        <ImageButton
+            android:id="@+id/epg_event_create_timer"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:src="@drawable/timer"
+            android:text="@string/epg_event_create_timer_text" />
 
-                <ImageButton
-                    android:id="@+id/epg_event_imdb"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@android:drawable/list_selector_background"
-                    android:src="@drawable/imdb"
-                    android:text="@string/epg_event_imdb_text" />
-
-                <ImageButton
-                    android:id="@+id/epg_event_omdb"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:drawable/list_selector_background"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/omdb"
-                    android:text="@string/epg_event_omdb_text" />
-
-                <ImageButton
-                    android:id="@+id/epg_event_tmdb"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:drawable/list_selector_background"
-                    android:src="@drawable/tmdb"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/epg_event_tmdb_text" />
-<!-- 
-                <ImageButton
-                    android:id="@+id/epg_event_switch"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@android:drawable/list_selector_background"
-                    android:src="@drawable/switchto"
-                    android:text="@string/switch_to_channel" />
--->
-                <ImageButton
-                    android:id="@+id/epg_event_create_timer"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"
-                    android:background="@android:drawable/list_selector_background"
-                    android:src="@drawable/timer"
-                    android:text="@string/epg_event_create_timer_text" />
-            </TableRow>
+</TableRow>
         </TableLayout>
-    </HorizontalScrollView>
     <!--
      <ImageButton
       android:id="@+id/epg_event_share"
