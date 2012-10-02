@@ -34,6 +34,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	public static final int MENU_REFRESH = 99;
 
 	protected T listView;
+	
+	@Override
+	public boolean onSearchRequested() {
+		// TODO Auto-generated method stub
+		return super.onSearchRequested();
+	}
 
 	protected ViewFlipper flipper;
 

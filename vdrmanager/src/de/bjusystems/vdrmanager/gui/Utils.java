@@ -301,8 +301,8 @@ public class Utils {
 		ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		// test for connection
 		if (cm.getActiveNetworkInfo() != null
-				&& cm.getActiveNetworkInfo().isAvailable()
-				&& cm.getActiveNetworkInfo().isConnected()) {
+				&& cm.getActiveNetworkInfo().isConnectedOrConnecting()
+				){
 			return true;
 		}
 		return false;
