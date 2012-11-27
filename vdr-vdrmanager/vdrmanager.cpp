@@ -15,7 +15,7 @@
 
 #define ANDROVDR_PORT		6420
 
-const char *VERSION = "0.7";
+const char *VERSION = "0.8";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
 class cPluginAndroVdr: public cPlugin {
@@ -55,6 +55,7 @@ cPluginAndroVdr::cPluginAndroVdr(void) {
 	Thread = NULL;
 	port = ANDROVDR_PORT;
 	password = "";
+	forceCheckSvdrp = false;
 }
 
 cPluginAndroVdr::~cPluginAndroVdr() {
@@ -71,13 +72,11 @@ cMenuSetupPage * cPluginAndroVdr::SetupMenu(void) {
 
 const char * cPluginAndroVdr::CommandLineHelp(void) {
 	return "  -p port          port number to listen to\n"
-		   "  -P password      password (none if not given)"
-		   "  -s               force check against svdrphosts.conf";
+		   "  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n"
+		   "  -s               force check against svdrphosts.conf, even if a password was given\n";
 }
 
 bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
-	dsyslog("forceCheckSvdrp = true %d", argc);
-
 	int c;
 	while ((c = getopt(argc, argv, "p:P:s")) != -1)
 		switch (c) {
