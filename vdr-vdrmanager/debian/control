@@ -11,5 +11,6 @@ Homepage: http://projects.vdr-developer.org/projects/vdr-manager
 Package: vdr-plugin-vdrmanager
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${vdr:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: Program VDR using Android
+ With VDR-Manager you can program VDR using mobile devices running Android.
+ So you can browse the EPG, manage timers and wakeup your VDR from anywhere.
