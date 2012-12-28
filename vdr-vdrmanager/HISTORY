@@ -1,6 +1,16 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
-2012-06-213: Version 0.7
+2013-01-xx: Version 0.9 (http://projects.vdr-developer.org/versions/show/312)
+-adopt vdr 1.7.34 Makfile for plugins
+-
+-
+-
+
+2012-11-27: Version 0.8
+-Bug #1145: forceCheckSvdrp is initializied randomly if not initialized via getopt's -s
+-Feature #1146: More info on command line options
+
+2012-06-21: Version 0.7
 -Bug #861: Escape Channelnames too, because some channels have (sky select?) ":" in names and it is used as separator
 -Bug #869: Error on Timer Mofiication should be wellformed (add START/END)
 -Bug #950: Bugfix in getting recording length
