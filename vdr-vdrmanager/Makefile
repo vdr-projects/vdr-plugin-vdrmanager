@@ -41,14 +41,13 @@ PACKAGE = vdr-$(ARCHIVE)
 SOFILE = libvdr-$(PLUGIN).so
 
 ### Includes and Defines (add further entries here):
+-INCLUDES += -I$(VDRDIR)/include -I$(DVBDIR)/include
 
-INCLUDES +=
-
-DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+-DEFINES += -D_GNU_SOURCE -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o
+OBJS = $(PLUGIN).o sock.o vdrmanagerthread.o select.o handler.o helpers.o
 
 ### The main target:
 
