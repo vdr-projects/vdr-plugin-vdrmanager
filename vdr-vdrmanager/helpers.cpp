@@ -753,6 +753,9 @@ bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
 			}
 		}
 	}
+        //Bug #1236
+        free(buffer);
+
 	return found;
 }
 
