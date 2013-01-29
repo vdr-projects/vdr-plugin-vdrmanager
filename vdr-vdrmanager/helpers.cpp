@@ -153,26 +153,24 @@ string cHelpers::SetChannelIntern(const string args) {
 	if (args.size() == 0) {
 		return "!ERROR:SetChannel;empty args\r\n";
 	}
-	
 
 	cChannel *channel;
 	bool isnum = true;
-	 for (int i = 0; i < (int)args.length(); i++) {
-	       if (!std::isdigit(args[i])){
-	    	   isnum = false;
-	    	   break;
-	       }
+	for (int i = 0; i < (int) args.length(); i++) {
+		if (!std::isdigit(args[i])) {
+			isnum = false;
+			break;
+		}
 
-	   }
+	}
 
-	if(isnum){
+	if (isnum) {
 		int nr = atoi(args.c_str());
 		channel = Channels.GetByNumber(nr);
-	}  else {
+	} else {
 		tChannelID chid = tChannelID::FromString(args.c_str());
 		channel = Channels.GetByChannelID(chid);
 	}
-
 
 	if (!channel) {
 		return "!ERROR:SetChannel;Unable to find channel " + args + "\r\n";
@@ -181,11 +179,13 @@ string cHelpers::SetChannelIntern(const string args) {
 	ostringstream outStream;
 
 	if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true)) {
-	        outStream << channel->Number();
-	        return "!ERROR:SetChannel;Error switching to channel " + outStream.str() + "\r\n";
+		outStream << channel->Number();
+		return "!ERROR:SetChannel;Error switching to channel " + outStream.str()
+				+ "\r\n";
 	}
-        
-        return "START\r\n" + MapSpecialChars(channel->GetChannelID().ToString()) + "\r\nEND\r\n";
+
+	return "START\r\n" + MapSpecialChars(channel->GetChannelID().ToString())
+			+ "\r\nEND\r\n";
 }
 
 string cHelpers::GetAudioTracks(const cChannel* channel) {
@@ -408,6 +408,10 @@ string cHelpers::SetTimerIntern(string args) {
 	//return "!ERROR:no separator found\r\n";
 	//}
 
+	if (Timers.BeingEdited()) {
+		return Error("Timers are being edited - try again later");
+	}
+
 	char operation = args[0];
 
 	args = Trim(args.substr(1));
@@ -534,7 +538,7 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	result += MapSpecialChars(info->ShortText() ?  info->ShortText() : "");
+	result += MapSpecialChars(info->ShortText() ? info->ShortText() : "");
 	result += ":";
 
 	result += MapSpecialChars(info->Description() ? info->Description() : "");
@@ -753,8 +757,8 @@ bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
 			}
 		}
 	}
-        //Bug #1236
-        free(buffer);
+	//Bug #1236
+	free(buffer);
 
 	return found;
 }
@@ -905,39 +909,39 @@ string cHelpers::UnMapSpecialChars(string text) {
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
 
-int nf = -1;
+	int nf = -1;
 #if APIVERSNUM >= 10721
- nf = recording->NumFrames();
+	nf = recording->NumFrames();
 #endif
 
 #if APIVERSNUM <= 10720
 	struct tIndexTs {
-	    uint64_t offset:40;
-	    int reserved:7;
-	    int independent:1;
-	    uint16_t number:16;
-	    tIndexTs(off_t Offset, bool Independent, uint16_t Number) {
-		offset = Offset;
-		reserved = 0;
-		independent = Independent;
-		number = Number;
-	}
+		uint64_t offset:40;
+		int reserved:7;
+		int independent:1;
+		uint16_t number:16;
+		tIndexTs(off_t Offset, bool Independent, uint16_t Number) {
+			offset = Offset;
+			reserved = 0;
+			independent = Independent;
+			number = Number;
+		}
 	};
- 
+
 	struct stat buf;
 #if APIVERSNUM >= 10703
 	cString fullname = cString::sprintf("%s%s", recording->FileName(), recording->IsPesRecording() ? "/index" ".vdr" : "/index");
 #else
-        cString fullname = cString::sprintf("%s%s", recording->FileName(), "/index" ".vdr");
-#endif
-        
-	if (recording->FileName() && *fullname && access(fullname, R_OK) == 0 && stat(fullname, &buf) == 0)
-	    nf = buf.st_size ? (buf.st_size - 1) / sizeof(tIndexTs) + 1 : 0;
+	cString fullname = cString::sprintf("%s%s", recording->FileName(), "/index" ".vdr");
 #endif
 
-if(nf == -1){
-	return -1;
-}
+	if (recording->FileName() && *fullname && access(fullname, R_OK) == 0 && stat(fullname, &buf) == 0)
+	nf = buf.st_size ? (buf.st_size - 1) / sizeof(tIndexTs) + 1 : 0;
+#endif
+
+	if (nf == -1) {
+		return -1;
+	}
 
 #if APIVERSNUM >= 10703
 	return int(((double) nf / recording->FramesPerSecond()));
