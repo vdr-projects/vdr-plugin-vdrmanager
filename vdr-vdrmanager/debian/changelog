@@ -1,4 +1,4 @@
-vdr-plugin-vdrmanager (0.8-1) unstable; urgency=low
+vdr-plugin-vdrmanager (0.9-1) unstable; urgency=low
 
   [lado]
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
