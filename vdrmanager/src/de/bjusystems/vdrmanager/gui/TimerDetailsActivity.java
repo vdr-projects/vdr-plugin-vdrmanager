@@ -229,7 +229,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 					weekdays[Calendar.THURSDAY], weekdays[Calendar.FRIDAY],
 					weekdays[Calendar.SATURDAY], weekdays[Calendar.SUNDAY], };
 
-			final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(0);
+			final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(getSelectedItems().mDays);
 
 			final AlertDialog b = new AlertDialog.Builder(this)
 					.setMultiChoiceItems(values, getSelectedItems().getBooleanArray(),
@@ -270,8 +270,8 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			return dow;
 		}
 
-		
-		dow.set(0, str.charAt(0) == 'M'); 
+
+		dow.set(0, str.charAt(0) == 'M');
 		dow.set(1, str.charAt(1) == 'T');
 		dow.set(2, str.charAt(2) == 'W');
 		dow.set(3, str.charAt(3) == 'T');

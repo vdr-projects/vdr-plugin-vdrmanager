@@ -1,8 +1,8 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.Calendar;
+import java.util.Comparator;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,7 +11,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
@@ -22,28 +21,28 @@ import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
 
 /**
  * This class is used for showing all the existing timers
- * 
+ *
  * @author bju
  */
 public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		OnItemClickListener, SvdrpAsyncListener<Timer> {
 
 	private static final int MENU_NEW_TIMER = 2;
-	
+
 	private static final int MENU_GROUP_NEW_TIMER = 2;
 	/**
-	 * 
+	 *
 	 */
 	TimerClient timerClient;
 
-	
 	@Override
 	protected SvdrpClient<Timer> getClient() {
 		return this.timerClient;
 	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseEventListActivity#onCreate(android.os
 	 * .Bundle)
@@ -92,10 +91,10 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 				timerClient);
 
 		// create progress dialog
-		//progress = new SvdrpProgressDialog(this, timerClient);
+		// progress = new SvdrpProgressDialog(this, timerClient);
 
 		// attach listener
-		//task.addListener(progress);
+		// task.addListener(progress);
 		task.addListener(this);
 
 		// start task
@@ -104,7 +103,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseTimerEditActivity#getTimer(de.bjusystems
 	 * .vdrmanager.data.EventListItem)
@@ -116,7 +115,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseEventListActivity#prepareTimer(de.bjusystems
 	 * .vdrmanager.data.EventListItem)
@@ -128,18 +127,38 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		app.setCurrentEpgList(results);
 	}
 
+	protected Comparator<Timer> getTimeComparator(boolean reverse) {
+		return new BaseEventComparator(reverse) {
+			@Override
+			public int compare(Timer item1, Timer item2) {
+				if (item1.isRecurring()) {
+					return 1;
+				}
+				if (item2.isRecurring()) {
+					return -1;
+				}
+				return super.compare(item1, item2);
+			}
+
+		};
+	}
+
 	protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		sortItemsByTime(results);
 		int day = -1;
 		Calendar cal = Calendar.getInstance();
-		for (Event e : results) {
-			cal.setTime(e.getStart());
-			int eday = cal.get(Calendar.DAY_OF_YEAR);
-			if (eday != day) {
-				day = eday;
-				adapter.add(new EventListItem(new DateFormatter(cal)
-						.getDailyHeader()));
+		for (Timer e : results) {
+			if (e.isRecurring()) {
+				adapter.add(new EventListItem(e.getWeekdays()));
+			} else {
+				cal.setTime(e.getStart());
+				int eday = cal.get(Calendar.DAY_OF_YEAR);
+				if (eday != day) {
+					day = eday;
+					adapter.add(new EventListItem(new DateFormatter(cal)
+							.getDailyHeader()));
+				}
 			}
 			adapter.add(new EventListItem(e));
 		}
@@ -151,6 +170,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	protected boolean notifyDataSetChangedOnResume() {
 		return true;
 	}
+
 	@Override
 	protected String getWindowTitle() {
 		return getString(R.string.action_menu_timers);
@@ -170,22 +190,22 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	protected void retry() {
 		refresh();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
 	 * .view.MenuItem)
 	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.timer_menu_add:
 			say("Comming soon...");
 			return true;
 		}
-		
+
 		// switch (item.getItemId()) {
 		// case R.id.epg_menu_search:
 		// startSearchManager();
@@ -201,15 +221,15 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	}
 
 	public boolean onCreateOptionsMenu(final Menu menu) {
-	//	MenuItem item;
-		//item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0, R.string.new_timer);
-		//item.setIcon(android.R.drawable.ic_menu_add);;
-//		/item.setAlphabeticShortcut('r');
+		// MenuItem item;
+		// item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
+		// R.string.new_timer);
+		// item.setIcon(android.R.drawable.ic_menu_add);;
+		// /item.setAlphabeticShortcut('r');
 
 		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.timer_list_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
 
 }
