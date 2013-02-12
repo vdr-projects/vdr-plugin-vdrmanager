@@ -47,7 +47,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListener,
@@ -56,17 +56,17 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	public static final String TAG = "EpgDetailsActivity";
 
 	public static String IMDB_BASE_URL = "http://%s";
-	
-	public static String IMDB_URL_QUERY = "/find?s=all&q=%s";
-	
+
+	public static String IMDB_URL_QUERY = "/find?s=tt&q=%s";
+
 	public static String OMDB_URL = "http://www.omdb.org/search?search[text]=%s";
-	
-	private static final String IMDB_URL_ENCODING = "ISO-8859-1";
-	
+
+	private static final String IMDB_URL_ENCODING = "UTF-8";
+
 	private static final String OMDB_URL_ENCODING = "UTF-8";
-	
+
 	private static final String TMDB_URL_ENCODING = "UTF-8";
-	
+
 	public static String TMDB_URL = "http://www.themoviedb.org/search?search=%s";
 
 	private String highlight = null;
@@ -180,15 +180,15 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 				if(epgs.isEmpty()){
 					epgs.add(cEvent);
 					return (Void)null;
-				} 
-				
+				}
+
 				for (Event e : epgs) {
 					if (epg.equals(e)) {
 						break;
 					}
 					counter++;
 				}
-				
+
 				if (counter == epgs.size()) {//not found?
 					epgs.add(0, cEvent);
 					counter  = 0;
@@ -318,12 +318,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			b.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
-					startFilmDatabaseBrowseIntent(String.format(IMDB_BASE_URL, Preferences.get().getImdbUrl()) + IMDB_URL_QUERY, view, IMDB_URL_ENCODING);	
+					startFilmDatabaseBrowseIntent(String.format(IMDB_BASE_URL, Preferences.get().getImdbUrl()) + IMDB_URL_QUERY, view, IMDB_URL_ENCODING);
 				}
 			});
 		}
 
-		
+
 			b = view.findViewById(R.id.epg_event_omdb);
 
 			if (Preferences.get().isShowOmdbButton() == false) {
@@ -337,7 +337,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 					}
 				});
 			}
-			
+
 			b = view.findViewById(R.id.epg_event_tmdb);
 
 			if (Preferences.get().isShowTmdbButton() == false) {
@@ -351,11 +351,11 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 					}
 				});
 			}
-			
-			
 
-			
-		
+
+
+
+
 
 		b = view.findViewById(R.id.epg_event_livetv);
 		if (Utils.isLive(event) == false && (event instanceof Recording == false || Preferences.get().isEnableRecStream() == false)) {
@@ -375,7 +375,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		}
 
 	}
-	
+
 	private void startFilmDatabaseBrowseIntent(String url, View view, String encoding){
 		final TextView title = (TextView) view
 				.findViewById(R.id.epg_detail_title);
@@ -594,8 +594,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			intent.putExtra(SearchManager.QUERY, cEvent.getTitle());
 			startActivity(intent);
 			return true;
-		} 
-		
+		}
+
 		if(item.getItemId() == R.id.epg_details_menu_switch){
 			Utils.switchTo(this, cEvent.getChannelId(), cEvent.getChannelName());
 			return true;
