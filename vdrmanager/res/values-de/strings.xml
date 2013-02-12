@@ -278,5 +278,10 @@
   <string name="timer_details_delete_title">Lösche Timer</string>
   <string name="timer_details_add_title">Neuen Timer anlegen</string>
   <string name="timer_details_modify_title">Einen Timer ändern</string>
+  <string name="sort">Sortieren</string>
+  <string name="sortby">Sortieren</string>
+  <string name="sortby_time">Zeitlich</string>
+  <string name="sortby_alphabet">Alphabetisch</string>
+  <string name="sortby_channellist">Nach Kanalliste</string>
 </resources>
   

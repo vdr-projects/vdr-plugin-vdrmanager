@@ -35,7 +35,7 @@
     <string name="search_reapt">Reruns</string>
     <string name="share_chooser">Share EPG Entry</string>
     <string name="about_text">
-        About "VDR-Manager" Software for Android\n 
+        About "VDR-Manager" Software for Android\n
 		This is Version %1$s\n
         If you have a VDR at home reachable
          over the internet and own a mobile phone running Android then you possibly find this program useful.
@@ -211,15 +211,15 @@
     <string name="qui_show_imdb_button_summary_off">IMDb Button is not shown</string>
     <string name="qui_imdb_url_title">IMDb Site</string>
     <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
-    
+
     <string name="qui_show_omdb_button_title">Show OMDB Button</string>
     <string name="qui_show_omdb_button_summary_on">OMDB Button is shown</string>
     <string name="qui_show_omdb_button_summary_off">OMDB Button is not shown</string>
-    
+
     <string name="qui_show_tmdb_button_title">Show TMDb Button</string>
     <string name="qui_show_tmdb_button_summary_on">TMDb Button is shown</string>
     <string name="qui_show_tmdb_button_summary_off">TMDb Button is not shown</string>
-    
+
 
     <string name="gui_custom_locale_title">Custom language</string>
     <string name="gui_custom_locale_sum">Set a custom language.</string>
@@ -312,7 +312,7 @@
 	<string name="gui_max_recent_channels_title">Max. recent channels</string>
 	<string name="gui_max_recent_channels_summary">How many channels should be kept in the recent channels?</string>
 	<string name="timer_detail_day_title">Day</string>
-	
+
     <!-- Repeat options that appear under an alarm on main Alarm Clock
          screen to identify repetition schedule: special case for when
          the alarm is set to repeat every day -->
@@ -333,12 +333,18 @@
     <string name="timer_detail_lifetime">Lifetime:</string>
     <string name="timer_detail_lifetime_hint">e.g. 99</string>
     <string name="timer_detail_priority_hint">e.g. 50</string>
-    
-    
+
+
     <string name="timer_detail_title_vps">%1$s (VPS)</string>
-    
+
     <string name="channel_item_menu_switch">Switch to</string>
     <string name="switching_success">Switched to %s</string>
     <string name="switching_failed">Switching to %1$s failed: %2$s</string>
     <string name="switch_to_channel">Switch to</string>
+    <string name="sort">Sort</string>
+    <string name="sortby">Sort by</string>
+  	<string name="sortby_time">Time</string>
+    <string name="sortby_alphabet">Alphabet</string>
+    <string name="sortby_channellist">Chanellist</string>
+    <string name="main_menu_clear_search">Clear Search History</string>
 </resources>
