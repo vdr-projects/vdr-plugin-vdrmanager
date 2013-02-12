@@ -9,7 +9,7 @@ import android.content.res.Configuration;
 import android.text.TextUtils;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
-import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 /**
  * Class for all preferences
@@ -24,12 +24,6 @@ public class Preferences {
 	public static final String PREFERENCE_FILE_NAME = "VDR-Manager";
 
 	private static Vdr current;
-
-	private static OrmDatabaseHelper db;
-
-	public static OrmDatabaseHelper getDatabaseHelper() {
-		return db;
-	}
 
 	public static void setCurrentVdr(Context context, Vdr vdr) {
 		current = vdr;
@@ -499,11 +493,11 @@ public class Preferences {
 		thePrefs = null;
 	}
 
-	public static void reloadVDR() {
+	public static void reloadVDR(Context context) {
 		if (current == null) {
 			return;
 		}
-		db.getVdrDAO().refresh(current);
+		DBAccess.get(context).getVdrDAO().refresh(current);
 	}
 
 	public static boolean initVDR(final Context context) {
@@ -516,7 +510,7 @@ public class Preferences {
 
 		Vdr vdr = null;
 		if (id != -1) {
-			vdr = db.getVdrDAO().queryForId(id);
+			vdr = DBAccess.get(context).getVdrDAO().queryForId(id);
 		}
 
 		setCurrentVdr(context, vdr);		
@@ -525,7 +519,7 @@ public class Preferences {
 			return true;
 		}
 
-		List<Vdr> list = db.getVdrDAO().queryForAll();
+		List<Vdr> list = DBAccess.get(context).getVdrDAO().queryForAll();
 		if (list != null && list.isEmpty() == false) {
 			vdr = list.get(0);
 			setCurrentVdr(context, vdr);
@@ -552,10 +546,6 @@ public class Preferences {
 		// if (thePrefs != null) {
 		// return;
 		// }
-		if (db == null) {
-			db = new OrmDatabaseHelper(context);
-		}
-
 		synchronized (Preferences.class) {
 			// if (thePrefs != null) {
 			// return;
@@ -632,7 +622,7 @@ public class Preferences {
 
 		vdr.setEncoding(getString(context, R.string.vdr_encoding_key, "utf-8"));
 
-		if (db.getVdrDAO().create(vdr) != 1) {
+		if (DBAccess.get(context).getVdrDAO().create(vdr) != 1) {
 			return false;
 		}
 
