@@ -3,14 +3,14 @@
 	android:id="@+id/timer_item" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:padding="5dp" android:paddingBottom="2dp"
 	android:orientation="vertical">
-	
+
 <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical"
   android:background="@android:drawable/list_selector_background"
 >
 <TextView
     android:id="@+id/timer_item_channel"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:text="Sky Film" android:textSize="17dip"/> 
+    android:layout_height="wrap_content" android:text="Sky Film" android:textSize="17dip"/>
 
 	<ProgressBar
 		android:id="@+id/timer_progress" android:layout_width="fill_parent"
@@ -28,7 +28,7 @@
 			android:ellipsize="end" android:layout_width="wrap_content" android:background="@android:drawable/list_selector_background"
 			android:textAppearance="?android:textAppearanceMedium"
 			android:layout_height="wrap_content" />
-			
+
 	</LinearLayout>
 
 	<LinearLayout android:layout_width="fill_parent" android:padding="3dip" android:paddingBottom="1dip"
@@ -40,17 +40,17 @@
 			android:layout_centerVertical="true" android:visibility="gone" />
 
 		<TextView android:id="@+id/timer_item_shorttext" android:textAppearance="?android:textAppearanceSmall"
-			android:text="timer_short_text" 
+			android:text="timer_short_text"
 			android:ellipsize="end"
 			android:layout_width="wrap_content" android:layout_weight="1"
 			android:layout_height="wrap_content" />
-					
+
 		<TextView android:id="@+id/timer_item_duration"
 			android:ellipsize="end" android:layout_width="wrap_content" android:gravity="right" 	android:textSize="13dip"
 			android:layout_height="wrap_content" android:text="89min"/>
-			
+
 	</LinearLayout>
-	
+
 	<TextView android:id="@+id/event_item_description"
 			android:layout_width="wrap_content"
 			android:textAppearance="?android:textAppearanceSmall"
