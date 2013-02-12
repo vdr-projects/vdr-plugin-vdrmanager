@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -16,6 +17,7 @@ import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
@@ -24,46 +26,47 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		OnItemClickListener, SvdrpAsyncListener<Epg> {
 
-
-	private void initSearch(Intent intent){
+	private void initSearch(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			if (TextUtils.isEmpty(query) == false) {
 				highlight = query.trim();
+				SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+						this, EPGSearchSuggestionsProvider.AUTHORITY,
+						EPGSearchSuggestionsProvider.MODE);
+				suggestions.saveRecentQuery(query, null);
 			}
 		}
 	}
-	
-	
+
 	@Override
 	protected SvdrpClient<Epg> getClient() {
 		return this.epgClient;
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		initSearch(intent);
 		startSearch();
 	}
-	
-	
-	private void startSearch(){
+
+	private void startSearch() {
 		startEpgQuery();
 	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		Preferences.setLocale(this);
-		//Preferences.init(this);
-		
+		// Preferences.init(this);
+
 		super.onCreate(savedInstanceState);
 
-		
 		Intent intent = getIntent();
 		initSearch(intent);
 		adapter = new TimeEventAdapter(this);
@@ -79,7 +82,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		startSearch();
 	}
 
-
 	public void onNothingSelected(final AdapterView<?> arg0) {
 		// startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
 	}
@@ -91,7 +93,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		if (checkInternetConnection() == false) {
 			return;
 		}
-		
+
 		EpgSearchParams sp = new EpgSearchParams();
 		sp.setTitle(highlight);
 		setTitle(getWindowTitle());
@@ -109,20 +111,18 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		// start task
 		task.run();
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
 	 * cache hit
-	 * 
+	 *
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
 	protected boolean finishedSuccessImpl() {
 		adapter.clear();
 		adapter.highlight = this.highlight;
-		
+
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
 		sortItemsByTime(results);
@@ -134,12 +134,11 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 				adapter.add(new EventListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem((Epg)e));
+			adapter.add(new EventListItem((Epg) e));
 		}
 		listView.setSelectionAfterHeaderView();
 		return results.isEmpty() == false;
 	}
-	
 
 	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
@@ -164,13 +163,13 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 
 	@Override
 	protected String getWindowTitle() {
-		if(TextUtils.isEmpty(highlight)){
+		if (TextUtils.isEmpty(highlight)) {
 			return getString(R.string.epg_by_search);
 		}
-		
+
 		return getString(R.string.epg_by_search_param, highlight);
 	}
-	
+
 	@Override
 	public boolean onSearchRequested() {
 		startSearchManager();
