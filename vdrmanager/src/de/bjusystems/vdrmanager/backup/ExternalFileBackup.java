@@ -36,7 +36,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
+
 
 /**
  * Handler for writing or reading single-file backups.
@@ -201,10 +202,10 @@ class ExternalFileBackup {
 			preferencesHelper.exportPreferences(preferences, outWriter);
 			
 			
-			File f = new File(OrmDatabaseHelper.getDataBaseFile());
+			File f = new File(DBAccess.getDataBaseFile());
 			if(f.exists()){
-				compressedStream.putNextEntry(new ZipEntry(OrmDatabaseHelper.DATABASE_NAME));
-				IOUtils.copy(new FileInputStream(OrmDatabaseHelper.getDataBaseFile()), outWriter);
+				compressedStream.putNextEntry(new ZipEntry(DBAccess.DATABASE_NAME));
+				IOUtils.copy(new FileInputStream(DBAccess.getDataBaseFile()), outWriter);
 			}
 
 			
@@ -255,10 +256,10 @@ class ExternalFileBackup {
 			
 			
 			
-			zipEntry = zipFile.getEntry(OrmDatabaseHelper.DATABASE_NAME);
+			zipEntry = zipFile.getEntry(DBAccess.DATABASE_NAME);
 			if (zipEntry != null) {
-				IOUtils.copy(zipFile.getInputStream(zipEntry), new FileOutputStream(OrmDatabaseHelper.getDataBaseFile()));
-				deleteJournal(OrmDatabaseHelper.getDataBaseFile());
+				IOUtils.copy(zipFile.getInputStream(zipEntry), new FileOutputStream(DBAccess.getDataBaseFile()));
+				deleteJournal(DBAccess.getDataBaseFile());
 			}
 			
 		} finally {
