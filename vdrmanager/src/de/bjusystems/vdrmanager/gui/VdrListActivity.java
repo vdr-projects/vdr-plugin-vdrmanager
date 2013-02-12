@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,21 +20,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
-
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
 import de.bjusystems.vdrmanager.backup.IntentUtils;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
-import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
 
-public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
+public class VdrListActivity extends ListActivity
 		implements OnItemClickListener, OnItemLongClickListener {
 
 	private static final String TAG = VdrListActivity.class.getName();
@@ -239,7 +232,7 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 	 */
 	private void refresh() {
 		list.clear();
-		list.addAll(getHelper().getVdrDAO().queryForAll());
+		list.addAll(DBAccess.get(this).getVdrDAO().queryForAll());
 		adapter.notifyDataSetChanged();
 	}
 
@@ -252,7 +245,7 @@ public class VdrListActivity extends OrmLiteBaseListActivity<OrmDatabaseHelper>
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								if (getHelper().getVdrDAO().deleteById(
+								if (DBAccess.get(VdrListActivity.this).getVdrDAO().deleteById(
 										adapter.getItem(position).getId()) > 0) {
 									if (Preferences.get().getCurrentVdrContext(
 											VdrListActivity.this) == id) {

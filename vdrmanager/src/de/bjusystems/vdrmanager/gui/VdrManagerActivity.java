@@ -1,45 +1,55 @@
 package de.bjusystems.vdrmanager.gui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.widget.SearchView;
+import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
+import com.j256.ormlite.android.AndroidDatabaseResults;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
+import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.utils.wakeup.AsyncWakeupTask;
 
-public class VdrManagerActivity extends Activity implements OnClickListener {
+public class VdrManagerActivity extends SherlockActivity implements
+		OnClickListener, OnQueryTextListener {
 
 	public static final String TAG = "VdrManagerActivity";
 
 	public static final String VDR_PORTAL = "http://www.vdr-portal.de";
 
+	private com.actionbarsherlock.widget.SearchView search;
+
+	private View actionMenuWakup;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//Preferences.initVDR(this);
-		
-		//if(Preferences.get().getCurrentVdr() == null){
-			//finish();
-			//return;
-		//}
-		
-		
+		// Preferences.initVDR(this);
+
+		// if(Preferences.get().getCurrentVdr() == null){
+		// finish();
+		// return;
+		// }
+
 		if (Preferences.initVDR(this) == false) {
 			Intent intent = new Intent();
 			intent.setClass(this, VdrListActivity.class);
@@ -49,16 +59,10 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			Toast.makeText(this, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
-		} 
-		
-	
-		
-		
+		}
+
 		Preferences.setLocale(this);
-		
-		
-		
-		
+
 		// this.getActionBar().setDisplayShowCustomEnabled(true);
 		// this.getActionBar().setDisplayShowTitleEnabled(false);
 		// setTitle(getString(R.string.app_name));
@@ -72,49 +76,53 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 		findViewById(R.id.action_menu_timers).setOnClickListener(this);
 		findViewById(R.id.action_menu_epg).setOnClickListener(this);
 		View v = findViewById(R.id.action_menu_search);
-		if(v != null){
+		if (v != null) {
 			v.setOnClickListener(this);
 		}
 		findViewById(R.id.main_logo).setOnClickListener(this);
-		if (Preferences.get().isWakeupEnabled() == false) {
-			findViewById(R.id.action_menu_wakeup).setVisibility(View.GONE);
-		} else {
-			findViewById(R.id.action_menu_wakeup).setOnClickListener(this);
-		}
-
+		actionMenuWakup = findViewById(R.id.action_menu_wakeup);
 
 		// add and register buttons
 		// createButtons();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		final MenuInflater inflater = getMenuInflater();
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 
-		int api = Build.VERSION.SDK_INT; 
-		if ( api >= 11){
-//		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search)
-//				.getActionView();
-//		searchView.setSearchableInfo(searchManager
-//				.getSearchableInfo(getComponentName()));
-//		searchView.setIconifiedByDefault(false); // Do not iconify the widget;
+		// search = new SearchView(getSupportActionBar().getThemedContext());
 
-		} 
+		search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+		// search = (SearchView)
+		// .getActionView();
+		//
+		// Object o = menu.findItem(R.id.menu_search);
+
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		search.setSearchableInfo(searchManager
+				.getSearchableInfo(getComponentName()));
+
+		// search.setOnQueryTextListener(this);
 		return true;
 	}
 
 	@Override
 	protected void onResume() {
 		Preferences.setLocale(this);
+		if (Preferences.get().isWakeupEnabled() == false) {
+			actionMenuWakup.setVisibility(View.GONE);
+			actionMenuWakup.setOnClickListener(null);
+		} else {
+			actionMenuWakup.setVisibility(View.VISIBLE);
+			actionMenuWakup.setOnClickListener(this);
+		}
 		super.onResume();
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
+	public boolean onOptionsItemSelected(
+			final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.main_menu_preferences: {
@@ -136,17 +144,26 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 			finish();
 			break;
 		}
-		
-//		case R.id.menu_search: {
-	//		if(Build.VERSION.SDK_INT <11){ 
-		//		onSearchRequested();
-			//}
-			//break;
-		//}
+
+		case R.id.main_menu_clear_search: {
+			SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+					this, EPGSearchSuggestionsProvider.AUTHORITY,
+					EPGSearchSuggestionsProvider.MODE);
+			suggestions.clearHistory();
+			break;
+		}
+
+		// case R.id.menu_search: {
+		// if(Build.VERSION.SDK_INT <11){
+		// onSearchRequested();
+		// }
+		// break;
+		// }
 		case R.id.main_menu_goto: {
 			try {
-				final Cursor cursor = Preferences.getDatabaseHelper()
-						.getVdrCursor();
+				final Cursor cursor = ((AndroidDatabaseResults) DBAccess
+						.get(this).getVdrDAO().iterator().getRawResults())
+						.getRawCursor();
 				startManagingCursor(cursor);
 				final AlertDialog ad = new AlertDialog.Builder(this)
 						.setSingleChoiceItems(cursor, findVdrCursor(cursor),
@@ -157,8 +174,8 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 										cursor.moveToPosition(which);
 										int id = cursor.getInt(cursor
 												.getColumnIndex("_id"));
-										Vdr vdr = Preferences
-												.getDatabaseHelper()
+										Vdr vdr = DBAccess
+												.get(VdrManagerActivity.this)
 												.getVdrDAO().queryForId(id);
 										if (vdr == null) {
 											Toast.makeText(
@@ -258,11 +275,29 @@ public class VdrManagerActivity extends Activity implements OnClickListener {
 
 	}
 
+	protected void startSearchManager() {
+		Bundle appData = new Bundle();
+		startSearch(null, false, appData, false);
+	}
+
 	@Override
 	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
+		search.setVisibility(View.VISIBLE);
+		// Bundle appData = new Bundle();
 		// appData.putBoolean(SearchableActivity.JARGON, true);
-		startSearch(null, false, appData, false);
+		// startSearch(null, false, appData, false);
 		return true;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -4,15 +4,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.VdrSharedPreferences;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 public class VdrPreferencesActivity extends BasePreferencesActivity implements
-		OnSharedPreferenceChangeListener, OnPreferenceClickListener {
+		OnSharedPreferenceChangeListener {
 
 	Vdr vdr;
 	VdrSharedPreferences pref;
@@ -36,7 +36,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			pref = new VdrSharedPreferences();
 			pref.instance = vdr;
 		} else {// edit
-			Vdr v = getHelper().getVdrDAO().queryForId(id);
+			Vdr v = DBAccess.get(this).getVdrDAO().queryForId(id);
 			if (v != null) {
 				vdr = v;
 				pref = new VdrSharedPreferences(vdr);
@@ -59,23 +59,19 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		// this.getPreferenceManager().setSharedPreferencesName(Preferences.getPreferenceFile(this));
 
 		pref.instance = vdr;
-		pref.dao = getHelper().getVdrDAO();
+		pref.dao = DBAccess.get(this).getVdrDAO();
 		pref.registerOnSharedPreferenceChangeListener(this);
 
 		this.addPreferencesFromResource(R.xml.vdr_prefs);
 
 		updateChildPreferences();
-
-		findPreference(getString(R.string.wakeup_wol_mac_key))
-				.setOnPreferenceClickListener(this);
-
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String key) {
 		updateChildPreferences();
 		Preference p = findPreference(key);
 		updateSummary(p);
-		Preferences.reloadVDR();
+		Preferences.reloadVDR(this);
 	}
 
 	@Override
@@ -166,10 +162,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	}
 
-	public boolean onPreferenceClick(Preference arg0) {
-
-		return false;
-	}
 
 	@Override
 	public void onBackPressed() {
@@ -179,7 +171,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			return;
 		}
 		if (pref.commits < 2) {// user has not changed anything
-			getHelper().getVdrDAO().delete(pref.instance);
+			DBAccess.get(this).getVdrDAO().delete(pref.instance);
 			finish();
 			return;
 		}
