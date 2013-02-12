@@ -12,4 +12,10 @@
 	  android:icon="@android:drawable/ic_menu_agenda"
 	  android:title="@string/action_menu_channels"/>
 
+	<item
+	  android:id="@+id/epg_list_sort_menu"
+	  android:icon="@android:drawable/ic_menu_sort_alphabetically"
+	  android:title="@string/sort"/>
+	
+	
 </menu>
