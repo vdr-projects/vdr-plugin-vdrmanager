@@ -4,12 +4,11 @@ import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.data.OrmLiteBasePreferenceActivity;
-import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
 
 /**
  * 
@@ -17,7 +16,7 @@ import de.bjusystems.vdrmanager.data.db.OrmDatabaseHelper;
  * @author lado
  *
  */
-public abstract class BasePreferencesActivity extends OrmLiteBasePreferenceActivity<OrmDatabaseHelper> {
+public abstract class BasePreferencesActivity extends PreferenceActivity {
 
 	protected void updateSummary(Preference ep) {
 		if (ep instanceof EditTextPreference) {

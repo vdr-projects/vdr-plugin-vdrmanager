@@ -244,14 +244,14 @@ public class ChannelListActivity extends
 		return true;
 	}
 
-	private static final String[] EMPTY = new String[] {};
+
 
 	private String[] getAvailableGroupByEntries() {
 		ArrayList<String> entries = new ArrayList<String>(2);
 		entries.add(getString(R.string.groupby_group));
 		entries.add(getString(R.string.groupby_provider));
 		entries.add(getString(R.string.groupby_name));
-		return entries.toArray(EMPTY);
+		return entries.toArray(Utils.EMPTY);
 	}
 
 	AlertDialog groupByDialog = null;
