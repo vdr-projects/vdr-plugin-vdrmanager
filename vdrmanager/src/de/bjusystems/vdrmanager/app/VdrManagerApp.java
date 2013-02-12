@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Application;
-
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
@@ -45,7 +44,7 @@ public class VdrManagerApp extends Application {
 		return currentEpgList;
 	}
 
-	public void setCurrentEpgList(List<Event> currentEpgList) {
+	public void setCurrentEpgList(List currentEpgList) {
 		this.currentEpgList = currentEpgList;
 	}
 
