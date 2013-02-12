@@ -1,19 +1,33 @@
 package de.bjusystems.vdrmanager.data;
 
 
-import de.bjusystems.vdrmanager.StringUtils;
-import de.bjusystems.vdrmanager.app.C;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import de.bjusystems.vdrmanager.StringUtils;
+import de.bjusystems.vdrmanager.app.C;
+
+@DatabaseTable
 public class Channel implements Parcelable {
 
+	
+	@DatabaseField(id=true)
 	String id;
 	private int number;
+	
+	@DatabaseField
 	private String name;
+	
+	@DatabaseField(index=true)
 	private String provider;
+
+	@DatabaseField
 	private String rawAudio;
+	
+	@DatabaseField(index = true)
 	private String group;
 
 	public String getGroup() {
