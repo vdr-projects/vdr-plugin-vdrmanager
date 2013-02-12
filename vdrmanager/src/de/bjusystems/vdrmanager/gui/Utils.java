@@ -42,13 +42,12 @@ import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 public class Utils {
 
 	public static final String TAG = Utils.class.getName();
-	
+
 	public static final List EMPTY_LIST = new ArrayList(0);
-	
 	public static final String[] EMPTY = new String[] {};
 	public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
-	
-			Color.RED);
+
+	Color.RED);
 
 	public static CharSequence highlight(String where, String what) {
 		if (TextUtils.isEmpty(what)) {
@@ -115,16 +114,16 @@ public class Utils {
 				&& now < event.getStop().getTime();
 	}
 
-	private static String trimToEmpty(String str){
-		if(str == null){
+	private static String trimToEmpty(String str) {
+		if (str == null) {
 			return "";
 		}
-		if(TextUtils.isEmpty(str)){
+		if (TextUtils.isEmpty(str)) {
 			return "";
 		}
 		return str;
 	}
-	
+
 	private static String getBaseUrl() {
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
@@ -154,9 +153,9 @@ public class Utils {
 		// "http://192.168.1.119:3000/TS/"
 		StringBuilder sb = new StringBuilder();
 		Preferences p = Preferences.getPreferences();
-		sb.append(getBaseUrl()).append("/")
-				.append(p.getRemuxCommand()).append(";")
-				.append(p.getRemuxParameter()).append("/").append(chn);
+		sb.append(getBaseUrl()).append("/").append(p.getRemuxCommand())
+				.append(";").append(p.getRemuxParameter()).append("/")
+				.append(chn);
 		return sb.toString();
 	}
 
@@ -209,39 +208,41 @@ public class Utils {
 	}
 
 	public static void startStream(Activity activity, String url) {
-		try{
-		final Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setDataAndType(Uri.parse(url.toString()), "video/*");
-		activity.startActivityForResult(intent, 1);
-		}catch(ActivityNotFoundException anfe){
-			Log.w(TAG,anfe);
-			Toast.makeText(activity, anfe.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+		try {
+			final Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse(url.toString()), "video/*");
+			activity.startActivityForResult(intent, 1);
+		} catch (ActivityNotFoundException anfe) {
+			Log.w(TAG, anfe);
+			Toast.makeText(activity, anfe.getLocalizedMessage(),
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	public static final String md5(final String s) {
-	    try {
-	        // Create MD5 Hash
-	        MessageDigest digest = java.security.MessageDigest
-	                .getInstance("MD5");
-	        digest.update(s.getBytes());
-	        byte messageDigest[] = digest.digest();
-	 
-	        // Create Hex String
-	        StringBuffer hexString = new StringBuffer();
-	        for (int i = 0; i < messageDigest.length; i++) {
-	            String h = Integer.toHexString(0xFF & messageDigest[i]);
-	            while (h.length() < 2)
-	                h = "0" + h;
-	            hexString.append(h);
-	        }
-	        return hexString.toString();
-	 
-	    } catch (NoSuchAlgorithmException e) {
-	    	Log.w(TAG,e);
-	    }
-	    return "";
+		try {
+			// Create MD5 Hash
+			MessageDigest digest = java.security.MessageDigest
+					.getInstance("MD5");
+			digest.update(s.getBytes());
+			byte messageDigest[] = digest.digest();
+
+			// Create Hex String
+			StringBuffer hexString = new StringBuffer();
+			for (int i = 0; i < messageDigest.length; i++) {
+				String h = Integer.toHexString(0xFF & messageDigest[i]);
+				while (h.length() < 2)
+					h = "0" + h;
+				hexString.append(h);
+			}
+			return hexString.toString();
+
+		} catch (NoSuchAlgorithmException e) {
+			Log.w(TAG, e);
+		}
+		return "";
 	}
+
 	public static int getDuration(Event event) {
 		long millis = event.getDuration();
 		int minuts = (int) (millis / 1000 / 60);
@@ -295,53 +296,66 @@ public class Utils {
 		}
 		return pi;
 	}
-	
 
 	public static boolean checkInternetConnection(Context ctx) {
-		ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) ctx
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		// test for connection
 		if (cm.getActiveNetworkInfo() != null
-				&& cm.getActiveNetworkInfo().isConnectedOrConnecting()
-				){
+				&& cm.getActiveNetworkInfo().isConnectedOrConnecting()) {
 			return true;
 		}
 		return false;
 	}
-	
-	public static void streamRecording(Activity ctx, Recording rec){
-		
+
+	public static void streamRecording(Activity ctx, Recording rec) {
+
 		StringBuilder url = new StringBuilder();
 		url.append("http://")
-		.append(Preferences.get().getSvdrpHost())//
-		.append(":")
-		.append(Integer.valueOf(Preferences.get().getLivePort()))//
-		.append("/recstream.html?recid=recording_").append(Utils.md5(rec.getFileName()));
-		//http://192.168.1.119:8008/b0cdedeed2d36508dfd924f0876a851b
+				.append(Preferences.get().getSvdrpHost())
+				//
+				.append(":")
+				.append(Integer.valueOf(Preferences.get().getLivePort()))
+				//
+				.append("/recstream.html?recid=recording_")
+				.append(Utils.md5(rec.getFileName()));
+		// http://192.168.1.119:8008/b0cdedeed2d36508dfd924f0876a851b
 		String urlstring = url.toString();
 		Log.d(TAG, "try stream: " + urlstring);
 		Utils.startStream(ctx, url.toString());
 	}
 
-	public static void switchTo(final Context ctx , final Channel channel){
+	public static void switchTo(final Context ctx, final Channel channel) {
 		switchTo(ctx, channel.getId(), channel.getName());
 	}
+
 	/**
 	 * @param ctx
 	 * @param id
-	 * @param name Optional für die Anzeige
+	 * @param name
+	 *            Optional für die Anzeige
 	 */
-	public static void switchTo(final Context ctx , final String id, final String name){
-		
+	public static void switchTo(final Context ctx, final String id,
+			final String name) {
+
 		final SwitchChannelClient scc = new SwitchChannelClient(id);
-		SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(scc);
+		SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(
+				scc);
 		task.addListener(new SvdrpAsyncListener<String>() {
 			public void svdrpEvent(SvdrpEvent event, String result) {
-				if(event == SvdrpEvent.FINISHED_SUCCESS){
-					Utils.say(ctx, ctx.getString(R.string.switching_success, (name != null ? name : id )));
-				} else if(event == SvdrpEvent.CONNECT_ERROR || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
-					Utils.say(ctx, ctx.getString(R.string.switching_failed, (name != null ? name : id ), event.name()));
+				if (event == SvdrpEvent.FINISHED_SUCCESS) {
+					Utils.say(ctx, ctx.getString(R.string.switching_success,
+							(name != null ? name : id)));
+				} else if (event == SvdrpEvent.CONNECT_ERROR
+						|| event == SvdrpEvent.FINISHED_ABNORMALY
+						|| event == SvdrpEvent.ABORTED
+						|| event == SvdrpEvent.ERROR
+						|| event == SvdrpEvent.CACHE_HIT) {
+					Utils.say(ctx, ctx.getString(R.string.switching_failed,
+							(name != null ? name : id), event.name()));
 				}
 			}
+
 			public void svdrpException(SvdrpException e) {
 				Log.w(TAG, e.getMessage(), e);
 				Utils.say(ctx, e.getMessage());
@@ -356,16 +370,21 @@ public class Utils {
 		t.show();
 	}
 
-	  /**
-	   * Formats the date and time based on user's phone date/time preferences.
-	   * 
-	   * @param context the context
-	   * @param time the time in milliseconds
-	   */
+	/**
+	 * Formats the date and time based on user's phone date/time preferences.
+	 * 
+	 * @param context
+	 *            the context
+	 * @param time
+	 *            the time in milliseconds
+	 */
 
 	public static String formatDateTime(Context context, long time) {
-	    return android.text.format.DateFormat.getDateFormat(context).format(time) + " "
-	        + DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_TIME).toString();
-	  }
+		return android.text.format.DateFormat.getDateFormat(context).format(
+				time)
+				+ " "
+				+ DateUtils.formatDateTime(context, time,
+						DateUtils.FORMAT_SHOW_TIME).toString();
+	}
 
 }
