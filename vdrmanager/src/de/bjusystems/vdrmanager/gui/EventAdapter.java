@@ -1,6 +1,8 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -60,6 +62,51 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	public void add(EventListItem object) {
 		items.add(object);
 		super.add(object);
+	}
+	
+	
+	void sort(int sortBy){
+		
+		ArrayList<EventListItem> events = new ArrayList<EventListItem>(items);
+		
+		if(sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET){
+		
+			Collections.sort(events, new Comparator<EventListItem>() {
+				@Override
+				public int compare(EventListItem lhs, EventListItem rhs) {
+					if(lhs == null || lhs.getTitle() == null){
+						return 1;
+					}
+					if(rhs == null || rhs.getTitle() == null){
+						return 0;
+					}
+					return lhs.getTitle().compareTo(rhs.getTitle());
+				}
+			});
+			
+		} else if(sortBy == BaseEventListActivity.MENU_GROUP_TIME) {
+			
+			Collections.sort(events, new Comparator<EventListItem>() {
+				@Override
+				public int compare(EventListItem lhs, EventListItem rhs) {
+					if(lhs == null || lhs.getStart() == null){
+						return 1;
+					}
+					if(rhs == null || rhs.getStart() == null){
+						return 0;
+					}
+					return lhs.getStart().compareTo(rhs.getStart());
+				}
+			});
+			
+		}
+		
+		clear();
+		for(EventListItem eli : events){
+			add(eli);
+		}
+		
+		notifyDataSetChanged();
 	}
 
 	@Override
