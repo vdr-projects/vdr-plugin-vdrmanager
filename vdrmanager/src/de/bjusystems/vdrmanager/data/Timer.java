@@ -11,12 +11,12 @@ import de.bjusystems.vdrmanager.gui.Utils;
 
 /**
  * Class for timer data
- * 
+ *
  * @author bju
  */
-public class Timer extends Event implements Timerable{
-	
-	  
+public class Timer extends Event implements Timerable {
+
+
 //			 tfActive    = 0x0001,
 //             tfInstant   = 0x0002,
 //             tfVps       = 0x0004,
@@ -55,7 +55,7 @@ public class Timer extends Event implements Timerable{
 
 	/**
 	 * Constructs a timer from SvdrpHelper result line
-	 * 
+	 *
 	 * @param timerData
 	 *            result line
 	 * @param channels
@@ -98,16 +98,16 @@ public class Timer extends Event implements Timerable{
 		if(values.length > 12 ){
 			this.channelId = values[12];
 		}
-		
+
 		if(values.length > 13) {
 			this.weekdays = values[13];
 		}
-		
-		
+
+
 		description = Utils.mapSpecialChars(description);
 	}
 
-	
+
 	public Timer copy(){
 		Timer t = new Timer(this);
 		t.flags = flags;
@@ -120,7 +120,7 @@ public class Timer extends Event implements Timerable{
 		t.weekdays = weekdays;
 		return t;
 	}
-	
+
 	public Timer(final Event event) {
 		final Preferences prefs = Preferences.getPreferences();
 
@@ -139,6 +139,10 @@ public class Timer extends Event implements Timerable{
 
 		this.title = event.getTitle();
 		this.description = event.getDescription();
+	}
+
+	public boolean isRecurring(){
+		return weekdays.equals("-------") == false;
 	}
 
 	public String toCommandLine() {
@@ -219,7 +223,7 @@ public class Timer extends Event implements Timerable{
 			flags = flags & ~VPS;
 		}
 	}
-	
+
 	public void setEnabled(final boolean enabled) {
 		if (enabled) {
 			flags = flags | ACTIVE;
