@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.bjusystems.vdrmanager" android:versionName="0.5.2"
-	android:versionCode="520">
-	
-    
+	package="de.bjusystems.vdrmanager" android:versionName="0.6"
+	android:versionCode="06">
+
+
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
-    
+
 	<application android:icon="@drawable/app_logo"
 		android:label="@string/app_name"
 		android:hardwareAccelerated="true"
 		android:name=".app.VdrManagerApp">
 		<activity android:label="@string/app_name" android:name=".gui.VdrManagerActivity"
 		     android:clearTaskOnLaunch="true"
+		     android:theme="@style/Theme.Sherlock"
 		     android:configChanges="locale">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -59,7 +60,7 @@
 			<meta-data android:name="android.app.default_searchable"
 				android:value=".gui.EpgSearchListActivity" />
 		</activity>
-		<activity android:name=".gui.EpgDetailsActivity" 
+		<activity android:name=".gui.EpgDetailsActivity"
 			android:configChanges="orientation|locale">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
@@ -88,22 +89,25 @@
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
-			<meta-data android:name="android.app.searchable"  
+			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable" />
 
 		</activity>
 		<activity android:name=".gui.EpgSearchTimesListActivity" 	android:configChanges="orientation|locale"/>
-	
+
 		<activity android:name=".gui.VdrListActivity" 	        android:configChanges="orientation|locale"/>
 		<activity android:name=".gui.VdrPreferencesActivity" 	android:configChanges="orientation|locale"/>
 
-		
+
 		<activity android:name=".backup.BackupActivity"   android:configChanges="orientation|locale"/>
         <activity android:name=".backup.RestoreActivity"  android:configChanges="orientation|locale" />
         <activity android:name=".backup.RestoreChooserActivity"  android:configChanges="orientation|locale" />
         <activity android:name=".backup.BackupSettingsActivity"  android:configChanges="orientation|locale"/>
 
+         <provider android:name=".data.db.EPGSearchSuggestionsProvider"
+              android:authorities="de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider" />
+
 	</application>
 
 
-</manifest> 
+</manifest>
