@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +34,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
  * @author lado
- * 
+ *
  */
 public abstract class BaseEventListActivity<T extends Event> extends
 		BaseActivity<T, ListView> implements OnItemClickListener,
@@ -59,9 +60,16 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	protected Channel currentChannel = null;
 
-	protected List<Event> results = new ArrayList<Event>();
+	protected List<T> results = new ArrayList<T>();
 
-	
+	AlertDialog sortByDialog = null;
+
+	public static final int MENU_GROUP_TIME = 0;
+
+	public static final int MENU_GROUP_ALPHABET = 1;
+
+	private int sortBy = MENU_GROUP_TIME;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,7 +98,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
 	 * .view.Menu)
@@ -106,7 +114,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	/**
 	 * Prepare the current event and the chained events for
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void prepareDetailsViewData(EventListItem event) {
@@ -115,7 +123,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
 	 */
 	@Override
@@ -137,12 +145,12 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			Utils.shareEvent(this, event);
 			break;
 		}
-		
+
 		case R.id.epg_item_menu_switchto: {
 			Utils.switchTo(this, event.getChannelId(), event.getChannelName());
 			break;
 		}
-				
+
 		default:
 			return super.onContextItemSelected(item);
 		}
@@ -150,21 +158,50 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		return true;
 	}
 
+	private String[] getAvailableSortByEntries() {
+		ArrayList<String> entries = new ArrayList<String>(2);
+		entries.add(getString(R.string.sortby_time));
+		entries.add(getString(R.string.sortby_alphabet));
+		return entries.toArray(Utils.EMPTY);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
 	 * .view.MenuItem)
 	 */
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.epg_list_menu_channels:
 			startActivity(new Intent(this, ChannelListActivity.class));
 			return true;
+
+		case R.id.epg_list_sort_menu: {
+
+			if (sortByDialog == null) {
+				sortByDialog = new AlertDialog.Builder(this)
+						.setTitle(R.string.sort)
+						.setIcon(android.R.drawable.ic_menu_sort_alphabetically)
+						.setSingleChoiceItems(getAvailableSortByEntries(),
+								sortBy, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										sortBy = which;
+										// fillAdapter();
+										adapter.sort(sortBy);
+										sortByDialog.dismiss();
+									}
+								}).create();
+			}
+
+			sortByDialog.show();
+
+			return true;
 		}
-		
+
 		// switch (item.getItemId()) {
 		// case R.id.epg_menu_search:
 		// startSearchManager();
@@ -175,13 +212,13 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// /intent.setClass(this, EpgSearchTimesListActivity.class);
 		// startActivity(intent);
 		// break;
-		// }
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
 	 * android.view.View, android.view.ContextMenu.ContextMenuInfo)
 	 */
@@ -195,10 +232,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// set menu title
 		final EventListItem item = adapter.getItem(info.position);
 
-		if(item.isHeader()){
+		if (item.isHeader()) {
 			return;
 		}
-		
+
 		MenuItem mi = menu.findItem(R.id.epg_item_menu_live_tv);
 		if (item.isLive() && item.getStreamId() != null) {
 			mi.setVisible(true);
@@ -209,7 +246,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param view
@@ -222,10 +259,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// find and remember item
 		final EventListItem item = adapter.getItem(position);
 
-		if(item.isHeader()){
+		if (item.isHeader()) {
 			return;
 		}
-		
+
 		prepareDetailsViewData(item);
 
 		// show details
@@ -239,10 +276,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				TimerDetailsActivity.REQUEST_CODE_TIMER_MODIFIED);
 	}
 
-	protected boolean notifyDataSetChangedOnResume(){
+	protected boolean notifyDataSetChangedOnResume() {
 		return true;
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -255,7 +292,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// }
 	}
 
-	protected void resultReceived(Event result) {
+	protected void resultReceived(T result) {
 		results.add(result);
 	}
 
@@ -317,10 +354,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	}
 
-	protected void sortItemsByChannel(List<Event> result) {
-		final Comparator<Event> comparator = new Comparator<Event>() {
+	protected void sortItemsByChannel(List<T> result) {
+		final Comparator<T> comparator = new Comparator<T>() {
 
-			public int compare(final Event item1, final Event item2) {
+			public int compare(final T item1, final T item2) {
 				return Integer.valueOf(item1.getChannelNumber()).compareTo(
 						Integer.valueOf(item2.getChannelNumber()));
 			}
@@ -328,34 +365,45 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		Collections.sort(result, comparator);
 	}
 
-	protected void sortItemsByTime(List<Event> result) {
+	protected void sortItemsByTime(List<T> result) {
 		sortItemsByTime(result, false);
 	}
-	protected void sortItemsByTime(List<Event> result, final boolean reverse) {
-		final Comparator<Event> comparator = new Comparator<Event>() {
 
-			public int compare(final Event item1, final Event item2) {
-				int c = item1.getStart().compareTo(item2.getStart());
-				if (c != 0) {
-					if(reverse == false)
-						return c;
-					return -1 * c;
-				}
-				if (item1.getChannelNumber() == null
-						&& item2.getChannelNumber() == null) {
-					return 0;
-				}
-				if (item1.getChannelNumber() == null) {
-					return 1;
-				}
-				if (item2.getChannelNumber() == null) {
-					return -1;
-				}
-				return Integer.valueOf(item1.getChannelNumber()).compareTo(
-						Integer.valueOf(item2.getChannelNumber()));
+	class BaseEventComparator implements Comparator<T> {
+		boolean r = false;
+		BaseEventComparator(boolean r){
+			this.r = r;
+		}
+		public int compare(final T item1, final T item2) {
+
+			int c = item1.getStart().compareTo(item2.getStart());
+			if (c != 0) {
+				if (r == false)
+					return c;
+				return -1 * c;
 			}
-		};
-		Collections.sort(result, comparator);
+			if (item1.getChannelNumber() == null
+					&& item2.getChannelNumber() == null) {
+				return 0;
+			}
+			if (item1.getChannelNumber() == null) {
+				return 1;
+			}
+			if (item2.getChannelNumber() == null) {
+				return -1;
+			}
+			return Integer.valueOf(item1.getChannelNumber()).compareTo(
+					Integer.valueOf(item2.getChannelNumber()));
+		}
+	}
+
+	protected void sortItemsByTime(List<T> result, final boolean reverse) {
+
+		Collections.sort(result, getTimeComparator(reverse));
+	}
+
+	protected Comparator<? super T> getTimeComparator(boolean reverse) {
+		return new BaseEventComparator(reverse);
 	}
 
 	public void svdrpException(final SvdrpException exception) {
@@ -370,7 +418,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 				results.size()));
 		return finishedSuccessImpl();
 	}
-	
+
 	@Override
 	protected boolean displayingResults() {
 		return results.isEmpty() == false;
