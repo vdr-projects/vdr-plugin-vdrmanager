@@ -1,20 +1,32 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.view.View;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.data.MacFetchEditTextPreference;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.VdrSharedPreferences;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
+import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 
 public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		OnSharedPreferenceChangeListener {
 
 	Vdr vdr;
+
 	VdrSharedPreferences pref;
 
 	int id = -1;
@@ -29,24 +41,81 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return super.findPreference(key);
 	}
 
-	private void initVDR() {
+	private void initVDRInstance() {
 		id = getIntent().getIntExtra(Intents.VDR_ID, -1);
 		if (id == -1) {// new vdr
 			vdr = new Vdr();
-			pref = new VdrSharedPreferences();
-			pref.instance = vdr;
+
 		} else {// edit
 			Vdr v = DBAccess.get(this).getVdrDAO().queryForId(id);
 			if (v != null) {
 				vdr = v;
-				pref = new VdrSharedPreferences(vdr);
 			} else {
 				vdr = new Vdr();
-				pref = new VdrSharedPreferences();
-				pref.instance = vdr;
 				id = -1;
 			}
 		}
+		pref.setInstance(vdr);
+	}
+
+	public static String ARP_CACHE = "/proc/net/arp";
+
+	/**
+	 * return mac address as a string.
+	 *
+	 * @param ip
+	 * @return
+	 */
+	public static String getMacFromArpCache(String ip) {
+
+		if (ip == null) {
+			return null;
+		}
+
+		BufferedReader br = null;
+
+		try {
+			br = new BufferedReader(new FileReader(ARP_CACHE));
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				String[] values = line.split("\\s+");
+				if (values != null && values.length >= 4
+						&& ip.equals(values[0])) {
+					// format check
+					String mac = values[3];
+					if (mac.matches("..:..:..:..:..:..")) {
+						return mac;
+					} else {
+						return null;
+					}
+				}
+			}
+		} catch (Exception e) {
+
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+
+			}
+		}
+		return null;
+	}
+
+	private String getIp() throws Exception {
+		final Preferences prefs = Preferences.get();
+		String host = prefs.getSvdrpHost();
+		return InetAddress.getByName(host).getHostAddress();
+	}
+
+	private void ping(String ip) throws Exception {
+		final Preferences prefs = Preferences.get();
+		Socket socket = new Socket();
+		socket.connect(new InetSocketAddress(ip, prefs.getSvdrpPort()),
+				5 * 1000);
+		socket.setSoTimeout(5 * 1000);
 	}
 
 	@Override
@@ -54,15 +123,88 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 		super.onCreate(savedInstanceState);
 
-		initVDR();
+		pref = new VdrSharedPreferences();
+
+		pref.dao = DBAccess.get(this).getVdrDAO();
+
+		initVDRInstance();
+
+		this.addPreferencesFromResource(R.xml.vdr_prefs);
 
 		// this.getPreferenceManager().setSharedPreferencesName(Preferences.getPreferenceFile(this));
 
-		pref.instance = vdr;
-		pref.dao = DBAccess.get(this).getVdrDAO();
 		pref.registerOnSharedPreferenceChangeListener(this);
 
-		this.addPreferencesFromResource(R.xml.vdr_prefs);
+
+
+		String recstream = pref.getString("key_recstream_method", "vdr-live");
+
+		if (recstream.equals("vdr-live") == false) {
+			Preference p = findPreference("key_live_port");
+			p.setEnabled(false);
+			// PreferenceCategory cat = (PreferenceCategory)
+			// findPreference("key_streaming_category");
+			// cat.removePreference(p);
+		}
+
+		final String host = pref.getString(getString(R.string.vdr_host_key),
+				null);
+
+		// create background task
+
+		// start task
+
+		final MacFetchEditTextPreference macedit = (MacFetchEditTextPreference) findPreference(getString(R.string.wakeup_wol_mac_key));
+		String mac = vdr.getMac();
+		macedit.setText(mac);
+		macedit.setCompoundButtonListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				if (host == null) {
+					Utils.say(VdrPreferencesActivity.this,
+							getString(R.string.vdr_host_not_defined));
+					return;
+				}
+
+				new VoidAsyncTask() {
+
+					ProgressDialog pd;
+
+					private String mac;
+
+					String message;
+
+					protected void onPreExecute() {
+						pd = new ProgressDialog(VdrPreferencesActivity.this);
+						pd.setMessage(getString(R.string.processing));
+						pd.show();
+					};
+
+					protected void onPostExecute(Void result) {
+						pd.dismiss();
+						if (message != null) {
+							Utils.say(VdrPreferencesActivity.this, message);
+							return;
+						}
+						macedit.setEditText(mac);
+					};
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						try {
+							String ip = getIp();
+							ping(ip);
+							mac = getMacFromArpCache(ip);
+						} catch (Exception ex) {
+							message = ex.getLocalizedMessage();
+						}
+
+						return null;
+					}
+				}.execute();
+			}
+		});
 
 		updateChildPreferences();
 	}
@@ -71,15 +213,33 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		updateChildPreferences();
 		Preference p = findPreference(key);
 		updateSummary(p);
+
+		if (key != null && key.equals("key_recstream_method")) {
+			String recstream = pref.getString("key_recstream_method",
+					"vdr-live");
+			Preference pk = findPreference("key_live_port");
+			if (recstream.equals("vdr-live") == false) {
+				pk.setEnabled(false);
+				// PreferenceCategory cat = (PreferenceCategory)
+				// findPreference("key_streaming_category");
+				// cat.removePreference(p);
+			} else {
+				pk.setEnabled(true);
+			}
+
+			// if(pk)
+			// cat.addPreference(pk);
+			// } else {
+			// cat.removePreference(pk);
+			// }
+		}
+
 		Preferences.reloadVDR(this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// Set up a listener whenever a key changes
-		pref.registerOnSharedPreferenceChangeListener(this);
-
 	}
 
 	@Override
@@ -162,7 +322,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	}
 
-
 	@Override
 	public void onBackPressed() {
 		if (id != -1) {// no new devices
@@ -171,7 +330,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			return;
 		}
 		if (pref.commits < 2) {// user has not changed anything
-			DBAccess.get(this).getVdrDAO().delete(pref.instance);
+			DBAccess.get(this).getVdrDAO().delete(pref.getInstance());
 			finish();
 			return;
 		}
