@@ -9,7 +9,7 @@ import de.bjusystems.vdrmanager.app.C;
 import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
 public class Recording extends Event{
-	
+
 	public Recording(String line)  {
 		final String[] words = StringUtils.splitPreserveAllTokens(line, C.DATA_SEPARATOR);
 		int idx = 0;
@@ -28,15 +28,29 @@ public class Recording extends Event{
 		if(idx < words.length){
 			realDuration = Long.parseLong(words[idx++]) * 1000;
 		}
+
+		if(idx < words.length){
+			devInode = mapSpecialChars(words[idx++]);
+		}
 	}
-	
+
 	private String fileName;
 
 	private int fileSize;
-	
+
 	private int index;
-	
+
 	private long realDuration = -1;
+
+	private String devInode = null;
+
+	public String getDevInode() {
+		return devInode;
+	}
+
+	public void setDevInode(String devInode) {
+		this.devInode = devInode;
+	}
 
 	/**
 	 * in millis
@@ -45,7 +59,7 @@ public class Recording extends Event{
 	public long getRealDuration() {
 		return realDuration;
 	}
-	
+
 	public long getDuration(){
 		if(realDuration != -1){
 			return realDuration;

@@ -27,6 +27,7 @@ import android.util.Pair;
 import android.view.Gravity;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
@@ -249,9 +250,6 @@ public class Utils {
 		return minuts;
 	}
 
-
-
-
 	public static void shareEvent(Activity activity, Event event) {
 		final Intent share = new Intent(android.content.Intent.ACTION_SEND);
 		share.setType("text/plain");
@@ -275,8 +273,7 @@ public class Utils {
 				activity.getString(R.string.share_chooser)));
 	}
 
-
-	public static void addCalendarEvent(Activity activity, Event event){
+	public static void addCalendarEvent(Activity activity, Event event) {
 		Intent intent = new Intent(Intent.ACTION_EDIT);
 		intent.setType("vnd.android.cursor.item/event");
 		intent.putExtra("title", event.getTitle());
@@ -285,7 +282,6 @@ public class Utils {
 		intent.putExtra("endTime", event.getStop().getTime());
 		activity.startActivity(intent);
 	}
-
 
 	public static String mapSpecialChars(String src) {
 		if (src == null) {
@@ -323,21 +319,40 @@ public class Utils {
 		return false;
 	}
 
-	public static void streamRecording(Activity ctx, Recording rec) {
+	private static String getRecordingStream(Activity ctx, Recording rec) {
+
+		String m = Preferences.get().getRecStreamMethod();
 
 		StringBuilder url = new StringBuilder();
-		url.append("http://")
-				.append(Preferences.get().getSvdrpHost())
-				//
-				.append(":")
-				.append(Integer.valueOf(Preferences.get().getLivePort()))
-				//
-				.append("/recstream.html?recid=recording_")
-				.append(Utils.md5(rec.getFileName()));
-		// http://192.168.1.119:8008/b0cdedeed2d36508dfd924f0876a851b
-		String urlstring = url.toString();
+
+		if (StringUtils.equals(m, "vdr-live")) {
+			url.append("http://")
+					.append(Preferences.get().getSvdrpHost())
+					//
+					.append(":")
+					.append(Integer.valueOf(Preferences.get().getLivePort()))
+					//
+					.append("/recstream.html?recid=recording_")
+					.append(Utils.md5(rec.getFileName()));
+			// http://192.168.1.119:8008/b0cdedeed2d36508dfd924f0876a851b
+			String urlstring = url.toString();
+			return urlstring;
+		} else if (StringUtils.equals(m, "vdr-streamdev")) {
+			url.append("http://")
+					.append(Preferences.get().getSvdrpHost())
+					//
+					.append(":")
+					.append(Integer.valueOf(Preferences.get().getStreamPort()))
+					//
+					.append("/").append(rec.getDevInode());
+		}
+		return url.toString();
+	}
+
+	public static void streamRecording(Activity ctx, Recording rec) {
+		String urlstring = getRecordingStream(ctx, rec);
 		Log.d(TAG, "try stream: " + urlstring);
-		Utils.startStream(ctx, url.toString());
+		Utils.startStream(ctx, urlstring);
 	}
 
 	public static void switchTo(final Context ctx, final Channel channel) {

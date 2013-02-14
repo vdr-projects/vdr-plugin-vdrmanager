@@ -13,9 +13,9 @@ import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 /**
  * Class for all preferences
- * 
+ *
  * @author bju, lado
- * 
+ *
  */
 public class Preferences {
 
@@ -41,12 +41,12 @@ public class Preferences {
 	public int getCurrentVdrContext(Context context){
 		return getInteger(context, R.string.current_vdr_id_key, -1);
 	}
-	
+
 	/** user defined epg search times */
 	private String epgSearchTimes;
 	/**
 	 * format times AM/PM or 24H
-	 * 
+	 *
 	 * @since 0.2
 	 */
 	private boolean use24hFormat;
@@ -137,7 +137,7 @@ public class Preferences {
 	/**
 	 * Whether to send Packets to the custom broadcast address. It is used, if
 	 * the address ist not empty
-	 * 
+	 *
 	 * @return
 	 * @since 0.2
 	 */
@@ -147,7 +147,7 @@ public class Preferences {
 
 	/**
 	 * Getter for use24hFormat
-	 * 
+	 *
 	 * @since 0.2
 	 * @return
 	 */
@@ -157,7 +157,7 @@ public class Preferences {
 
 	/**
 	 * Checks for connect using SSL
-	 * 
+	 *
 	 * @return true, if use SSL connections
 	 */
 	public boolean isSecure() {
@@ -166,7 +166,7 @@ public class Preferences {
 
 	/**
 	 * Retrieves the channel filtering mode
-	 * 
+	 *
 	 * @return true, if channels will be filtered
 	 */
 	public boolean isFilterChannels() {
@@ -175,7 +175,7 @@ public class Preferences {
 
 	/**
 	 * Last channel to receive
-	 * 
+	 *
 	 * @return channel number
 	 */
 	public String getChannels() {
@@ -184,7 +184,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP host or IP address
-	 * 
+	 *
 	 * @return SVDRP host
 	 */
 	public String getSvdrpHost() {
@@ -193,7 +193,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP port
-	 * 
+	 *
 	 * @return SVDRP port
 	 */
 	public int getSvdrpPort() {
@@ -202,7 +202,7 @@ public class Preferences {
 
 	/**
 	 * Gets the SVDRP password
-	 * 
+	 *
 	 * @return SVDRO password
 	 */
 	public String getPassword() {
@@ -215,7 +215,7 @@ public class Preferences {
 
 	/**
 	 * Checks for enables remote wakeup
-	 * 
+	 *
 	 * @return true, if remote wakeup is enabled
 	 */
 	public boolean isWakeupEnabled() {
@@ -224,7 +224,7 @@ public class Preferences {
 
 	/**
 	 * Gets the URL for the wakeup request
-	 * 
+	 *
 	 * @return wakeup url
 	 */
 	public String getWakeupUrl() {
@@ -233,7 +233,7 @@ public class Preferences {
 
 	/**
 	 * Gets the user for the wakeup url
-	 * 
+	 *
 	 * @return user name
 	 */
 	public String getWakeupUser() {
@@ -242,7 +242,7 @@ public class Preferences {
 
 	/**
 	 * Gets the password for the wakeup url
-	 * 
+	 *
 	 * @return password
 	 */
 	public String getWakeupPassword() {
@@ -251,7 +251,7 @@ public class Preferences {
 
 	/**
 	 * Checks for enabled alive check
-	 * 
+	 *
 	 * @return true, if enabled
 	 */
 	public boolean isAliveCheckEnabled() {
@@ -268,7 +268,7 @@ public class Preferences {
 
 	/**
 	 * Gets the time between alive checks
-	 * 
+	 *
 	 * @return time in seconds
 	 */
 	public int getAliveCheckInterval() {
@@ -277,7 +277,7 @@ public class Preferences {
 
 	/**
 	 * Gets the buffer before the event start
-	 * 
+	 *
 	 * @return pre event buffer
 	 */
 	public int getTimerPreMargin() {
@@ -286,7 +286,7 @@ public class Preferences {
 
 	/**
 	 * Gets the buffer after the event stop
-	 * 
+	 *
 	 * @return post event buffer
 	 */
 	public int getTimerPostMargin() {
@@ -295,7 +295,7 @@ public class Preferences {
 
 	/**
 	 * Gets the default priority
-	 * 
+	 *
 	 * @return default priority
 	 */
 	public int getTimerDefaultPriority() {
@@ -304,7 +304,7 @@ public class Preferences {
 
 	/**
 	 * Gets the default lifetime
-	 * 
+	 *
 	 * @return default lifetime
 	 */
 	public int getTimerDefaultLifetime() {
@@ -313,7 +313,7 @@ public class Preferences {
 
 	/**
 	 * Gets the time values for the epg search
-	 * 
+	 *
 	 * @return
 	 */
 	public String getEpgSearchTimes() {
@@ -322,7 +322,7 @@ public class Preferences {
 
 	/**
 	 * gets the MAC Address of the vdr host
-	 * 
+	 *
 	 * @return
 	 * @since 0.2
 	 */
@@ -332,7 +332,7 @@ public class Preferences {
 
 	/**
 	 * Gets the selection which wakeup method to use
-	 * 
+	 *
 	 * @return
 	 * @since 0.2
 	 */
@@ -342,7 +342,7 @@ public class Preferences {
 
 	/**
 	 * Getter for streaming port
-	 * 
+	 *
 	 * @return
 	 * @since 02.
 	 */
@@ -352,7 +352,7 @@ public class Preferences {
 
 	/**
 	 * Getter for selected streaming format
-	 * 
+	 *
 	 * @return
 	 * @since 0.2
 	 */
@@ -362,7 +362,7 @@ public class Preferences {
 
 	/**
 	 * Sets the time values for the epg search
-	 * 
+	 *
 	 * @param epgSearchTimes
 	 *            new time values
 	 */
@@ -381,7 +381,7 @@ public class Preferences {
 
 	/**
 	 * Gets the name for the file which preferences will be saved into
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @return filename
@@ -392,7 +392,7 @@ public class Preferences {
 
 	/**
 	 * Show Channel Numbers in the overviews
-	 * 
+	 *
 	 * @since 0.2
 	 * @return
 	 */
@@ -402,7 +402,7 @@ public class Preferences {
 
 	/**
 	 * getter
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isEnableRemux() {
@@ -411,7 +411,7 @@ public class Preferences {
 
 	/**
 	 * getter
-	 * 
+	 *
 	 * @return
 	 */
 	public String getRemuxCommand() {
@@ -420,7 +420,7 @@ public class Preferences {
 
 	/**
 	 * getter
-	 * 
+	 *
 	 * @return
 	 */
 	public String getRemuxParameter() {
@@ -429,7 +429,7 @@ public class Preferences {
 
 	/**
 	 * getter
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isQuiteOnBackButton() {
@@ -438,17 +438,22 @@ public class Preferences {
 
 	/**
 	 * Gets the previous loaded preferences
-	 * 
+	 *
 	 * @return preferences
 	 */
 	public static Preferences getPreferences() {
 		return thePrefs;
 	}
 
+	public String getRecStreamMethod(){
+		return getCurrentVdr().getRecStreamMethod();
+	}
+
+
 	/**
-	 * 
+	 *
 	 * Gets the previous loaded preferences, same as getPreferences();
-	 * 
+	 *
 	 * @return
 	 */
 	public static Preferences get() {
@@ -501,7 +506,7 @@ public class Preferences {
 	}
 
 	public static boolean initVDR(final Context context) {
-		
+
 		if (current != null) {
 			return true;
 		}
@@ -513,8 +518,8 @@ public class Preferences {
 			vdr = DBAccess.get(context).getVdrDAO().queryForId(id);
 		}
 
-		setCurrentVdr(context, vdr);		
-		
+		setCurrentVdr(context, vdr);
+
 		if (vdr != null) {
 			return true;
 		}
@@ -525,7 +530,7 @@ public class Preferences {
 			setCurrentVdr(context, vdr);
 			return true;
 		}
-		
+
 		return initFromOldVersion(context);
 		//Intent intent = new Intent();
 		//intent.setClass(context, VdrListActivity.class);
@@ -537,7 +542,7 @@ public class Preferences {
 
 	/**
 	 * Loads all preferences
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @return Preferences
@@ -633,7 +638,7 @@ public class Preferences {
 
 	/**
 	 * Gets the persistent preferences
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @return preferences
@@ -645,7 +650,7 @@ public class Preferences {
 
 	/**
 	 * Helper for retrieving integer values from preferences
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @param resId
@@ -665,7 +670,7 @@ public class Preferences {
 
 	/**
 	 * Helper for retrieving boolean values from preferences
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @param resId
@@ -682,7 +687,7 @@ public class Preferences {
 
 	/**
 	 * Helper for retrieving string values from preferences
-	 * 
+	 *
 	 * @param context
 	 *            Context
 	 * @param resId
@@ -712,7 +717,7 @@ public class Preferences {
 
 	/**
 	 * Set locale read from preferences to context.
-	 * 
+	 *
 	 * @param context
 	 *            {@link Context}
 	 */
