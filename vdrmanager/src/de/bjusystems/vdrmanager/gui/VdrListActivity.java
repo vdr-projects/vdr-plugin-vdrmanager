@@ -110,7 +110,7 @@ public class VdrListActivity extends ListActivity
 				}
 
 				Vdr vdr = getItem(position);
-				String name = vdr.getName();
+				String name = (vdr.getName() != null ? vdr.getName() : "");
 				String host = vdr.getHost();
 				holder.text2.setText(host);
 
@@ -164,7 +164,7 @@ public class VdrListActivity extends ListActivity
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget
 	 * .AdapterView, android.view.View, int, long)
@@ -176,7 +176,7 @@ public class VdrListActivity extends ListActivity
 
 	/**
 	 * Start {@link VdrPreferencesActivity} to create or edit a vdr
-	 * 
+	 *
 	 * @param id
 	 *            may be null. Then a new vdr is created
 	 */
@@ -188,7 +188,7 @@ public class VdrListActivity extends ListActivity
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onActivityResult(int, int,
 	 * android.content.Intent)
 	 */
