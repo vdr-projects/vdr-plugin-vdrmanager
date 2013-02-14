@@ -68,7 +68,7 @@
 			android:key="@string/wakeup_password_key" android:password="true"
 			android:summary="@string/wakeup_password_summary" android:title="@string/wakeup_password_title" />
 
-		<EditTextPreference android:dependency="@string/wakeup_enabled_key"
+		<de.bjusystems.vdrmanager.data.MacFetchEditTextPreference android:dependency="@string/wakeup_enabled_key"
 			android:key="@string/wakeup_wol_mac_key" android:summary="@string/wakeup_wol_mac_summary"
 			android:title="@string/wakeup_wol_mac_title" />
 
@@ -129,7 +129,7 @@
 			android:summary="@string/remux_parameter_summary" android:title="@string/remux_parameter_title" />
 	</PreferenceCategory>
 
-	<PreferenceCategory android:title="@string/recstream">
+	<PreferenceCategory android:title="@string/recstream" android:key="key_streaming_category">
 
 		<CheckBoxPreference android:key="key_rec_stream_enable"
 			android:defaultValue="false" android:summary="@string/recstream_enable_summary"

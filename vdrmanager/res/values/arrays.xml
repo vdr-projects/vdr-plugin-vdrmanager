@@ -11,12 +11,12 @@
         <item>it</item>
         <item>uk</item>
     </string-array>
-    
+
     <string-array name="remux_entry_values">
         <item>EXT</item>
         <item>EXTERN</item>
     </string-array>
-    
+
     <string-array name="imdb_urls_velues">
         <item>akas.imdb.com</item>
         <item>imdb.com</item>
@@ -27,11 +27,12 @@
         <item>imdb.it</item>
         <item>imdb.pt</item>
     </string-array>
-    
-    
+
+
     <string-array name="recstream_entry_values">
         <item>vdr-live</item>
+        <item>vdr-streamdev</item>
     </string-array>
-    
+
 
 </resources>
