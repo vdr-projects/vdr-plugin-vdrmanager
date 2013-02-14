@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Vdr {
 
 	/**
-	 * 
+	 *
 	 */
 	@DatabaseField(columnName = "_id", generatedId = true)
 	private Integer id;
@@ -62,7 +62,7 @@ public class Vdr {
 
 	/**
 	 * vdr mac for wol
-	 * 
+	 *
 	 * @since 0.2
 	 */
 	@DatabaseField
@@ -70,9 +70,9 @@ public class Vdr {
 
 	/**
 	 * which wakeup method to use
-	 * 
+	 *
 	 * @since 0.2
-	 * 
+	 *
 	 */
 	@DatabaseField
 	private String wakeupMethod;
@@ -107,7 +107,7 @@ public class Vdr {
 
 	/**
 	 * Which port to use for streaming
-	 * 
+	 *
 	 * @since 0.2
 	 */
 	@DatabaseField
@@ -115,7 +115,7 @@ public class Vdr {
 
 	/**
 	 * Which format to use for streaming
-	 * 
+	 *
 	 * @since 0.2
 	 */
 	@DatabaseField
@@ -123,7 +123,7 @@ public class Vdr {
 
 	/**
 	 * Do not send broadcasts, send directly to the host (router problem)
-	 * 
+	 *
 	 * @since 0.2
 	 */
 	@DatabaseField
@@ -173,17 +173,16 @@ public class Vdr {
 
 	@DatabaseField
 	private String streamingPassword;
-	
+
 	@DatabaseField
 	private int livePort;
-	
+
 	@DatabaseField
 	private String recStreamMethod;
-	
+
 	@DatabaseField
 	private boolean enableRecStreaming = false;
 
-	
 	public String getRecStreamMethod() {
 		return recStreamMethod;
 	}
@@ -207,7 +206,6 @@ public class Vdr {
 	public void setEnableRecStreaming(boolean enableRecStreaming) {
 		this.enableRecStreaming = enableRecStreaming;
 	}
-
 
 	public String getStreamingPassword() {
 		return streamingPassword;
@@ -478,10 +476,14 @@ public class Vdr {
 	}
 
 	private static <T> T get(Map<String, Object> map, String key, Object def) {
-		return (T) map.get(key);
+		if(map.containsKey(key)){
+			return (T) map.get(key);
+		}
+		return (T)def;
 	}
 
-	private static Integer getInteger(Map<String, Object> map, String key, Integer def) {
+	private static Integer getInteger(Map<String, Object> map, String key,
+			Integer def) {
 		if (map.containsKey(key) == false) {
 			return def;
 		}
@@ -506,8 +508,13 @@ public class Vdr {
 	}
 
 	private static Boolean getBoolean(Map<String, Object> map, String key) {
+		return getBoolean(map, key, false);
+	}
+
+	private static Boolean getBoolean(Map<String, Object> map, String key,
+			boolean defValue) {
 		if (map.containsKey(key) == false) {
-			return Boolean.FALSE;
+			return defValue;
 		}
 		Object obj = get(map, key);
 		if (obj instanceof Boolean) {
@@ -554,13 +561,64 @@ public class Vdr {
 		map.put("remux_enable", enableRemux);
 		map.put("key_rec_stream_enable", enableRecStreaming);
 		map.put("key_live_port", livePort);
-		map.put("key_recstream_method", recStreamMethod );
+		map.put("key_recstream_method", recStreamMethod);
 		return map;
+	}
+
+	public void set(Map<String, Object> map) {
+		name = get(map, "vdr_name", name);
+		host = get(map, "vdr_host", host);
+		port = getInteger(map, "vdr_port", port);
+		password = get(map, "vdr_password", password);
+		secure = getBoolean(map, "vdr_secure", secure);
+
+		filterChannels = getBoolean(map, "limit_channels", filterChannels);
+		channelFilter = get(map, "last_channel", channelFilter);
+
+		wakeupEnabled = getBoolean(map, "key_wakeup_enabled", wakeupEnabled);
+		wakeupUrl = get(map, "key_wakeup_url", wakeupUrl);
+		wakeupUser = get(map, "key_wakeup_user", wakeupUser);
+		wakeupPassword = get(map, "key_wakeup_password", wakeupPassword);
+		wakeupMethod = get(map, "key_wakeup_method", wakeupMethod);
+		wolCustomBroadcast = get(map, "key_wol_custom_broadcast",
+				wolCustomBroadcast);
+		mac = get(map, "key_wakeup_wol_mac", mac);
+
+		connectionTimeout = getInteger(map, "key_conntimeout_key",
+				connectionTimeout);
+		readTimeout = getInteger(map, "key_vdr_readtimeout", readTimeout);
+		timeout = getInteger(map, "key_vdr_timeout", timeout);
+
+		timerPreMargin = getInteger(map, "timer_pre_start_buffer",
+				timerPreMargin);
+		timerPostMargin = getInteger(map, "timer_post_end_buffer",
+				timerPostMargin);
+		timerDefaultPriority = getInteger(map, "timer_default_priority",
+				timerDefaultPriority);
+		timerDefaultLifetime = getInteger(map, "timer_default_lifetime",
+				timerDefaultLifetime);
+
+		streamPort = getInteger(map, "streamingport", streamPort);
+		streamingPassword = get(map, "key_streaming_password",
+				streamingPassword);
+		streamingUsername = get(map, "key_streaming_username",
+				streamingUsername);
+		encoding = get(map, "key_vdr_encoding", encoding);
+		streamFormat = get(map, "livetv_streamformat", streamFormat);
+		remuxCommand = get(map, "remux_command", remuxCommand);
+		remuxParameter = get(map, "remux_parameter", remuxParameter);
+		enableRemux = getBoolean(map, "remux_enable", enableRemux);
+
+		enableRecStreaming = getBoolean(map, "key_rec_stream_enable",
+				enableRecStreaming);
+		livePort = getInteger(map, "key_live_port", livePort);
+		recStreamMethod = get(map, "key_recstream_method", recStreamMethod);
+
 	}
 
 	public void init(Map<String, Object> map) {
 		name = get(map, "vdr_name", name);
-		host = get(map, "vdr_host" );
+		host = get(map, "vdr_host");
 		port = getInteger(map, "vdr_port");
 		password = get(map, "vdr_password");
 		secure = getBoolean(map, "vdr_secure");
@@ -570,11 +628,11 @@ public class Vdr {
 
 		wakeupEnabled = getBoolean(map, "key_wakeup_enabled");
 		wakeupUrl = get(map, "key_wakeup_url", "0.0.0.0");
-		wakeupUser = get(map, "key_wakeup_user","");
-		wakeupPassword = get(map, "key_wakeup_password","");
-		wakeupMethod = get(map, "key_wakeup_method","wol");
-		wolCustomBroadcast = get(map, "key_wol_custom_broadcast","");
-		mac = get(map, "key_wakeup_wol_mac","");
+		wakeupUser = get(map, "key_wakeup_user", "");
+		wakeupPassword = get(map, "key_wakeup_password", "");
+		wakeupMethod = get(map, "key_wakeup_method", "wol");
+		wolCustomBroadcast = get(map, "key_wol_custom_broadcast", "");
+		mac = get(map, "key_wakeup_wol_mac", "");
 
 		connectionTimeout = getInteger(map, "key_conntimeout_key");
 		readTimeout = getInteger(map, "key_vdr_readtimeout");
@@ -593,7 +651,7 @@ public class Vdr {
 		remuxCommand = get(map, "remux_command");
 		remuxParameter = get(map, "remux_parameter");
 		enableRemux = getBoolean(map, "remux_enable");
-		
+
 		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
 		livePort = getInteger(map, "key_live_port");
 		recStreamMethod = get(map, "key_recstream_method");

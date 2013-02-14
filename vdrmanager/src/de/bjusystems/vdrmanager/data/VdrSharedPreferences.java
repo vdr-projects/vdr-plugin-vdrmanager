@@ -1,6 +1,7 @@
 package de.bjusystems.vdrmanager.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,31 +15,40 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 public class VdrSharedPreferences implements SharedPreferences {
 
 	private static final String EMPTY_STRING = "";
-	
-	public int commits  = 0;
-	
+
+	public int commits = 0;
+
 	public RuntimeExceptionDao<Vdr, Integer> dao;
-	
-	public Vdr instance;
-	
+
+	private Vdr instance;
+
+	public Vdr getInstance() {
+		return instance;
+	}
+
+	public void setInstance(Vdr instance) {
+		this.instance = instance;
+		map.putAll(instance.toMap());
+	}
+
 	protected List<OnSharedPreferenceChangeListener> listeners = new LinkedList<OnSharedPreferenceChangeListener>();
 
 	Map<String, Object> map = new HashMap<String, Object>();
-	
-	public VdrSharedPreferences(){
-		
+
+	public VdrSharedPreferences() {
+
 	}
-	public VdrSharedPreferences (Vdr vdr){
-		map.putAll(vdr.toMap());
-		instance = vdr;
-	}
-	
+
+//	public VdrSharedPreferences(Vdr vdr) {
+
+//	}
+
 	public boolean contains(String key) {
 		return map.containsKey(key);
 	}
 
 	public Editor edit() {
-		return new Editor(); 
+		return new Editor();
 	}
 
 	public Map<String, Object> getAll() {
@@ -70,7 +80,7 @@ public class VdrSharedPreferences implements SharedPreferences {
 
 	public String getString(String key, String defValue) {
 		Object obj = get(key, defValue);
-		if(obj == null){
+		if (obj == null) {
 			return EMPTY_STRING;
 		}
 		return String.valueOf(obj);
@@ -89,85 +99,110 @@ public class VdrSharedPreferences implements SharedPreferences {
 			OnSharedPreferenceChangeListener listener) {
 		listeners.remove(listener);
 	}
-	
-	
+
+	/**
+	 * @author lado
+	 *
+	 */
 	public class Editor implements SharedPreferences.Editor {
-		
-		Map<String, Object> data = new HashMap<String, Object>();
+
+		Map<String, Object> modified = new HashMap<String, Object>();
+
+		private boolean clear = false;
 
 		public SharedPreferences.Editor clear() {
-			data.clear();
+			clear = true;
+			modified.clear();
 			return this;
 		}
 
 		public boolean commit() {
-			instance.init(map);
-			CreateOrUpdateStatus custatus = dao.createOrUpdate(instance);
 
+
+
+			if(instance == null){
+				map.putAll(modified);
+				return true;
+			}
+
+			instance.set(modified);
+
+			CreateOrUpdateStatus custatus = dao.createOrUpdate(instance);
 
 			boolean status = custatus.isCreated() || custatus.isUpdated();
 
-			if(status == false)
+			if (status == false)
 				return false;
-			
+
+			map.putAll(modified);
+
+
 			++commits;
-			
+
 			// and update any listeners
-			for (OnSharedPreferenceChangeListener listener : listeners) {
-				listener.onSharedPreferenceChanged(
-						VdrSharedPreferences.this, null);
+			for (String key : modified.keySet()) {
+				for (OnSharedPreferenceChangeListener listener : listeners) {
+					listener.onSharedPreferenceChanged(
+							VdrSharedPreferences.this, key);
+				}
 			}
+
+			modified.clear();
 
 			return true;
 		}
 
-
-		public android.content.SharedPreferences.Editor put(
-				String key, Object value) {
-			 	map.put(key, value);
-			 return this;
-					 
-		}
-		public android.content.SharedPreferences.Editor putBoolean(
-				String key, boolean value) {
-			return put(key,value);
+		public android.content.SharedPreferences.Editor put(String key,
+				Object value) {
+			synchronized (this) {
+				modified.put(key, value);
+				return this;
+			}
 		}
 
-		public android.content.SharedPreferences.Editor putFloat(
-				String key, float value) {
-			return put(key,value);
+		public android.content.SharedPreferences.Editor putBoolean(String key,
+				boolean value) {
+			return put(key, value);
+		}
+
+		public android.content.SharedPreferences.Editor putFloat(String key,
+				float value) {
+			return put(key, value);
 		}
 
 		public android.content.SharedPreferences.Editor putInt(String key,
 				int value) {
-			return put(key,value);
+			return put(key, value);
 		}
 
 		public android.content.SharedPreferences.Editor putLong(String key,
 				long value) {
-			return put(key,value);
+			return put(key, value);
 		}
 
-		public android.content.SharedPreferences.Editor putString(
-				String key, String value) {
-			return put(key,value);
+		public android.content.SharedPreferences.Editor putString(String key,
+				String value) {
+			return put(key, value);
 		}
 
 		public android.content.SharedPreferences.Editor remove(String key) {
-			map.remove(key);
-			return this;
+			synchronized (this) {
+				modified.remove(key);
+				return this;
+			}
 		}
-
 
 		public void apply() {
 			commit();
 		}
 
-
 		public android.content.SharedPreferences.Editor putStringSet(
-				String arg0, Set<String> arg1) {
-			// TODO Auto-generated method stub
-			return null;
+				String key, Set<String> values) {
+			synchronized (this) {
+				modified.put(key, (values == null) ? null
+						: new HashSet<String>(values));
+				return this;
+			}
 		}
 
 	}
