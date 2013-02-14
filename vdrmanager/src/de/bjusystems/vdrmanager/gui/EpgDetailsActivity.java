@@ -16,9 +16,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -564,11 +561,13 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	}
 
 
+
+
 	@Override
-	public final boolean onCreateOptionsMenu(final Menu menu) {
+	public final boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		final MenuInflater inflater = getMenuInflater();
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.epg_details, menu);
 
 		// mShareActionProvider = (ShareActionProvider)
@@ -583,11 +582,16 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		if (item.getItemId() == R.id.epg_details_menu_share) {
 			shareEvent(cEvent);
 			return true;
 		}
+
+		if(item.getItemId() == R.id.epg_details_menu_add_to_cal){
+			Utils.addCalendarEvent(this, cEvent);
+		}
+
 		if (item.getItemId() == R.id.epg_details_menu_search_repeat) {
 			Intent intent = new Intent(this, EpgSearchListActivity.class);
 			intent.setAction(Intent.ACTION_SEARCH);

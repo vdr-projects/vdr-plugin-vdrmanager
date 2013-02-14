@@ -33,7 +33,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class RecordingListActivity extends BaseEventListActivity<Recording>
@@ -46,13 +46,13 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	public static final int MENU_CHANNEL = 2;
 
 	public static final int ASC = 0;
-	
+
 	public static final int DESC = 1;
-	
+
 	private int groupBy = MENU_DATE;
-	
+
 	private int ASC_DESC = ASC;
-	
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -75,7 +75,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		// start query
 		startRecordingQuery();
 	}
-	
+
 
 	private String[] getAvailableGroupByEntries() {
 		ArrayList<String> entries = new ArrayList<String>(2);
@@ -88,7 +88,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	AlertDialog groupByDialog = null;
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.menu_groupby:
@@ -124,19 +124,19 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
 	 * .view.Menu)
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = getMenuInflater();
+	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.recording_list_menu, menu);
 		return 	super.onCreateOptionsMenu(menu);
 	}
 
-	
+
 	@Override
 	protected SvdrpClient<Recording> getClient() {
 		return this.recordingClient;
@@ -172,18 +172,18 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			inflater.inflate(R.menu.recording_list_item_menu, menu);
 			if(Preferences.get().isEnableRecStream() == false){
 				menu.removeItem(R.id.recording_item_menu_stream);
-			} 
+			}
 
 		}
-		
+
 		super.onCreateContextMenu(menu, v, menuInfo);
 		//
 //		http://projects.vdr-developer.org/issues/863
 		if(Utils.isLive(item)){
-			menu.removeItem(R.id.epg_item_menu_live_tv);				
+			menu.removeItem(R.id.epg_item_menu_live_tv);
 		}
 	}
-	
+
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
@@ -217,7 +217,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	private void startRecordingQuery() {
-		
+
 
 		if (checkInternetConnection() == false) {
 			return;
@@ -231,7 +231,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				recordingClient);
 
 		// create progress dialog
-		
+
 		task.addListener(this);
 
 		// start task

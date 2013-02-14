@@ -14,10 +14,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,16 +32,13 @@ import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
-import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class ChannelListActivity extends
@@ -65,7 +60,7 @@ public class ChannelListActivity extends
 	public static final int MENU_NAME = 2;
 
 	private int groupBy = MENU_GROUP;
-	
+
 	private int groupByInverse = 0;
 
 	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(1);
@@ -119,7 +114,7 @@ public class ChannelListActivity extends
 		} else {
 			channelClient.removeSvdrpListener(this);
 		}
-		
+
 		if(useCache == false){
 			ChannelClient.clearCache();
 		}
@@ -135,25 +130,25 @@ public class ChannelListActivity extends
 
 	static RecentChannelsAdapter RECENT_ADAPTER = null;
 
-	
+
 	static class RecentChannelsAdapter extends ArrayAdapter<Channel>{
 		private Activity context;
 		int resId;
-		
+
 		public RecentChannelsAdapter(Activity context, List<Channel> list) {
 			super(context,	android.R.layout.simple_list_item_1, list);
 			this.context = context;
 			showChannelNumbers = Preferences.get().isShowChannelNumbers();
-			
+
 			if (Build.VERSION.SDK_INT < 11) {
 				resId = android.R.layout.select_dialog_item;
 			} else {
 				resId = 	android.R.layout.simple_list_item_1;
 			}
 		}
-		
+
 		public boolean showChannelNumbers;
-		
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// recycle view?
 			TextView text1;
@@ -182,7 +177,7 @@ public class ChannelListActivity extends
 			RECENT_ADAPTER.notifyDataSetChanged();
 			return RECENT_ADAPTER;
 		}
-		
+
 		RECENT_ADAPTER = new RecentChannelsAdapter(this, RECENT);
 		return RECENT_ADAPTER;
 
@@ -229,16 +224,15 @@ public class ChannelListActivity extends
 		}
 	}
 
-	public boolean onPrepareOptionsMenu(Menu menu) {
-
+	public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
-	public final boolean onCreateOptionsMenu(final Menu menu) {
+	public final boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		final MenuInflater inflater = getMenuInflater();
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.channellist, menu);
 
 		return true;
@@ -257,7 +251,7 @@ public class ChannelListActivity extends
 	AlertDialog groupByDialog = null;
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.channels_groupby:
@@ -292,7 +286,7 @@ public class ChannelListActivity extends
 				say(R.string.recent_channels_no_history);
 				return true;
 			}
-			
+
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.recent_channels)
 					.setAdapter(getRecentAdapter(), new DialogInterface.OnClickListener() {
@@ -369,12 +363,12 @@ public class ChannelListActivity extends
 			case R.id.channel_item_menu_hide_permanent:
 				// TODO http://projects.vdr-developer.org/issues/722
 				break;
-			
+
 			case R.id.channel_item_menu_switch:
 				Utils.switchTo(this, channel);
 				break;
 			}
-			
+
 
 
 			return true;
@@ -525,7 +519,7 @@ public class ChannelListActivity extends
 	protected SvdrpClient<Channel> getClient() {
 		return channelClient;
 	}
-	
+
 	public void svdrpEvent(SvdrpEvent event, Channel result){
 		super.svdrpEvent(event, result);
 	}

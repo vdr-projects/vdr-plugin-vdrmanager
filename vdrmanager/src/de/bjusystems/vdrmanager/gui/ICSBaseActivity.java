@@ -1,22 +1,18 @@
 package de.bjusystems.vdrmanager.gui;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.os.Build;
+import com.actionbarsherlock.app.SherlockActivity;
 
-public abstract class ICSBaseActivity extends Activity{
+public abstract class ICSBaseActivity extends SherlockActivity{
 
 	public void initActionBar() {
-		int api = Build.VERSION.SDK_INT;
-		if (api < 14) {
-			return;
-		}
-
-		ActionBar actionBar = getActionBar();
+//		int api = Build.VERSION.SDK_INT;
+	//	if (api < 14) {
+		//	return;
+		//}
+		com.actionbarsherlock.app.ActionBar actionBar = getSupportActionBar();
 		if(actionBar == null){
 			return;
 		}
-		//this is since 14 enabled
 		actionBar.setHomeButtonEnabled(true);
 	}
 }

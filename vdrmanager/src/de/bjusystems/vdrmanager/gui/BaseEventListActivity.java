@@ -46,6 +46,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	public static final int MENU_SHARE = 90;
 
+	public static final int MENU_GROUP_TO_CAL = 91;
+
+	public static final int MENU_TO_CAL = 91;
+
+
 	private SimpleGestureFilter detector;
 
 	protected EpgClient epgClient;
@@ -104,10 +109,10 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 * .view.Menu)
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
+	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		final MenuInflater inflater = getMenuInflater();
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.epg_list_menu, menu);
 		return true;
 	}
@@ -146,6 +151,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			break;
 		}
 
+		case MENU_TO_CAL: {
+			Utils.addCalendarEvent(this, event);
+			break;
+		}
+
 		case R.id.epg_item_menu_switchto: {
 			Utils.switchTo(this, event.getChannelId(), event.getChannelName());
 			break;
@@ -172,7 +182,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
 	 * .view.MenuItem)
 	 */
-	public boolean onOptionsItemSelected(final MenuItem item) {
+	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.epg_list_menu_channels:
@@ -243,6 +253,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			mi.setVisible(false);
 		}
 		menu.add(MENU_GROUP_SHARE, MENU_SHARE, 0, R.string.share);
+		menu.add(MENU_GROUP_TO_CAL, MENU_TO_CAL, 0, R.string.addtocal);
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 	}

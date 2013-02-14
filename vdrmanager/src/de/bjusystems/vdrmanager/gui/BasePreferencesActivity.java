@@ -9,9 +9,10 @@ import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.data.MacFetchEditTextPreference;
 
 /**
- * 
+ *
  * Basis class for PreferencesActivities with some goodies in it
  * @author lado
  *
@@ -23,12 +24,28 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 			updateSummary((EditTextPreference) ep);
 		} else if (ep instanceof ListPreference) {
 			updateSummary((ListPreference) ep);
+		} else if(ep instanceof MacFetchEditTextPreference){
+			updateSummary((MacFetchEditTextPreference)ep);
 		}
 	}
 
 	/**
 	 * If text set add it to the summary
-	 * 
+	 *
+	 * @param ep
+	 */
+	protected void updateSummary(MacFetchEditTextPreference ep) {
+		String text = ep.getText();
+		if (text == null) {
+			text = "";
+		}
+
+		setSummary(text, ep);
+	}
+
+	/**
+	 * If text set add it to the summary
+	 *
 	 * @param ep
 	 */
 	protected void updateSummary(EditTextPreference ep) {
@@ -36,11 +53,11 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 		if (text == null) {
 			return;
 		}
-		
+
 		if(isPassword(ep.getEditText())){
 			text = text.replaceAll(".", "*");
 		}
-		
+
 		setSummary(text, ep);
 	}
 
@@ -50,7 +67,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 		}
 		return false;
 	}
-	
+
 	protected void setSummary(CharSequence text, DialogPreference ep){
 		CharSequence sm = ep.getSummary();
 		String sum;
@@ -61,11 +78,11 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 		} else {
 			sum = "";
 		}
-		
+
 		if(TextUtils.isEmpty(text)){
 			text = getString(R.string.prefs_current_value_not_set);
 		}
-		
+
 		if (isBlank(sum)) {
 			sum = getString(R.string.prefs_current_value_template, text);
 		} else {
@@ -74,7 +91,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 		}
 		ep.setSummary(sum);
 	}
-	
+
 	protected void updateSummary(ListPreference ep) {
 		CharSequence text = ep.getEntry();
 
@@ -89,13 +106,13 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * Gets the substring before the last occurrence of a separator. The
 	 * separator is not returned.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * A <code>null</code> string input will return <code>null</code>. An empty
 	 * ("") string input will return the empty string. An empty or
 	 * <code>null</code> separator will return the input string.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * StringUtils.substringBeforeLast(null, *)      = null
 	 * StringUtils.substringBeforeLast("", *)        = ""
@@ -106,7 +123,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * StringUtils.substringBeforeLast("a", null)    = "a"
 	 * StringUtils.substringBeforeLast("a", "")      = "a"
 	 * </pre>
-	 * 
+	 *
 	 * @param str
 	 *            the String to get a substring from, may be null
 	 * @param separator
@@ -132,7 +149,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * <p>
 	 * Checks if a String is empty ("") or null.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * StringUtils.isEmpty(null)      = true
 	 * StringUtils.isEmpty("")        = true
@@ -140,12 +157,12 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * StringUtils.isEmpty("bob")     = false
 	 * StringUtils.isEmpty("  bob  ") = false
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * NOTE: This method changed in Lang version 2.0. It no longer trims the
 	 * String. That functionality is available in isBlank().
 	 * </p>
-	 * 
+	 *
 	 * @param str
 	 *            the String to check, may be null
 	 * @return <code>true</code> if the String is empty or null
@@ -158,7 +175,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * <p>
 	 * Checks if a String is whitespace, empty ("") or null.
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * StringUtils.isBlank(null)      = true
 	 * StringUtils.isBlank("")        = true
@@ -166,7 +183,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 * StringUtils.isBlank("bob")     = false
 	 * StringUtils.isBlank("  bob  ") = false
 	 * </pre>
-	 * 
+	 *
 	 * @param str
 	 *            the String to check, may be null
 	 * @return <code>true</code> if the String is null, empty or whitespace

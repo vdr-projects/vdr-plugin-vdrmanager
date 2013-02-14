@@ -34,7 +34,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	public static final int MENU_REFRESH = 99;
 
 	protected T listView;
-	
+
 	@Override
 	public boolean onSearchRequested() {
 		// TODO Auto-generated method stub
@@ -135,7 +135,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
 		getApp().addActivityToFinish(this);
-		
+
 		initActionBar();
 
 		// your logic for click listner
@@ -150,14 +150,14 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
+	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
 
 		// MenuItem item;
 		// item = menu.add(MENU_GROUP_REFRESH, MENU_REFRESH, 0,
 		// R.string.refresh);
 		// item.setIcon(R.drawable.ic_menu_refresh);
 		// item.setAlphabeticShortcut('r');
-		MenuInflater inf = getMenuInflater();
+		com.actionbarsherlock.view.MenuInflater inf = getSupportMenuInflater();
 		inf.inflate(R.menu.refresh_menu, menu);
 
 		// SearchView searchView = (SearchView)
@@ -174,7 +174,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	abstract protected SvdrpClient<Result> getClient();
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.list_refresh:
 			backupViewSelection();
