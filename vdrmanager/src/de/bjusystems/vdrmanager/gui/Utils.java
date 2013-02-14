@@ -249,6 +249,9 @@ public class Utils {
 		return minuts;
 	}
 
+
+
+
 	public static void shareEvent(Activity activity, Event event) {
 		final Intent share = new Intent(android.content.Intent.ACTION_SEND);
 		share.setType("text/plain");
@@ -271,6 +274,18 @@ public class Utils {
 		activity.startActivity(Intent.createChooser(share,
 				activity.getString(R.string.share_chooser)));
 	}
+
+
+	public static void addCalendarEvent(Activity activity, Event event){
+		Intent intent = new Intent(Intent.ACTION_EDIT);
+		intent.setType("vnd.android.cursor.item/event");
+		intent.putExtra("title", event.getTitle());
+		intent.putExtra("description", event.getShortText());
+		intent.putExtra("beginTime", event.getStart().getTime());
+		intent.putExtra("endTime", event.getStop().getTime());
+		activity.startActivity(intent);
+	}
+
 
 	public static String mapSpecialChars(String src) {
 		if (src == null) {
@@ -372,7 +387,7 @@ public class Utils {
 
 	/**
 	 * Formats the date and time based on user's phone date/time preferences.
-	 * 
+	 *
 	 * @param context
 	 *            the context
 	 * @param time
