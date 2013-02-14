@@ -11,14 +11,14 @@ public class StringUtils {
      * An empty immutable <code>String</code> array.
      */
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
-    
+
 
 	public static final String EMPTY_STRING = "";
 
-    
+
     /**
-     * Performs the logic for the <code>split</code> and 
-     * <code>splitPreserveAllTokens</code> methods that return a maximum array 
+     * Performs the logic for the <code>split</code> and
+     * <code>splitPreserveAllTokens</code> methods that return a maximum array
      * length.
      *
      * @param str  the String to parse, may be <code>null</code>
@@ -114,9 +114,9 @@ public class StringUtils {
         }
         return (String[]) list.toArray(new String[list.size()]);
     }
-    
+
     /**
-     * <p>Splits the provided text into an array, separators specified, 
+     * <p>Splits the provided text into an array, separators specified,
      * preserving all tokens, including empty tokens created by adjacent
      * separators. This is an alternative to using StringTokenizer.</p>
      *
@@ -152,4 +152,29 @@ public class StringUtils {
         return splitWorker(str, separatorChars, -1, true);
     }
 
+    // Equals
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Compares two Strings, returning <code>true</code> if they are equal.</p>
+     *
+     * <p><code>null</code>s are handled without exceptions. Two <code>null</code>
+     * references are considered to be equal. The comparison is case sensitive.</p>
+     *
+     * <pre>
+     * StringUtils.equals(null, null)   = true
+     * StringUtils.equals(null, "abc")  = false
+     * StringUtils.equals("abc", null)  = false
+     * StringUtils.equals("abc", "abc") = true
+     * StringUtils.equals("abc", "ABC") = false
+     * </pre>
+     *
+     * @see java.lang.String#equals(Object)
+     * @param str1  the first String, may be null
+     * @param str2  the second String, may be null
+     * @return <code>true</code> if the Strings are equal, case sensitive, or
+     *  both <code>null</code>
+     */
+    public static boolean equals(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equals(str2);
+    }
 }
