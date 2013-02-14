@@ -198,7 +198,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
 	 * .view.MenuItem)
 	 */
-	public boolean onOptionsItemSelected(final MenuItem item) {
+	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.timer_menu_add:
@@ -220,14 +220,14 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	public boolean onCreateOptionsMenu(final Menu menu) {
+	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
 		// MenuItem item;
 		// item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
 		// R.string.new_timer);
 		// item.setIcon(android.R.drawable.ic_menu_add);;
 		// /item.setAlphabeticShortcut('r');
 
-		final MenuInflater inflater = getMenuInflater();
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.timer_list_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
