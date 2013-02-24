@@ -16,6 +16,7 @@
 #include "vdrmanagerthread.h"
 #include <memory>
 #include <vdr/cutter.h>
+#include <vdr/sources.h>
 
 #define TIMER_SEP		"#|#|#"
 
@@ -141,6 +142,8 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 			result += channel->GetChannelID().ToString();
 			result += ":";
 			result += GetAudioTracks(channel);
+                        result += ":";
+                        result += MapSpecialChars(cSource::ToString(channel->Source()));
 			result += "\r\n";
 		}
 	}
@@ -751,7 +754,6 @@ string cHelpers::ToText(const cEvent * event) {
 // search assigned timer
 	eTimerMatch TimerMatch = tmNone;
 	cTimer * eventTimer = Timers.GetMatch(event, &TimerMatch);
-
 //	if(eventTimer){
 //
 //	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
