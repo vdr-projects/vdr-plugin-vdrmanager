@@ -15,6 +15,7 @@
 #include "helpers.h"
 #include "vdrmanagerthread.h"
 #include <memory>
+#include <vdr/cutter.h>
 
 #define TIMER_SEP		"#|#|#"
 
@@ -140,7 +141,6 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 			result += channel->GetChannelID().ToString();
 			result += ":";
 			result += GetAudioTracks(channel);
-			result += ":";
 			result += "\r\n";
 		}
 	}
@@ -260,27 +260,88 @@ string cHelpers::GetEventsIntern(string wantedChannels, string when) {
 	return result + "END\r\n";
 }
 
+string cHelpers::DelRecording(cRecording * recording) {
+
+	cString FileName = recording->FileName();
+
+	if (cCutter::Active(recording->FileName())) {
+		cCutter::Stop();
+		recording = Recordings.GetByName(FileName); // cCutter::Stop() might have deleted it if it was the edited version
+		// we continue with the code below even if recording is NULL,
+		// in order to have the menu updated etc.
+	}
+
+	if (cReplayControl::NowReplaying()
+			&& strcmp(cReplayControl::NowReplaying(), FileName) == 0) {
+		cControl::Shutdown();
+	}
+
+	if (!recording || recording->Delete()) {
+		cReplayControl::ClearLastReplayed(FileName);
+		Recordings.DelByName(FileName);
+		cVideoDiskUsage::ForceCheck();
+	}
+
+	return "START\r\nEND\r\n";
+}
+
 string cHelpers::DelRecordingIntern(string args) {
 
 	if (args.size() == 0) {
-		return "!ERROR:DelRecording;empty args\r\n";
+		return Error("empty args");
 	}
 
 	int index = atoi(args.c_str());
 
-	cRecording * r;
-	if (index < 0|| index >= Recordings.Count()
-	|| (r = Recordings.Get(index)) == NULL) {return "!ERROR:DelRecording;Wrong recording index -> " + args + "\r\n";
-}
-
-	if (r->Delete()) {
-		Recordings.DelByName(r->FileName());
-		return "START\r\nEND\r\n";
-	} else {
-		return "!ERROR:Failed\r\n";
+	cRecording *recording = Recordings.Get(index);
+	if (!recording) {
+		return Error("Recording not found");
 	}
 
+	cRecordControl *rc = cRecordControls::GetRecordControl(
+			recording->FileName());
+
+	if (!rc) {
+		return cHelpers::DelRecording(recording);
+	}
+
+	/**
+	 * this should come as a parameter later
+	 */
+
+	bool forceDelete = true;
+
+	if (forceDelete == false) {
+		return Error("Recording is in use by a timer");
+	}
+
+	cTimer *timer = rc->Timer();
+	if (timer) {
+		timer->Skip();
+		cRecordControls::Process(time(NULL));
+		if (timer->IsSingleEvent()) {
+			isyslog("deleting timer %s", *timer->ToDescr());
+			Timers.Del(timer);
+		}
+		Timers.SetModified();
+	}
+	return cHelpers::DelRecording(recording);
 }
+//
+//	return "START\r\nEND\r\n";
+//	if (r->Delete()) {
+//		cRecordControl* rc = cRecordControls::GetRecordControl(r->FileName());
+//		//cTimer *timer = rc->Timer();
+//		//if (timer) {
+//		//isyslog("deleting timer %s", *timer->ToDescr());
+//		//Timers.sel(timer);
+//		Timers.SetModified();
+//		//}
+//		Recordings.DelByName(r->FileName());
+//		return "START\r\nEND\r\n";
+//	} else {
+//		return "!ERROR:Failed\r\n";
+//	}
 
 string cHelpers::SetTimerIntern(char op, string param) {
 
@@ -318,18 +379,25 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		dsyslog("[vdrmanager] timer %s parsed", *timer->ToDescr());
 
-		cTimer* oldTimer = Timers.GetTimer(timer.get());
-		if (oldTimer == 0) {
+		cTimer * t = Timers.GetTimer(timer.get());
+
+		if (!t) {
 			return Error("Timer not defined");
 		}
 
-		if (oldTimer->Recording()) {
-			oldTimer->Skip();
-			cRecordControls::Process(time(0));
+		/**
+		 * this should come as a parameter later
+		 */
+		bool forceDelete = true;
+
+		if (t->Recording() && forceDelete == false) {
+			return Error("Timer  is recording");
 		}
-		Timers.Del(oldTimer);
+
+		isyslog("deleting timer %s", *t->ToDescr());
+		Timers.Del(t);
 		Timers.SetModified();
-		dsyslog("[vdrmanager] timer %s deleted", *timer->ToDescr());
+		dsyslog("[vdrmanager] timer %s deleted", *t->ToDescr());
 		break;
 	}
 	case 'M':
@@ -400,13 +468,13 @@ string cHelpers::SetTimerIntern(char op, string param) {
 }
 
 string cHelpers::SetTimerIntern(string args) {
-	//C dasdasda#|#|#
-	//C 1 as:asd:SadA:sd  ada:a :ada
-	// separete timer number
-	//size_t sep = args.find('');
-	//if (sep == string::npos) {
-	//return "!ERROR:no separator found\r\n";
-	//}
+//C dasdasda#|#|#
+//C 1 as:asd:SadA:sd  ada:a :ada
+// separete timer number
+//size_t sep = args.find('');
+//if (sep == string::npos) {
+//return "!ERROR:no separator found\r\n";
+//}
 
 	if (Timers.BeingEdited()) {
 		return Error("Timers are being edited - try again later");
@@ -416,16 +484,16 @@ string cHelpers::SetTimerIntern(string args) {
 
 	args = Trim(args.substr(1));
 
-	// Use StringReplace here because if ':' are characters in the
-	// title or aux string it breaks parsing of timer definition
-	// in VDRs cTimer::Parse method.  The '|' will be replaced
-	// back to ':' by the cTimer::Parse() method.
+// Use StringReplace here because if ':' are characters in the
+// title or aux string it breaks parsing of timer definition
+// in VDRs cTimer::Parse method.  The '|' will be replaced
+// back to ':' by the cTimer::Parse() method.
 
-	// Fix was submitted by rofafor: see
-	// http://www.vdr-portal.de/board/thread.php?threadid=100398
+// Fix was submitted by rofafor: see
+// http://www.vdr-portal.de/board/thread.php?threadid=100398
 	string params = replaceAll(args, "|##", "|");
 
-	//replace also newlines
+//replace also newlines
 	params = replaceAll(params, "||#", "\n");
 
 	string result = SetTimerIntern(operation, params);
@@ -560,6 +628,16 @@ string cHelpers::ToText(cRecording * recording) {
 	snprintf(buf, sizeof(buf) - 1, "%d", length);
 	result += buf;
 
+	result += ":";
+
+	struct stat st;
+	if (stat(recording->FileName(), &st) == 0) {
+		result += MapSpecialChars(
+				cString::sprintf("%lu:%lu.rec", st.st_dev, st.st_ino));
+	} else {
+		result += "";
+	}
+
 	result += "\r\n";
 	return result;
 }
@@ -569,22 +647,22 @@ string cHelpers::ToText(cTimer * timer) {
 	const cChannel * channel = timer->Channel();
 	const char * channelName = channel->Name();
 
-	//cSchedulesLock schedulesLock;
-	//  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
+//cSchedulesLock schedulesLock;
+//  const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
 
-	//  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
+//  const cSchedule * schedule = schedules->GetSchedule(channel->GetChannelID());
 
-	//const cList<cEvent> * events = schedule->Events();
-	//  cEvent * match = NULL;
-	//  for(cEvent * event = events->First(); event; event = events->Next(event)) {
-	//
-	//time_t startTime = event->StartTime();
-	//    time_t stopTime = startTime + event->Duration();
-	//if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
-	//  match = event;
-	//  break;
-	//}
-	//  }
+//const cList<cEvent> * events = schedule->Events();
+//  cEvent * match = NULL;
+//  for(cEvent * event = events->First(); event; event = events->Next(event)) {
+//
+//time_t startTime = event->StartTime();
+//    time_t stopTime = startTime + event->Duration();
+//if(startTime <= timer->StartTime() && timer->StopTime() >= stopTime){
+//  match = event;
+//  break;
+//}
+//  }
 
 	string result;
 	char buf[100];
@@ -669,16 +747,21 @@ string cHelpers::ToText(const cEvent * event) {
 	cChannel * channel = Channels.GetByChannelID(
 			event->Schedule()->ChannelID());
 
-	// search assigned timer
-	cTimer * eventTimer = NULL;
-	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
-		if (timer->Channel() == channel
-				&& timer->StartTime() <= event->StartTime()
-				&& timer->StopTime()
-						>= event->StartTime() + event->Duration()) {
-			eventTimer = timer;
-		}
-	}
+// search assigned timer
+	eTimerMatch TimerMatch = tmNone;
+	cTimer * eventTimer = Timers.GetMatch(event, &TimerMatch);
+
+//	if(eventTimer){
+//
+//	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
+//		if (timer->Channel() == channel
+//				&& timer->StartTime() <= event->StartTime()
+//				&& timer->StopTime()
+//						>= event->StartTime() + event->Duration()) {
+//			eventTimer = timer;
+//			break;
+//		}
+//	}
 
 	char buf[100];
 	string result;
@@ -757,7 +840,7 @@ bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
 			}
 		}
 	}
-	//Bug #1236
+//Bug #1236
 	free(buffer);
 
 	return found;
@@ -804,7 +887,7 @@ string cHelpers::Trim(string str) {
 }
 
 string cHelpers::SafeCall(string (*f)()) {
-	// loop, if vdr modified list and we crash
+// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f();
@@ -821,7 +904,7 @@ string cHelpers::SafeCall(string (*f)()) {
 }
 
 string cHelpers::SafeCall(string (*f)(string arg), string arg) {
-	// loop, if vdr modified list and we crash
+// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg);
@@ -838,7 +921,7 @@ string cHelpers::SafeCall(string (*f)(string arg), string arg) {
 
 string cHelpers::SafeCall(string (*f)(string arg1, string arg2), string arg1,
 		string arg2) {
-	// loop, if vdr modified list and we crash
+// loop, if vdr modified list and we crash
 	for (int i = 0; i < 3; i++) {
 		try {
 			return f(arg1, arg2);
@@ -863,7 +946,7 @@ string cHelpers::MapSpecialChars(const string text) {
 
 string cHelpers::MapSpecialChars(const char * p) {
 
-	//const char * p = text.c_str();
+//const char * p = text.c_str();
 	string result = "";
 	while (*p) {
 		switch (*p) {
@@ -967,7 +1050,7 @@ string cHelpers::compress_string(const string& str, int compressionlevel) {
 	char outbuffer[32768];
 	string outstring;
 
-	// retrieve the compressed bytes blockwise
+// retrieve the compressed bytes blockwise
 	do {
 		zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
 		zs.avail_out = sizeof(outbuffer);
@@ -1006,7 +1089,7 @@ string cHelpers::decompress_string(const string& str) {
 	char outbuffer[32768];
 	string outstring;
 
-	// get the decompressed bytes blockwise using repeated calls to inflate
+// get the decompressed bytes blockwise using repeated calls to inflate
 	do {
 		zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
 		zs.avail_out = sizeof(outbuffer);
