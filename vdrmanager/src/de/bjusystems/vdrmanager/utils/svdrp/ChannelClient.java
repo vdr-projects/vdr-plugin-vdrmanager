@@ -3,7 +3,6 @@ package de.bjusystems.vdrmanager.utils.svdrp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,6 +49,8 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 	}
 
 	public static void clearCache() {
+		channelSources.clear();
+		sourceChannels.clear();
 		channelGroups.clear();
 		groupChannels.clear();
 		providerChannels.clear();
