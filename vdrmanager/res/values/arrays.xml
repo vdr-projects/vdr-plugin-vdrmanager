@@ -34,5 +34,12 @@
         <item>vdr-streamdev</item>
     </string-array>
 
+  <string-array name="recent_channels_order_entry_values">
+    <item>most</item>
+    <item>last</item>
+  </string-array>
+
+
+
 
 </resources>
