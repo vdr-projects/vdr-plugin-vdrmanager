@@ -45,8 +45,10 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 
 	private int groupBy = -1;
 
+	private boolean reverse = false;
+
 	public void fill(ArrayList<String> groups,
-			Map<String, ArrayList<Channel>> data, int groupBy) {
+			Map<String, ArrayList<Channel>> data, int groupBy, boolean reverse) {
 		this.groupBy = groupBy;
 		this.groups.clear();
 		this.groups.addAll(groups);
@@ -104,6 +106,8 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			itemHolder.aux.setText(item.getGroup());
 		} else if(groupBy == ChannelListActivity.MENU_GROUP) {
 			itemHolder.aux.setText(item.getProvider());
+		} else if(groupBy== ChannelListActivity.MENU_SOURCE){
+			itemHolder.aux.setText(item.getSource());
 		} else {
 			itemHolder.aux.setText(item.getProvider());
 		}
@@ -179,6 +183,8 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 
 	private String groupFilter = null;
 
+	private String sourceFilter = null;
+
 	private String channelFilter = null;
 
 	public Filter getFilter() {
@@ -199,7 +205,7 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 									.getGroupChannels().get(str));
 						}
 					}
-				
+
 				} else if (groupBy == ChannelListActivity.MENU_PROVIDER) {
 					groupFilter = String.valueOf(arg0).toLowerCase();
 					for (Map.Entry<String, ArrayList<Channel>> p : ChannelClient
@@ -212,6 +218,17 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 						}
 					}
 
+				} else if(groupBy == ChannelListActivity.MENU_SOURCE) {
+					sourceFilter = String.valueOf(arg0).toLowerCase();
+					for (Map.Entry<String, ArrayList<Channel>> p : ChannelClient
+							.getSourceChannels().entrySet()) {
+						String pr = p.getKey();
+						String g = pr.toLowerCase();
+						if (g.indexOf(q) != -1) {
+							groups.add(pr);
+							groupChannels.put(pr, p.getValue());
+						}
+					}
 				} else {
 					channelFilter = String.valueOf(arg0).toLowerCase();
 					ArrayList<Channel> channels = new ArrayList<Channel>();
@@ -233,7 +250,7 @@ class ChannelAdapter extends BaseExpandableListAdapter implements Filterable// ,
 			@Override
 			protected void publishResults(CharSequence arg0, FilterResults arg1) {
 				Pair<ArrayList<String>, HashMap<String, ArrayList<Channel>>> res = (Pair<ArrayList<String>, HashMap<String, ArrayList<Channel>>>) arg1.values;
-				fill(res.first, res.second, groupBy);
+				fill(res.first, res.second, groupBy, reverse);
 
 			}
 		};

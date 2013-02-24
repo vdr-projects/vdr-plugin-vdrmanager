@@ -444,7 +444,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			if(cEvent instanceof Recording){
 				Utils.streamRecording(this, (Recording)cEvent);
 			} else {
-				Utils.stream(this, cEvent.getChannelNumber());
+				Utils.stream(this, String.valueOf(cEvent.getChannelNumber()));
 			}
 			break;
 		case R.id.epg_event_create_timer:

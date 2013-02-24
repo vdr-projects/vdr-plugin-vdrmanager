@@ -15,7 +15,7 @@ public class DelRecordingClient extends SvdrpClient<Recording> {
 
 	/**
 	 * Constructor
-	 * Recording	
+	 * Recording
 	 */
 	public DelRecordingClient(final Recording recording) {
 		super();
@@ -26,7 +26,7 @@ public class DelRecordingClient extends SvdrpClient<Recording> {
 	 * Starts the request
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	public void run()   {
 
 		final StringBuilder command = new StringBuilder();
 

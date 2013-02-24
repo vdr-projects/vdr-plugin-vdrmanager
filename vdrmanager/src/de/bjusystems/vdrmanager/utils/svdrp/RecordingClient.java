@@ -3,13 +3,7 @@ package de.bjusystems.vdrmanager.utils.svdrp;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Recording;
 
-public class RecordingClient extends SvdrpClient<Recording> implements SvdrpListener<Recording> {
-
-	public void svdrpEvent(SvdrpEvent event, Recording result) {
-//		if(event == SvdrpEvent.RESULT_RECEIVED){
-//			results.add(result);
-//		}
-	}
+public class RecordingClient extends SvdrpClient<Recording> {
 
 	@Override
 	protected Recording parseAnswer(String line) {
@@ -22,7 +16,7 @@ public class RecordingClient extends SvdrpClient<Recording> implements SvdrpList
 	}
 
 	@Override
-	public void run() throws SvdrpException {
+	public void run()   {
 		runCommand("recordings");
 	}
 

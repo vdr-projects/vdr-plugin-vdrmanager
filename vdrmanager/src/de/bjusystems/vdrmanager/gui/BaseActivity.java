@@ -5,27 +5,27 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpExceptionListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpResultListener;
 
-public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseActivity
-		implements OnClickListener, SvdrpAsyncListener<Result>, Cache {
+public abstract class BaseActivity<Result, T extends ListView> extends
+		ICSBaseActivity implements OnClickListener,
+		SvdrpResultListener<Result>, SvdrpListener, SvdrpExceptionListener,
+		Cache {
 
 	public static final String TAG = BaseActivity.class.getName();
 
@@ -91,6 +91,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 		Preferences.setLocale(this);
 		super.onConfigurationChanged(newConfig);
 	}
+
 	@Override
 	protected void onResume() {
 		Preferences.setLocale(this);
@@ -128,7 +129,6 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	// setTitle(title);
 	// }
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -150,7 +150,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+	public boolean onCreateOptionsMenu(
+			final com.actionbarsherlock.view.Menu menu) {
 
 		// MenuItem item;
 		// item = menu.add(MENU_GROUP_REFRESH, MENU_REFRESH, 0,
@@ -174,7 +175,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	abstract protected SvdrpClient<Result> getClient();
 
 	@Override
-	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			final com.actionbarsherlock.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.list_refresh:
 			backupViewSelection();
@@ -237,7 +239,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	}
 
 	protected void alert(String msg) {
-		if(isFinishing()){
+		if (isFinishing()) {
 			return;
 		}
 		new AlertDialog.Builder(this)//
@@ -272,7 +274,23 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 		return false;
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final Result result) {
+	public void svdrpEvent(Result result) {
+		resultReceived(result);
+	}
+
+	@Override
+	public void svdrpEvent(SvdrpEvent event, Throwable t) {
+		Utils.say(this, t.getLocalizedMessage());
+	}
+
+	protected void addListener(SvdrpAsyncTask<Result, SvdrpClient<Result>> task) {
+		task.addSvdrpExceptionListener(this);
+		task.addSvdrpResultListener(this);
+		task.addSvdrpListener(this);
+	}
+
+	@Override
+	public void svdrpEvent(final SvdrpEvent event) {
 
 		switch (event) {
 		case LOGIN:
@@ -296,13 +314,13 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 		case DISCONNECTED:
 			break;
 		case ABORTED:
+			progress.dismiss();
 			say(R.string.aborted);
 			break;
 		case ERROR:
-			alert(R.string.epg_client_errors);
 			progress.dismiss();
+			alert(R.string.epg_client_errors);
 			break;
-
 		case CONNECTED:
 			connected();
 			break;
@@ -314,23 +332,24 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 			noConnection(event);
 			break;
 		case CACHE_HIT:
-			cacheHit();
 			progress.dismiss();
+			cacheHit();
 			return;
 		case FINISHED_SUCCESS:
-
+			progress.dismiss();
 			if (finishedSuccess()) {
 				finishedSuccess = true;
 				restoreViewSelection();
 			} else {
 				say(R.string.epg_no_items);
 			}
-			progress.dismiss();
-			break;
-		case RESULT_RECEIVED:
-			resultReceived(result);
+
 			break;
 		}
+		// case RESULT_RECEIVED:
+		// resultReceived(result);
+		// break;
+		// }
 	}
 
 	private void setMessage(int progressConnect) {
@@ -354,7 +373,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends ICSBaseAc
 	protected abstract void resultReceived(Result result);
 
 	protected void connected() {
-
+		if (flipper != null) {
+			flipper.setDisplayedChild(0);
+		}
+		// results.clear();
 	}
 
 	public void svdrpException(final SvdrpException exception) {

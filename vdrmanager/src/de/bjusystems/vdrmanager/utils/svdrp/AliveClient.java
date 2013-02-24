@@ -24,7 +24,7 @@ public class AliveClient extends SvdrpClient<AliveState> {
 	 * @param parameter parameter for lste
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	public void run()   {
 		runCommand("aliv");
 	}
 

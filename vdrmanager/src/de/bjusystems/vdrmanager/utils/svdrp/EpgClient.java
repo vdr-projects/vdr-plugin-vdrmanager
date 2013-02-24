@@ -61,7 +61,7 @@ public class EpgClient extends SvdrpClient<Epg> {
 	 * @param parameter parameter for lste
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	public void run()   {
 		if (time != null) {
 			runCommand(String.format("tevents %s %s", time, Preferences.getPreferences().getChannels()));
 		} else if (channel != null) {

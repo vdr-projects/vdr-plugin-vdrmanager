@@ -2,7 +2,10 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +21,10 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
+import de.bjusystems.vdrmanager.data.EpgSearchTimeValue;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.gui.BaseEventListActivity.TitleComparator;
 import de.bjusystems.vdrmanager.tasks.ChannelsTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
@@ -30,7 +35,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
@@ -106,6 +111,15 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
+	@Override
+	protected int getAvailableSortByEntries() {
+		return R.array.epg_sort_by_time_alpha;
+	}
+
+	protected String getViewID() {
+		return EventEpgListActivity.class.getSimpleName();
+	}
+
 	private void startQuery() {
 		new ChannelsTask(this, new ChannelClient()) {
 			public void finished(SvdrpEvent event) {
@@ -136,6 +150,14 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
+	void sort() {
+		if (sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET) {
+			Collections.sort(CACHE, new TitleComparator());
+		} else if (sortBy == BaseEventListActivity.MENU_GROUP_DEFAULT) {
+			Collections.sort(CACHE, new TimeComparator(false));
+		}
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -163,6 +185,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	private void clearCache() {
 		cachedChannel = null;
+		CACHE.clear();
 	}
 
 	private boolean useCache() {
@@ -230,7 +253,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 		// create progress
 
-		task.addListener(this);
+		addListener(task);
 
 		// start task
 		task.run();
@@ -241,23 +264,19 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		return this.epgClient;
 	}
 
-	/*
-	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
-	 * cache hit
-	 * 
-	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
-	 */
 	@Override
-	synchronized protected boolean finishedSuccessImpl() {
-		adapter.clear();
-		CACHE.clear();
-		Date now = new Date();
-		nextForceCache = FUTURE;
+	protected void fillAdapter() {
+
+		if (CACHE.isEmpty()) {
+			return;
+		}
+
+		sort();
+
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		sortItemsByTime(results);
-		for (Event e : results) {
-			CACHE.add(e);
+		adapter.clear();
+		for (Event e : CACHE) {
 			cal.setTime(e.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -266,12 +285,76 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 						.getDailyHeader()));
 			}
 			adapter.add(new EventListItem((Epg) e));
+		}
+
+
+		adapter.notifyDataSetChanged();
+
+	}
+
+	/*
+	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
+	 * cache hit
+	 *
+	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
+	 */
+	@Override
+	synchronized protected boolean finishedSuccessImpl() {
+		// adapter.clear();
+		// CACHE.clear();
+
+		clearCache();
+
+		if (results.isEmpty()) {
+			return false;
+		}
+
+		Date now = new Date();
+
+		nextForceCache = FUTURE;
+		// Calendar cal = Calendar.getInstance();
+		// int day = -1;
+		// sortItemsByTime(results);
+		for (Event e : results) {
+			CACHE.add(e);
+			// cal.setTime(e.getStart());
+			// int eday = cal.get(Calendar.DAY_OF_YEAR);
+			// if (eday != day) {
+			// day = eday;
+			// adapter.add(new EventListItem(new DateFormatter(cal)
+			// .getDailyHeader()));
+			// }
+			// adapter.add(new EventListItem((Epg) e));
 			if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
 				nextForceCache = e.getStop();
 			}
 		}
 		cachedChannel = currentChannel;
+
+		fillAdapter();
+		listView.setSelectionAfterHeaderView();
 		return results.isEmpty() == false;
+
+		// ///////////////
+
+		// // get spinner value
+		// final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
+		// .getSelectedItem();
+		// nextForceCache = FUTURE;
+		// cachedTime = selection.getValue();
+		// Date now = new Date();
+		//
+		// //adapter.add(new EventListItem(new DateFormatter(results.get(0)
+		// // .getStart()).getDailyHeader()));
+		//
+		// for (Event e : results) {
+		// CACHE.add(e);
+		// if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
+		// nextForceCache = e.getStop();
+		// }
+		// }
+		//
+
 	}
 
 	protected void prepareDetailsViewData(final EventListItem item) {

@@ -34,10 +34,10 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 
 public class Utils {
@@ -371,8 +371,8 @@ public class Utils {
 		final SwitchChannelClient scc = new SwitchChannelClient(id);
 		SvdrpAsyncTask<String, SwitchChannelClient> task = new SvdrpAsyncTask<String, SwitchChannelClient>(
 				scc);
-		task.addListener(new SvdrpAsyncListener<String>() {
-			public void svdrpEvent(SvdrpEvent event, String result) {
+		task.addSvdrpListener(new SvdrpListener() {
+			public void svdrpEvent(SvdrpEvent event) {
 				if (event == SvdrpEvent.FINISHED_SUCCESS) {
 					Utils.say(ctx, ctx.getString(R.string.switching_success,
 							(name != null ? name : id)));

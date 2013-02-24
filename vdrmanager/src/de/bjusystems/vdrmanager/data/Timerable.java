@@ -11,10 +11,12 @@ public interface Timerable {
 		Recorded
 		;
 	}
-	
+
 	public Timer createTimer();
-	
+
 	public abstract Timer getTimer();
 
 	public TimerState getTimerState();
+
+	public TimerMatch getTimerMatch();
 }

@@ -20,7 +20,6 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 
@@ -30,7 +29,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
  * @author bju
  */
 public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
-		OnItemClickListener, SvdrpAsyncListener<Epg> {
+		OnItemClickListener {
 
 	private void initSearch(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -106,7 +105,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		task.addListener(this);
+		addListener(task);
 
 		// start task
 		task.run();
@@ -137,7 +136,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 			adapter.add(new EventListItem((Epg) e));
 		}
 		listView.setSelectionAfterHeaderView();
-		return results.isEmpty() == false;
+		return adapter.getCount() > 0;
 	}
 
 	protected void prepareDetailsViewData(final EventListItem item) {

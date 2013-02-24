@@ -4,9 +4,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
@@ -14,7 +11,6 @@ import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
@@ -25,7 +21,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.TimerClient;
  * @author bju
  */
 public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
-		OnItemClickListener, SvdrpAsyncListener<Timer> {
+		OnItemClickListener {
 
 	private static final int MENU_NEW_TIMER = 2;
 
@@ -95,7 +91,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 
 		// attach listener
 		// task.addListener(progress);
-		task.addListener(this);
+		addListener(task);
 
 		// start task
 		task.run();
@@ -128,7 +124,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	}
 
 	protected Comparator<Timer> getTimeComparator(boolean reverse) {
-		return new BaseEventComparator(reverse) {
+		return new TimeAndChannelComparator(reverse) {
 			@Override
 			public int compare(Timer item1, Timer item2) {
 				if (item1.isRecurring()) {
@@ -163,7 +159,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 			adapter.add(new EventListItem(e));
 		}
 		listView.setSelectionAfterHeaderView();
-		return results.isEmpty() == false;
+		return adapter.isEmpty() == false;
 	}
 
 	@Override

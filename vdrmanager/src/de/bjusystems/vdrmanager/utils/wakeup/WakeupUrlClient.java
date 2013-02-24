@@ -24,7 +24,7 @@ public class WakeupUrlClient extends SvdrpClient<WakeupState> {
 	 * Starts the wakeup request
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	public void run() {
 		runCommand("wake");
 	}
 

@@ -5,12 +5,9 @@ import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-
 import android.os.Bundle;
-
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +23,6 @@ import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
@@ -37,7 +33,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * @author bju
  */
 public class RecordingListActivity extends BaseEventListActivity<Recording>
-		implements OnItemLongClickListener, SvdrpAsyncListener<Recording> {
+		implements OnItemLongClickListener {
 
 	RecordingClient recordingClient;
 
@@ -76,7 +72,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		startRecordingQuery();
 	}
 
-
 	private String[] getAvailableGroupByEntries() {
 		ArrayList<String> entries = new ArrayList<String>(2);
 		entries.add(getString(R.string.groupby_date));
@@ -88,7 +83,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	AlertDialog groupByDialog = null;
 
 	@Override
-	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.menu_groupby:
@@ -102,13 +98,14 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 								groupBy, new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
-										if(groupBy == which){
-											ASC_DESC =  ASC_DESC == ASC ? DESC : ASC;
+										if (groupBy == which) {
+											ASC_DESC = ASC_DESC == ASC ? DESC
+													: ASC;
 										} else {
 											groupBy = which;
 											ASC_DESC = ASC;
 										}
-										//fillAdapter();
+										// fillAdapter();
 										groupByDialog.dismiss();
 										say("Comming soon...");
 									}
@@ -122,6 +119,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -130,12 +128,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	 * .view.Menu)
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+	public boolean onCreateOptionsMenu(
+			final com.actionbarsherlock.view.Menu menu) {
 		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.recording_list_menu, menu);
-		return 	super.onCreateOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu);
 	}
-
 
 	@Override
 	protected SvdrpClient<Recording> getClient() {
@@ -159,7 +157,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 		final EventListItem item = adapter.getItem(info.position);
-		if(item.isHeader()){
+		if (item.isHeader()) {
 			return;
 		}
 
@@ -170,7 +168,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			menu.setHeaderTitle(formatter.getTitle());
 
 			inflater.inflate(R.menu.recording_list_item_menu, menu);
-			if(Preferences.get().isEnableRecStream() == false){
+			if (Preferences.get().isEnableRecStream() == false) {
 				menu.removeItem(R.id.recording_item_menu_stream);
 			}
 
@@ -178,12 +176,11 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 		super.onCreateContextMenu(menu, v, menuInfo);
 		//
-//		http://projects.vdr-developer.org/issues/863
-		if(Utils.isLive(item)){
+		// http://projects.vdr-developer.org/issues/863
+		if (Utils.isLive(item)) {
 			menu.removeItem(R.id.epg_item_menu_live_tv);
 		}
 	}
-
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
@@ -197,8 +194,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
 				@Override
 				public void finished(SvdrpEvent event) {
-					backupViewSelection();
-					refresh();
+					if (event == SvdrpEvent.FINISHED_SUCCESS) {
+						backupViewSelection();
+						refresh();
+					}
 				}
 			};
 			drt.start();
@@ -206,7 +205,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 		case R.id.recording_item_menu_stream: {
 			Utils.streamRecording(this, rec);
-			//say("Sorry, not yet. It would be. File -> " + rec.getFileName());
+			// say("Sorry, not yet. It would be. File -> " + rec.getFileName());
 			break;
 		}
 
@@ -217,7 +216,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	private void startRecordingQuery() {
-
 
 		if (checkInternetConnection() == false) {
 			return;
@@ -232,7 +230,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 		// create progress dialog
 
-		task.addListener(this);
+		addListener(task);
 
 		// start task
 		task.run();
@@ -270,10 +268,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				adapter.add(new EventListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem((Recording)rec));
+			adapter.add(new EventListItem((Recording) rec));
 		}
 		// adapter.sortItems();
-		return results.isEmpty() == false;
+		return adapter.isEmpty() == false;
 	}
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,

@@ -2,6 +2,7 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -33,7 +34,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 
 /**
  * This class is used for showing what's current running on all channels
- * 
+ *
  * @author bju
  */
 public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
@@ -62,13 +63,13 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		cachedTime = null;
 		super.reset();
 	}
-	
-	
+
+
 	@Override
 	protected SvdrpClient<Epg> getClient() {
 		return this.epgClient;
 	}
-	
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -209,6 +210,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	private void clearCache() {
 		cachedTime = null;
+		CACHE.clear();
 	}
 
 	private boolean useCache(String time) {
@@ -234,25 +236,13 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private void startEpgQuery(String time, boolean force) {
 
 		if (useCache(time) && !force) {
-			// TODO unschön, refactor to have one code for filling adapter.
-			adapter.clear();
-			if (CACHE.isEmpty() == false) {
-				adapter.add(new EventListItem(new DateFormatter(CACHE.get(0)
-						.getStart()).getDailyHeader()));
-			}
-			for (Event e : CACHE) {
-				adapter.add(new EventListItem((Epg) e));
-			}
-			// adapter.sortItems();
-			listView.setSelectionAfterHeaderView();
+			fillAdapter();
 			return;
 		}
 
 		if (checkInternetConnection() == false) {
 			return;
 		}
-
-		clearCache();
 
 		epgClient = new EpgClient(time);
 
@@ -264,39 +254,76 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 				epgClient);
 
 		// create progress
-		task.addListener(this);
+		addListener(task);
 
 		// start task
 		task.run();
 	}
 
+
+	@Override
+	protected void fillAdapter() {
+		if(CACHE.isEmpty()){
+			return;
+		}
+
+		sort();
+		adapter.clear();
+		adapter.add(new EventListItem(new DateFormatter(CACHE.get(0)
+				.getStart()).getDailyHeader()));
+
+		for (Event e : CACHE) {
+			adapter.add(new EventListItem((Epg) e));
+		}
+		adapter.notifyDataSetChanged();
+	}
+
+	void sort() {
+		if(sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET) {
+			Collections.sort(CACHE, new TitleComparator());
+		} else if (sortBy == BaseEventListActivity.MENU_GROUP_DEFAULT) {
+			Collections.sort(CACHE, new ChannelComparator());
+		}
+	}
+
+
+	@Override
+	protected int getAvailableSortByEntries() {
+		return R.array.epg_sort_by_channels_alpha;
+	}
+
+
+	protected String getViewID(){
+		return TimeEpgListActivity.class.getSimpleName();
+	}
+
 	@Override
 	protected boolean finishedSuccessImpl() {
-		// get spinner value
-		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
-				.getSelectedItem();
-		adapter.clear();
-		CACHE.clear();
-		nextForceCache = FUTURE;
-		cachedTime = selection.getValue();
-		Date now = new Date();
-		sortItemsByChannel(results);
+		clearCache();
+
 		if (results.isEmpty()) {
 			return false;
 		}
 
-		adapter.add(new EventListItem(new DateFormatter(results.get(0)
-				.getStart()).getDailyHeader()));
+		// get spinner value
+		final EpgSearchTimeValue selection = (EpgSearchTimeValue) timeSpinner
+				.getSelectedItem();
+		nextForceCache = FUTURE;
+		cachedTime = selection.getValue();
+		Date now = new Date();
+
+		//adapter.add(new EventListItem(new DateFormatter(results.get(0)
+			//	.getStart()).getDailyHeader()));
 
 		for (Event e : results) {
 			CACHE.add(e);
-			adapter.add(new EventListItem((Epg) e));
 			if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
 				nextForceCache = e.getStop();
 			}
 		}
+		fillAdapter();
 		listView.setSelectionAfterHeaderView();
-		return CACHE.isEmpty() == false;
+		return results.isEmpty() == false;
 
 	}
 

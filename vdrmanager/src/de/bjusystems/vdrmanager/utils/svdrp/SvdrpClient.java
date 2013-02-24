@@ -22,9 +22,9 @@ import de.bjusystems.vdrmanager.data.Preferences;
 
 /**
  * Class for SVDRP communication
- * 
+ *
  * @author bju
- * 
+ *
  */
 public abstract class SvdrpClient<Result> {
 
@@ -39,7 +39,15 @@ public abstract class SvdrpClient<Result> {
 	/** flag for stopping the current request */
 	private boolean abort;
 	/** listener */
-	private final List<SvdrpListener<Result>> listeners = new ArrayList<SvdrpListener<Result>>();
+	private final List<SvdrpListener> svdrpListeners = new ArrayList<SvdrpListener>();
+
+	private final List<SvdrpResultListener<Result>> svdrpResultListeners = new ArrayList<SvdrpResultListener<Result>>();
+
+	private final List<SvdrpExceptionListener> svdrpExceptionListeners = new ArrayList<SvdrpExceptionListener>();
+
+	// private final List<SvdrpListener<>> listeners = new
+	// ArrayList<SvdrpListener<Result>>();
+
 	/** list of results */
 	// private final List<Result> results = new ArrayList<Result>();
 	/** should the listener be informed about each received result */
@@ -53,7 +61,7 @@ public abstract class SvdrpClient<Result> {
 
 	private Timer watchDog = new Timer();
 
-	//private NativeDES crypt = new NativeDES();
+	// private NativeDES crypt = new NativeDES();
 
 	public boolean isConnected() {
 		if (socket == null) {
@@ -64,7 +72,7 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Parse received answer line
-	 * 
+	 *
 	 * @param line
 	 *            line
 	 * @return received data object or null if not completed yet
@@ -73,11 +81,11 @@ public abstract class SvdrpClient<Result> {
 
 	public abstract int getProgressTextId();
 
-	public abstract void run() throws SvdrpException;
+	public abstract void run();
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param prefs
 	 *            Preferences
 	 */
@@ -88,28 +96,61 @@ public abstract class SvdrpClient<Result> {
 	/**
 	 * Remove all listeners
 	 */
-	public void clearSvdrpListener() {
-		listeners.clear();
+	public void clearListener() {
+		svdrpExceptionListeners.clear();
+		svdrpListeners.clear();
+		svdrpResultListeners.clear();
 	}
 
 	/**
 	 * Adds the listener to the list of listeners
-	 * 
+	 *
 	 * @param listener
 	 *            listener
 	 */
-	public void addSvdrpListener(final SvdrpListener<Result> listener) {
-		listeners.add(listener);
+	public void addSvdrpListener(final SvdrpListener listener) {
+		svdrpListeners.add(listener);
+	}
+
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpResultListener(
+			final SvdrpResultListener<Result> listener) {
+		svdrpResultListeners.add(listener);
+	}
+
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpExceptionListener(final SvdrpExceptionListener listener) {
+		svdrpExceptionListeners.add(listener);
 	}
 
 	/**
 	 * Removes the listener from the list of listeners
-	 * 
+	 *
 	 * @param listener
 	 *            listener
 	 */
-	public void removeSvdrpListener(final SvdrpListener<Result> listener) {
-		listeners.remove(listener);
+	public void removeSvdrpListener(final SvdrpListener listener) {
+		svdrpListeners.remove(listener);
+	}
+
+	public void removeSvdrpResultListener(
+			final SvdrpResultListener<Result> listener) {
+		svdrpResultListeners.remove(listener);
+	}
+
+	public void removeSvdrpExceptionListener(
+			final SvdrpExceptionListener listener) {
+		svdrpExceptionListeners.remove(listener);
 	}
 
 	/**
@@ -140,7 +181,7 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Connect to SVDRP
-	 * 
+	 *
 	 * @param host
 	 *            host
 	 * @param port
@@ -155,7 +196,7 @@ public abstract class SvdrpClient<Result> {
 		final Preferences prefs = Preferences.get();
 		try {
 			// connect
-			informListener(SvdrpEvent.CONNECTING, null);
+			informListener(SvdrpEvent.CONNECTING);
 
 			if (false && Preferences.get().isSecure()) {
 
@@ -172,7 +213,7 @@ public abstract class SvdrpClient<Result> {
 							.getSvdrpPort()),
 					prefs.getConnectionTimeout() * 1000);// 8 secs for connect
 			if (abort) {
-				informListener(SvdrpEvent.ABORTED, null);
+				informListener(SvdrpEvent.ABORTED);
 			}
 			//
 			socket.setSoTimeout(prefs.getReadTimeout() * 1000);// 15 sec for
@@ -191,22 +232,22 @@ public abstract class SvdrpClient<Result> {
 					abort = true;
 				}
 			}, delay);
-			informListener(SvdrpEvent.CONNECTED, null);
+			informListener(SvdrpEvent.CONNECTED);
 		} catch (final SocketTimeoutException sote) {
 			Log.w(TAG, sote);
 			if (abort) {
-				informListener(SvdrpEvent.ABORTED, null);
+				informListener(SvdrpEvent.ABORTED);
 			} else {
-				informListener(SvdrpEvent.CONNECTION_TIMEOUT, null);
+				informListener(SvdrpEvent.CONNECTION_TIMEOUT);
 			}
 			return false;
 		} catch (final Exception e) {
 
 			Log.w(TAG, e);
 			if (abort) {
-				informListener(SvdrpEvent.ABORTED, null);
+				informListener(SvdrpEvent.ABORTED);
 			} else {
-				informListener(SvdrpEvent.CONNECT_ERROR, null);
+				informListener(SvdrpEvent.CONNECT_ERROR);
 			}
 			return false;
 		}
@@ -218,36 +259,36 @@ public abstract class SvdrpClient<Result> {
 		// inputStream = new InflaterInputStream(socket.getInputStream())
 
 		// password needed?
-		informListener(SvdrpEvent.LOGIN, null);
+		informListener(SvdrpEvent.LOGIN);
 		writeLine("passwd " + prefs.getPassword());
 		if (!readLine().startsWith("!OK")) {
-			informListener(SvdrpEvent.LOGIN_ERROR, null);
+			informListener(SvdrpEvent.LOGIN_ERROR);
 			disconnect();
 			return false;
 		} else {
-			informListener(SvdrpEvent.LOGGED_IN, null);
+			informListener(SvdrpEvent.LOGGED_IN);
 		}
 		return true;
 	}
 
 	/**
 	 * Disconnect from SVDRP if connected
-	 * 
+	 *
 	 * @throws IOException
 	 *             on errors
 	 */
 	protected void disconnect() throws IOException {
-		informListener(SvdrpEvent.DISCONNECTING, null);
+		informListener(SvdrpEvent.DISCONNECTING);
 		if (socket != null && socket.isConnected()) {
 			socket.close();
 			socket = null;
 		}
-		informListener(SvdrpEvent.DISCONNECTED, null);
+		informListener(SvdrpEvent.DISCONNECTED);
 	}
 
 	/**
 	 * Sends one line to SVDRP
-	 * 
+	 *
 	 * @param line
 	 *            line of text
 	 * @throws IOException
@@ -256,9 +297,9 @@ public abstract class SvdrpClient<Result> {
 	protected void writeLine(final String line) throws IOException {
 
 		String command = line + "\r\n";
-		//if (false && Preferences.get().isSecure()) {
-			//command = crypt.encrypt(command, Preferences.get().getPassword());
-		//}
+		// if (false && Preferences.get().isSecure()) {
+		// command = crypt.encrypt(command, Preferences.get().getPassword());
+		// }
 		final byte[] bytes = command.getBytes("utf-8");
 		outputStream.write(bytes);
 		outputStream.flush();
@@ -266,7 +307,7 @@ public abstract class SvdrpClient<Result> {
 
 	/**
 	 * Reads one line from SVDRP
-	 * 
+	 *
 	 * @return line read
 	 * @throws IOException
 	 *             on errors
@@ -306,13 +347,13 @@ public abstract class SvdrpClient<Result> {
 			Log.w(TAG, usex);
 			line = lineBytes.toString();
 		}
-		//if (false && Preferences.get().isSecure()) {
-			//line = crypt.decrypt(line, Preferences.get().getPassword());
-		//}
+		// if (false && Preferences.get().isSecure()) {
+		// line = crypt.decrypt(line, Preferences.get().getPassword());
+		// }
 		return line;
 	}
 
-	public void runCommand(final String command) throws SvdrpException {
+	public void runCommand(final String command) {
 
 		try {
 
@@ -329,9 +370,9 @@ public abstract class SvdrpClient<Result> {
 			}
 
 			// send command
-			informListener(SvdrpEvent.COMMAND_SENDING, null);
+			informListener(SvdrpEvent.COMMAND_SENDING);
 			writeLine(command);
-			informListener(SvdrpEvent.COMMAND_SENT, null);
+			informListener(SvdrpEvent.COMMAND_SENT);
 			Log.i(TAG, SvdrpEvent.COMMAND_SENT + ":" + command);
 
 			// read first line
@@ -358,7 +399,14 @@ public abstract class SvdrpClient<Result> {
 				// error?
 				if (line.startsWith("!ERROR")) {
 					Log.w(TAG, line);
-					informListener(SvdrpEvent.ERROR, null);
+					String msg;
+					if (line.startsWith("!ERROR:")) {
+						msg = line.substring(7);
+					} else {
+						msg = line;
+					}
+					disconnect();
+					informListener(SvdrpEvent.ERROR, new SvdrpException(msg));
 					break;
 				}
 
@@ -366,17 +414,19 @@ public abstract class SvdrpClient<Result> {
 				Result result = null;
 				try {
 					result = parseAnswer(line);
+
 				} catch (Exception ex) {
 					Log.w(TAG, ex);
-					Log.w(TAG, "line: " + line);
-					informListener(SvdrpEvent.ERROR, null);
 					disconnect();
-					break;
+					Log.w(TAG, "line: " + line);
+					informListener(SvdrpEvent.ERROR, ex);
+					return;
 				}
 				if (result != null) {
+					informListener(result);
 					// results.add(result);
 					// if (resultInfoEnabled) {
-					informListener(SvdrpEvent.RESULT_RECEIVED, result);
+
 					// }
 				}
 
@@ -386,15 +436,14 @@ public abstract class SvdrpClient<Result> {
 			disconnect();
 
 			if (abort) {
-				informListener(SvdrpEvent.ABORTED, null);
+				informListener(SvdrpEvent.ABORTED);
 			} else {
-				informListener(SvdrpEvent.FINISHED_SUCCESS, null);
+				informListener(SvdrpEvent.FINISHED_SUCCESS);
 			}
 
 		} catch (final Exception e) {
-			// throw new SvdrpException(e);
 			Log.w(TAG, e);
-			informListener(SvdrpEvent.FINISHED_ABNORMALY, null);
+			informListener(SvdrpEvent.FINISHED_ABNORMALY, e);
 		}
 	}
 
@@ -402,14 +451,22 @@ public abstract class SvdrpClient<Result> {
 	// this.resultInfoEnabled = resultInfoEnabled;
 	// }
 
-	protected void informListenerError(final SvdrpEvent event,
-			final Throwable result) {
-
-	}
-
-	protected void informListener(final SvdrpEvent event, final Result result) {
-		for (final SvdrpListener<Result> listener : listeners) {
-			listener.svdrpEvent(event, result);
+	protected void informListener(final SvdrpEvent event, final Throwable e) {
+		for (final SvdrpExceptionListener listener : svdrpExceptionListeners) {
+			listener.svdrpEvent(event, e);
 		}
 	}
+
+	protected void informListener(final SvdrpEvent event) {
+		for (final SvdrpListener listener : svdrpListeners) {
+			listener.svdrpEvent(event);
+		}
+	}
+
+	protected void informListener(final Result result) {
+		for (final SvdrpResultListener<Result> listener : svdrpResultListeners) {
+			listener.svdrpEvent(result);
+		}
+	}
+
 }

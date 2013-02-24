@@ -5,14 +5,14 @@ import java.util.Date;
 import android.text.TextUtils;
 
 /**
- * Basisc class for all Events 
- * 
+ * Basisc class for all Events
+ *
  * @author bju,lado
  *
  */
 public abstract class Event {
 
-	protected String channelNumber;
+	protected Long channelNumber;
 	protected String channelId;
 	protected String channelName;
 
@@ -21,18 +21,18 @@ public abstract class Event {
 	protected String description;
 	protected Date start;
 	protected Date stop;
-	
-	
+
+
 	public long getDuration(){
 		long millis = getStop().getTime() - getStart().getTime();
 		return millis;
 	}
-	
+
 	public Event(){
-		
+
 	}
-	
-	public void setChannelNumber(String channelNumber) {
+
+	public void setChannelNumber(Long channelNumber) {
 		this.channelNumber = channelNumber;
 	}
 
@@ -70,7 +70,7 @@ public abstract class Event {
 		stop = event.getStop();
 	}
 
-	public String getChannelNumber() {
+	public Long getChannelNumber() {
 		return channelNumber;
 	}
 
@@ -116,7 +116,7 @@ public abstract class Event {
 		if(channelId  != null){
 			return channelId;
 		}
-		return channelNumber;
+		return String.valueOf(channelNumber);
 	}
-	
+
 }

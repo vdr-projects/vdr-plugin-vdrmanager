@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +26,10 @@ import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.P;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
+import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
@@ -50,7 +51,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	public static final int MENU_TO_CAL = 91;
 
-
 	private SimpleGestureFilter detector;
 
 	protected EpgClient epgClient;
@@ -69,15 +69,18 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	AlertDialog sortByDialog = null;
 
-	public static final int MENU_GROUP_TIME = 0;
+	public static final int MENU_GROUP_DEFAULT = 0;
 
 	public static final int MENU_GROUP_ALPHABET = 1;
 
-	private int sortBy = MENU_GROUP_TIME;
+	protected int sortBy;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		sortBy = Preferences.get(this, getViewID() + "_"
+				+ P.EPG_LAST_SORT, MENU_GROUP_DEFAULT);
 		// Attach view
 		setContentView(getMainLayout());
 		setTitle(getWindowTitle());
@@ -109,7 +112,8 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 * .view.Menu)
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+	public boolean onCreateOptionsMenu(
+			final com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
 		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
@@ -168,11 +172,14 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		return true;
 	}
 
-	private String[] getAvailableSortByEntries() {
-		ArrayList<String> entries = new ArrayList<String>(2);
-		entries.add(getString(R.string.sortby_time));
-		entries.add(getString(R.string.sortby_alphabet));
-		return entries.toArray(Utils.EMPTY);
+
+
+	protected int getAvailableSortByEntries() {
+		return 0;
+	}
+
+	protected void fillAdapter() {
+
 	}
 
 	/*
@@ -182,7 +189,8 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
 	 * .view.MenuItem)
 	 */
-	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.epg_list_menu_channels:
@@ -199,11 +207,33 @@ public abstract class BaseEventListActivity<T extends Event> extends
 								sortBy, new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
+
+										if (sortBy == which) {
+											sortByDialog.dismiss();
+											return;
+										}
+
 										sortBy = which;
-										// fillAdapter();
-										adapter.sort(sortBy);
+
+										new VoidAsyncTask() {
+
+											@Override
+											protected Void doInBackground(
+													Void... params) {
+												Preferences
+														.set(BaseEventListActivity.this,
+																getViewID()
+																		+ "_"
+																		+ P.EPG_LAST_SORT,
+																sortBy);
+												return null;
+											}
+										}.execute();
+
 										sortByDialog.dismiss();
+										fillAdapter();
 									}
+
 								}).create();
 			}
 
@@ -308,14 +338,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	}
 
 	@Override
-	protected void connected() {
-		if (flipper != null) {
-			flipper.setDisplayedChild(0);
-		}
-		results.clear();
-	}
-
-	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		int index = savedInstanceState.getInt("INDEX");
@@ -365,12 +387,12 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	}
 
-	protected void sortItemsByChannel(List<T> result) {
-		final Comparator<T> comparator = new Comparator<T>() {
+	protected void sortItemsByChannel(List<Event> result) {
+		final Comparator<Event> comparator = new Comparator<Event>() {
 
-			public int compare(final T item1, final T item2) {
-				return Integer.valueOf(item1.getChannelNumber()).compareTo(
-						Integer.valueOf(item2.getChannelNumber()));
+			public int compare(final Event item1, final Event item2) {
+				return item1.getChannelNumber().compareTo(
+						item2.getChannelNumber());
 			}
 		};
 		Collections.sort(result, comparator);
@@ -380,11 +402,57 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		sortItemsByTime(result, false);
 	}
 
-	class BaseEventComparator implements Comparator<T> {
+	protected void sortItemsByTime(List<T> result, final boolean reverse) {
+		Collections.sort(result, new TimeAndChannelComparator(reverse));
+	}
+
+	public void svdrpException(final SvdrpException exception) {
+		Log.w(TAG, exception);
+		alert(getString(R.string.vdr_error_text, exception.getMessage()));
+	}
+
+	abstract protected boolean finishedSuccessImpl();
+
+	protected String getViewID(){
+		return this.getClass().getSimpleName();
+	}
+
+	protected final synchronized boolean finishedSuccess() {
+		setTitle(getString(R.string.epg_window_title_count, getWindowTitle(),
+				results.size()));
+		try {
+			return finishedSuccessImpl();
+		} finally {
+			results.clear();
+		}
+	}
+
+	@Override
+	protected boolean displayingResults() {
+		return results.isEmpty() == false;
+	}
+
+	class TitleComparator implements Comparator<Event> {
+
+		@Override
+		public int compare(Event lhs, Event rhs) {
+			if (lhs == null || lhs.getTitle() == null) {
+				return 1;
+			}
+			if (rhs == null || rhs.getTitle() == null) {
+				return 0;
+			}
+			return lhs.getTitle().compareToIgnoreCase(rhs.getTitle());
+		}
+	};
+
+	class TimeAndChannelComparator implements Comparator<T> {
 		boolean r = false;
-		BaseEventComparator(boolean r){
+
+		TimeAndChannelComparator(boolean r) {
 			this.r = r;
 		}
+
 		public int compare(final T item1, final T item2) {
 
 			int c = item1.getStart().compareTo(item2.getStart());
@@ -403,36 +471,45 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			if (item2.getChannelNumber() == null) {
 				return -1;
 			}
-			return Integer.valueOf(item1.getChannelNumber()).compareTo(
-					Integer.valueOf(item2.getChannelNumber()));
+			return item1.getChannelNumber().compareTo(item2.getChannelNumber());
 		}
 	}
 
-	protected void sortItemsByTime(List<T> result, final boolean reverse) {
+	class TimeComparator implements Comparator<Event> {
+		boolean r = false;
 
-		Collections.sort(result, getTimeComparator(reverse));
+		TimeComparator(boolean r) {
+			this.r = r;
+		}
+
+		public int compare(final Event item1, final Event item2) {
+
+			int c = item1.getStart().compareTo(item2.getStart());
+			if (c == 0) {
+				return c;
+			}
+			if (r == false)
+				return c;
+			return -1 * c;
+		}
 	}
 
-	protected Comparator<? super T> getTimeComparator(boolean reverse) {
-		return new BaseEventComparator(reverse);
-	}
+	class ChannelComparator implements Comparator<Event> {
 
-	public void svdrpException(final SvdrpException exception) {
-		Log.w(TAG, exception);
-		alert(getString(R.string.vdr_error_text, exception.getMessage()));
-	}
+		public int compare(final Event item1, final Event item2) {
 
-	abstract protected boolean finishedSuccessImpl();
-
-	protected final boolean finishedSuccess() {
-		setTitle(getString(R.string.epg_window_title_count, getWindowTitle(),
-				results.size()));
-		return finishedSuccessImpl();
-	}
-
-	@Override
-	protected boolean displayingResults() {
-		return results.isEmpty() == false;
+			if (item1.getChannelNumber() == null
+					&& item2.getChannelNumber() == null) {
+				return 0;
+			}
+			if (item1.getChannelNumber() == null) {
+				return 1;
+			}
+			if (item2.getChannelNumber() == null) {
+				return -1;
+			}
+			return item1.getChannelNumber().compareTo(item2.getChannelNumber());
+		}
 	}
 
 }

@@ -1,5 +1,7 @@
 package de.bjusystems.vdrmanager.data;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,25 +15,62 @@ import de.bjusystems.vdrmanager.app.C;
 @DatabaseTable
 public class Channel implements Parcelable {
 
-	
-	@DatabaseField(id=true)
+	@DatabaseField(id = true)
 	String id;
 	private int number;
-	
+
 	@DatabaseField
 	private String name;
-	
-	@DatabaseField(index=true)
+
+	@DatabaseField(index = true)
 	private String provider;
 
 	@DatabaseField
 	private String rawAudio;
-	
+
 	@DatabaseField(index = true)
 	private String group;
 
+	private String source;
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
 	public String getGroup() {
 		return group;
+	}
+
+	private List<Audio> audio;
+
+	public List<Audio> getAudio() {
+		if (audio != null) {
+			return audio;
+		}
+
+		String[] splitted = rawAudio.split("\\|");
+		if (splitted == null || splitted.length == 0) {
+			audio = new ArrayList<Channel.Audio>(0);
+		} else {
+			audio = new ArrayList<Channel.Audio>(splitted.length);
+			for (String a : splitted) {
+				String[] ar = a.split(",");
+				if (ar == null || ar.length != 3) {
+					continue;
+				}
+				Audio track = new Audio();
+				track.type = ar[0];
+				track.index = Integer.valueOf(ar[1]);
+				track.display = ar[2];
+				audio.add(track);
+			}
+		}
+		return audio;
+
 	}
 
 	public void setGroup(String group) {
@@ -43,19 +82,26 @@ public class Channel implements Parcelable {
 	}
 
 	public Channel(final String channelData) {
-		String[] words = StringUtils.splitPreserveAllTokens(channelData, C.DATA_SEPARATOR);
+		String[] words = StringUtils.splitPreserveAllTokens(channelData,
+				C.DATA_SEPARATOR);
 		this.number = Integer.valueOf(words[0].substring(1));
 		if (words.length > 2) {
 			this.name = words[1];
 			this.provider = words[2];
 			this.id = words[3];
 			this.rawAudio = words[4];
+			if (words.length > 5) {
+				this.source = words[5];
+			} else {
+				this.source = "Default";
+			}
 		} else {
 			this.name = words[1];
 			this.id = "-1";
 			this.provider = "Unknown";
 			this.rawAudio = "";
 		}
+
 	}
 
 	public Channel() {
@@ -72,6 +118,7 @@ public class Channel implements Parcelable {
 		this.provider = in.readString();
 		this.id = in.readString();
 		this.rawAudio = in.readString();
+		this.source = in.readString();
 	}
 
 	public boolean isGroupSeparator() {
@@ -90,10 +137,10 @@ public class Channel implements Parcelable {
 		return provider;
 	}
 
-	public String getId(){
+	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String toString() {
 		final StringBuilder text = new StringBuilder();
@@ -115,6 +162,7 @@ public class Channel implements Parcelable {
 		dest.writeString(provider);
 		dest.writeString(id);
 		dest.writeString(rawAudio);
+		dest.writeString(source);
 
 	}
 
@@ -127,21 +175,31 @@ public class Channel implements Parcelable {
 			return new Channel[size];
 		}
 	};
-	
+
 	public boolean equals(Object o) {
-		if(o instanceof Channel == false){
+		if (o instanceof Channel == false) {
 			return false;
 		}
-		if(o == this){
+		if (o == this) {
 			return true;
 		}
 
-		return number == ((Channel)o).getNumber();
+		return number == ((Channel) o).getNumber();
 	};
-	
+
 	@Override
 	public int hashCode() {
 		return number;
 	}
-	
+
+	class Audio {
+
+		public int index;
+
+		public String type;
+
+		public String display;
+
+	}
+
 }

@@ -71,7 +71,7 @@ public class Timer extends Event implements Timerable {
 
 		// flags, channel number and channel name
 		this.flags = Integer.valueOf(values[1]);
-		this.channelNumber = values[2];
+		this.channelNumber = Long.valueOf(values[2]);
 		this.channelName = Utils.mapSpecialChars(values[3]);
 
 		// get start and stop
@@ -239,4 +239,13 @@ public class Timer extends Event implements Timerable {
 	public Timer createTimer() {
 		return new Timer(this);
 	}
+
+
+	@Override
+	public TimerMatch getTimerMatch() {
+		return TimerMatch.Full;
+	}
+
+
+
 }

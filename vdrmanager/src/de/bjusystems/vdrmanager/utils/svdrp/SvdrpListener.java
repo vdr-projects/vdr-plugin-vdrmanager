@@ -1,7 +1,9 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
 
-public interface SvdrpListener<Result>{
+public interface SvdrpListener{
 
-	void svdrpEvent(SvdrpEvent event, Result result);
+
+	void svdrpEvent(SvdrpEvent event);
+
 }

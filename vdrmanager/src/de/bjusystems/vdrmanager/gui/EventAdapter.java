@@ -21,6 +21,7 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
@@ -38,15 +39,14 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 
 	String highlight;
 
-	 /**
-     * Lock used to modify the content of {@link #mObjects}. Any write operation
-     * performed on the array should be synchronized on this lock. This lock is also
-     * used by the filter (see {@link #getFilter()} to make a synchronized copy of
-     * the original array of data.
-     */
-    private final Object _Lock = new Object();
+	/**
+	 * Lock used to modify the content of {@link #mObjects}. Any write operation
+	 * performed on the array should be synchronized on this lock. This lock is
+	 * also used by the filter (see {@link #getFilter()} to make a synchronized
+	 * copy of the original array of data.
+	 */
+	private final Object _Lock = new Object();
 
-	
 	public EventAdapter(final Context context, int layout) {
 		super(context, layout);
 		this.layout = layout;
@@ -63,51 +63,8 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		items.add(object);
 		super.add(object);
 	}
-	
-	
-	void sort(int sortBy){
-		
-		ArrayList<EventListItem> events = new ArrayList<EventListItem>(items);
-		
-		if(sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET){
-		
-			Collections.sort(events, new Comparator<EventListItem>() {
-				@Override
-				public int compare(EventListItem lhs, EventListItem rhs) {
-					if(lhs == null || lhs.getTitle() == null){
-						return 1;
-					}
-					if(rhs == null || rhs.getTitle() == null){
-						return 0;
-					}
-					return lhs.getTitle().compareTo(rhs.getTitle());
-				}
-			});
-			
-		} else if(sortBy == BaseEventListActivity.MENU_GROUP_TIME) {
-			
-			Collections.sort(events, new Comparator<EventListItem>() {
-				@Override
-				public int compare(EventListItem lhs, EventListItem rhs) {
-					if(lhs == null || lhs.getStart() == null){
-						return 1;
-					}
-					if(rhs == null || rhs.getStart() == null){
-						return 0;
-					}
-					return lhs.getStart().compareTo(rhs.getStart());
-				}
-			});
-			
-		}
-		
-		clear();
-		for(EventListItem eli : events){
-			add(eli);
-		}
-		
-		notifyDataSetChanged();
-	}
+
+
 
 	@Override
 	public int getItemViewType(int position) {
@@ -188,31 +145,45 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		return itemHolder;
 	}
 
+	private int getTimerStateDrawable(TimerMatch match, int full, int begin,
+			int end) {
+		if (match == TimerMatch.Full) {
+			return full;
+		}
+
+		if (match == TimerMatch.Begin) {
+			return begin;
+		}
+
+		return end;
+	}
+
 	public void fillEventViewHolder(EventListItemHolder itemHolder,
 			EventListItem item) {
 
-		
-		
-		
-		
+
+
+
+
 		itemHolder.state.setVisibility(View.VISIBLE);
-		
+
 		if(item.getEvent() instanceof Timerable == false){
-			itemHolder.state.setImageResource(R.drawable.timer_none);	
+			itemHolder.state.setImageResource(R.drawable.timer_none);
 		} else if(item.getEvent() instanceof Recording){
 			if(Utils.isLive(item.getEvent())){
-				itemHolder.state.setImageResource(R.drawable.timer_recording);					
+				itemHolder.state.setImageResource(R.drawable.timer_recording);
 			}
 		} else {
+		TimerMatch match = ((Timerable)item.getEvent()).getTimerMatch();
 		switch (((Timerable)item.getEvent()).getTimerState()) {
 		case Active:
-			itemHolder.state.setImageResource(R.drawable.timer_active);
+			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end));
 			break;
 		case Inactive:
-			itemHolder.state.setImageResource(R.drawable.timer_inactive);
+			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_inactive, R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end));
 			break;
 		case Recording:
-			itemHolder.state.setImageResource(R.drawable.timer_recording);
+			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_recording, R.drawable.timer_recording_begin, R.drawable.timer_recording_end));
 			break;
 		case None:
 			itemHolder.state.setImageResource(R.drawable.timer_none);
@@ -296,11 +267,11 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	}
 
 	// TODO implement locking in performFiltering, check the parent class
-	//http://stackoverflow.com/questions/5846385/how-to-update-android-listview-with-dynamic-data-in-real-time
+	// http://stackoverflow.com/questions/5846385/how-to-update-android-listview-with-dynamic-data-in-real-time
 	public Filter getFilter() {
 		return new Filter() {
 			/**
-			 * 
+			 *
 			 */
 			EventListItem prevHead = null;
 

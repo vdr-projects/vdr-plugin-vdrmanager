@@ -2,8 +2,6 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
@@ -29,12 +27,14 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
+import de.bjusystems.vdrmanager.data.P;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.RecenteChannel;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
@@ -53,15 +53,21 @@ public class ChannelListActivity extends
 
 	Preferences prefs;
 
-	private static final LinkedList<Channel> RECENT = new LinkedList<Channel>();
+	// private static final LinkedList<Channel> RECENT = new
+	// LinkedList<Channel>();
 
 	public static final int MENU_GROUP = 0;
 	public static final int MENU_PROVIDER = 1;
-	public static final int MENU_NAME = 2;
+	public static final int MENU_SOURCE = 2;
+	public static final int MENU_NAME = 3;
 
-	private int groupBy = MENU_GROUP;
+	public static final boolean GROUP_NATURAL = false;
 
-	private int groupByInverse = 0;
+	public static final boolean GROUP_REVERSE = true;
+
+	private int groupBy;
+
+	private boolean groupByReverse;
 
 	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(1);
 
@@ -78,6 +84,11 @@ public class ChannelListActivity extends
 		setContentView(getMainLayout());
 		setTitle(getWindowTitle());
 		initFlipper();
+
+		groupBy = Preferences.get(this, P.CHANNELS_LAST_ORDER, MENU_GROUP);
+		groupByReverse = Preferences.get(this, P.CHANNELS_LAST_ORDER_REVERSE,
+				GROUP_NATURAL);
+
 		adapter = new ChannelAdapter(this);
 
 		listView = (ExpandableListView) findViewById(R.id.channel_list);
@@ -108,14 +119,14 @@ public class ChannelListActivity extends
 			return;
 		}
 
-		if(channelClient == null){
+		if (channelClient == null) {
 			// get channel task
 			channelClient = new ChannelClient();
 		} else {
 			channelClient.removeSvdrpListener(this);
 		}
 
-		if(useCache == false){
+		if (useCache == false) {
 			ChannelClient.clearCache();
 		}
 
@@ -123,27 +134,28 @@ public class ChannelListActivity extends
 		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(
 				channelClient);
 
-		task.addListener(this);
+		task.addSvdrpExceptionListener(this);
+		task.addSvdrpResultListener(this);
+		task.addSvdrpListener(this);
 		// start task
 		task.run();
 	}
 
 	static RecentChannelsAdapter RECENT_ADAPTER = null;
 
-
-	static class RecentChannelsAdapter extends ArrayAdapter<Channel>{
+	static class RecentChannelsAdapter extends ArrayAdapter<Channel> {
 		private Activity context;
 		int resId;
 
-		public RecentChannelsAdapter(Activity context, List<Channel> list) {
-			super(context,	android.R.layout.simple_list_item_1, list);
+		public RecentChannelsAdapter(Activity context) {
+			super(context, android.R.layout.simple_list_item_1);
 			this.context = context;
 			showChannelNumbers = Preferences.get().isShowChannelNumbers();
 
 			if (Build.VERSION.SDK_INT < 11) {
 				resId = android.R.layout.select_dialog_item;
 			} else {
-				resId = 	android.R.layout.simple_list_item_1;
+				resId = android.R.layout.simple_list_item_1;
 			}
 		}
 
@@ -154,8 +166,7 @@ public class ChannelListActivity extends
 			TextView text1;
 			View view = convertView;
 			if (view == null) {
-				view = this.context.getLayoutInflater().inflate(
-						resId, null);
+				view = this.context.getLayoutInflater().inflate(resId, null);
 				text1 = (TextView) view.findViewById(android.R.id.text1);
 				view.setTag(text1);
 			} else {
@@ -163,7 +174,8 @@ public class ChannelListActivity extends
 			}
 
 			Channel c = getItem(position);
-			String text = showChannelNumbers ? text = c.toString() : c.getName();
+			String text = showChannelNumbers ? text = c.toString() : c
+					.getName();
 			text1.setText(text);
 			return view;
 
@@ -171,14 +183,14 @@ public class ChannelListActivity extends
 	}
 
 	private ArrayAdapter<Channel> getRecentAdapter() {
-		if (RECENT_ADAPTER != null)
-		{
-			RECENT_ADAPTER.showChannelNumbers = Preferences.get().isShowChannelNumbers();
+		if (RECENT_ADAPTER != null) {
+			RECENT_ADAPTER.showChannelNumbers = Preferences.get()
+					.isShowChannelNumbers();
 			RECENT_ADAPTER.notifyDataSetChanged();
 			return RECENT_ADAPTER;
 		}
 
-		RECENT_ADAPTER = new RecentChannelsAdapter(this, RECENT);
+		RECENT_ADAPTER = new RecentChannelsAdapter(this);
 		return RECENT_ADAPTER;
 
 	}
@@ -192,7 +204,8 @@ public class ChannelListActivity extends
 		switch (groupBy) {
 		case MENU_GROUP:
 			ArrayList<String> cgs = ChannelClient.getChannelGroups();
-			adapter.fill(cgs, ChannelClient.getGroupChannels(), groupBy);
+			adapter.fill(cgs, ChannelClient.getGroupChannels(), groupBy,
+					groupByReverse);
 			if (cgs.size() == 1) {// one group or first no first group
 				listView.expandGroup(0);
 			} else if ((cgs.size() > 1 && TextUtils.isEmpty(cgs.get(0)))) {
@@ -200,10 +213,25 @@ public class ChannelListActivity extends
 			}
 			updateWindowTitle();
 			break;
+
+		case MENU_SOURCE:
+			ArrayList<String> css = ChannelClient.getChannelSources();
+			adapter.fill(css, ChannelClient.getSourceChannels(), groupBy,
+					groupByReverse);
+			if (css.size() == 1) {// one group or first no first group
+				listView.expandGroup(0);
+			} else if ((css.size() > 1 && TextUtils.isEmpty(css.get(0)))) {
+				listView.expandGroup(0);
+			}
+			updateWindowTitle();
+			break;
+
+
 		case MENU_PROVIDER:
 			ArrayList<String> gs = new ArrayList<String>(ChannelClient
 					.getProviderChannels().keySet());
-			adapter.fill(gs, ChannelClient.getProviderChannels(), groupBy);
+			adapter.fill(gs, ChannelClient.getProviderChannels(), groupBy,
+					groupByReverse);
 			if (gs.size() == 1) {
 				listView.expandGroup(0);
 			}
@@ -218,10 +246,11 @@ public class ChannelListActivity extends
 					1);
 			channels.put(getString(R.string.groupby_name_all_channels_group),
 					ChannelClient.getChannels());
-			adapter.fill(ALL_CHANNELS_GROUP, channels, groupBy);
+			adapter.fill(ALL_CHANNELS_GROUP, channels, groupBy, groupByReverse);
 			listView.expandGroup(0);
 			updateWindowTitle();
 		}
+		adapter.notifyDataSetChanged();
 	}
 
 	public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
@@ -229,7 +258,8 @@ public class ChannelListActivity extends
 	}
 
 	@Override
-	public final boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+	public final boolean onCreateOptionsMenu(
+			final com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
 		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
@@ -238,20 +268,15 @@ public class ChannelListActivity extends
 		return true;
 	}
 
-
-
-	private String[] getAvailableGroupByEntries() {
-		ArrayList<String> entries = new ArrayList<String>(2);
-		entries.add(getString(R.string.groupby_group));
-		entries.add(getString(R.string.groupby_provider));
-		entries.add(getString(R.string.groupby_name));
-		return entries.toArray(Utils.EMPTY);
+	private int getAvailableGroupByEntries() {
+		return R.array.channels_group_by;
 	}
 
 	AlertDialog groupByDialog = null;
 
 	@Override
-	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.channels_groupby:
@@ -265,7 +290,37 @@ public class ChannelListActivity extends
 								groupBy, new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
+
+										final boolean reversed = which == groupBy ? true
+												: false;
 										groupBy = which;
+										new VoidAsyncTask() {
+
+											@Override
+											protected Void doInBackground(
+													Void... params) {
+
+												if (reversed) {
+													if (groupByReverse == true) {
+														groupByReverse = false;
+													} else {
+														groupByReverse = true;
+													}
+													Preferences
+															.set(ChannelListActivity.this,
+																	P.CHANNELS_LAST_ORDER_REVERSE,
+																	groupByReverse);
+
+												} else {
+													Preferences
+															.set(ChannelListActivity.this,
+																	P.CHANNELS_LAST_ORDER,
+																	groupBy);
+												}
+												return null;
+											}
+										}.execute();
+
 										fillAdapter();
 										groupByDialog.dismiss();
 									}
@@ -276,26 +331,58 @@ public class ChannelListActivity extends
 
 			return true;
 		case R.id.channels_recent_channels:
-			if (RECENT.isEmpty()) {
+
+			String order = Preferences.get(ChannelListActivity.this,
+					"gui_recent_channels_order", "most");
+
+			List<RecenteChannel> rcs = null;
+
+			if (order.equals("most")) {
+				rcs = DBAccess
+						.get(ChannelListActivity.this)
+						.getRecentChannelDAO()
+						.loadByRecentUse(
+								Preferences.get().getMaxRecentChannels());
+			} else if (order.equals("last")) {
+				rcs = DBAccess
+						.get(ChannelListActivity.this)
+						.getRecentChannelDAO()
+						.loadByLastAccess(
+								Preferences.get().getMaxRecentChannels());
+			} else {
+				return true;
+			}
+
+			if (rcs.isEmpty()) {
 				say(R.string.recent_channels_no_history);
 				return true;
 			}
 
-			if(Preferences.get().getMaxRecentChannels() <= 0){
-				RECENT.clear();
+			if (Preferences.get().getMaxRecentChannels() <= 0) {
 				say(R.string.recent_channels_no_history);
 				return true;
+			}
+
+			final ArrayAdapter<Channel> recentAdapter = getRecentAdapter();
+
+			recentAdapter.clear();
+			for (Channel c : DBAccess.get(ChannelListActivity.this)
+					.getRecentChannelDAO()
+					.getRecentChannels(channelClient.getIdChannels(), rcs)) {
+				recentAdapter.add(c);
 			}
 
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.recent_channels)
-					.setAdapter(getRecentAdapter(), new DialogInterface.OnClickListener() {
+					.setAdapter(getRecentAdapter(),
+							new DialogInterface.OnClickListener() {
 
-						public void onClick(DialogInterface dialog, int which) {
-							Channel c = RECENT.get(which);
-							startChannelEPG(c);
-						}
-					})//
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Channel c = recentAdapter.getItem(which);
+									startChannelEPG(c);
+								}
+							})//
 					.create().show();
 			return true;
 		default:
@@ -369,8 +456,6 @@ public class ChannelListActivity extends
 				break;
 			}
 
-
-
 			return true;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			int groupPos = ExpandableListView
@@ -401,23 +486,13 @@ public class ChannelListActivity extends
 			@Override
 			protected Void doInBackground(Void... arg0) {
 				int max = Preferences.get().getMaxRecentChannels();
-				if(max <= 0){
+				if (max <= 0) {
 					return null;
 				}
-				Iterator<Channel> i = RECENT.iterator();
-				while (i.hasNext()) {
-					Channel c = i.next();
-					if (c.equals(channel)) {
-						i.remove();
-						break;
-					}
-				}
 
-				if (RECENT.size() >= Preferences.get().getMaxRecentChannels()) {
-					RECENT.removeLast();
+				DBAccess.get(ChannelListActivity.this).getRecentChannelDAO()
+						.hit(channel.getId());
 
-				}
-				RECENT.addFirst(channel);
 				return (Void) null;
 			}
 		}.execute((Void) null);
@@ -479,7 +554,16 @@ public class ChannelListActivity extends
 					.append(getString(R.string.groupby_window_title_templte,
 							getString(R.string.groupby_group)));
 			break;
+
+		case MENU_SOURCE: {
+			sb.append(getString(R.string.action_menu_channels))
+					.append(" > ")
+					.append(getString(R.string.groupby_window_title_templte,
+							getString(R.string.groupby_source)));
+			break;
 		}
+		}
+
 		return sb.toString();
 	}
 
@@ -490,7 +574,7 @@ public class ChannelListActivity extends
 	}
 
 	@Override
-	protected boolean finishedSuccess() {
+	protected synchronized boolean finishedSuccess() {
 		fillAdapter();
 		restoreViewSelection();
 		updateWindowTitle();
@@ -518,10 +602,6 @@ public class ChannelListActivity extends
 	@Override
 	protected SvdrpClient<Channel> getClient() {
 		return channelClient;
-	}
-
-	public void svdrpEvent(SvdrpEvent event, Channel result){
-		super.svdrpEvent(event, result);
 	}
 
 }

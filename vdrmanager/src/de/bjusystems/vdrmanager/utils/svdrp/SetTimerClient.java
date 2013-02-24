@@ -23,14 +23,14 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 		public String getCommand(){
 			return this.command;
 		}
-		
+
 	}
-	
+
 	/** channel names for timer */
 	Timer newTimer;
 
 	Timer oldTimer;
-	
+
 	/** timer should be deleted */
 	private TimerOperation timerOperation;
 
@@ -53,12 +53,12 @@ public class SetTimerClient extends SvdrpClient<Timer> {
 		this.timerOperation = op;
 	}
 
-	
+
 	/**
 	 * Starts the request
 	 */
 	@Override
-	public void run() throws SvdrpException {
+	public void run()   {
 
 		final StringBuilder command = new StringBuilder();
 

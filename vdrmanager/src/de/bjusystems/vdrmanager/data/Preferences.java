@@ -25,20 +25,49 @@ public class Preferences {
 
 	private static Vdr current;
 
+	public static void set(Context context, String key, int value) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		sharedPrefs.edit().putInt(key, value).commit();
+	}
+
+	public static void set(Context context, String key, boolean value) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		sharedPrefs.edit().putBoolean(key, value).commit();
+	}
+
+	public static int get(Context context, String key, int defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		return sharedPrefs.getInt(key, defValue);
+
+	}
+
+	public static String get(Context context, String key, String defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		return sharedPrefs.getString(key, defValue);
+
+	}
+
+
+	public static boolean get(Context context, String key, boolean defValue) {
+		final SharedPreferences sharedPrefs = getSharedPreferences(context);
+		return sharedPrefs.getBoolean(key, defValue);
+
+	}
+
 	public static void setCurrentVdr(Context context, Vdr vdr) {
 		current = vdr;
 		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		sharedPrefs
 				.edit()
 				.putInt(context.getString(R.string.current_vdr_id_key),
-						current != null ? current.getId() : -1 ).commit();
+						current != null ? current.getId() : -1).commit();
 	}
 
 	public Vdr getCurrentVdr() {
 		return current;
 	}
 
-	public int getCurrentVdrContext(Context context){
+	public int getCurrentVdrContext(Context context) {
 		return getInteger(context, R.string.current_vdr_id_key, -1);
 	}
 
@@ -445,10 +474,9 @@ public class Preferences {
 		return thePrefs;
 	}
 
-	public String getRecStreamMethod(){
+	public String getRecStreamMethod() {
 		return getCurrentVdr().getRecStreamMethod();
 	}
-
 
 	/**
 	 *
@@ -532,12 +560,12 @@ public class Preferences {
 		}
 
 		return initFromOldVersion(context);
-		//Intent intent = new Intent();
-		//intent.setClass(context, VdrListActivity.class);
-		//intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		//intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
-		//context.startActivity(intent);
-		//Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
+		// Intent intent = new Intent();
+		// intent.setClass(context, VdrListActivity.class);
+		// intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		// intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
+		// context.startActivity(intent);
+		// Toast.makeText(context, R.string.no_vdr, Toast.LENGTH_SHORT).show();
 	}
 
 	/**

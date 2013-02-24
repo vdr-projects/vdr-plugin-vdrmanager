@@ -4,26 +4,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
-										extends AsyncTask<Void, Object, Void>
-										implements SvdrpListener<Result> {
+public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
+		AsyncTask<Void, Object, Void> implements SvdrpListener,
+		SvdrpExceptionListener {
 
 	Client client;
-	List<SvdrpAsyncListener<Result>> listeners = new ArrayList<SvdrpAsyncListener<Result>>();
+
+	Throwable ex;
+
+	SvdrpEvent event;
+
+	List<SvdrpListener> eventListeners = new ArrayList<SvdrpListener>();
+
+	List<SvdrpExceptionListener> exceptionListeners = new ArrayList<SvdrpExceptionListener>();
 
 	public SvdrpAsyncTask(final Client client) {
 		this.client = client;
-		client.addSvdrpListener(this);
+		this.client.addSvdrpListener(this);
+		this.client.addSvdrpExceptionListener(this);
 	}
 
-	public void addListener(final SvdrpAsyncListener<Result> listener) {
-		listeners.add(listener);
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpListener(final SvdrpListener listener) {
+		// client.addSvdrpListener(listener);
+		eventListeners.add(listener);
 	}
 
-	public void removeListener(final SvdrpAsyncListener<Result> listener) {
-		listeners.remove(listener);
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpResultListener(
+			final SvdrpResultListener<Result> listener) {
+		client.addSvdrpResultListener(listener);
+	}
+
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpExceptionListener(final SvdrpExceptionListener listener) {
+		// client.addSvdrpExceptionListener(listener);
+		exceptionListeners.add(listener);
 	}
 
 	public void run() {
@@ -32,36 +64,58 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>>
 
 	@Override
 	protected Void doInBackground(final Void... params) {
-		try {
-			client.run();
-		} catch (final SvdrpException e) {
-			publishProgress(e);
-		}
+		client.run();
 		return null;
 	}
 
-	public void svdrpEvent(final SvdrpEvent event, final Result result) {
-		publishProgress(event, result);
-		if(event == SvdrpEvent.FINISHED_SUCCESS || event == SvdrpEvent.FINISHED_ABNORMALY || event == SvdrpEvent.ABORTED || event == SvdrpEvent.ERROR || event == SvdrpEvent.CACHE_HIT){
-			client.removeSvdrpListener(this);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onProgressUpdate(final Object... values) {
-		super.onProgressUpdate(values);
 
-		if (values.length == 2) {
-			for(final SvdrpAsyncListener<Result> listener : listeners) {
-				listener.svdrpEvent((SvdrpEvent)values[0], (Result)values[1]);
+		if (values.length == 1) {
+			for (final SvdrpListener listener : eventListeners) {
+				listener.svdrpEvent((SvdrpEvent) values[0]);
 			}
-		} else if(values.length == 1) {
-			for(final SvdrpAsyncListener<Result> listener : listeners) {
-				listener.svdrpException((SvdrpException)values[0]);
+
+		} else if (values.length == 2) {
+			for (final SvdrpExceptionListener listener : exceptionListeners) {
+				listener.svdrpEvent((SvdrpEvent) values[0],
+						(Throwable) values[1]);
 			}
-		} else {
-			Log.w(toString(), "Unknonw count of argument in onProgressUpdate");
 		}
+
+		/*
+		 * switch (event) { case CONNECTING: {
+		 * setMessage(R.string.progress_connect); progress.show(); break; }
+		 *
+		 * case LOGGED_IN: { setMessage(R.string.progress_login); break; }
+		 *
+		 * case COMMAND_SENT: { setMessage(client.getProgressTextId()); break; }
+		 *
+		 * case DISCONNECTING: { setMessage(R.string.progress_disconnect);
+		 * break; }
+		 *
+		 * case ERROR: case CONNECTION_TIMEOUT: case CONNECT_ERROR: case
+		 * FINISHED_ABNORMALY: case CACHE_HIT: case FINISHED_SUCCESS: case
+		 * LOGIN_ERROR: { progress.dismiss(); }
+		 *
+		 * }
+		 */
+	}
+
+	// @Override
+	// protected void onPostExecute(SvdrpException exception) {
+	// for (SvdrpExceptionListener l : exceptionListeners) {
+	// l.svdrpEvent(exception.getEvent(), ex);
+	// }
+	// }
+
+	@Override
+	public void svdrpEvent(SvdrpEvent event) {
+		publishProgress(event);
+	}
+
+	@Override
+	public void svdrpEvent(SvdrpEvent event, Throwable t) {
+		publishProgress(event, t);
 	}
 }
