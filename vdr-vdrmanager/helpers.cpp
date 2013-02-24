@@ -208,8 +208,9 @@ string cHelpers::GetAudioTracks(const cChannel* channel) {
 		for (int i = 0; channel->Dpid(i) != 0; ++i, ++index) {
 			result += sep + "d," + (const char*) itoa(index) + ","
 					+ channel->Dlang(i);
+			sep = "|";
 		}
-		sep = "|";
+
 	}
 	return result;
 }
