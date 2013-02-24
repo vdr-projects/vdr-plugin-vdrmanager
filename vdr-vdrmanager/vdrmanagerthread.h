@@ -16,18 +16,18 @@ using namespace std;
 
 class cSelect;
 
-class cAndroVdrThread : public cThread {
+class cVdrManagerThread : public cThread {
 private:
   cSelect * select;
   int port;
   const char * password;
   bool forceCheckSvdrp;
 public:
-  cAndroVdrThread(int port, const char * password, bool forceCheckSvdrp);
+  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp);
   virtual void Action(void);
   void Shutdown();
 private:
-  virtual ~cAndroVdrThread();
+  virtual ~cVdrManagerThread();
   void Cleanup();
   bool Init();
 };

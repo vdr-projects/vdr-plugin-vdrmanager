@@ -13,22 +13,23 @@
 #include <vdr/player.h>
 #include "vdrmanagerthread.h"
 
-#define ANDROVDR_PORT		6420
+#define VDRMANAGER_PORT		6420
 
 static const char *VERSION = "0.9";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
-class cPluginAndroVdr: public cPlugin {
+class cVdrManager: public cPlugin {
 private:
 	// Add any member variables or functions you may need here.
-	cAndroVdrThread * Thread;
+	cVdrManagerThread * Thread;
 	int port;
 	const char * password;
 	bool forceCheckSvdrp;
+	bool forceDelete;
 protected:
 public:
-	cPluginAndroVdr(void);
-	virtual ~cPluginAndroVdr();
+	cVdrManager(void);
+	virtual ~cVdrManager();
 	virtual const char *Version(void) {
 		return VERSION;
 	}
@@ -48,37 +49,36 @@ public:
 	virtual bool ProcessArgs(int argc, char *argv[]);
 };
 
-cPluginAndroVdr::cPluginAndroVdr(void) {
+cVdrManager::cVdrManager(void) {
 	// Initialize any member variables here.
 	// DON'T DO ANYTHING ELSE THAT MAY HAVE SIDE EFFECTS, REQUIRE GLOBAL
 	// VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
 	Thread = NULL;
-	port = ANDROVDR_PORT;
+	port = VDRMANAGER_PORT;
 	password = "";
 	forceCheckSvdrp = false;
+	forceDelete = false;
 }
 
-cPluginAndroVdr::~cPluginAndroVdr() {
+cVdrManager::~cVdrManager() {
 	// Clean up after yourself!
 }
 
-cOsdObject * cPluginAndroVdr::MainMenuAction(void) {
+cOsdObject * cVdrManager::MainMenuAction(void) {
 	return NULL;
 }
 
-cMenuSetupPage * cPluginAndroVdr::SetupMenu(void) {
+cMenuSetupPage * cVdrManager::SetupMenu(void) {
 	return NULL;
 }
 
-const char * cPluginAndroVdr::CommandLineHelp(void) {
-	return "  -p port          port number to listen to\n"
-		   "  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n"
-		   "  -s               force check against svdrphosts.conf, even if a password was given\n";
+const char * cVdrManager::CommandLineHelp(void) {
+	return "  -p port          port number to listen to\n  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n  -s               force check against svdrphosts.conf, even if a password was given\n  -f               force delete of a timer or a recording even if they are active\n";
 }
 
-bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
+bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "p:P:s")) != -1)
+	while ((c = getopt(argc, argv, "p:P:s:f")) != -1)
 		switch (c) {
 		case 'p':
 			port = atoi(optarg);
@@ -88,6 +88,9 @@ bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
 			break;
 		case 's':
 			forceCheckSvdrp = true;
+			break;
+		case 'f':
+			forceDelete = true;
 			break;
 		case '?':
 			if (optopt == 'c') {
@@ -103,34 +106,34 @@ bool cPluginAndroVdr::ProcessArgs(int argc, char *argv[]) {
 
 // default port
 	if (port <= 0)
-		port = ANDROVDR_PORT;
+		port = VDRMANAGER_PORT;
 
 	return true;
 }
 
-bool cPluginAndroVdr::Initialize(void) {
+bool cVdrManager::Initialize(void) {
 // Initialize any background activities the plugin shall perform.
 
 // Start any background activities the plugin shall perform.
-	Thread = new cAndroVdrThread(port, password, forceCheckSvdrp);
+	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp);
 
 	return Thread != NULL;
 }
 
-bool cPluginAndroVdr::Start(void) {
+bool cVdrManager::Start(void) {
 	Thread->Start();
 
 	return true;
 }
 
-void cPluginAndroVdr::Stop(void) {
+void cVdrManager::Stop(void) {
 // Stop any background activities the plugin shall perform.
 	Thread->Shutdown();
 }
 
-void cPluginAndroVdr::Housekeeping(void) {
+void cVdrManager::Housekeeping(void) {
 // Perform any cleanup or other regular tasks.
 }
 
-VDRPLUGINCREATOR(cPluginAndroVdr);
+VDRPLUGINCREATOR(cVdrManager);
 // Don't touch this!

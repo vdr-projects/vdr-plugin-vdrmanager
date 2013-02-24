@@ -8,20 +8,20 @@
 #include "select.h"
 #include "helpers.h"
 
-cAndroVdrThread::cAndroVdrThread(int port, const char * password, bool forceCheckSvdrp)
+cVdrManagerThread::cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp)
 {
   select = NULL;
-  this->port = port;
-  this->password = password;
-  this->forceCheckSvdrp = forceCheckSvdrp;
+  this -> port = port;
+  this -> password = password;
+  this -> forceCheckSvdrp = forceCheckSvdrp;
 }
 
-cAndroVdrThread::~cAndroVdrThread()
+cVdrManagerThread::~cVdrManagerThread()
 {
   Cleanup();
 }
 
-void cAndroVdrThread::Action(void)
+void cVdrManagerThread::Action(void)
 {
   // create listener socket
   if (!Init())
@@ -34,7 +34,7 @@ void cAndroVdrThread::Action(void)
   Cleanup();
 }
 
-bool cAndroVdrThread::Init()
+bool cVdrManagerThread::Init()
 {
   // create select
   select = new cSelect();
@@ -52,12 +52,12 @@ bool cAndroVdrThread::Init()
   return true;
 }
 
-void cAndroVdrThread::Cleanup()
+void cVdrManagerThread::Cleanup()
 {
   if (select)
     delete select;
 }
 
-void cAndroVdrThread::Shutdown()
+void cVdrManagerThread::Shutdown()
 {
 }
