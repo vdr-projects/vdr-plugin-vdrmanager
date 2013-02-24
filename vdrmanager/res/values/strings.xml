@@ -175,7 +175,6 @@
         <item>WOL</item>
     </string-array>
 
-    <string name="default_wakeup_method">wol</string>
     <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
     <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of broadcast address.</string>
     <string name="wakeup_wol_mac_title">MAC-Address</string>

@@ -37,7 +37,7 @@
   <string name="search_reapt">Wiederholungen</string>
   <string name="share_chooser">Share EPG Eintrag</string>
   <string name="about_text">
-        Über \"VDR-Manager\" Software für Android\n 
+        Über \"VDR-Manager\" Software für Android\n
 		Das ist Version %1$s\n
         Wenn Sie Ihren VDR zu Hause über das Internet und ein Handy mit Android
         erreichen wollen, dann finden sie dieses Programm vielleicht nützlich.
@@ -163,7 +163,6 @@
   <string name="wakeup_password_summary">Passwort für Remote-Wecken</string>
   <string name="wakeup_method_title">Weckmethode</string>
   <string name="wakeup_method_summary">Wähle eine Methode zum Wecken des VDR Rechners</string>
-  <string name="default_wakeup_method">url</string>
   <string name="wakeup_wol_custom_boradcast_title">Ziel IP-Adresse</string>
   <string name="wakeup_wol_custom_boradcast_summary">Eine WOL-Netzwerkadresse von 255.255.255.255 abweichend. Zum Beispiel sinnvoll für VPN Verbindungen.</string>
   <string name="wakeup_wol_mac_title">MAC-Adresse</string>
@@ -233,6 +232,7 @@
     <item>imdb.it</item>
     <item>imdb.pt</item>
   </string-array>
+
   <string-array name="lang">
     <item>Englisch</item>
     <item>Deutsch</item>
@@ -283,5 +283,5 @@
   <string name="sortby_time">Zeitlich</string>
   <string name="sortby_alphabet">Alphabetisch</string>
   <string name="sortby_channellist">Nach Kanalliste</string>
+
 </resources>
-  
