@@ -373,4 +373,13 @@
         <item>Name</item>
     </string-array>
 
+    <string-array name="navigation_array">
+        <item>Channels</item>
+        <item>EPG by Time</item>
+        <item>EPG by Channel</item>
+        <item>Recordings</item>
+        <item>Timers</item>
+    </string-array>
+
+
 </resources>

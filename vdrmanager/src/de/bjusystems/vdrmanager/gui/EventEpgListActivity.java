@@ -414,6 +414,11 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
+	@Override
+	protected int getListNavigationIndex() {
+		return LIST_NAVIGATION_EPG_BY_CHANNEL;
+	}
+
 	// @Override
 	// protected void timerModified() {
 	// cachedChannel = null;

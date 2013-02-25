@@ -1,5 +1,7 @@
 package de.bjusystems.vdrmanager.gui;
 
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,8 +9,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import android.widget.ViewFlipper;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
@@ -129,6 +133,81 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	// setTitle(title);
 	// }
 
+	abstract protected int getListNavigationIndex();
+
+	public static final int LIST_NAVIGATION_CHANNELS = 0;
+	public static final int LIST_NAVIGATION_EPG_BY_TIME = 1;
+	public static final int LIST_NAVIGATION_EPG_BY_CHANNEL = 2;
+	public static final int LIST_NAVIGATION_RECORDINGS = 3;
+	public static final int LIST_NAVIGATION_TIMERS = 4;
+
+	protected boolean hasListNavigation(){
+		return true;
+	}
+
+	protected void initListNavigation(){
+
+		if(hasListNavigation() == false){
+			return;
+		}
+
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+		getSupportActionBar().setNavigationMode(
+				getSupportActionBar().NAVIGATION_MODE_LIST);
+
+		ArrayAdapter<CharSequence> mSpinnerAdapter = ArrayAdapter
+				.createFromResource(this, R.array.navigation_array,
+						android.R.layout.simple_spinner_dropdown_item);
+
+		getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter,
+				new OnNavigationListener() {
+
+					private boolean firstHit = true;
+
+					@Override
+					public boolean onNavigationItemSelected(int itemPosition,
+							long itemId) {
+
+						if (firstHit == true) {
+							firstHit = false;
+							return false;
+						}
+						switch (itemPosition) {
+
+						case LIST_NAVIGATION_CHANNELS: {
+							startActivity(ChannelListActivity.class);
+							return true;
+						}
+						case LIST_NAVIGATION_EPG_BY_TIME: {
+							startActivity(TimeEpgListActivity.class);
+							return true;
+						}
+
+						case LIST_NAVIGATION_EPG_BY_CHANNEL: {
+							startActivity(EventEpgListActivity.class);
+							return true;
+						}
+
+						case LIST_NAVIGATION_RECORDINGS: {
+							startActivity(RecordingListActivity.class);
+							return true;
+						}
+
+						case LIST_NAVIGATION_TIMERS: {
+							startActivity(TimerListActivity.class);
+							return true;
+						}
+
+						}
+						return false;
+					}
+				});
+		getSupportActionBar().setSelectedNavigationItem(
+				getListNavigationIndex());
+
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -137,6 +216,18 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		getApp().addActivityToFinish(this);
 
 		initActionBar();
+
+		initListNavigation();
+
+		// new OnNavigationListener() {
+		// @Override
+		// public boolean onNavigationItemSelected(int itemPosition, long
+		// itemId) {
+		// System.err.println("itemPosition: "+ itemPosition +", itemId:" +
+		// itemId);
+		// rturn false;
+		// }
+		// });
 
 		// your logic for click listner
 		// setListenerForActionBarCustomView(actionBarView);
@@ -147,6 +238,13 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		// actionBarView.findViewById(R.id.text_view_title).setOnClickListener(actionBarCustomViewOnClickListener);
 		// }
 
+	}
+
+	public void startActivity(Class<?> clazz) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setClass(this, clazz);
+		startActivity(intent);
+		finish();
 	}
 
 	@Override

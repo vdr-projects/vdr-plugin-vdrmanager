@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!-- 
+<!--
 	<item
 	  android:id="@+id/epg_menu_search"
 	  android:icon="@android:drawable/ic_menu_search"
@@ -13,9 +13,4 @@
 	  android:alphabeticShortcut="a"
 	  android:title="@string/epg_item_menu_timer_add"/>
 
-    	<item
-	  android:id="@+id/epg_list_menu_channels"
-	  android:icon="@drawable/ic_menu_moreoverflow"
-	  android:showAsAction="ifRoom"
-	  android:title="@string/action_menu_channels"/>
 </menu>

@@ -175,4 +175,14 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		return true;
 	}
 
+	@Override
+	protected int getListNavigationIndex() {
+		return -1;
+	}
+
+	@Override
+	protected boolean hasListNavigation() {
+		return false;
+	}
+
 }

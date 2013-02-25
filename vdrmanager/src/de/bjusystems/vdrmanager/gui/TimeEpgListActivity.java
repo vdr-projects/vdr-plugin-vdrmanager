@@ -389,4 +389,10 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
+
+	@Override
+	protected int getListNavigationIndex() {
+		return LIST_NAVIGATION_EPG_BY_TIME;
+	}
+
 }

@@ -604,4 +604,9 @@ public class ChannelListActivity extends
 		return channelClient;
 	}
 
+	@Override
+	protected int getListNavigationIndex() {
+		return LIST_NAVIGATION_CHANNELS;
+	}
+
 }

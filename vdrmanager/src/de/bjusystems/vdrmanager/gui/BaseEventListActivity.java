@@ -193,9 +193,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			final com.actionbarsherlock.view.MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.epg_list_menu_channels:
-			startActivity(new Intent(this, ChannelListActivity.class));
-			return true;
 
 		case R.id.epg_list_sort_menu: {
 

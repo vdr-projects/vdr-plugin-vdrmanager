@@ -280,4 +280,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		return false;
 	}
 
+	@Override
+	protected int getListNavigationIndex() {
+		return LIST_NAVIGATION_RECORDINGS;
+	}
+
 }

@@ -228,4 +228,9 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	@Override
+	protected int getListNavigationIndex() {
+		return LIST_NAVIGATION_TIMERS;
+	}
+
 }
