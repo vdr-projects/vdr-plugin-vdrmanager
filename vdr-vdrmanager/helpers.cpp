@@ -142,8 +142,8 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 			result += channel->GetChannelID().ToString();
 			result += ":";
 			result += GetAudioTracks(channel);
-                        result += ":";
-                        result += MapSpecialChars(cSource::ToString(channel->Source()));
+			result += ":";
+			result += MapSpecialChars(cSource::ToString(channel->Source()));
 			result += "\r\n";
 		}
 	}
@@ -390,18 +390,22 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		}
 
 		/**
-		 * this should come as a parameter later
+		 * this should come lates as a command line parameter
 		 */
 		bool forceDelete = true;
 
-		if (t->Recording() && forceDelete == false) {
-			return Error("Timer  is recording");
+		if (t->Recording()) {
+			if(forceDelete == true){
+				t->Skip();
+				cRecordControls::Process(time(NULL));
+			} else {
+				return Error("Timer  is recording");
+			}
 		}
 
-		isyslog("deleting timer %s", *t->ToDescr());
+		dsyslog("[vdrmanager] deleting timer %s", *t->ToDescr());
 		Timers.Del(t);
 		Timers.SetModified();
-		dsyslog("[vdrmanager] timer %s deleted", *t->ToDescr());
 		break;
 	}
 	case 'M':
