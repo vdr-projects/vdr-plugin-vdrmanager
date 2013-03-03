@@ -791,7 +791,9 @@ string cHelpers::ToText(const cEvent * event) {
 	result += MapSpecialChars(event->ShortText() ? event->ShortText() : "");
 	result += ":";
 	result += MapSpecialChars(channel->GetChannelID().ToString());
-	result += "\r\n";
+	result += ":";
+	result += GetAudioTracks(channel);
+    result += "\r\n";
 
 	if (eventTimer) {
 		result += ToText(eventTimer);
