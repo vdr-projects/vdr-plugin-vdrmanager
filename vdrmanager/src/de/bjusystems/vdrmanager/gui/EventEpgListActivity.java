@@ -201,8 +201,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	public void clearCache() {
 		getCache().clear();
-		CACHE.remove(currentChannel);
-		NEXT_REFRESH.remove(currentChannel);
+		CACHE.remove(currentChannel.getId());
+		NEXT_REFRESH.remove(currentChannel.getId());
 	}
 
 	private boolean useCache() {
@@ -211,7 +211,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			return false;
 		}
 
-		ArrayList<Epg> cachedChannel = CACHE.get(currentChannel) ;
+		ArrayList<Epg> cachedChannel = CACHE.get(currentChannel.getId()) ;
 
 		if (cachedChannel == null) {
 			return false;
@@ -285,7 +285,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private static final ArrayList<Epg> EMPTY = new ArrayList<Epg>(0);
 
 	private ArrayList<Epg> getCache() {
-		ArrayList<Epg> arrayList = CACHE.get(currentChannel);
+		ArrayList<Epg> arrayList = CACHE.get(currentChannel.getId());
 		if (arrayList == null) {
 			return EMPTY;
 		}
@@ -398,7 +398,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentEvent(item.getEvent());
-		app.setCurrentEpgList(CACHE.get(currentChannel));
+		app.setCurrentEpgList(getCache());
 	}
 
 	@Override
@@ -459,7 +459,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	@Override
 	protected List<Epg> getCACHE() {
-		return getCACHE();
+		return getCache();
 	}
 
 	@Override
