@@ -1,6 +1,5 @@
 package de.bjusystems.vdrmanager.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Parcel;
@@ -45,32 +44,14 @@ public class Channel implements Parcelable {
 		return group;
 	}
 
-	private List<Audio> audio;
+	private List<AudioTrack> audio;
 
-	public List<Audio> getAudio() {
+	public List<AudioTrack> getAudio() {
 		if (audio != null) {
 			return audio;
 		}
-
-		String[] splitted = rawAudio.split("\\|");
-		if (splitted == null || splitted.length == 0) {
-			audio = new ArrayList<Channel.Audio>(0);
-		} else {
-			audio = new ArrayList<Channel.Audio>(splitted.length);
-			for (String a : splitted) {
-				String[] ar = a.split(",");
-				if (ar == null || ar.length != 3) {
-					continue;
-				}
-				Audio track = new Audio();
-				track.type = ar[0];
-				track.index = Integer.valueOf(ar[1]);
-				track.display = ar[2];
-				audio.add(track);
-			}
-		}
+		audio = AudioTrack.getAudio(rawAudio);
 		return audio;
-
 	}
 
 	public void setGroup(String group) {
@@ -183,23 +164,12 @@ public class Channel implements Parcelable {
 		if (o == this) {
 			return true;
 		}
-
-		return number == ((Channel) o).getNumber();
+		return ((Channel)o).getId().equals(id);
 	};
 
 	@Override
 	public int hashCode() {
-		return number;
-	}
-
-	class Audio {
-
-		public int index;
-
-		public String type;
-
-		public String display;
-
+		return id.hashCode();
 	}
 
 }

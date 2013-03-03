@@ -35,6 +35,7 @@ import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.Timer;
+import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 import de.bjusystems.vdrmanager.data.Timerable.TimerState;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
@@ -47,8 +48,8 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  *
  * @author bju
  */
-public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListener,
-		OnPageChangeListener {
+public class EpgDetailsActivity extends ICSBaseActivity implements
+		OnClickListener, OnPageChangeListener {
 
 	public static final String TAG = "EpgDetailsActivity";
 
@@ -174,9 +175,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 				final VdrManagerApp app = (VdrManagerApp) getApplication();
 				epgs = app.getCurrentEpgList();
 
-				if(epgs.isEmpty()){
+				if (epgs.isEmpty()) {
 					epgs.add(cEvent);
-					return (Void)null;
+					return (Void) null;
 				}
 
 				for (Event e : epgs) {
@@ -186,9 +187,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 					counter++;
 				}
 
-				if (counter == epgs.size()) {//not found?
+				if (counter == epgs.size()) {// not found?
 					epgs.add(0, cEvent);
-					counter  = 0;
+					counter = 0;
 				}
 				return (Void) null;
 			}
@@ -232,6 +233,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 
 		Event event = epgs.get(position);
 
+		// view.setTag(event);
+
 		final EventFormatter formatter = new EventFormatter(event);
 
 		final TextView title = (TextView) view
@@ -255,15 +258,17 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			setState(state, R.drawable.timer_none);
 		} else {
 
+			TimerMatch match = timerable.getTimerMatch();
+
 			switch (timerable.getTimerState()) {
 			case Active:
-				setState(state, R.drawable.timer_active);
+				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end) );
 				break;
 			case Inactive:
-				setState(state, R.drawable.timer_inactive);
+				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_inactive,R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end));
 				break;
 			case Recording:
-				setState(state, R.drawable.timer_recording);
+				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_recording, R.drawable.timer_recording_begin, R.drawable.timer_recording_end));
 				break;
 			default:
 				setState(state, R.drawable.timer_none);
@@ -276,6 +281,18 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		final TextView textView = (TextView) view
 				.findViewById(R.id.epg_detail_description);
 		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
+
+
+
+		if(cEvent.getAudio().isEmpty() == false){
+			final TextView audioTracks = (TextView) view.findViewById(R.id.epg_detail_audio);
+			audioTracks.setText(Utils.formatAudio(this, cEvent.getAudio()));
+		} else {
+			view.findViewById(R.id.audio_image).setVisibility(View.GONE);
+		}
+
+
+
 
 		// copy color for separator lines
 		// final int color = textView.getTextColors().getDefaultColor();
@@ -315,47 +332,48 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			b.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
-					startFilmDatabaseBrowseIntent(String.format(IMDB_BASE_URL, Preferences.get().getImdbUrl()) + IMDB_URL_QUERY, view, IMDB_URL_ENCODING);
+					startFilmDatabaseBrowseIntent(
+							String.format(IMDB_BASE_URL, Preferences.get()
+									.getImdbUrl())
+									+ IMDB_URL_QUERY, view, IMDB_URL_ENCODING);
 				}
 			});
 		}
 
+		b = view.findViewById(R.id.epg_event_omdb);
 
-			b = view.findViewById(R.id.epg_event_omdb);
+		if (Preferences.get().isShowOmdbButton() == false) {
+			b.setVisibility(View.GONE);
+		} else {
+			b.setVisibility(View.VISIBLE);
+			b.setOnClickListener(new OnClickListener() {
 
-			if (Preferences.get().isShowOmdbButton() == false) {
-				b.setVisibility(View.GONE);
-			} else {
-				b.setVisibility(View.VISIBLE);
-				b.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					startFilmDatabaseBrowseIntent(OMDB_URL, view,
+							OMDB_URL_ENCODING);
+				}
+			});
+		}
 
-					public void onClick(View v) {
-						startFilmDatabaseBrowseIntent(OMDB_URL, view, OMDB_URL_ENCODING);
-					}
-				});
-			}
+		b = view.findViewById(R.id.epg_event_tmdb);
 
-			b = view.findViewById(R.id.epg_event_tmdb);
+		if (Preferences.get().isShowTmdbButton() == false) {
+			b.setVisibility(View.GONE);
+		} else {
+			b.setVisibility(View.VISIBLE);
+			b.setOnClickListener(new OnClickListener() {
 
-			if (Preferences.get().isShowTmdbButton() == false) {
-				b.setVisibility(View.GONE);
-			} else {
-				b.setVisibility(View.VISIBLE);
-				b.setOnClickListener(new OnClickListener() {
-
-					public void onClick(View v) {
-						startFilmDatabaseBrowseIntent(TMDB_URL, view, TMDB_URL_ENCODING);
-					}
-				});
-			}
-
-
-
-
-
+				public void onClick(View v) {
+					startFilmDatabaseBrowseIntent(TMDB_URL, view,
+							TMDB_URL_ENCODING);
+				}
+			});
+		}
 
 		b = view.findViewById(R.id.epg_event_livetv);
-		if (Utils.isLive(event) == false && (event instanceof Recording == false || Preferences.get().isEnableRecStream() == false)) {
+		if (Utils.isLive(event) == false
+				&& (event instanceof Recording == false || Preferences.get()
+						.isEnableRecStream() == false)) {
 			b.setVisibility(View.GONE);
 		} else {
 			b.setVisibility(View.VISIBLE);
@@ -373,16 +391,18 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 
 	}
 
-	private void startFilmDatabaseBrowseIntent(String url, View view, String encoding){
+	private void startFilmDatabaseBrowseIntent(String url, View view,
+			String encoding) {
 		final TextView title = (TextView) view
 				.findViewById(R.id.epg_detail_title);
-		url = String.format(url, encode(String.valueOf(title.getText()), encoding));
+		url = String.format(url,
+				encode(String.valueOf(title.getText()), encoding));
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
-        i.addCategory(Intent.CATEGORY_BROWSABLE);
-		try{
+		i.addCategory(Intent.CATEGORY_BROWSABLE);
+		try {
 			startActivity(i);
-		}catch(ActivityNotFoundException anfe){
+		} catch (ActivityNotFoundException anfe) {
 			Log.w(TAG, anfe);
 			say(anfe.getLocalizedMessage());
 		}
@@ -393,6 +413,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			v.setOnClickListener(this);
 		}
 	}
+
 
 	private void setThisAsOnClickListener(View root, int view) {
 		setThisAsOnClickListener(root.findViewById(view));
@@ -441,8 +462,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	public void onClick(final View v) {
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
-			if(cEvent instanceof Recording){
-				Utils.streamRecording(this, (Recording)cEvent);
+			if (cEvent instanceof Recording) {
+				Utils.streamRecording(this, (Recording) cEvent);
 			} else {
 				Utils.stream(this, String.valueOf(cEvent.getChannelNumber()));
 			}
@@ -531,10 +552,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			public void finished(SvdrpEvent event) {
 				if (event == SvdrpEvent.FINISHED_SUCCESS) {
 					TimerState state = timer.getTimerState();
+					TimerMatch match = timer.getTimerMatch();
 					int res = -1;
 					if (state == TimerState.Active) {
-						res = R.drawable.timer_inactive;
+						res = Utils.getTimerStateDrawable(match, R.drawable.timer_inactive, R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end);
 					} else if (state == TimerState.Inactive) {
+						Utils.getTimerStateDrawable(match,R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end);
 						res = R.drawable.timer_active;
 					}
 					if (res != -1) {
@@ -548,9 +571,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		task.start();
 	}
 
-
 	private List<Event> epgs = new ArrayList<Event>();
-
 
 	protected void say(int res) {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
@@ -560,11 +581,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 
-
-
-
 	@Override
-	public final boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+	public final boolean onCreateOptionsMenu(
+			com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
 		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
@@ -582,13 +601,14 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
 		if (item.getItemId() == R.id.epg_details_menu_share) {
 			shareEvent(cEvent);
 			return true;
 		}
 
-		if(item.getItemId() == R.id.epg_details_menu_add_to_cal){
+		if (item.getItemId() == R.id.epg_details_menu_add_to_cal) {
 			Utils.addCalendarEvent(this, cEvent);
 		}
 
@@ -600,13 +620,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 			return true;
 		}
 
-		if(item.getItemId() == R.id.epg_details_menu_switch){
+		if (item.getItemId() == R.id.epg_details_menu_switch) {
 			Utils.switchTo(this, cEvent.getChannelId(), cEvent.getChannelName());
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 
 	protected void deleteTimer(final Timer timer) {
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
@@ -672,7 +691,5 @@ public class EpgDetailsActivity extends ICSBaseActivity implements OnClickListen
 		setTitle(getString(R.string.epg_of_a_channel, cn, current + 1,
 				epgs.size()));
 	}
-
-	// private ShareActionProvider mShareActionProvider;
 
 }

@@ -5,61 +5,78 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
-        
+        android:layout_height="wrap_content" >
+
         <LinearLayout
             android:id="@+id/whatson_time"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:orientation="horizontal" >
-        
 
-        <Spinner
-            android:id="@+id/epg_list_channel_spinner"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-			android:layout_marginTop="3dip"            
-            android:prompt="@string/epg_list_channel_spinner" />
+            <Spinner
+                android:id="@+id/epg_list_channel_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dip"
+                android:layout_weight="1"
+                android:prompt="@string/epg_list_channel_spinner" />
 
             <ImageView
-                android:clickable="true"
-                android:background="@android:drawable/list_selector_background"
+                android:id="@+id/switch_epg_view"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/switch_epg_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/buttonStyleSmall"
+                android:background="@android:drawable/list_selector_background"
+                android:clickable="true"
                 android:src="@drawable/ic_menu_revert" />
-		</LinearLayout>
+        </LinearLayout>
 
         <ListView
             android:id="@+id/whatson_list"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentTop="true"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/channel_info"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_below="@id/epg_list_channel_spinner"
+            android:layout_below="@+id/whatson_time"
             android:layout_centerHorizontal="true"
             android:cacheColorHint="?android:attr/colorBackground" />
 
-        <TextView
-            android:id="@+id/epg_list_search_label"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/channel_info"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/epg_list_search_label" />
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/back"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:padding="2dp" >
+
+            <ImageView
+                android:id="@+id/audio_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_volume_small" />
+
+            <TextView
+                android:id="@+id/channel_audio"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/no_connection_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -86,4 +103,5 @@
                 android:textSize="18dip" />
         </LinearLayout>
     </LinearLayout>
+
 </ViewFlipper>

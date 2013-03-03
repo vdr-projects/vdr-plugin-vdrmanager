@@ -33,7 +33,7 @@ public class TimerClient extends SvdrpClient<Timer> {
 	 * @param parameter parameter for lste
 	 */
 	@Override
-	public void run()   {
+	public synchronized void run()   {
 		runCommand("timers");
 	}
 

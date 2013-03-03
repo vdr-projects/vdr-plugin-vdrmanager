@@ -1,6 +1,5 @@
 package de.bjusystems.vdrmanager.gui;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -30,7 +29,6 @@ import de.bjusystems.vdrmanager.data.P;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.gui.SimpleGestureFilter.SimpleGestureListener;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
-import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 /**
@@ -53,11 +51,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	private SimpleGestureFilter detector;
 
-	protected EpgClient epgClient;
-
 	protected EventAdapter adapter;
 
 	protected String highlight = null;
+
+	protected Date lastUpdate = null;
 
 	protected static final Date FUTURE = new Date(Long.MAX_VALUE);
 
@@ -65,7 +63,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	protected Channel currentChannel = null;
 
-	protected List<T> results = new ArrayList<T>();
+	//protected List<T> results = new ArrayList<T>();
 
 	AlertDialog sortByDialog = null;
 
@@ -115,7 +113,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	public boolean onCreateOptionsMenu(
 			final com.actionbarsherlock.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
-
 		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.epg_list_menu, menu);
 		return true;
@@ -150,6 +147,8 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			Utils.stream(this, event);
 			break;
 		}
+
+
 		case MENU_SHARE: {
 			Utils.shareEvent(this, event);
 			break;
@@ -275,8 +274,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 		MenuItem mi = menu.findItem(R.id.epg_item_menu_live_tv);
 		if (item.isLive() && item.getStreamId() != null) {
+
 			mi.setVisible(true);
+
 		} else {
+
 			mi.setVisible(false);
 		}
 		menu.add(MENU_GROUP_SHARE, MENU_SHARE, 0, R.string.share);
@@ -330,9 +332,9 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		// }
 	}
 
-	protected void resultReceived(T result) {
-		results.add(result);
-	}
+//	protected void resultReceived(T result) {
+//		results.add(result);
+//	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -408,25 +410,39 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		alert(getString(R.string.vdr_error_text, exception.getMessage()));
 	}
 
-	abstract protected boolean finishedSuccessImpl();
+	abstract protected boolean finishedSuccessImpl(List<T> results);
 
 	protected String getViewID(){
 		return this.getClass().getSimpleName();
 	}
 
-	protected final synchronized boolean finishedSuccess() {
+	protected void pushResultCountToTitle(){
 		setTitle(getString(R.string.epg_window_title_count, getWindowTitle(),
-				results.size()));
+				getCACHE().size()));
+	}
+
+
+	synchronized protected final boolean finishedSuccess(List<T> results) {
+		//ProgressDialog dialog = new ProgressDialog(this);
+		//dialog.setMessage("Loading");
+		//dialog.show();
 		try {
-			return finishedSuccessImpl();
+			lastUpdate = new Date();
+			boolean r = finishedSuccessImpl(results);
+			if(r == false){
+				adapter.clear();
+				adapter.notifyDataSetChanged();
+			}
+			return r;
 		} finally {
-			results.clear();
+//			dialog.dismiss();
+			//results.clear();
 		}
 	}
 
 	@Override
 	protected boolean displayingResults() {
-		return results.isEmpty() == false;
+		return getCACHE().isEmpty() == false;
 	}
 
 	class TitleComparator implements Comparator<Event> {
@@ -443,14 +459,17 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		}
 	};
 
-	class TimeAndChannelComparator implements Comparator<T> {
+	class TimeAndChannelComparator implements Comparator<Event> {
 		boolean r = false;
 
+		TimeAndChannelComparator() {
+			this(false);
+		}
 		TimeAndChannelComparator(boolean r) {
 			this.r = r;
 		}
 
-		public int compare(final T item1, final T item2) {
+		public int compare(final Event item1, final Event item2) {
 
 			int c = item1.getStart().compareTo(item2.getStart());
 			if (c != 0) {
@@ -471,6 +490,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			return item1.getChannelNumber().compareTo(item2.getChannelNumber());
 		}
 	}
+
 
 	class TimeComparator implements Comparator<Event> {
 		boolean r = false;
@@ -508,5 +528,19 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			return item1.getChannelNumber().compareTo(item2.getChannelNumber());
 		}
 	}
+
+
+
+	public void clearCache() {
+		getCACHE().clear();
+	}
+
+	protected abstract List<T> getCACHE();
+
+//	@Override
+//	protected void connected() {
+//		super.connected();
+//		results.clear();
+//	}
 
 }

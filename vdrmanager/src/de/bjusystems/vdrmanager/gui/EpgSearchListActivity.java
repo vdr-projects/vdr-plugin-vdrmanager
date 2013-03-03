@@ -1,6 +1,9 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -10,13 +13,18 @@ import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import com.actionbarsherlock.view.MenuItem;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.P;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
@@ -30,6 +38,12 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
  */
 public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		OnItemClickListener {
+
+	protected static ArrayList<Epg> CACHE = new ArrayList<Epg>();
+
+	protected List<Epg> getCACHE() {
+		return CACHE;
+	}
 
 	private void initSearch(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -45,11 +59,6 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected SvdrpClient<Epg> getClient() {
-		return this.epgClient;
-	}
-
-	@Override
 	protected void onNewIntent(Intent intent) {
 		initSearch(intent);
 		startSearch();
@@ -59,12 +68,21 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		startEpgQuery();
 	}
 
+	protected String getViewID(){
+		return this.getClass().getSimpleName();
+	}
+
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		Preferences.setLocale(this);
 		// Preferences.init(this);
 
 		super.onCreate(savedInstanceState);
+
+		sortBy = Preferences.get(this, getViewID() + "_"
+				+ P.EPG_LAST_SORT, MENU_GROUP_DEFAULT);
+
 
 		Intent intent = getIntent();
 		initSearch(intent);
@@ -96,7 +114,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		EpgSearchParams sp = new EpgSearchParams();
 		sp.setTitle(highlight);
 		setTitle(getWindowTitle());
-		epgClient = new EpgClient(sp);
+		EpgClient epgClient = new EpgClient(sp);
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
 
@@ -111,21 +129,43 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		task.run();
 	}
 
-	/*
-	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
-	 * cache hit
-	 *
-	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
-	 */
+	protected void sort() {
+		/* */
+		switch (sortBy) {
+		case MENU_GROUP_DEFAULT: {
+			//Collections.sort(CACHE, getTimeComparator(false));
+			break;
+		}
+		case MENU_GROUP_ALPHABET: {
+			Collections.sort(CACHE, new TitleComparator());
+			break;
+		}
+		//case MENU_GROUP_CHANNEL: {
+		   //sortItemsByChannel(results);
+		//}
+		}
+	}
+
+
 	@Override
-	protected boolean finishedSuccessImpl() {
-		adapter.clear();
+	protected int getBaseMenu() {
+		return R.menu.refresh_menu;
+	}
+
+	@Override
+	protected synchronized void fillAdapter() {
+
 		adapter.highlight = this.highlight;
+
+		adapter.clear();
+
+		if(CACHE.isEmpty()){
+			return;
+		}
 
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		sortItemsByTime(results);
-		for (Event e : results) {
+		for (Event e : CACHE) {
 			cal.setTime(e.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -135,6 +175,31 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 			adapter.add(new EventListItem((Epg) e));
 		}
+		adapter.notifyDataSetChanged();
+	}
+
+
+	@Override
+	protected int getAvailableSortByEntries() {
+		return R.array.epg_sort_by_time_alpha;
+	}
+
+
+	/*
+	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
+	 * cache hit
+	 *
+	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
+	 */
+	@Override
+	protected boolean finishedSuccessImpl(List<Epg> results) {
+
+		clearCache();
+		for(Epg e : results){
+			CACHE.add(e);
+		}
+		pushResultCountToTitle();
+		fillAdapter();
 		listView.setSelectionAfterHeaderView();
 		return adapter.getCount() > 0;
 	}
@@ -142,7 +207,7 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	protected void prepareDetailsViewData(final EventListItem item) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentEvent(item.getEvent());
-		app.setCurrentEpgList(results);
+		app.setCurrentEpgList(CACHE);
 	}
 
 	@Override
@@ -160,6 +225,27 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		startEpgQuery();
 	}
 
+	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+		// MenuItem item;
+		// item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
+		// R.string.new_timer);
+		// item.setIcon(android.R.drawable.ic_menu_add);;
+		// /item.setAlphabeticShortcut('r');
+
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.epg_search_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.epg_search){
+			startSearchManager();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@Override
 	protected String getWindowTitle() {
 		if (TextUtils.isEmpty(highlight)) {
@@ -169,11 +255,11 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		return getString(R.string.epg_by_search_param, highlight);
 	}
 
-	@Override
-	public boolean onSearchRequested() {
-		startSearchManager();
-		return true;
-	}
+	//@Override
+	//public boolean onSearchRequested() {
+		//startSearchManager();
+		//return true;
+	//}
 
 	@Override
 	protected int getListNavigationIndex() {
@@ -183,6 +269,12 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	@Override
 	protected boolean hasListNavigation() {
 		return false;
+	}
+
+	@Override
+	protected void timerModified(Timer timer) {
+		clearCache();
+		super.timerModified(timer);
 	}
 
 }

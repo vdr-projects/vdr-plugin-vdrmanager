@@ -1,6 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,10 +12,14 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.Cache;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -23,13 +27,12 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpExceptionListener;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpFinishedListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
-import de.bjusystems.vdrmanager.utils.svdrp.SvdrpResultListener;
 
 public abstract class BaseActivity<Result, T extends ListView> extends
-		ICSBaseActivity implements OnClickListener,
-		SvdrpResultListener<Result>, SvdrpListener, SvdrpExceptionListener,
-		Cache {
+		ICSBaseActivity implements OnClickListener, SvdrpListener,
+		SvdrpExceptionListener, SvdrpFinishedListener<Result>, Cache {
 
 	public static final String TAG = BaseActivity.class.getName();
 
@@ -39,17 +42,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	protected T listView;
 
-	@Override
-	public boolean onSearchRequested() {
-		// TODO Auto-generated method stub
-		return super.onSearchRequested();
-	}
-
 	protected ViewFlipper flipper;
 
 	private Button retry;
 
 	private ProgressDialog progress;
+
 
 	// protected SvdrpProgressDialog progress;
 
@@ -72,10 +70,6 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	}
 
 	protected boolean forceRefresh = false;
-
-	public void reset() {
-
-	}
 
 	protected void switchNoConnection() {
 		if (flipper == null) {
@@ -141,13 +135,13 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	public static final int LIST_NAVIGATION_RECORDINGS = 3;
 	public static final int LIST_NAVIGATION_TIMERS = 4;
 
-	protected boolean hasListNavigation(){
+	protected boolean hasListNavigation() {
 		return true;
 	}
 
-	protected void initListNavigation(){
+	protected void initListNavigation() {
 
-		if(hasListNavigation() == false){
+		if (hasListNavigation() == false) {
 			return;
 		}
 
@@ -213,6 +207,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		super.onCreate(savedInstanceState);
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
+
+
 		getApp().addActivityToFinish(this);
 
 		initActionBar();
@@ -247,6 +243,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		finish();
 	}
 
+	protected int getBaseMenu() {
+		return R.menu.refresh_filter_menu;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(
 			final com.actionbarsherlock.view.Menu menu) {
@@ -257,7 +257,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		// item.setIcon(R.drawable.ic_menu_refresh);
 		// item.setAlphabeticShortcut('r');
 		com.actionbarsherlock.view.MenuInflater inf = getSupportMenuInflater();
-		inf.inflate(R.menu.refresh_menu, menu);
+		inf.inflate(getBaseMenu(), menu);
 
 		// SearchView searchView = (SearchView)
 		// menu.findItem(R.id.menu_search).getActionView();
@@ -270,7 +270,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	abstract protected void retry();
 
-	abstract protected SvdrpClient<Result> getClient();
+	// abstract protected SvdrpClient<Result> getClient();
 
 	@Override
 	public boolean onOptionsItemSelected(
@@ -280,6 +280,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 			backupViewSelection();
 			refresh();
 			return true;
+		case R.id.list_filter: {
+			onSearchRequested();
+			return true;
+		}
 		case android.R.id.home:
 			Intent intent = new Intent(this, VdrManagerActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -372,9 +376,9 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		return false;
 	}
 
-	public void svdrpEvent(Result result) {
-		resultReceived(result);
-	}
+	// public void svdrpEvent(Result result) {
+	// resultReceived(result);
+	// }
 
 	@Override
 	public void svdrpEvent(SvdrpEvent event, Throwable t) {
@@ -383,8 +387,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	protected void addListener(SvdrpAsyncTask<Result, SvdrpClient<Result>> task) {
 		task.addSvdrpExceptionListener(this);
-		task.addSvdrpResultListener(this);
 		task.addSvdrpListener(this);
+		task.addSvdrpFinishedListener(this);
 	}
 
 	@Override
@@ -398,13 +402,15 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		case CONNECTING:
 			progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			setMessage(R.string.progress_connect);
-			progress.show();
+			if (!isFinishing()) {
+				progress.show();
+			}
 			break;
 		case LOGGED_IN:
 			setMessage(R.string.progress_login);
 			break;
 		case COMMAND_SENT:
-			setMessage(getClient().getProgressTextId());
+			setMessage(getProgressTextId());
 			break;
 		case DISCONNECTING:
 			setMessage(R.string.progress_disconnect);
@@ -435,19 +441,16 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 			return;
 		case FINISHED_SUCCESS:
 			progress.dismiss();
-			if (finishedSuccess()) {
-				finishedSuccess = true;
-				restoreViewSelection();
-			} else {
-				say(R.string.epg_no_items);
-			}
-
 			break;
 		}
 		// case RESULT_RECEIVED:
 		// resultReceived(result);
 		// break;
 		// }
+	}
+
+	protected int getProgressTextId() {
+		return R.string.progress_loading;
 	}
 
 	private void setMessage(int progressConnect) {
@@ -463,18 +466,17 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	/**
 	 * @return false, if no results found
 	 */
-	protected abstract boolean finishedSuccess();
+	protected abstract boolean finishedSuccess(List<Result> results);
 
-	/**
-	 * @param result
-	 */
-	protected abstract void resultReceived(Result result);
+	// /**
+	// * @param result
+	// */
+	// protected abstract void resultReceived(Result result);
 
 	protected void connected() {
 		if (flipper != null) {
 			flipper.setDisplayedChild(0);
 		}
-		// results.clear();
 	}
 
 	public void svdrpException(final SvdrpException exception) {
@@ -489,6 +491,16 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 			progress.dismiss();
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	public void finished(List<Result> results) {
+		if (finishedSuccess(results)) {
+			finishedSuccess = true;
+			restoreViewSelection();
+		} else {
+			say(R.string.epg_no_items);
+		}
 	}
 
 }

@@ -1,8 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -25,7 +23,9 @@ import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
-		Filterable {
+		Filterable
+//		, SectionIndexer
+		{
 
 	private final int TYPE_ITEM = 0;
 	private final int TYPE_HEADER = 1;
@@ -61,10 +61,11 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	@Override
 	public void add(EventListItem object) {
 		items.add(object);
+		//if (object.isHeader()) {
+			//sections.add(object.getHeader());
+		//}
 		super.add(object);
 	}
-
-
 
 	@Override
 	public int getItemViewType(int position) {
@@ -145,50 +146,42 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		return itemHolder;
 	}
 
-	private int getTimerStateDrawable(TimerMatch match, int full, int begin,
-			int end) {
-		if (match == TimerMatch.Full) {
-			return full;
-		}
-
-		if (match == TimerMatch.Begin) {
-			return begin;
-		}
-
-		return end;
-	}
 
 	public void fillEventViewHolder(EventListItemHolder itemHolder,
 			EventListItem item) {
 
-
-
-
-
 		itemHolder.state.setVisibility(View.VISIBLE);
 
-		if(item.getEvent() instanceof Timerable == false){
+		if (item.getEvent() instanceof Timerable == false) {
 			itemHolder.state.setImageResource(R.drawable.timer_none);
-		} else if(item.getEvent() instanceof Recording){
-			if(Utils.isLive(item.getEvent())){
+		} else if (item.getEvent() instanceof Recording) {
+			if (Utils.isLive(item.getEvent())) {
 				itemHolder.state.setImageResource(R.drawable.timer_recording);
 			}
 		} else {
-		TimerMatch match = ((Timerable)item.getEvent()).getTimerMatch();
-		switch (((Timerable)item.getEvent()).getTimerState()) {
-		case Active:
-			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end));
-			break;
-		case Inactive:
-			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_inactive, R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end));
-			break;
-		case Recording:
-			itemHolder.state.setImageResource(getTimerStateDrawable(match, R.drawable.timer_recording, R.drawable.timer_recording_begin, R.drawable.timer_recording_end));
-			break;
-		case None:
-			itemHolder.state.setImageResource(R.drawable.timer_none);
-			break;
-		}
+			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();
+			switch (((Timerable) item.getEvent()).getTimerState()) {
+			case Active:
+				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(match,
+						R.drawable.timer_active, R.drawable.timer_active_begin,
+						R.drawable.timer_active_end));
+				break;
+			case Inactive:
+				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(match,
+						R.drawable.timer_inactive,
+						R.drawable.timer_inactive_begin,
+						R.drawable.timer_inactive_end));
+				break;
+			case Recording:
+				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(match,
+						R.drawable.timer_recording,
+						R.drawable.timer_recording_begin,
+						R.drawable.timer_recording_end));
+				break;
+			case None:
+				itemHolder.state.setImageResource(R.drawable.timer_none);
+				break;
+			}
 		}
 
 		final EventFormatter formatter = getEventFormatter(item);
@@ -214,7 +207,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 			}
 		}
 
-		//TODO better render of duration
+		// TODO better render of duration
 		int p = Utils.getProgress(item);
 		if (p == -1) {
 			itemHolder.progress.setVisibility(View.GONE);
@@ -248,6 +241,10 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 
 	private void addSuper(EventListItem item) {
 		super.add(item);
+	}
+
+	private void clearSuper() {
+		super.clear();
 	}
 
 	public boolean isHideDescription() {
@@ -306,12 +303,40 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 
 			@Override
 			protected void publishResults(CharSequence arg0, FilterResults arg1) {
-				EventAdapter.this.clear();
+				clearSuper();
 				for (EventListItem item : (ArrayList<EventListItem>) arg1.values) {
 					addSuper(item);
 				}
 				notifyDataSetChanged();
 			}
 		};
+	}
+
+	//@Override
+	//public int getPositionForSection(int section) {
+		//return 0;
+//	}
+
+	//@Override
+	//public int getSectionForPosition(int position) {
+		// TODO Auto-generated method stub
+		//return 0;
+	//}
+
+	//ArrayList<String> sections = new ArrayList<String>();
+
+	//@Override
+	//public Object[] getSections() {
+		//try {
+		//	return sections.toArray();
+		//} finally {
+			//sections.clear();
+		//}
+	//}
+
+	@Override
+	public void clear() {
+		super.clear();
+		items.clear();
 	}
 }

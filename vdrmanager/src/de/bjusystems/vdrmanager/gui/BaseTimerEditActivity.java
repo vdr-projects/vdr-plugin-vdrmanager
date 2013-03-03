@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.Event;
-import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.Timerable;
@@ -20,11 +19,11 @@ import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
- * 
+ *
  * This class is a base class for all the listings, which can deal with timers
- * 
+ *
  * @author lado
- * 
+ *
  * @param <T>
  *            Class extending Event
  */
@@ -32,8 +31,8 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		BaseEventListActivity<T> implements OnClickListener // SvdrpAsyncListener<Timer>,
 {
 
-	//private static final ScheduledExecutorService worker = Executors
-			//.newSingleThreadScheduledExecutor();
+	// private static final ScheduledExecutorService worker = Executors
+	// .newSingleThreadScheduledExecutor();
 
 	// /@Override
 	// public boolean onPrepareOptionsMenu(Menu menu) {
@@ -41,7 +40,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 	// }
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
 	 */
 	// @Override
@@ -90,7 +89,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
 	 * android.view.View, android.view.ContextMenu.ContextMenuInfo)
 	 */
@@ -103,12 +102,12 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 
 		// set menu title
 		final EventListItem item = adapter.getItem(info.position);
-		
-		if(item.isHeader()){
+
+		if (item.isHeader()) {
 			return;
 		}
-		
-		//final EventFormatter formatter = new EventFormatter(item);
+
+		// final EventFormatter formatter = new EventFormatter(item);
 		menu.setHeaderTitle(item.getTitle());
 
 		inflater.inflate(R.menu.epg_list_item_menu, menu);
@@ -140,7 +139,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 
 	/**
 	 * Extract a Timer from a given {@link EventListItem}
-	 * 
+	 *
 	 * @param item
 	 * @return Timer if any on the event
 	 */
@@ -152,11 +151,11 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		return ((Timerable) e).getTimer();
 	}
 
-	protected void toggleTimer(Timer timer) {
+	protected void toggleTimer(final Timer timer) {
 		final ToggleTimerTask task = new ToggleTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
-				timerModified();
+				timerModified(timer);
 				restoreViewSelection();
 			}
 		};
@@ -165,7 +164,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 
 	/**
 	 * Delete a given timer
-	 * 
+	 *
 	 * @param timer
 	 */
 	protected void deleteTimer(final Timer timer) {
@@ -173,35 +172,40 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		final DeleteTimerTask task = new DeleteTimerTask(this, timer) {
 			@Override
 			public void finished(SvdrpEvent event) {
-				timerModified();
+				timerModified(timer);
 				restoreViewSelection();
 			}
 		};
 		task.start();
 	}
 
+	protected void timerModified() {
+		timerModified(null);
+	}
+
 	/**
 	 * Is called, if a timer has been changed and so update of the list is
 	 * required
 	 */
-	protected void timerModified() {
+	protected void timerModified(final Timer timer) {
 		backupViewSelection();
-		//say(R.string.update_will_start_in);
-		//Runnable task = new Runnable() {
-			//public void run() {
-				refresh();
-			//}
-		//};
-		//worker.schedule(task, 1000, TimeUnit.MILLISECONDS);
+		// say(R.string.update_will_start_in);
+		// Runnable task = new Runnable() {
+		// public void run() {
+		refresh();
+		// }
+		// };
+		// worker.schedule(task, 1000, TimeUnit.MILLISECONDS);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see android.app.Activity#onActivityResult(int, int,
 	 * android.content.Intent)
 	 */

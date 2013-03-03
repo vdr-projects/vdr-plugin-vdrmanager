@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!--
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
 	<item
 	  android:id="@+id/epg_menu_search"
 	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_search"/>
--->
-<!--
+    -->
+    <!--
 	<item
 	  android:id="@+id/epg_menu_times"
 	  android:icon="@android:drawable/ic_menu_search"
 	  android:title="@string/epg_menu_times"/>
     -->
+    <!--  -->
 
-	<item
-	  android:showAsAction="ifRoom"
-	  android:id="@+id/epg_list_sort_menu"
-	  android:icon="@android:drawable/ic_menu_sort_alphabetically"
-	  android:title="@string/sort"/>
+    <item
+        android:id="@+id/epg_list_sort_menu"
+        android:icon="@android:drawable/ic_menu_sort_alphabetically"
+        android:showAsAction="ifRoom"
+        android:title="@string/sort"/>
 
 </menu>

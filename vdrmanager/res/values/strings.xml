@@ -9,7 +9,7 @@
     <string name="action_menu_wakeup">Wakeup</string>
     <string name="app_name">VDR-Manager</string>
     <string name="channel_item_menu_epg">Show EPG</string>
-    <string name="channel_item_menu_stream">Show live stream</string>
+    <string name="channel_item_menu_stream">Live stream</string>
     <string name="channel_item_menu_hide">Hide</string>
     <string name="channel_item_menu_hide_permanent">Hide permanent</string>
     <string name="channel_group_menu_hide">Hide</string>
@@ -82,7 +82,7 @@
     <string name="epg_search_button">Search</string>
     <string name="epg_duration_template">%1$s min</string>
     <string name="epg_duration_template_live">%1$s/%2$s min</string>
-    <string name="epg_of_a_channel">EPG -> %1$s,  %2$s/%3$s</string>
+    <string name="epg_of_a_channel">%1$s,  %2$s/%3$s</string>
     <string name="epg_by_channel">EPG by channel</string>
     <string name="epg_by_search">EPG Search</string>
     <string name="epg_by_search_param">EPG Search: \'%1$s\'</string>
@@ -95,7 +95,7 @@
     <string name="new_timer">New timer</string>
     <string name="vdr_error_text">The communication with VDR has caused an error: %1$s</string>
     <string name="livetv">Live TV</string>
-    <string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
+      <string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
 		player such as VPlayer</string>
     <string name="settings_livetv_streamformat">Streamformat</string>
     <string name="settings_livetv_port">Streaming Port</string>
@@ -108,17 +108,13 @@
         <item>ES</item>
         <item>PS</item>
     </string-array>
-    <string-array name="livetv_streamformat_values">
-        <item>TS</item>
-        <item>PES</item>
-        <item>ES</item>
-        <item>PS</item>
-    </string-array>
+
 
     <string name="key_remux_enable">remux_enable</string>
     <string name="key_remux_command">remux_command</string>
     <string name="key_remux_parameter">remux_parameter</string>
     <string name="stream_via_as">Stream</string>
+    <string name="stream_choose_audio">Choose Audio Track</string>
     <string name="stream_via">via %s</string>
     <string name="stream_as">as %s</string>
     <string name="remux_title">Remux</string>
@@ -144,7 +140,6 @@
     <string name="vdr_host_summary">Host running VDR</string>
     <string name="vdr_port_title">VDR plugin port </string>
     <string name="vdr_port_summary">Port for connections to VDR plugin</string>
-    <string name="vdr_port_default">6420</string>
     <string name="vdr_password_title">VDR plugin password</string>
     <string name="vdr_password_summary">Password for the VDR plugin</string>
     <string name="vdr_ssl_title">Secure connect</string>
@@ -288,6 +283,7 @@
     <string name="progress_recordings_loading">Loading recordings…</string>
     <string name="progress_switching">Switching…</string>
     <string name="progress_channels_loading">Loading channels…</string>
+    <string name="progress_loading">Loading…</string>
     <string name="progress_disconnect">Disconnecting…</string>
     <string name="progress_wakeup_sending">Initiating wakeup request…</string>
     <string name="progress_wakeup_sent">Wakeup request sent</string>
@@ -362,6 +358,10 @@
         <item>Channels</item>
         <item>Alphabet</item>
     </string-array>
+    <string-array name="recordings_group_by">
+        <item>By Time</item>
+        <item>By Alphabet</item>
+    </string-array>
 
     <string name="gui_recent_channels_order_summary">Sort by last used or mostly used</string>
     <string name="gui_recent_channels_order_title">Recent Channels Sorting</string>
@@ -372,7 +372,6 @@
         <item>Source</item>
         <item>Name</item>
     </string-array>
-
     <string-array name="navigation_array">
         <item>Channels</item>
         <item>EPG by Time</item>
@@ -381,5 +380,10 @@
         <item>Timers</item>
     </string-array>
 
+    <string name="filter">Filter</string>
 
+    <string name="vdr_stream_proxy_sum">Proxy server for streaming</string>
+    <string name="vdr_stream_proxy_title">Proxy Server</string>
+    <string name="audio_tracks_template">Audio Tracks: %1$s</string>
+    <string name="audio_track_dolby">D</string>
 </resources>

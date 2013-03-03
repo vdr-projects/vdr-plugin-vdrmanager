@@ -120,12 +120,7 @@
     <item>ES</item>
     <item>PS</item>
   </string-array>
-  <string-array name="livetv_streamformat_values">
-    <item>TS</item>
-    <item>PES</item>
-    <item>ES</item>
-    <item>PS</item>
-  </string-array>
+
 
   <string name="main_menu_preferences">Einstellungen</string>
   <string name="main_menu_info">Infomationen</string>
@@ -142,7 +137,6 @@
   <string name="vdr_host_summary">VDR Hostrechner</string>
   <string name="vdr_port_title">VDR Plugin Port </string>
   <string name="vdr_port_summary">Port für Verbindungen zum VDR Plugin</string>
-  <string name="vdr_port_default">6420</string>
   <string name="vdr_password_title">VDR Plugin Passwort</string>
   <string name="vdr_password_summary">Passwort für das VDR Plugin</string>
   <string name="vdr_ssl_title">Sichere Verbindung</string>

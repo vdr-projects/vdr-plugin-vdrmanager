@@ -6,13 +6,13 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Application;
+import de.bjusystems.vdrmanager.data.Cache;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.Vdr;
-import de.bjusystems.vdrmanager.gui.Cache;
 
 
 public class VdrManagerApp extends Application {
@@ -131,7 +131,7 @@ public class VdrManagerApp extends Application {
 	public void finishActivities() {
 		for (final Activity activity : activitiesToFinish) {
 			if (activity instanceof Cache) {
-				((Cache) activity).reset();
+				((Cache) activity).clearCache();
 			}
 			activity.finish();
 		}

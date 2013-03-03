@@ -37,6 +37,7 @@ public class Epg extends Event implements Timerable {
 		description = words.length > 5 ? mapSpecialChars(words[5]) : "";
 		shortText = words.length > 6 ? mapSpecialChars(words[6]) : "";
 		channelId = words.length > 7 ? mapSpecialChars(words[7]) : "";
+		rawAudio = words.length > 8 ? mapSpecialChars(words[8]) : "";
 	}
 
 	public Timer getTimer() {

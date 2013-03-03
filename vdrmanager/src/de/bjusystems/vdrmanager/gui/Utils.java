@@ -29,11 +29,13 @@ import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
+import de.bjusystems.vdrmanager.data.AudioTrack;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
@@ -147,6 +149,7 @@ public class Utils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getBaseUrl()).append("/").append(p.getStreamFormat())
 				.append("/").append(chn);
+
 		return sb.toString();
 	}
 
@@ -160,12 +163,12 @@ public class Utils {
 		return sb.toString();
 	}
 
-	public static void stream(Activity activity, Event event) {
+	public static void stream(final Activity activity, Event event) {
 		stream(activity, event.getStreamId());
 	}
 
-	public static void stream(Activity a, Channel c) {
-		stream(a, String.valueOf(c.getId()));
+	public static void stream(final Activity activity, Channel channel) {
+		stream(activity, channel.getId());
 	}
 
 	public static void stream(final Activity activity, final String idornr) {
@@ -338,8 +341,7 @@ public class Utils {
 			String urlstring = url.toString();
 			return urlstring;
 		} else if (StringUtils.equals(m, "vdr-streamdev")) {
-			url.append("http://")
-					.append(Preferences.get().getSvdrpHost())
+			url.append("http://").append(Preferences.get().getSvdrpHost())
 					//
 					.append(":")
 					.append(Integer.valueOf(Preferences.get().getStreamPort()))
@@ -417,5 +419,33 @@ public class Utils {
 						DateUtils.FORMAT_SHOW_TIME).toString();
 	}
 
-	
+	public static int getTimerStateDrawable(TimerMatch match, int full,
+			int begin, int end) {
+		if (match == TimerMatch.Full) {
+			return full;
+		}
+
+		if (match == TimerMatch.Begin) {
+			return begin;
+		}
+
+		return end;
+	}
+
+	public static String formatAudio(Context context, List<AudioTrack> tracks){
+
+		StringBuilder sb = new StringBuilder();
+
+		String sep  = "";
+		for(AudioTrack a : tracks){
+			sb.append(sep).append(a.display);
+			if(a.type.equals("d")){
+				sb.append(" (").append(context.getString(R.string.audio_track_dolby)).append(")");
+			}
+			sep = ", ";
+		}
+		return sb.toString();
+
+	}
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 Jake Wharton
+<!--
+     Copyright (C) 2011 Jake Wharton
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
 -->
 
 <resources>
+
     <style name="Theme.PageIndicatorDefaults" parent="@android:style/Theme">
         <item name="circlePageIndicatorStyle">@style/Widget.CirclePageIndicator</item>
         <item name="titlePageIndicatorStyle">@style/Widget.TitlePageIndicator</item>
@@ -45,8 +47,7 @@
         <item name="titlePadding">@dimen/default_title_indicator_title_padding</item>
         <item name="topPadding">@dimen/default_title_indicator_top_padding</item>
     </style>
-    
-    
+
     <style name="MinusButton">
         <item name="android:background">@drawable/btn_circle</item>
         <item name="android:src">@drawable/ic_btn_round_minus</item>
@@ -56,6 +57,15 @@
         <item name="android:background">@drawable/btn_circle</item>
         <item name="android:src">@drawable/ic_btn_round_plus</item>
     </style>
-    
-    
+
+    <style name="Line">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:background">@drawable/line_gradient</item>
+    </style>
+
 </resources>

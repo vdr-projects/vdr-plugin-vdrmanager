@@ -2,9 +2,9 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -35,17 +35,16 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 public class RecordingListActivity extends BaseEventListActivity<Recording>
 		implements OnItemLongClickListener {
 
-	RecordingClient recordingClient;
+	//RecordingClient recordingClient;
 
-	public static final int MENU_DATE = 0;
-	public static final int MENU_NAME = 1;
-	public static final int MENU_CHANNEL = 2;
+	//public static final int MENU_GROUP_CHANNEL = 2;
 
 	public static final int ASC = 0;
 
 	public static final int DESC = 1;
 
-	private int groupBy = MENU_DATE;
+	protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
+
 
 	private int ASC_DESC = ASC;
 
@@ -72,53 +71,49 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		startRecordingQuery();
 	}
 
-	private String[] getAvailableGroupByEntries() {
-		ArrayList<String> entries = new ArrayList<String>(2);
-		entries.add(getString(R.string.groupby_date));
-		entries.add(getString(R.string.groupby_name));
-		entries.add(getString(R.string.groupby_channel));
-		return entries.toArray(Utils.EMPTY);
-	}
+	protected int getAvailableSortByEntries() {
+		return R.array.recordings_group_by;
+	};
 
-	AlertDialog groupByDialog = null;
+	// AlertDialog groupByDialog = null;
 
-	@Override
-	public boolean onOptionsItemSelected(
-			final com.actionbarsherlock.view.MenuItem item) {
-
-		switch (item.getItemId()) {
-		case R.id.menu_groupby:
-			// case MENU_PROVIDER:
-			// case MENU_NAME:
-			if (groupByDialog == null) {
-				groupByDialog = new AlertDialog.Builder(this)
-						.setTitle(R.string.menu_groupby)
-						.setIcon(android.R.drawable.ic_menu_sort_alphabetically)
-						.setSingleChoiceItems(getAvailableGroupByEntries(),
-								groupBy, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int which) {
-										if (groupBy == which) {
-											ASC_DESC = ASC_DESC == ASC ? DESC
-													: ASC;
-										} else {
-											groupBy = which;
-											ASC_DESC = ASC;
-										}
-										// fillAdapter();
-										groupByDialog.dismiss();
-										say("Comming soon...");
-									}
-								}).create();
-			}
-
-			groupByDialog.show();
-
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+	// @Override
+	// public boolean onOptionsItemSelected(
+	// final com.actionbarsherlock.view.MenuItem item) {
+	//
+	// switch (item.getItemId()) {
+	// case R.id.menu_groupby:
+	// // case MENU_PROVIDER:
+	// // case MENU_NAME:
+	// if (groupByDialog == null) {
+	// groupByDialog = new AlertDialog.Builder(this)
+	// .setTitle(R.string.menu_groupby)
+	// .setIcon(android.R.drawable.ic_menu_sort_alphabetically)
+	// .setSingleChoiceItems(getAvailableGroupByEntries(),
+	// groupBy, new DialogInterface.OnClickListener() {
+	// public void onClick(DialogInterface dialog,
+	// int which) {
+	// if (groupBy == which) {
+	// ASC_DESC = ASC_DESC == ASC ? DESC
+	// : ASC;
+	// } else {
+	// groupBy = which;
+	// ASC_DESC = ASC;
+	// }
+	// // fillAdapter();
+	// groupByDialog.dismiss();
+	// say("Comming soon...");
+	// }
+	// }).create();
+	// }
+	//
+	// groupByDialog.show();
+	//
+	// return true;
+	// default:
+	// return super.onOptionsItemSelected(item);
+	// }
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -136,11 +131,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected SvdrpClient<Recording> getClient() {
-		return this.recordingClient;
-	}
-
-	@Override
 	protected void onPause() {
 		super.onPause();
 	}
@@ -148,7 +138,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected void prepareDetailsViewData(EventListItem event) {
 		getApp().setCurrentEvent(event.getEvent());
-		getApp().setCurrentEpgList(results);
+		getApp().setCurrentEpgList(CACHE);
 	}
 
 	@Override
@@ -222,7 +212,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 
 		// get timer client
-		recordingClient = new RecordingClient();
+		 RecordingClient recordingClient = new RecordingClient();
 
 		// create backgound task
 		final SvdrpAsyncTask<Recording, SvdrpClient<Recording>> task = new SvdrpAsyncTask<Recording, SvdrpClient<Recording>>(
@@ -254,13 +244,38 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		return getString(R.string.action_menu_recordings);
 	}
 
+	protected void sort() {
+		/* */
+		switch (sortBy) {
+		case MENU_GROUP_DEFAULT: {
+			sortItemsByTime(CACHE, true);
+			break;
+		}
+		case MENU_GROUP_ALPHABET: {
+			Collections.sort(CACHE, new TitleComparator());
+			break;
+		}
+		//case MENU_GROUP_CHANNEL: {
+		   //sortItemsByChannel(results);
+		//}
+		}
+	}
+
 	@Override
-	protected boolean finishedSuccessImpl() {
+	protected void fillAdapter() {
+
 		adapter.clear();
+
+		if (CACHE.isEmpty()) {
+			return;
+		}
+
+		sort();
+
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
-		sortItemsByTime(results, true);
-		for (final Event rec : results) {
+
+		for (final Event rec : CACHE) {
 			cal.setTime(rec.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -269,9 +284,21 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 						.getDailyHeader()));
 			}
 			adapter.add(new EventListItem((Recording) rec));
+			adapter.notifyDataSetChanged();
 		}
-		// adapter.sortItems();
+
+	}
+
+	@Override
+	protected boolean finishedSuccessImpl(List<Recording> results) {
+		clearCache();
+		for(Recording r :results){
+			CACHE.add(r);
+		}
+		pushResultCountToTitle();
+		fillAdapter();
 		return adapter.isEmpty() == false;
+
 	}
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -283,6 +310,11 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected int getListNavigationIndex() {
 		return LIST_NAVIGATION_RECORDINGS;
+	}
+
+	@Override
+	protected List<Recording> getCACHE() {
+		return CACHE;
 	}
 
 }

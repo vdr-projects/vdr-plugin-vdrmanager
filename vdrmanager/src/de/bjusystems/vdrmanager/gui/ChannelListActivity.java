@@ -47,8 +47,6 @@ public class ChannelListActivity extends
 
 	private static final String TAG = ChannelListActivity.class.getName();
 
-	ChannelClient channelClient;
-
 	ChannelAdapter adapter;
 
 	Preferences prefs;
@@ -99,7 +97,10 @@ public class ChannelListActivity extends
 		// register context menu
 		registerForContextMenu(listView);
 		startChannelQuery();
+
 	}
+
+
 
 	//
 
@@ -119,12 +120,7 @@ public class ChannelListActivity extends
 			return;
 		}
 
-		if (channelClient == null) {
-			// get channel task
-			channelClient = new ChannelClient();
-		} else {
-			channelClient.removeSvdrpListener(this);
-		}
+		ChannelClient channelClient = new ChannelClient();
 
 		if (useCache == false) {
 			ChannelClient.clearCache();
@@ -134,9 +130,12 @@ public class ChannelListActivity extends
 		final SvdrpAsyncTask<Channel, SvdrpClient<Channel>> task = new SvdrpAsyncTask<Channel, SvdrpClient<Channel>>(
 				channelClient);
 
-		task.addSvdrpExceptionListener(this);
-		task.addSvdrpResultListener(this);
-		task.addSvdrpListener(this);
+		addListener(task);
+		//task.addSvdrpExceptionListener(this);
+		//task.addSvdrpResultListener(this);
+		//task.addSvdrpListener(this);
+		//task.addSvdrpFinishedListener(this);
+
 		// start task
 		task.run();
 	}
@@ -193,11 +192,6 @@ public class ChannelListActivity extends
 		RECENT_ADAPTER = new RecentChannelsAdapter(this);
 		return RECENT_ADAPTER;
 
-	}
-
-	@Override
-	public void reset() {
-		channelClient.clearCache();
 	}
 
 	private void fillAdapter() {
@@ -368,7 +362,7 @@ public class ChannelListActivity extends
 			recentAdapter.clear();
 			for (Channel c : DBAccess.get(ChannelListActivity.this)
 					.getRecentChannelDAO()
-					.getRecentChannels(channelClient.getIdChannels(), rcs)) {
+					.getRecentChannels(ChannelClient.getIdChannels(), rcs)) {
 				recentAdapter.add(c);
 			}
 
@@ -390,6 +384,7 @@ public class ChannelListActivity extends
 		}
 	}
 
+
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
@@ -405,9 +400,12 @@ public class ChannelListActivity extends
 			// Array created earlier when we built the expandable list
 			Channel item = (Channel) adapter.getChild(group, child);
 			// if (v.getId() == R.id.channel_list) {
+
 			final MenuInflater inflater = getMenuInflater();
 			menu.setHeaderTitle(item.getName());
 			inflater.inflate(R.menu.channel_list_item_menu, menu);
+
+
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			/*
 			 * http://projects.vdr-developer.org/issues/722 String grp =
@@ -437,19 +435,20 @@ public class ChannelListActivity extends
 					.getPackedPositionChild(info.packedPosition);
 			channel = (Channel) adapter.getChild(groupPos, childPos);
 			switch (item.getItemId()) {
-			case R.id.channel_item_menu_epg:
-				startChannelEPG(channel);
-				break;
+			//case R.id.channel_item_menu_epg:
+				//startChannelEPG(channel);
+				//break;
 			case R.id.channel_item_menu_stream:
 				// show live stream
 				Utils.stream(this, channel);
 				break;
-			case R.id.channel_item_menu_hide:
+
+			//case R.id.channel_item_menu_hide:
 				// TODO http://projects.vdr-developer.org/issues/722
-				break;
-			case R.id.channel_item_menu_hide_permanent:
+				//break;
+			//case R.id.channel_item_menu_hide_permanent:
 				// TODO http://projects.vdr-developer.org/issues/722
-				break;
+				//break;
 
 			case R.id.channel_item_menu_switch:
 				Utils.switchTo(this, channel);
@@ -574,15 +573,11 @@ public class ChannelListActivity extends
 	}
 
 	@Override
-	protected synchronized boolean finishedSuccess() {
+	protected synchronized boolean finishedSuccess(List<Channel> results) {
 		fillAdapter();
 		restoreViewSelection();
 		updateWindowTitle();
 		return ChannelClient.getChannels().isEmpty() == false;
-	}
-
-	@Override
-	protected void resultReceived(Channel result) {
 	}
 
 	protected void cacheHit() {
@@ -600,13 +595,19 @@ public class ChannelListActivity extends
 	}
 
 	@Override
-	protected SvdrpClient<Channel> getClient() {
-		return channelClient;
+	protected int getProgressTextId() {
+		return R.string.progress_channels_loading;
 	}
+
 
 	@Override
 	protected int getListNavigationIndex() {
 		return LIST_NAVIGATION_CHANNELS;
+	}
+
+	@Override
+	public void clearCache() {
+		ChannelClient.clearCache();
 	}
 
 }

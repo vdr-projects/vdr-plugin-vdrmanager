@@ -32,7 +32,7 @@
   <string name="share">Поділитися</string>
   <string name="search_reapt">Перезапустити</string>
   <string name="share_chooser">Поділитися текстом EPG</string>
-  <string name="about_text">Про програму \"VDR-менеджер\" для Android\n 
+  <string name="about_text">Про програму \"VDR-менеджер\" для Android\n
 Це версія %1$s\n
 Якщо Ви маєте пристрій VDR, до якого є доступ
 через інтернет і є мобільний телефон з ОС Android, тоді Ви оцінити можливості цієї прогорами.
@@ -117,7 +117,6 @@ herrlado&lt;herrlado@gmail.com&gt;
   <string name="vdr_host_summary">Вузол з запущеним VDR</string>
   <string name="vdr_port_title">Порт додатку VDR </string>
   <string name="vdr_port_summary">Порт для підключення до додатку VDR</string>
-  <string name="vdr_port_default">6420</string>
   <string name="vdr_password_title">Пароль додатку VDR</string>
   <string name="vdr_password_summary">Пароль для додатка VDR</string>
   <string name="vdr_ssl_title">Безпечне підключення</string>
@@ -138,7 +137,6 @@ herrlado&lt;herrlado@gmail.com&gt;
   <string name="wakeup_password_summary">Пароль для віддаленого пробудження</string>
   <string name="wakeup_method_title">Метод пробудження</string>
   <string name="wakeup_method_summary">Виберіть метод пробудження вузла VDR</string>
-  <string name="default_wakeup_method">wol</string>
   <string name="wakeup_wol_custom_boradcast_title">IP-адреса призначення</string>
   <string name="wakeup_wol_custom_boradcast_summary">Якщо у Вас немає статичних таблиці ARP, Вам потрібно використовувати якусь широкомовну адресу.</string>
   <string name="wakeup_wol_mac_title">MAC-адреса</string>
@@ -238,12 +236,7 @@ herrlado&lt;herrlado@gmail.com&gt;
     <item>ES</item>
     <item>PS</item>
   </string-array>
-  <string-array name="livetv_streamformat_values">
-    <item>TS</item>
-    <item>PES</item>
-    <item>ES</item>
-    <item>PS</item>
-  </string-array>
+
   <string-array name="wakeup_methods">
     <item>Виклик URL</item>
     <item>WOL (пробудження через інтернет)</item>

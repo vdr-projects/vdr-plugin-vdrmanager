@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="default_wakeup_method">wol</string>
+    <string name="vdr_port_default">6420</string>
+
+    <string-array name="livetv_streamformat_values">
+        <item>TS</item>
+        <item>PES</item>
+        <item>ES</item>
+        <item>PS</item>
+    </string-array>
+
+    <string name="vdr_stream_proxy_key">key_vdr_stream_proxy</string>
+
 </resources>

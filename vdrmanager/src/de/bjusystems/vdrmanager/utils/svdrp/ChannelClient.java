@@ -141,9 +141,6 @@ public class ChannelClient extends SvdrpClient<Channel> implements
 
 	private void received(Channel c) {
 
-
-
-
 		if (c.isGroupSeparator()) {
 			currentGroup = c.getName();
 			channelGroups.add(currentGroup);

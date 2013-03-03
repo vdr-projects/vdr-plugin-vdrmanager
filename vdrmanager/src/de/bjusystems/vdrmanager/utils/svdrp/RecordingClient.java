@@ -16,7 +16,7 @@ public class RecordingClient extends SvdrpClient<Recording> {
 	}
 
 	@Override
-	public void run()   {
+	public synchronized void run()   {
 		runCommand("recordings");
 	}
 

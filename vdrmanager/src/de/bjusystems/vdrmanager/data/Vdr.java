@@ -26,11 +26,11 @@ public class Vdr {
 
 	/** SVDRP host name or ip */
 	@DatabaseField
-	private String host;
+	private String host  = "0.0.0.0";
 
 	/** SVDRP port */
 	@DatabaseField
-	private int port;
+	private int port = 6420;
 
 	/** Password */
 	@DatabaseField
@@ -46,7 +46,7 @@ public class Vdr {
 
 	/** Enable remote wakeup */
 	@DatabaseField
-	private boolean wakeupEnabled;
+	private boolean wakeupEnabled = false;
 
 	/** URL of the wakeup script */
 	@DatabaseField
@@ -75,7 +75,7 @@ public class Vdr {
 	 *
 	 */
 	@DatabaseField
-	private String wakeupMethod;
+	private String wakeupMethod = "wol";
 
 	/** Check for running VDR is enabled */
 	@DatabaseField
@@ -87,19 +87,19 @@ public class Vdr {
 
 	/** Buffer before event */
 	@DatabaseField
-	private int timerPreMargin;
+	private int timerPreMargin = 5;
 
 	/** Buffer after event */
 	@DatabaseField
-	private int timerPostMargin;
+	private int timerPostMargin = 30;
 
 	/** Default priority */
 	@DatabaseField
-	private int timerDefaultPriority;
+	private int timerDefaultPriority = 50;
 
 	/** Default lifetime */
 	@DatabaseField
-	private int timerDefaultLifetime;
+	private int timerDefaultLifetime = 99;
 
 	/** user defined epg search times */
 	@DatabaseField
@@ -127,25 +127,25 @@ public class Vdr {
 	 * @since 0.2
 	 */
 	@DatabaseField
-	private String wolCustomBroadcast = "";
+	private String wolCustomBroadcast = "255.255.255.255";
 
 	/**
 	 * Use remux ?
 	 */
 	@DatabaseField
-	private boolean enableRemux;
+	private boolean enableRemux = false;
 
 	/**
 	 * Remux command
 	 */
 	@DatabaseField
-	private String remuxCommand;
+	private String remuxCommand  = "EXT";
 
 	/**
 	 * Remux command Parameter
 	 */
 	@DatabaseField
-	private String remuxParameter;
+	private String remuxParameter = "QUALITY=DSL1000";
 
 	@DatabaseField
 	private String encoding = "utf-8";
@@ -154,19 +154,19 @@ public class Vdr {
 	 * Connection timeout
 	 */
 	@DatabaseField
-	private int connectionTimeout;
+	private int connectionTimeout = 10;
 
 	/**
 	 * Read Timeout
 	 */
 	@DatabaseField
-	private int readTimeout;
+	private int readTimeout = 10;
 
 	/**
 	 * Timeout for a whole command run
 	 */
 	@DatabaseField
-	private int timeout;
+	private int timeout = 60;
 
 	@DatabaseField
 	private String streamingUsername;
@@ -175,10 +175,10 @@ public class Vdr {
 	private String streamingPassword;
 
 	@DatabaseField
-	private int livePort;
+	private int livePort = 8008;
 
 	@DatabaseField
-	private String recStreamMethod;
+	private String recStreamMethod = "vdr-live";
 
 	@DatabaseField
 	private boolean enableRecStreaming = false;

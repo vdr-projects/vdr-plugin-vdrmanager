@@ -1,6 +1,7 @@
 package de.bjusystems.vdrmanager.data;
 
 import java.util.Date;
+import java.util.List;
 
 import android.text.TextUtils;
 
@@ -21,6 +22,17 @@ public abstract class Event {
 	protected String description;
 	protected Date start;
 	protected Date stop;
+	protected String rawAudio;
+
+	private List<AudioTrack> audio;
+
+	public List<AudioTrack> getAudio() {
+		if (audio != null) {
+			return audio;
+		}
+		audio = AudioTrack.getAudio(rawAudio);
+		return audio;
+	}
 
 
 	public long getDuration(){
@@ -62,12 +74,14 @@ public abstract class Event {
 
 	public Event(Event event) {
 		channelNumber = event.getChannelNumber();
+		channelId = event.getChannelId();
 		channelName = event.getChannelName();
 		title = event.getTitle();
 		shortText = event.getShortText();
 		description = event.getDescription();
 		start = event.getStart();
 		stop = event.getStop();
+		rawAudio = event.rawAudio;
 	}
 
 	public Long getChannelNumber() {
@@ -118,5 +132,4 @@ public abstract class Event {
 		}
 		return String.valueOf(channelNumber);
 	}
-
 }

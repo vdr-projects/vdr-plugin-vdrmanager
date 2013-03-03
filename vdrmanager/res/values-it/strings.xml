@@ -33,7 +33,7 @@
   <string name="search_reapt">Riesegui</string>
   <string name="share_chooser">Condividi valore EPG</string>
   <string name="about_text">
-        Info sul programma \"Gestore VDR\" per Android\n 
+        Info sul programma \"Gestore VDR\" per Android\n
 		Questa è la versione %1$s\n
         Se a casa disponi di una VDR raggiungibile
          da Internet e possiedi un telefono cellulare che usa Android allora forse hai trovato l\'applicazione che fa per te.
@@ -141,7 +141,6 @@
   <string name="wakeup_password_summary">Password per accensione remota</string>
   <string name="wakeup_method_title">Metodo accensione</string>
   <string name="wakeup_method_summary">Scegli un metodo per accendere VDR</string>
-  <string name="default_wakeup_method">url</string>
   <string name="wakeup_wol_custom_boradcast_title">Indirizzo IP destinazione</string>
   <string name="wakeup_wol_custom_boradcast_summary">A meno di non avere delle tabelle ARP statiche dovresti usare un indirizzo di broadcast.</string>
   <string name="wakeup_wol_mac_title">Indirizzo MAC</string>
@@ -238,12 +237,6 @@
   <string name="gui_max_recent_channels_title">Numero massimo canali recenti</string>
   <string name="gui_max_recent_channels_summary">Quanti canali vuoi conservare tra quelli recenti?</string>
   <string-array name="livetv_streamformat">
-    <item>TS</item>
-    <item>PES</item>
-    <item>ES</item>
-    <item>PS</item>
-  </string-array>
-  <string-array name="livetv_streamformat_values">
     <item>TS</item>
     <item>PES</item>
     <item>ES</item>

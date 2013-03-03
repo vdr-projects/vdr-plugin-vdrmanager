@@ -1,7 +1,10 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import android.os.Bundle;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,15 +29,8 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	private static final int MENU_NEW_TIMER = 2;
 
 	private static final int MENU_GROUP_NEW_TIMER = 2;
-	/**
-	 *
-	 */
-	TimerClient timerClient;
 
-	@Override
-	protected SvdrpClient<Timer> getClient() {
-		return this.timerClient;
-	}
+	protected static ArrayList<Timer> CACHE = new ArrayList<Timer>();
 
 	/*
 	 * (non-Javadoc)
@@ -80,7 +76,7 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		}
 
 		// get timer client
-		timerClient = new TimerClient();
+		TimerClient timerClient = new TimerClient();
 
 		// create backgound task
 		final SvdrpAsyncTask<Timer, SvdrpClient<Timer>> task = new SvdrpAsyncTask<Timer, SvdrpClient<Timer>>(
@@ -120,11 +116,12 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		// remember event for details view and timer things
 		app.setCurrentEvent(item.getEvent());
-		app.setCurrentEpgList(results);
+		app.setCurrentEpgList(CACHE);
 	}
 
 	protected Comparator<Timer> getTimeComparator(boolean reverse) {
-		return new TimeAndChannelComparator(reverse) {
+		return new Comparator<Timer>() {
+			TimeAndChannelComparator c = new TimeAndChannelComparator();
 			@Override
 			public int compare(Timer item1, Timer item2) {
 				if (item1.isRecurring()) {
@@ -133,18 +130,60 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 				if (item2.isRecurring()) {
 					return -1;
 				}
-				return super.compare(item1, item2);
+				return c.compare(item1, item2);
 			}
 
 		};
 	}
 
-	protected boolean finishedSuccessImpl() {
+
+
+	@Override
+	protected boolean finishedSuccessImpl(List<Timer> results) {
+		clearCache();
+		for(Timer r :results){
+			CACHE.add(r);
+		}
+		pushResultCountToTitle();
+		fillAdapter();
+		return adapter.isEmpty() == false;
+
+	}
+
+
+	protected void sort() {
+		/* */
+		switch (sortBy) {
+		case MENU_GROUP_DEFAULT: {
+			Collections.sort(CACHE, getTimeComparator(false));
+			break;
+		}
+		case MENU_GROUP_ALPHABET: {
+			Collections.sort(CACHE, new TitleComparator());
+			break;
+		}
+		//case MENU_GROUP_CHANNEL: {
+		   //sortItemsByChannel(results);
+		//}
+		}
+	}
+
+
+	@Override
+	protected void fillAdapter() {
+
 		adapter.clear();
-		sortItemsByTime(results);
+
+		if (CACHE.isEmpty()) {
+			return;
+		}
+
+		sort();
+
 		int day = -1;
 		Calendar cal = Calendar.getInstance();
-		for (Timer e : results) {
+
+		for (Timer e : CACHE) {
 			if (e.isRecurring()) {
 				adapter.add(new EventListItem(e.getWeekdays()));
 			} else {
@@ -158,9 +197,31 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 			}
 			adapter.add(new EventListItem(e));
 		}
-		listView.setSelectionAfterHeaderView();
-		return adapter.isEmpty() == false;
+		adapter.notifyDataSetChanged();
 	}
+
+//	protected boolean finishedSuccessImpl() {
+//		adapter.clear();
+//		sortItemsByTime(results);
+//		int day = -1;
+//		Calendar cal = Calendar.getInstance();
+//		for (Timer e : results) {
+//			if (e.isRecurring()) {
+//				adapter.add(new EventListItem(e.getWeekdays()));
+//			} else {
+//				cal.setTime(e.getStart());
+//				int eday = cal.get(Calendar.DAY_OF_YEAR);
+//				if (eday != day) {
+//					day = eday;
+//					adapter.add(new EventListItem(new DateFormatter(cal)
+//							.getDailyHeader()));
+//				}
+//			}
+//			adapter.add(new EventListItem(e));
+//		}
+//		listView.setSelectionAfterHeaderView();
+//		return adapter.isEmpty() == false;
+//	}
 
 	@Override
 	protected boolean notifyDataSetChangedOnResume() {
@@ -187,33 +248,9 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 		refresh();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.bjusystems.vdrmanager.gui.BaseActivity#onOptionsItemSelected(android
-	 * .view.MenuItem)
-	 */
-	public boolean onOptionsItemSelected(final com.actionbarsherlock.view.MenuItem item) {
-
-		switch (item.getItemId()) {
-		case R.id.timer_menu_add:
-			say("Comming soon...");
-			return true;
-		}
-
-		// switch (item.getItemId()) {
-		// case R.id.epg_menu_search:
-		// startSearchManager();
-		// super.onSearchRequested();
-		// break;
-		// case R.id.epg_menu_times:
-		// intent = new Intent();
-		// /intent.setClass(this, EpgSearchTimesListActivity.class);
-		// startActivity(intent);
-		// break;
-		// }
-		return super.onOptionsItemSelected(item);
+	@Override
+	protected int getAvailableSortByEntries() {
+		return R.array.epg_sort_by_time_alpha;
 	}
 
 	public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
@@ -231,6 +268,11 @@ public class TimerListActivity extends BaseTimerEditActivity<Timer> implements
 	@Override
 	protected int getListNavigationIndex() {
 		return LIST_NAVIGATION_TIMERS;
+	}
+
+	@Override
+	protected List<Timer> getCACHE() {
+		return CACHE;
 	}
 
 }

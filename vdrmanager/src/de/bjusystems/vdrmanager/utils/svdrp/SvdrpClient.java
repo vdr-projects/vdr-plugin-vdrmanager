@@ -45,8 +45,7 @@ public abstract class SvdrpClient<Result> {
 
 	private final List<SvdrpExceptionListener> svdrpExceptionListeners = new ArrayList<SvdrpExceptionListener>();
 
-	// private final List<SvdrpListener<>> listeners = new
-	// ArrayList<SvdrpListener<Result>>();
+	private final List<SvdrpFinishedListener<Result>> svdrpFinishedListeners = new ArrayList<SvdrpFinishedListener<Result>>();
 
 	/** list of results */
 	// private final List<Result> results = new ArrayList<Result>();
@@ -121,6 +120,17 @@ public abstract class SvdrpClient<Result> {
 	public void addSvdrpResultListener(
 			final SvdrpResultListener<Result> listener) {
 		svdrpResultListeners.add(listener);
+	}
+
+	/**
+	 * Adds the listener to the list of listeners
+	 *
+	 * @param listener
+	 *            listener
+	 */
+	public void addSvdrpFinishedListener(
+			final SvdrpFinishedListener<Result> listener) {
+		svdrpFinishedListeners.add(listener);
 	}
 
 	/**

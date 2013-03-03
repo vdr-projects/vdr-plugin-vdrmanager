@@ -12,7 +12,7 @@ import de.bjusystems.vdrmanager.data.Timer;
  * @author bju
  *
  */
-public class EpgClient extends SvdrpClient<Epg> {
+public class EpgClient extends SvdrpClient<Epg>  {
 
 	/** Time to retrieve EPG for */
 	private String time;
@@ -87,5 +87,6 @@ public class EpgClient extends SvdrpClient<Epg> {
 	public int getProgressTextId() {
 		return R.string.progress_whatson_loading;
 	}
+
 }
 

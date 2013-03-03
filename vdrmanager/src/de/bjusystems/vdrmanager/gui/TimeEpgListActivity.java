@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -27,6 +28,7 @@ import de.bjusystems.vdrmanager.data.EpgSearchTimeValues;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.EpgClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -50,24 +52,15 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	protected static Date nextForceCache = null;
 
-	private final static ArrayList<Event> CACHE = new ArrayList<Event>();
-
 	private static String cachedTime = null;
 
 	int selectedIndex = 0;
 
+	protected static ArrayList<Epg> CACHE = new ArrayList<Epg>();
 
 	@Override
-	public void reset() {
-		CACHE.clear();
-		cachedTime = null;
-		super.reset();
-	}
-
-
-	@Override
-	protected SvdrpClient<Epg> getClient() {
-		return this.epgClient;
+	public int getProgressTextId() {
+		return R.string.progress_whatson_loading;
 	}
 
 	@Override
@@ -135,6 +128,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity(intent);
+			finish();
 		} else if (view == clock) {
 			Intent intent = new Intent();
 			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
@@ -196,6 +190,15 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			final TimePickerDialog dialog = new TimePickerDialog(this, this,
 					cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
 					Preferences.get().isUse24hFormat());
+//			dialog.setOnDismissListener(new OnDismissListener() {
+
+	//			@Override
+		//		public void onDismiss(DialogInterface dialog) {
+
+
+			//	}
+			//});
+
 			dialog.show();
 		} else {
 			// update search
@@ -208,9 +211,9 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		// startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
 	}
 
-	private void clearCache() {
+	public void clearCache() {
+		super.clearCache();
 		cachedTime = null;
-		CACHE.clear();
 	}
 
 	private boolean useCache(String time) {
@@ -244,7 +247,7 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			return;
 		}
 
-		epgClient = new EpgClient(time);
+		EpgClient epgClient = new EpgClient(time);
 
 		// remove old listeners
 		// epgClient.clearSvdrpListener();
@@ -260,45 +263,46 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		task.run();
 	}
 
-
 	@Override
-	protected void fillAdapter() {
-		if(CACHE.isEmpty()){
+	protected synchronized void fillAdapter() {
+
+		adapter.clear();
+
+		if (CACHE.isEmpty()) {
 			return;
 		}
 
 		sort();
-		adapter.clear();
-		adapter.add(new EventListItem(new DateFormatter(CACHE.get(0)
-				.getStart()).getDailyHeader()));
+		listView.setFastScrollEnabled(false);
+		adapter.add(new EventListItem(
+				new DateFormatter(CACHE.get(0).getStart()).getDailyHeader()));
 
 		for (Event e : CACHE) {
 			adapter.add(new EventListItem((Epg) e));
 		}
 		adapter.notifyDataSetChanged();
+		listView.setFastScrollEnabled(true);
 	}
 
 	void sort() {
-		if(sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET) {
+		if (sortBy == BaseEventListActivity.MENU_GROUP_ALPHABET) {
 			Collections.sort(CACHE, new TitleComparator());
 		} else if (sortBy == BaseEventListActivity.MENU_GROUP_DEFAULT) {
 			Collections.sort(CACHE, new ChannelComparator());
 		}
 	}
 
-
 	@Override
 	protected int getAvailableSortByEntries() {
 		return R.array.epg_sort_by_channels_alpha;
 	}
 
-
-	protected String getViewID(){
+	protected String getViewID() {
 		return TimeEpgListActivity.class.getSimpleName();
 	}
 
 	@Override
-	protected boolean finishedSuccessImpl() {
+	protected boolean finishedSuccessImpl(List<Epg> results) {
 		clearCache();
 
 		if (results.isEmpty()) {
@@ -312,16 +316,17 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		cachedTime = selection.getValue();
 		Date now = new Date();
 
-		//adapter.add(new EventListItem(new DateFormatter(results.get(0)
-			//	.getStart()).getDailyHeader()));
+		// adapter.add(new EventListItem(new DateFormatter(results.get(0)
+		// .getStart()).getDailyHeader()));
 
-		for (Event e : results) {
+		for (Epg e : results) {
 			CACHE.add(e);
 			if (e.getStop().before(nextForceCache) && e.getStop().after(now)) {
 				nextForceCache = e.getStop();
 			}
 		}
 		fillAdapter();
+		pushResultCountToTitle();
 		listView.setSelectionAfterHeaderView();
 		return results.isEmpty() == false;
 
@@ -389,10 +394,20 @@ public class TimeEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 	}
 
-
 	@Override
 	protected int getListNavigationIndex() {
 		return LIST_NAVIGATION_EPG_BY_TIME;
+	}
+
+	@Override
+	protected List<Epg> getCACHE() {
+		return CACHE;
+	}
+
+	@Override
+	protected void timerModified(Timer timer) {
+		clearCache();
+		super.timerModified(timer);
 	}
 
 }

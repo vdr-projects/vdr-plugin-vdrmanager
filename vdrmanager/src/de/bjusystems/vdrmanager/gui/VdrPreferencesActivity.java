@@ -240,6 +240,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
+		pref.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 
 public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 		AsyncTask<Void, Object, Void> implements SvdrpListener,
-		SvdrpExceptionListener {
+		SvdrpExceptionListener, SvdrpResultListener<Result> {
 
 	Client client;
 
@@ -19,11 +19,22 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 
 	List<SvdrpExceptionListener> exceptionListeners = new ArrayList<SvdrpExceptionListener>();
 
+	List<SvdrpFinishedListener<Result>> finishedListeners = new ArrayList<SvdrpFinishedListener<Result>>();
+
 	public SvdrpAsyncTask(final Client client) {
 		this.client = client;
 		this.client.addSvdrpListener(this);
 		this.client.addSvdrpExceptionListener(this);
+		this.client.addSvdrpResultListener(this);
 	}
+
+	protected  List<Result> results = new ArrayList<Result>();
+
+
+	public List<Result> getResults() {
+		return results;
+	}
+
 
 	/**
 	 * Adds the listener to the list of listeners
@@ -45,6 +56,10 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 	public void addSvdrpResultListener(
 			final SvdrpResultListener<Result> listener) {
 		client.addSvdrpResultListener(listener);
+	}
+
+	public void addSvdrpFinishedListener(final SvdrpFinishedListener<Result> liste) {
+		finishedListeners.add(liste);
 	}
 
 	/**
@@ -72,6 +87,14 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 	protected void onProgressUpdate(final Object... values) {
 
 		if (values.length == 1) {
+
+			if (List.class.isAssignableFrom(values[0].getClass())) {
+				for (final SvdrpFinishedListener<Result> listener : finishedListeners) {
+					listener.finished((List<Result>) values[0]);
+				}
+				return;
+			}
+
 			for (final SvdrpListener listener : eventListeners) {
 				listener.svdrpEvent((SvdrpEvent) values[0]);
 			}
@@ -111,11 +134,25 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 
 	@Override
 	public void svdrpEvent(SvdrpEvent event) {
-		publishProgress(event);
+		publishProgress(event);;
+		if(event == SvdrpEvent.FINISHED_SUCCESS){
+			publishProgress(results);
+		}
 	}
+
+//	@Override
+//	public void finished(ListResult> results) {
+//		publishProgress(results);
+//	}
 
 	@Override
 	public void svdrpEvent(SvdrpEvent event, Throwable t) {
 		publishProgress(event, t);
+	}
+
+
+	@Override
+	public void svdrpEvent(Result result) {
+		results.add(result);
 	}
 }
