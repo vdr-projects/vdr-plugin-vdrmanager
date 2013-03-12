@@ -17,8 +17,12 @@
 #include <memory>
 #include <vdr/cutter.h>
 #include <vdr/sources.h>
+#include <fstream>
 
 #define TIMER_SEP		"#|#|#"
+// Taken from vdr-ive
+#define INDEXFILESUFFIX   "/index.vdr"
+#define LENGTHFILESUFFIX  "/length.vdr"
 
 string cHelpers::GetRecordings(string args) {
 	return SafeCall(GetRecordingsIntern);
@@ -395,7 +399,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		bool forceDelete = true;
 
 		if (t->Recording()) {
-			if(forceDelete == true){
+			if (forceDelete == true) {
 				t->Skip();
 				cRecordControls::Process(time(NULL));
 			} else {
@@ -497,7 +501,7 @@ string cHelpers::SetTimerIntern(string args) {
 // in VDRs cTimer::Parse method.  The '|' will be replaced
 // back to ':' by the cTimer::Parse() method.
 
-// Fix was submitted by rofafor: see
+	// Fix was submitted by rofafor: see
 // http://www.vdr-portal.de/board/thread.php?threadid=100398
 	string params = replaceAll(args, "|##", "|");
 
@@ -540,6 +544,51 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 	return result + "END\r\n";
 }
 
+
+//copied from vdr-live
+
+long cHelpers::Duration(cRecording* recording)
+{
+	long RecLength = 0;
+	if (!recording->FileName()) return 0;
+#if VDRVERSNUM < 10704
+	cString filename = cString::sprintf("%s%s", recording->FileName(), INDEXFILESUFFIX);
+	if (*filename) {
+		if (access(filename, R_OK) == 0) {
+			struct stat buf;
+			if (stat(filename, &buf) == 0) {
+				struct tIndex { int offset; uchar type; uchar number; short reserved; };
+				int delta = buf.st_size % sizeof(tIndex);
+				if (delta) {
+					delta = sizeof(tIndex) - delta;
+					esyslog("ERROR: invalid file size (%ld) in '%s'", buf.st_size, *filename);
+				}
+				RecLength = (buf.st_size + delta) / sizeof(tIndex) / SecondsToFrames(60);
+			}
+		}
+	}
+#elif VDRVERSNUM < 10721
+	// open index file for reading only
+	cIndexFile *index = new cIndexFile(recording->FileName(), false, recording->IsPesRecording());
+	if (index && index->Ok()) {
+		RecLength = (int) (index->Last() / SecondsToFrames(60, recording->FramesPerSecond()));
+	}
+	delete index;
+#else
+	return recording->LengthInSeconds() / 60;
+#endif
+	if (RecLength == 0) {
+		cString lengthFile = cString::sprintf("%s%s", recording->FileName(), LENGTHFILESUFFIX);
+		ifstream length(*lengthFile);
+		if(length)
+			length >> RecLength;
+	}
+
+	return RecLength;
+}
+
+
+
 string cHelpers::ToText(cRecording * recording) {
 	const cRecordingInfo * info = recording->Info();
 #if APIVERSNUM >= 10705
@@ -577,13 +626,14 @@ string cHelpers::ToText(cRecording * recording) {
 	char buf[100];
 	string result = "";
 
-#if APIVERSNUM >= 10705
-	time_t startTime = event->StartTime();
-	time_t endTime = event->EndTime();
+#if VDRVERSNUM < 10726
+	time_t startTime = recording->start;
 #else
-	time_t startTime = 0L;
-	time_t endTime = 1L;
+	time_t startTime = recording->Start();
 #endif
+
+	time_t endTime = startTime + Duration(recording);
+
 	snprintf(buf, sizeof(buf) - 1, "%d", recording->Index());
 	result = buf;
 	result += ":";
@@ -603,14 +653,14 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	if (info->Title()) {
+ if (info->Title()) {
 		result += MapSpecialChars(info->Title());
 #if APIVERSNUM >= 10705
 	} else if (event->Title()) {
 		result += MapSpecialChars(event->Title());
 #endif
 	} else {
-		result += "<unknown>";
+		result += recording->Name();
 	}
 	result += ":";
 
@@ -793,7 +843,7 @@ string cHelpers::ToText(const cEvent * event) {
 	result += MapSpecialChars(channel->GetChannelID().ToString());
 	result += ":";
 	result += GetAudioTracks(channel);
-    result += "\r\n";
+	result += "\r\n";
 
 	if (eventTimer) {
 		result += ToText(eventTimer);
