@@ -139,7 +139,6 @@
         android:layout_height="4sp" />
 
     <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/root"
         style="@android:style/ButtonBar"
         android:layout_width="fill_parent"
