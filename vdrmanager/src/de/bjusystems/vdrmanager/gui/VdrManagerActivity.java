@@ -137,6 +137,9 @@ public class VdrManagerActivity extends SherlockActivity implements
 			break;
 		}
 		case R.id.main_menu_info: {
+			if(!isFinishing()){
+				return true;
+			}
 			About.show(this);
 			break;
 		}
