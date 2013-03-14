@@ -632,7 +632,7 @@ string cHelpers::ToText(cRecording * recording) {
 	time_t startTime = recording->Start();
 #endif
 
-	time_t endTime = startTime + Duration(recording);
+	time_t endTime = startTime + RecordingLengthInSeconds(recording);
 
 	snprintf(buf, sizeof(buf) - 1, "%d", recording->Index());
 	result = buf;
@@ -694,6 +694,19 @@ string cHelpers::ToText(cRecording * recording) {
 				cString::sprintf("%lu:%lu.rec", st.st_dev, st.st_ino));
 	} else {
 		result += "";
+	}
+
+	result += ":";
+
+	cRecordControl *rc = cRecordControls::GetRecordControl(
+				recording->FileName());
+	if(rc){
+		cTimer *timer = rc->Timer();
+		if(timer){
+			char buf[100];
+			snprintf(buf, sizeof(buf) - 1, "%lu", timer->StopTime());
+			result += buf;
+		}
 	}
 
 	result += "\r\n";
@@ -1050,47 +1063,7 @@ string cHelpers::UnMapSpecialChars(string text) {
  * based on vdr-restfulapi's RecordingLengthInSeconds
  */
 int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
-
-	int nf = -1;
-#if APIVERSNUM >= 10721
-	nf = recording->NumFrames();
-#endif
-
-#if APIVERSNUM <= 10720
-	struct tIndexTs {
-		uint64_t offset:40;
-		int reserved:7;
-		int independent:1;
-		uint16_t number:16;
-		tIndexTs(off_t Offset, bool Independent, uint16_t Number) {
-			offset = Offset;
-			reserved = 0;
-			independent = Independent;
-			number = Number;
-		}
-	};
-
-	struct stat buf;
-#if APIVERSNUM >= 10703
-	cString fullname = cString::sprintf("%s%s", recording->FileName(), recording->IsPesRecording() ? "/index" ".vdr" : "/index");
-#else
-	cString fullname = cString::sprintf("%s%s", recording->FileName(), "/index" ".vdr");
-#endif
-
-	if (recording->FileName() && *fullname && access(fullname, R_OK) == 0 && stat(fullname, &buf) == 0)
-	nf = buf.st_size ? (buf.st_size - 1) / sizeof(tIndexTs) + 1 : 0;
-#endif
-
-	if (nf == -1) {
-		return -1;
-	}
-
-#if APIVERSNUM >= 10703
-	return int(((double) nf / recording->FramesPerSecond()));
-#else
-	return int((double)nf / FRAMESPERSEC);
-#endif
-
+	return Duration(recording) * 60;
 }
 
 /** Compress a STL string using zlib with given compression level and return
