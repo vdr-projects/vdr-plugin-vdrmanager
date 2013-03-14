@@ -24,8 +24,8 @@ import de.bjusystems.vdrmanager.data.Timerable;
 
 abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		Filterable
-//		, SectionIndexer
-		{
+// , SectionIndexer
+{
 
 	private final int TYPE_ITEM = 0;
 	private final int TYPE_HEADER = 1;
@@ -61,9 +61,9 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 	@Override
 	public void add(EventListItem object) {
 		items.add(object);
-		//if (object.isHeader()) {
-			//sections.add(object.getHeader());
-		//}
+		// if (object.isHeader()) {
+		// sections.add(object.getHeader());
+		// }
 		super.add(object);
 	}
 
@@ -146,19 +146,17 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		return itemHolder;
 	}
 
-
 	public void fillEventViewHolder(EventListItemHolder itemHolder,
 			EventListItem item) {
 
 		itemHolder.state.setVisibility(View.VISIBLE);
 
-		if (item.getEvent() instanceof Timerable == false) {
-			itemHolder.state.setImageResource(R.drawable.timer_none);
-		} else if (item.getEvent() instanceof Recording) {
-			if (Utils.isLive(item.getEvent())) {
+		if (item.getEvent() instanceof Recording) {
+			Recording r = (Recording)item.getEvent();
+			if(r.getTimerStopTime() != null){
 				itemHolder.state.setImageResource(R.drawable.timer_recording);
 			}
-		} else {
+		} else if (item.getEvent() instanceof Timerable == true) {
 			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();
 			switch (((Timerable) item.getEvent()).getTimerState()) {
 			case Active:
@@ -182,6 +180,8 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 				itemHolder.state.setImageResource(R.drawable.timer_none);
 				break;
 			}
+		} else {
+			itemHolder.state.setImageResource(R.drawable.timer_none);
 		}
 
 		final EventFormatter formatter = getEventFormatter(item);
@@ -208,7 +208,7 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		}
 
 		// TODO better render of duration
-		int p = Utils.getProgress(item);
+		int p = Utils.getProgress(item.getEvent());
 		if (p == -1) {
 			itemHolder.progress.setVisibility(View.GONE);
 			int dura = Utils.getDuration(item);
@@ -217,8 +217,12 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		} else {
 			itemHolder.progress.setVisibility(View.VISIBLE);
 			itemHolder.progress.setProgress(p);
-			int dura = Utils.getDuration(item);
+			int dura = Utils.getDuration(item.getEvent());
 			int rest = dura - (dura * p / 100);
+			//on live recordings the amount of already recorded time
+			if(item.getEvent() instanceof Recording){
+				rest = dura - rest;
+			}
 			itemHolder.duration.setText(getContext().getString(
 					R.string.epg_duration_template_live, rest, dura));
 		}
@@ -312,27 +316,27 @@ abstract class EventAdapter extends ArrayAdapter<EventListItem> implements
 		};
 	}
 
-	//@Override
-	//public int getPositionForSection(int section) {
-		//return 0;
-//	}
+	// @Override
+	// public int getPositionForSection(int section) {
+	// return 0;
+	// }
 
-	//@Override
-	//public int getSectionForPosition(int position) {
-		// TODO Auto-generated method stub
-		//return 0;
-	//}
+	// @Override
+	// public int getSectionForPosition(int position) {
+	// TODO Auto-generated method stub
+	// return 0;
+	// }
 
-	//ArrayList<String> sections = new ArrayList<String>();
+	// ArrayList<String> sections = new ArrayList<String>();
 
-	//@Override
-	//public Object[] getSections() {
-		//try {
-		//	return sections.toArray();
-		//} finally {
-			//sections.clear();
-		//}
-	//}
+	// @Override
+	// public Object[] getSections() {
+	// try {
+	// return sections.toArray();
+	// } finally {
+	// sections.clear();
+	// }
+	// }
 
 	@Override
 	public void clear() {
