@@ -93,7 +93,15 @@ public class Utils {
 	}
 
 	public static int getProgress(Event e) {
-		return getProgress(e.getStart(), e.getStop());
+		if(e instanceof Recording == false){
+			return getProgress(e.getStart(), e.getStop());
+		}
+		Recording r = ((Recording)e);
+		if(r.getTimerStopTime() == null){
+			return getProgress(e.getStart(), e.getStop());
+		}
+		return getProgress(r.getStart(), r.getTimerStopTime());
+
 	}
 
 	/**
@@ -114,7 +122,7 @@ public class Utils {
 	public static boolean isLive(Event event) {
 		long now = System.currentTimeMillis();
 		return now >= event.getStart().getTime()
-				&& now < event.getStop().getTime();
+				&& now <= event.getStop().getTime();
 	}
 
 	private static String trimToEmpty(String str) {
