@@ -32,6 +32,13 @@ public class Recording extends Event{
 		if(idx < words.length){
 			devInode = mapSpecialChars(words[idx++]);
 		}
+
+		if(idx  < words.length) { //timer
+			String data = words[idx++];
+			if(data != null && data.length() > 0){
+				timerStopTime = new Date(Long.parseLong(data) * 1000L);
+			}
+		}
 	}
 
 	private String fileName;
@@ -43,6 +50,19 @@ public class Recording extends Event{
 	private long realDuration = -1;
 
 	private String devInode = null;
+
+	/**
+	 * If it is not null, recording is on going or will be on going until this date;
+	 */
+	private Date timerStopTime = null;
+
+	public Date getTimerStopTime() {
+		return timerStopTime;
+	}
+
+	public void setTimerStopTime(Date timerStopTime) {
+		this.timerStopTime = timerStopTime;
+	}
 
 	public String getDevInode() {
 		return devInode;
@@ -61,6 +81,10 @@ public class Recording extends Event{
 	}
 
 	public long getDuration(){
+		if(timerStopTime != null){
+			return timerStopTime.getTime() - start.getTime();
+		}
+
 		if(realDuration != -1){
 			return realDuration;
 		}
