@@ -167,9 +167,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		super.onCreateContextMenu(menu, v, menuInfo);
 		//
 		// http://projects.vdr-developer.org/issues/863
-		if (Utils.isLive(item)) {
+		//if (Utils.isLive(item)) {
 			menu.removeItem(R.id.epg_item_menu_live_tv);
-		}
+		//}
 	}
 
 	@Override
