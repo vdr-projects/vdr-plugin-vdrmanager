@@ -1,6 +1,7 @@
 package de.bjusystems.vdrmanager.data.db;
 
 import java.sql.SQLException;
+import java.util.TimeZone;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -77,10 +78,19 @@ public class DBAccess extends OrmLiteSqliteOpenHelper {
 			// TableUtils.dropTable(connectionSource, Vdr.class, true);
 			// after we drop the old databases, we create the new ones
 			// onCreate(db, connectionSource);
-
+			
 			if (oldVersion < 3) {
 				TableUtils.createTable(connectionSource, RecenteChannel.class);
+				getVdrDAO()
+				.executeRaw(
+						"ALTER TABLE `vdr` ADD COLUMN stz varchar;");
+
+				String tz = TimeZone.getDefault().getID();
+				getVdrDAO()
+				.executeRaw(
+						"UPDATE `vdr` set stz = ?", tz);
 			}
+			
 
 		} catch (SQLException e) {
 			Log.e(DBAccess.class.getName(), "Can't drop databases", e);
