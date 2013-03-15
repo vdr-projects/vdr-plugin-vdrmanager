@@ -12,5 +12,6 @@
     </string-array>
 
     <string name="vdr_stream_proxy_key">key_vdr_stream_proxy</string>
+    <string name="timezone_key">key_timezone</string>
 
 </resources>

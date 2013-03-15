@@ -386,4 +386,10 @@
     <string name="vdr_stream_proxy_title">Proxy Server</string>
     <string name="audio_tracks_template">Audio Tracks: %1$s</string>
     <string name="audio_track_dolby">D</string>
+
+    <string name="vdr_timezone_summary">The time zone used on the server. It is important if you travel and modify timers from another time zone.</string>
+    <string name="vdr_timezone_title">Select server time zone</string>
+    <string name="zone_list_menu_sort_alphabetically">Sort alphabetically</string>
+    <string name="zone_list_menu_sort_by_timezone">Sort by time zone</string>
+
 </resources>
