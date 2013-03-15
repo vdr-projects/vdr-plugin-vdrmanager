@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.data.CACHE;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
@@ -189,10 +190,14 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 	 */
 	protected void timerModified(final Timer timer) {
 		backupViewSelection();
+		if(timer != null && timer.getChannelId()!=null){
+			CACHE.CACHE.remove(timer.getChannelId());
+		}
 		// say(R.string.update_will_start_in);
 		// Runnable task = new Runnable() {
 		// public void run() {
 		refresh();
+
 		// }
 		// };
 		// worker.schedule(task, 1000, TimeUnit.MILLISECONDS);

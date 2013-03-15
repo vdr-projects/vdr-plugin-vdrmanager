@@ -17,7 +17,7 @@ import de.bjusystems.vdrmanager.data.Preferences;
 public class PreferencesActivity extends BasePreferencesActivity implements
 		OnSharedPreferenceChangeListener, OnPreferenceChangeListener,
 		OnPreferenceClickListener {
-//	
+//
 //	Preference somePreference = findPreference(SOME_PREFERENCE_KEY);
 //	PreferenceScreen preferenceScreen = getPreferenceScreen();
 //	preferenceScreen.removePreference(somePreference);
@@ -35,7 +35,7 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 				Preferences.getPreferenceFile(this));
 		this.addPreferencesFromResource(R.xml.preferences);
 
-		
+
 	    Preference backupPreference = findPreference(getString(R.string.settings_backup_key));
 	    backupPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 	        @Override
@@ -46,7 +46,7 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 	        return true;
 	      }
 	    });
-		
+
 		updateChildPreferences();
 	}
 
@@ -82,27 +82,25 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 			updateSummary(p);
 		}
 
-		
+
 	}
 
 	@Override
 	public void onBackPressed() {
-		
-		
 		//Preferences.getSharedPreferences(this)
 		//.registerOnSharedPreferenceChangeListener(this);
 
 		// finish this activity
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		app.addActivityToFinish(this);
-		app.finishActivities();
-
 		//Preferences.init(this);
 		// restart main activity because
 		// the buttons needs refreshing
-		final Intent intent = new Intent();
-		intent.setClass(this, VdrManagerActivity.class);
+		Intent intent = new Intent(this,  VdrManagerActivity.class);
+		int flags = Intent.FLAG_ACTIVITY_NEW_TASK
+				| Intent.FLAG_ACTIVITY_SINGLE_TOP
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP;
+		intent.setFlags(flags);
 		startActivity(intent);
+		finish();
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String key) {
@@ -142,5 +140,5 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 		return true;
 	}
 
-	
+
 }

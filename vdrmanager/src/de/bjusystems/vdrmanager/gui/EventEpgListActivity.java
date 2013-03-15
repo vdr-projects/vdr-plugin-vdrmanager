@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.CACHE;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.Event;
@@ -58,10 +59,6 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	ArrayAdapter<Channel> channelSpinnerAdapter;
 
 	// protected static ArrayList<Epg> CACHE = new ArrayList<Epg>();
-
-	private static WeakHashMap<String, ArrayList<Epg>> CACHE = new WeakHashMap<String, ArrayList<Epg>>();
-
-	private static WeakHashMap<String, Date> NEXT_REFRESH = new WeakHashMap<String, Date>();
 
 	private TextView audio;
 
@@ -201,23 +198,23 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	public void clearCache() {
 		getCache().clear();
-		CACHE.remove(currentChannel.getId());
-		NEXT_REFRESH.remove(currentChannel.getId());
+		CACHE.CACHE.remove(currentChannel.getId());
+		CACHE.NEXT_REFRESH.remove(currentChannel.getId());
 	}
 
 	private boolean useCache() {
 
-		if(currentChannel == null){
+		if (currentChannel == null) {
 			return false;
 		}
 
-		ArrayList<Epg> cachedChannel = CACHE.get(currentChannel.getId()) ;
+		ArrayList<Epg> cachedChannel = CACHE.CACHE.get(currentChannel.getId());
 
 		if (cachedChannel == null) {
 			return false;
 		}
 
-		Date nextForceCache = NEXT_REFRESH.get(currentChannel.getId());
+		Date nextForceCache = CACHE.NEXT_REFRESH.get(currentChannel.getId());
 
 		if (nextForceCache == null) {
 			return false;
@@ -274,18 +271,10 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		task.run();
 	}
 
-	@Override
-	protected void timerModified(Timer timer) {
-		if(timer != null){
-			CACHE.remove(timer.getChannelId());
-		}
-		super.timerModified(timer);
-	}
-
 	private static final ArrayList<Epg> EMPTY = new ArrayList<Epg>(0);
 
 	private ArrayList<Epg> getCache() {
-		ArrayList<Epg> arrayList = CACHE.get(currentChannel.getId());
+		ArrayList<Epg> arrayList = CACHE.CACHE.get(currentChannel.getId());
 		if (arrayList == null) {
 			return EMPTY;
 		}
@@ -297,8 +286,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 		adapter.clear();
 
-
-		ArrayList<Epg> cache  = getCache();
+		ArrayList<Epg> cache = getCache();
 
 		if (cache.isEmpty()) {
 			return;
@@ -342,8 +330,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 		Date now = new Date();
 
-
-		NEXT_REFRESH.put(currentChannel.getId(), FUTURE);
+		CACHE.NEXT_REFRESH.put(currentChannel.getId(), FUTURE);
 
 		Date nextForceCache = FUTURE;
 
@@ -366,8 +353,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 		}
 
-		NEXT_REFRESH.put(currentChannel.getId(), nextForceCache);
-		CACHE.put(currentChannel.getId(), cache);
+		CACHE.NEXT_REFRESH.put(currentChannel.getId(), nextForceCache);
+		CACHE.CACHE.put(currentChannel.getId(), cache);
 
 		fillAdapter();
 		listView.setSelectionAfterHeaderView();
@@ -478,10 +465,5 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	// @Override
-	// protected void timerModified() {
-	// cachedChannel = null;
-	// }
 
 }

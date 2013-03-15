@@ -68,7 +68,7 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 		return false;
 	}
 
-	protected void setSummary(CharSequence text, DialogPreference ep){
+	protected void setSummary(CharSequence text, Preference ep){
 		CharSequence sm = ep.getSummary();
 		String sum;
 		if (sm != null) {

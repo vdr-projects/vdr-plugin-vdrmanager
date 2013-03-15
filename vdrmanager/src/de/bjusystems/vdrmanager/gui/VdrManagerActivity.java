@@ -126,14 +126,13 @@ public class VdrManagerActivity extends SherlockActivity implements
 
 		switch (item.getItemId()) {
 		case R.id.main_menu_preferences: {
-			// remember activity for finishing
-			final VdrManagerApp app = (VdrManagerApp) getApplication();
-			app.clearActivitiesToFinish();
-			app.addActivityToFinish(this);
-
-			Intent intent = new Intent();
-			intent.setClass(this, PreferencesActivity.class);
+			Intent intent = new Intent(this,  PreferencesActivity.class);
+			int flags = Intent.FLAG_ACTIVITY_NEW_TASK
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP
+					| Intent.FLAG_ACTIVITY_CLEAR_TOP;
+			intent.setFlags(flags);
 			startActivity(intent);
+			finish();
 			break;
 		}
 		case R.id.main_menu_info: {
@@ -195,8 +194,6 @@ public class VdrManagerActivity extends SherlockActivity implements
 															R.string.main_menu_switched_to,
 															vdr.getName()),
 													Toast.LENGTH_SHORT).show();
-											((VdrManagerApp) getApplication())
-													.finishActivities();
 											Intent intent = getIntent();
 											overridePendingTransition(0, 0);
 											intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

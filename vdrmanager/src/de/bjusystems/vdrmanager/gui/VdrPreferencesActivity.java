@@ -7,13 +7,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.view.View;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.ZonePicker;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.MacFetchEditTextPreference;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -23,7 +28,9 @@ import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 
 public class VdrPreferencesActivity extends BasePreferencesActivity implements
-		OnSharedPreferenceChangeListener {
+		OnSharedPreferenceChangeListener, OnPreferenceClickListener {
+
+	public static final int REQUEST_CODE_PICK_A_TIME_ZONE  = 1;
 
 	Vdr vdr;
 
@@ -41,6 +48,19 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return super.findPreference(key);
 	}
 
+
+	@Override
+	protected void updateSummary(Preference ep) {
+	 if(ep.getKey().equals("key_timezone")) {
+			String text = vdr.getServerTimeZone();
+			if (text == null) {
+				return;
+			}
+			setSummary(text, ep);
+			return;
+		}
+		super.updateSummary(ep);
+	}
 	private void initVDRInstance() {
 		id = getIntent().getIntExtra(Intents.VDR_ID, -1);
 		if (id == -1) {// new vdr
@@ -207,6 +227,9 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		});
 
 		updateChildPreferences();
+
+		findPreference(getString(R.string.timezone_key)).setOnPreferenceClickListener(this);
+
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String key) {
@@ -336,6 +359,36 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			return;
 		}
 		super.onBackPressed();
+	}
+
+	@Override
+	public boolean onPreferenceClick(Preference preference) {
+
+		String timezone = vdr.getServerTimeZone();
+
+		Intent intent = new Intent(this, ZonePicker.class);
+		intent.putExtra("current_tz", timezone);
+		startActivityForResult(intent, REQUEST_CODE_PICK_A_TIME_ZONE);
+		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != Activity.RESULT_OK){
+			super.onActivityResult(requestCode, resultCode, data);
+			return;
+		}
+
+		if(requestCode == REQUEST_CODE_PICK_A_TIME_ZONE){
+			String ntz = data.getStringExtra("new_tz");
+			if(ntz != null){
+				vdr.setServerTimeZone(ntz);
+				Editor editor = findPreference("key_timezone").getEditor();
+				editor.putString("key_timezone", ntz);
+				editor.commit();
+				//setSummary(ntz, );
+			}
+		}
 	}
 
 }

@@ -604,10 +604,4 @@ public class ChannelListActivity extends
 	protected int getListNavigationIndex() {
 		return LIST_NAVIGATION_CHANNELS;
 	}
-
-	@Override
-	public void clearCache() {
-		ChannelClient.clearCache();
-	}
-
 }

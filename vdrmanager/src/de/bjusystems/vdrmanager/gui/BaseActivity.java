@@ -12,14 +12,12 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.Cache;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -32,7 +30,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
 
 public abstract class BaseActivity<Result, T extends ListView> extends
 		ICSBaseActivity implements OnClickListener, SvdrpListener,
-		SvdrpExceptionListener, SvdrpFinishedListener<Result>, Cache {
+		SvdrpExceptionListener, SvdrpFinishedListener<Result> {
 
 	public static final String TAG = BaseActivity.class.getName();
 
@@ -208,8 +206,6 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
 
-
-		getApp().addActivityToFinish(this);
 
 		initActionBar();
 
