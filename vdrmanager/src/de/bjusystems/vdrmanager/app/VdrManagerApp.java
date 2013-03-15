@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Application;
-import de.bjusystems.vdrmanager.data.Cache;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
@@ -118,24 +117,6 @@ public class VdrManagerApp extends Application {
 
 	public List<Activity> getActivitiesToFinish() {
 		return activitiesToFinish;
-	}
-
-	public void clearActivitiesToFinish() {
-		activitiesToFinish.clear();
-	}
-
-	public void addActivityToFinish(final Activity activityToFinish) {
-		activitiesToFinish.add(activityToFinish);
-	}
-
-	public void finishActivities() {
-		for (final Activity activity : activitiesToFinish) {
-			if (activity instanceof Cache) {
-				((Cache) activity).clearCache();
-			}
-			activity.finish();
-		}
-		activitiesToFinish.clear();
 	}
 
 	public boolean isReload() {
