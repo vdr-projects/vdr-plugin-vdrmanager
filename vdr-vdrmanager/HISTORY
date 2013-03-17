@@ -1,10 +1,14 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
 2013-01-xx: Version 0.9 (http://projects.vdr-developer.org/versions/show/312)
--adopt vdr 1.7.34 Makfile for plugins
--
--
--
+- Improved Timer/Recording deletion
+- Improved recording information (recordings command)
+- Free alocated memory after search
+- Group by Satellite(Source) in the channel list(channels command delivers now also the Source)
+- support streamdev recording streaming.
+- Audio Tracks in Event infos
+- adopt vdr 1.7.34 Makfile for plugins
+
 
 2012-11-27: Version 0.8
 -Bug #1145: forceCheckSvdrp is initializied randomly if not initialized via getopt's -s
