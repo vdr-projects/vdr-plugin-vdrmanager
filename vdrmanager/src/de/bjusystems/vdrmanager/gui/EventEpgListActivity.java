@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.CACHE;
+import de.bjusystems.vdrmanager.data.EpgCache;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Epg;
 import de.bjusystems.vdrmanager.data.Event;
@@ -198,8 +198,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	public void clearCache() {
 		getCache().clear();
-		CACHE.CACHE.remove(currentChannel.getId());
-		CACHE.NEXT_REFRESH.remove(currentChannel.getId());
+		EpgCache.CACHE.remove(currentChannel.getId());
+		EpgCache.NEXT_REFRESH.remove(currentChannel.getId());
 	}
 
 	private boolean useCache() {
@@ -208,13 +208,13 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			return false;
 		}
 
-		ArrayList<Epg> cachedChannel = CACHE.CACHE.get(currentChannel.getId());
+		ArrayList<Epg> cachedChannel = EpgCache.CACHE.get(currentChannel.getId());
 
 		if (cachedChannel == null) {
 			return false;
 		}
 
-		Date nextForceCache = CACHE.NEXT_REFRESH.get(currentChannel.getId());
+		Date nextForceCache = EpgCache.NEXT_REFRESH.get(currentChannel.getId());
 
 		if (nextForceCache == null) {
 			return false;
@@ -274,7 +274,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private static final ArrayList<Epg> EMPTY = new ArrayList<Epg>(0);
 
 	private ArrayList<Epg> getCache() {
-		ArrayList<Epg> arrayList = CACHE.CACHE.get(currentChannel.getId());
+		ArrayList<Epg> arrayList = EpgCache.CACHE.get(currentChannel.getId());
 		if (arrayList == null) {
 			return EMPTY;
 		}
@@ -330,7 +330,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 		Date now = new Date();
 
-		CACHE.NEXT_REFRESH.put(currentChannel.getId(), FUTURE);
+		EpgCache.NEXT_REFRESH.put(currentChannel.getId(), FUTURE);
 
 		Date nextForceCache = FUTURE;
 
@@ -353,8 +353,8 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 			}
 		}
 
-		CACHE.NEXT_REFRESH.put(currentChannel.getId(), nextForceCache);
-		CACHE.CACHE.put(currentChannel.getId(), cache);
+		EpgCache.NEXT_REFRESH.put(currentChannel.getId(), nextForceCache);
+		EpgCache.CACHE.put(currentChannel.getId(), cache);
 
 		fillAdapter();
 		listView.setSelectionAfterHeaderView();

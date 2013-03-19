@@ -27,6 +27,7 @@ import android.widget.Toast;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.EpgCache;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
@@ -134,7 +135,6 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			tView.saveButton.setText(R.string.timer_details_save_title);
 			break;
 		}
-
 	}
 
 	private void updateDisplay() {
@@ -152,6 +152,9 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.priority.setText(String.valueOf(timer.getPriority()));
 		tView.lifecycle.setText(String.valueOf(timer.getLifetime()));
 		tView.repeat.setText(getSelectedItems().toString(this, true));
+		EpgCache.CACHE.remove(timer.getChannelId());
+		EpgCache.NEXT_REFRESH.remove(timer.getChannelId());
+
 	}
 
 	protected VdrManagerApp getApp() {
