@@ -382,8 +382,6 @@
 
     <string name="filter">Filter</string>
 
-    <string name="vdr_stream_proxy_sum">Proxy server for streaming</string>
-    <string name="vdr_stream_proxy_title">Proxy Server</string>
     <string name="audio_tracks_template">Audio Tracks: %1$s</string>
     <string name="audio_track_dolby">D</string>
 
