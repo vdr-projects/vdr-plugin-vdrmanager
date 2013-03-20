@@ -1,6 +1,5 @@
 package de.bjusystems.vdrmanager.gui;
 
-import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -9,7 +8,7 @@ import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.data.MacFetchEditTextPreference;
+import de.bjusystems.vdrmanager.data.FetchEditTextPreference;
 
 /**
  *
@@ -24,8 +23,8 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 			updateSummary((EditTextPreference) ep);
 		} else if (ep instanceof ListPreference) {
 			updateSummary((ListPreference) ep);
-		} else if(ep instanceof MacFetchEditTextPreference){
-			updateSummary((MacFetchEditTextPreference)ep);
+		} else if(ep instanceof FetchEditTextPreference){
+			updateSummary((FetchEditTextPreference)ep);
 		}
 	}
 
@@ -34,12 +33,11 @@ public abstract class BasePreferencesActivity extends PreferenceActivity {
 	 *
 	 * @param ep
 	 */
-	protected void updateSummary(MacFetchEditTextPreference ep) {
+	protected void updateSummary(FetchEditTextPreference ep) {
 		String text = ep.getText();
 		if (text == null) {
 			text = "";
 		}
-
 		setSummary(text, ep);
 	}
 

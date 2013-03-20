@@ -39,9 +39,9 @@ public class VdrSharedPreferences implements SharedPreferences {
 
 	}
 
-//	public VdrSharedPreferences(Vdr vdr) {
+	// public VdrSharedPreferences(Vdr vdr) {
 
-//	}
+	// }
 
 	public boolean contains(String key) {
 		return map.containsKey(key);
@@ -64,11 +64,21 @@ public class VdrSharedPreferences implements SharedPreferences {
 	}
 
 	public int getInt(String key, int defValue) {
-		return get(key, defValue);
+		String val = get(key, String.valueOf(defValue));
+		try {
+			return Integer.valueOf(val);
+		} catch (Exception ex) {
+			return defValue;
+		}
 	}
 
 	public long getLong(String key, long defValue) {
-		return get(key, defValue);
+		String val = get(key, String.valueOf(defValue));
+		try {
+			return Long.valueOf(val);
+		} catch (Exception ex) {
+			return defValue;
+		}
 	}
 
 	public <T> T get(String key, T defValue) {
@@ -118,9 +128,7 @@ public class VdrSharedPreferences implements SharedPreferences {
 
 		public boolean commit() {
 
-
-
-			if(instance == null){
+			if (instance == null) {
 				map.putAll(modified);
 				return true;
 			}
@@ -135,7 +143,6 @@ public class VdrSharedPreferences implements SharedPreferences {
 				return false;
 
 			map.putAll(modified);
-
 
 			++commits;
 

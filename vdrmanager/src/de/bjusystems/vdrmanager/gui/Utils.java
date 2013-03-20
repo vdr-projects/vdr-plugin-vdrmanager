@@ -410,6 +410,12 @@ public class Utils {
 		t.show();
 	}
 
+	public static void say(Context ctx, int msg) {
+		Toast t = Toast.makeText(ctx, msg, Toast.LENGTH_SHORT);
+		t.setGravity(Gravity.CENTER, 0, 0);
+		t.show();
+	}
+
 	/**
 	 * Formats the date and time based on user's phone date/time preferences.
 	 *

@@ -11,7 +11,7 @@
     <PreferenceCategory
         android:key="vdr_preferences"
         android:title="@string/vdr_preferences" >
-        <EditTextPreference
+        <de.bjusystems.vdrmanager.data.FetchEditTextPreference
             android:inputType="textNoSuggestions"
             android:key="@string/vdr_host_key"
             android:summary="@string/vdr_host_summary"
@@ -80,7 +80,7 @@
             android:summary="@string/wakeup_password_summary"
             android:title="@string/wakeup_password_title" />
 
-        <de.bjusystems.vdrmanager.data.MacFetchEditTextPreference
+        <de.bjusystems.vdrmanager.data.FetchEditTextPreference
             android:dependency="@string/wakeup_enabled_key"
             android:key="@string/wakeup_wol_mac_key"
             android:summary="@string/wakeup_wol_mac_summary"

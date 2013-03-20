@@ -391,5 +391,7 @@
     <string name="vdr_timezone_title">Select server time zone</string>
     <string name="zone_list_menu_sort_alphabetically">Sort alphabetically</string>
     <string name="zone_list_menu_sort_by_timezone">Sort by time zone</string>
-
+    <string name="probing">Probing %1$s …</string>
+	<string name="no_results">No results…</string>
+	<!-- … -->
 </resources>

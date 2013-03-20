@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.VdrSharedPreferences.Editor;
 
-public class MacFetchEditTextPreference extends DialogPreference {
+public class FetchEditTextPreference extends DialogPreference{
 
 	private EditText mEditText;
 
@@ -38,15 +38,15 @@ public class MacFetchEditTextPreference extends DialogPreference {
 	//private CharSequence mCompoundButtonText;
 	private View.OnClickListener mCompoundButtonCallback;
 
-	public MacFetchEditTextPreference(Context context, AttributeSet attrs,
+	public FetchEditTextPreference(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
-		setDialogLayoutResource(R.layout.mac_fetch_preference);
+		setDialogLayoutResource(R.layout.fetch_preference);
 	}
 
-	public MacFetchEditTextPreference(Context context, AttributeSet attrs) {
+	public FetchEditTextPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		setDialogLayoutResource(R.layout.mac_fetch_preference);
+		setDialogLayoutResource(R.layout.fetch_preference);
 	}
 
 	@Override

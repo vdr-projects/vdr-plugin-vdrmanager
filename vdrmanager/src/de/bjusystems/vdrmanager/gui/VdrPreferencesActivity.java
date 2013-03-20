@@ -6,13 +6,20 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.fueri.reeldroid.network.DeviceManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -20,7 +27,7 @@ import android.view.View;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.ZonePicker;
 import de.bjusystems.vdrmanager.app.Intents;
-import de.bjusystems.vdrmanager.data.MacFetchEditTextPreference;
+import de.bjusystems.vdrmanager.data.FetchEditTextPreference;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.VdrSharedPreferences;
@@ -30,7 +37,7 @@ import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		OnSharedPreferenceChangeListener, OnPreferenceClickListener {
 
-	public static final int REQUEST_CODE_PICK_A_TIME_ZONE  = 1;
+	public static final int REQUEST_CODE_PICK_A_TIME_ZONE = 1;
 
 	Vdr vdr;
 
@@ -48,10 +55,9 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return super.findPreference(key);
 	}
 
-
 	@Override
 	protected void updateSummary(Preference ep) {
-	 if(ep.getKey().equals("key_timezone")) {
+		if (ep.getKey().equals("key_timezone")) {
 			String text = vdr.getServerTimeZone();
 			if (text == null) {
 				return;
@@ -61,6 +67,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		}
 		super.updateSummary(ep);
 	}
+
 	private void initVDRInstance() {
 		id = getIntent().getIntExtra(Intents.VDR_ID, -1);
 		if (id == -1) {// new vdr
@@ -124,16 +131,15 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return null;
 	}
 
-	private String getIp() throws Exception {
-		final Preferences prefs = Preferences.get();
-		String host = prefs.getSvdrpHost();
-		return InetAddress.getByName(host).getHostAddress();
-	}
+//	private String getIp() throws Exception {
+//		final Preferences prefs = Preferences.get();
+//		String host = prefs.getSvdrpHost();
+//		return InetAddress.getByName(host).getHostAddress();
+//	}
 
-	private void ping(String ip) throws Exception {
-		final Preferences prefs = Preferences.get();
+	private void ping(String ip, int port) throws Exception {
 		Socket socket = new Socket();
-		socket.connect(new InetSocketAddress(ip, prefs.getSvdrpPort()),
+		socket.connect(new InetSocketAddress(ip, port),
 				5 * 1000);
 		socket.setSoTimeout(5 * 1000);
 	}
@@ -155,8 +161,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 		pref.registerOnSharedPreferenceChangeListener(this);
 
-
-
 		String recstream = pref.getString("key_recstream_method", "vdr-live");
 
 		if (recstream.equals("vdr-live") == false) {
@@ -167,20 +171,22 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			// cat.removePreference(p);
 		}
 
-		final String host = pref.getString(getString(R.string.vdr_host_key),
-				null);
+
 
 		// create background task
 
 		// start task
 
-		final MacFetchEditTextPreference macedit = (MacFetchEditTextPreference) findPreference(getString(R.string.wakeup_wol_mac_key));
+		final FetchEditTextPreference macedit = (FetchEditTextPreference) findPreference(getString(R.string.wakeup_wol_mac_key));
 		String mac = vdr.getMac();
+		if(mac == null){
+			mac = "";
+		}
 		macedit.setText(mac);
 		macedit.setCompoundButtonListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				final String host = vdr.getHost();
 				if (host == null) {
 					Utils.say(VdrPreferencesActivity.this,
 							getString(R.string.vdr_host_not_defined));
@@ -213,8 +219,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 					@Override
 					protected Void doInBackground(Void... params) {
 						try {
-							String ip = getIp();
-							ping(ip);
+							String ip = InetAddress.getByName(host).getHostAddress();
+							ping(ip, vdr.getPort());
 							mac = getMacFromArpCache(ip);
 						} catch (Exception ex) {
 							message = ex.getLocalizedMessage();
@@ -226,9 +232,87 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			}
 		});
 
+		final FetchEditTextPreference ipEdit = (FetchEditTextPreference) findPreference(getString(R.string.vdr_host_key));
+		String ip = vdr.getHost();
+		ipEdit.setText(ip);
+		ipEdit.setCompoundButtonListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				new AsyncTask<Void, String, List<String>>() {
+
+					ProgressDialog pd;
+
+					String message;
+
+					protected void onPreExecute() {
+						pd = new ProgressDialog(VdrPreferencesActivity.this);
+						pd.setMessage(getString(R.string.processing));
+						pd.show();
+					};
+
+					protected void onPostExecute(final List<String> ips) {
+						pd.dismiss();
+						if (message != null) {
+							Utils.say(VdrPreferencesActivity.this, message);
+							return;
+						}
+
+						if(ips.isEmpty()){
+							Utils.say(VdrPreferencesActivity.this, R.string.no_results);
+							return;
+						}
+						if (ips.size() == 1) {
+							ipEdit.setEditText(ips.get(0).toString());
+						} else {
+							new AlertDialog.Builder(VdrPreferencesActivity.this).setItems(
+									ips.toArray(new CharSequence[] {}),
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											String ip = ips.get(which);
+											ipEdit.setEditText(ip);
+										}
+									}).show();
+						}
+
+					}
+
+					protected void onProgressUpdate(String... values) {
+						pd.setMessage(getString(R.string.probing, values[0]));
+					};
+
+					@Override
+					protected List<String> doInBackground(Void... params) {
+						try {
+
+							final int port = vdr.getPort();
+							return DeviceManager.findVDRHosts(
+									VdrPreferencesActivity.this, port,
+									new DeviceManager.ProgressListener() {
+
+										@Override
+										public void publish(String currentIP) {
+											publishProgress(currentIP);
+										}
+									});
+
+						} catch (Exception ex) {
+							message = ex.getLocalizedMessage();
+						}
+						return new ArrayList<String>(0);
+					}
+				}.execute();
+
+			}
+		});
+
 		updateChildPreferences();
 
-		findPreference(getString(R.string.timezone_key)).setOnPreferenceClickListener(this);
+		findPreference(getString(R.string.timezone_key))
+				.setOnPreferenceClickListener(this);
 
 	}
 
@@ -374,19 +458,19 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode != Activity.RESULT_OK){
+		if (resultCode != Activity.RESULT_OK) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}
 
-		if(requestCode == REQUEST_CODE_PICK_A_TIME_ZONE){
+		if (requestCode == REQUEST_CODE_PICK_A_TIME_ZONE) {
 			String ntz = data.getStringExtra("new_tz");
-			if(ntz != null){
+			if (ntz != null) {
 				vdr.setServerTimeZone(ntz);
 				Editor editor = findPreference("key_timezone").getEditor();
 				editor.putString("key_timezone", ntz);
 				editor.commit();
-				//setSummary(ntz, );
+				// setSummary(ntz, );
 			}
 		}
 	}
