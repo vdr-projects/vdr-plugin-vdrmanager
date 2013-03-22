@@ -30,6 +30,7 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
+import de.bjusystems.vdrmanager.data.EpgCache;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -38,6 +39,7 @@ import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 import de.bjusystems.vdrmanager.data.Timerable.TimerState;
+import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
@@ -233,6 +235,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 		Event event = epgs.get(position);
 
+		view.setTag(event);
 		// view.setTag(event);
 
 		final EventFormatter formatter = new EventFormatter(event);
@@ -262,13 +265,21 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 			switch (timerable.getTimerState()) {
 			case Active:
-				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end) );
+				setState(state, Utils.getTimerStateDrawable(match,
+						R.drawable.timer_active, R.drawable.timer_active_begin,
+						R.drawable.timer_active_end));
 				break;
 			case Inactive:
-				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_inactive,R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end));
+				setState(state, Utils.getTimerStateDrawable(match,
+						R.drawable.timer_inactive,
+						R.drawable.timer_inactive_begin,
+						R.drawable.timer_inactive_end));
 				break;
 			case Recording:
-				setState(state, Utils.getTimerStateDrawable(match, R.drawable.timer_recording, R.drawable.timer_recording_begin, R.drawable.timer_recording_end));
+				setState(state, Utils.getTimerStateDrawable(match,
+						R.drawable.timer_recording,
+						R.drawable.timer_recording_begin,
+						R.drawable.timer_recording_end));
 				break;
 			default:
 				setState(state, R.drawable.timer_none);
@@ -282,17 +293,13 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 				.findViewById(R.id.epg_detail_description);
 		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
 
-
-
-		if(cEvent.getAudio().isEmpty() == false){
-			final TextView audioTracks = (TextView) view.findViewById(R.id.epg_detail_audio);
+		if (cEvent.getAudio().isEmpty() == false) {
+			final TextView audioTracks = (TextView) view
+					.findViewById(R.id.epg_detail_audio);
 			audioTracks.setText(Utils.formatAudio(this, cEvent.getAudio()));
 		} else {
 			view.findViewById(R.id.audio_image).setVisibility(View.GONE);
 		}
-
-
-
 
 		// copy color for separator lines
 		// final int color = textView.getTextColors().getDefaultColor();
@@ -414,7 +421,6 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		}
 	}
 
-
 	private void setThisAsOnClickListener(View root, int view) {
 		setThisAsOnClickListener(root.findViewById(view));
 	}
@@ -486,6 +492,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 			} else {
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_add));
+				if (Utils.isLive(cEvent) && (cEvent instanceof Timerable) && ((Timerable)cEvent).getTimer() == null) {
+					ada.add(new Wrapper(R.string.epg_item_menu_timer_record));
+				}
 			}
 			new AlertDialog.Builder(this)
 					.setAdapter(ada, new DialogInterface.OnClickListener() {
@@ -530,6 +539,21 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 								toggleTimer(timer);
 								break;
 							}
+
+							case R.string.epg_item_menu_timer_record: {
+								final Timer timer = new Timer(cEvent);
+								final CreateTimerTask task = new CreateTimerTask(
+										EpgDetailsActivity.this, timer) {
+									@Override
+									public void finished(SvdrpEvent event) {
+										modifed = true;
+										EpgCache.CACHE.remove(timer.getChannelId());
+										say(R.string.recording_started);
+									}
+								};
+								task.start();
+
+							}
 							}
 						}
 					}).create()//
@@ -555,9 +579,15 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 					TimerMatch match = timer.getTimerMatch();
 					int res = -1;
 					if (state == TimerState.Active) {
-						res = Utils.getTimerStateDrawable(match, R.drawable.timer_inactive, R.drawable.timer_inactive_begin, R.drawable.timer_inactive_end);
+						res = Utils.getTimerStateDrawable(match,
+								R.drawable.timer_inactive,
+								R.drawable.timer_inactive_begin,
+								R.drawable.timer_inactive_end);
 					} else if (state == TimerState.Inactive) {
-						Utils.getTimerStateDrawable(match,R.drawable.timer_active, R.drawable.timer_active_begin, R.drawable.timer_active_end);
+						Utils.getTimerStateDrawable(match,
+								R.drawable.timer_active,
+								R.drawable.timer_active_begin,
+								R.drawable.timer_active_end);
 						res = R.drawable.timer_active;
 					}
 					if (res != -1) {
@@ -635,6 +665,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 					setState((ImageView) findViewById(R.id.epg_timer_state),
 							R.drawable.timer_none);
 					modifed = true;
+					EpgCache.CACHE.remove(timer.getChannelId());
 				}
 			}
 		};
