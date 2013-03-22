@@ -25,12 +25,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.view.View;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.VdrSharedPreferencesImpl;
 import de.bjusystems.vdrmanager.ZonePicker;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.data.FetchEditTextPreference;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
-import de.bjusystems.vdrmanager.data.VdrSharedPreferences;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 
@@ -41,7 +41,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 	Vdr vdr;
 
-	VdrSharedPreferences pref;
+	VdrSharedPreferencesImpl pref;
 
 	int id = -1;
 
@@ -68,11 +68,16 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		super.updateSummary(ep);
 	}
 
+
+	private boolean isNew = false;
+
+	private boolean hasChanged = false;
+
 	private void initVDRInstance() {
 		id = getIntent().getIntExtra(Intents.VDR_ID, -1);
 		if (id == -1) {// new vdr
 			vdr = new Vdr();
-
+			isNew = true;
 		} else {// edit
 			Vdr v = DBAccess.get(this).getVdrDAO().queryForId(id);
 			if (v != null) {
@@ -80,9 +85,10 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			} else {
 				vdr = new Vdr();
 				id = -1;
+				isNew = true;
 			}
 		}
-		pref.setInstance(vdr);
+		pref = new VdrSharedPreferencesImpl(vdr, DBAccess.get(this).getVdrDAO());
 	}
 
 	public static String ARP_CACHE = "/proc/net/arp";
@@ -148,10 +154,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-
-		pref = new VdrSharedPreferences();
-
-		pref.dao = DBAccess.get(this).getVdrDAO();
 
 		initVDRInstance();
 
@@ -317,6 +319,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String key) {
+		hasChanged = true;
 		updateChildPreferences();
 		Preference p = findPreference(key);
 		updateSummary(p);
@@ -437,8 +440,9 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			finish();
 			return;
 		}
-		if (pref.commits < 2) {// user has not changed anything
-			DBAccess.get(this).getVdrDAO().delete(pref.getInstance());
+		if(isNew == true && hasChanged == false) {
+		//if (pref.commits < 2) {// user has not changed anything
+			DBAccess.get(this).getVdrDAO().delete(pref.getVdr());
 			finish();
 			return;
 		}

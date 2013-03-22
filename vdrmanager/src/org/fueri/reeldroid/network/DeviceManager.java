@@ -61,10 +61,12 @@ public class DeviceManager {
 		WifiManager wifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
 
-		boolean wifiStatus = (conMgr
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).isConnected();
+		boolean netStatus = conMgr
+				.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()
+				|| conMgr.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET)
+						.isConnected();
 
-		if (wifiStatus == false) {
+		if (netStatus == false) {
 			return list;
 		}
 

@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
+@Deprecated
 public class VdrSharedPreferences implements SharedPreferences {
 
 	private static final String EMPTY_STRING = "";

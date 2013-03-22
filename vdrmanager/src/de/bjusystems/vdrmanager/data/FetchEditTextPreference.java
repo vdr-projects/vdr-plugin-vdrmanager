@@ -2,13 +2,13 @@ package de.bjusystems.vdrmanager.data;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences.Editor;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.data.VdrSharedPreferences.Editor;
 
 public class FetchEditTextPreference extends DialogPreference{
 

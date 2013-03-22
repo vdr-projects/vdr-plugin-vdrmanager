@@ -17,7 +17,7 @@ public class Vdr {
 	private Integer id;
 
 	@DatabaseField(columnName = "name")
-	private String name = "-";
+	private String name = "VDR";
 
 	/**
 	 * Use secure channel
@@ -27,15 +27,15 @@ public class Vdr {
 
 	/** SVDRP host name or ip */
 	@DatabaseField
-	private String host  = "0.0.0.0";
+	private String host = "0.0.0.0";
 
 	/** SVDRP port */
 	@DatabaseField
-	private int port = 6420;
+	private Integer port = 6420;
 
 	/** Password */
 	@DatabaseField
-	private String password;
+	private String password = "";
 
 	/** should channels be filtered? */
 	@DatabaseField
@@ -51,15 +51,15 @@ public class Vdr {
 
 	/** URL of the wakeup script */
 	@DatabaseField
-	private String wakeupUrl;
+	private String wakeupUrl = "";
 
 	/** User for wakeup */
 	@DatabaseField
-	private String wakeupUser;
+	private String wakeupUser = "";
 
 	/** Password for wakeup */
 	@DatabaseField
-	private String wakeupPassword;
+	private String wakeupPassword = "";
 
 	/**
 	 * vdr mac for wol
@@ -67,7 +67,7 @@ public class Vdr {
 	 * @since 0.2
 	 */
 	@DatabaseField
-	private String mac;
+	private String mac = "";
 
 	/**
 	 * which wakeup method to use
@@ -84,7 +84,7 @@ public class Vdr {
 
 	/** Intervall for alive test */
 	@DatabaseField
-	private int aliveCheckInterval;
+	private Integer aliveCheckInterval;
 
 	/** Buffer before event */
 	@DatabaseField
@@ -104,7 +104,7 @@ public class Vdr {
 
 	/** user defined epg search times */
 	@DatabaseField
-	private String epgSearchTimes;
+	private String epgSearchTimes = "";
 
 	/**
 	 * Which port to use for streaming
@@ -140,7 +140,7 @@ public class Vdr {
 	 * Remux command
 	 */
 	@DatabaseField
-	private String remuxCommand  = "EXT";
+	private String remuxCommand = "EXT";
 
 	/**
 	 * Remux command Parameter
@@ -170,10 +170,10 @@ public class Vdr {
 	private int timeout = 60;
 
 	@DatabaseField
-	private String streamingUsername;
+	private String streamingUsername = "";
 
 	@DatabaseField
-	private String streamingPassword;
+	private String streamingPassword = "";
 
 	@DatabaseField
 	private int livePort = 8008;
@@ -184,8 +184,7 @@ public class Vdr {
 	@DatabaseField
 	private boolean enableRecStreaming = false;
 
-
-	@DatabaseField(columnName="stz")
+	@DatabaseField(columnName = "stz")
 	private String serverTimeZone = "Europe/Berlin";
 
 	public String getServerTimeZone() {
@@ -489,10 +488,14 @@ public class Vdr {
 	}
 
 	private static <T> T get(Map<String, Object> map, String key, Object def) {
-		if(map.containsKey(key)){
+		if (map.containsKey(key)) {
 			return (T) map.get(key);
 		}
-		return (T)def;
+		return (T) def;
+	}
+
+	private static Integer getInteger(Map<String, Object> map, String key) {
+		return getInteger(map, key, 0);
 	}
 
 	private static Integer getInteger(Map<String, Object> map, String key,
@@ -505,20 +508,25 @@ public class Vdr {
 		if (obj instanceof Integer) {
 			return (Integer) obj;
 		}
-		return Integer.valueOf(String.valueOf(obj));
+
+		try {
+			return Integer.valueOf(String.valueOf(obj));
+		} catch (NumberFormatException nfe) {
+			return def;
+		}
 	}
 
-	private static Integer getInteger(Map<String, Object> map, String key) {
-		if (map.containsKey(key) == false) {
-			return Integer.valueOf(0);
-		}
+	// private static Integer getInteger(Map<String, Object> map, String key) {
+	// if (map.containsKey(key) == false) {
+	// return Integer.valueOf(0);
+	// }
 
-		Object obj = get(map, key);
-		if (obj instanceof Integer) {
-			return (Integer) obj;
-		}
-		return Integer.valueOf(String.valueOf(obj));
-	}
+	// Object obj = get(map, key);
+	// if (obj instanceof Integer) {
+	// return (Integer) obj;
+	// }
+	// return Integer.valueOf(String.valueOf(obj));
+	// }
 
 	private static Boolean getBoolean(Map<String, Object> map, String key) {
 		return getBoolean(map, key, false);
@@ -580,58 +588,9 @@ public class Vdr {
 	}
 
 	public void set(Map<String, Object> map) {
-		name = get(map, "vdr_name", name);
-		host = get(map, "vdr_host", host);
-		port = getInteger(map, "vdr_port", port);
-		password = get(map, "vdr_password", password);
-		secure = getBoolean(map, "vdr_secure", secure);
-
-		filterChannels = getBoolean(map, "limit_channels", filterChannels);
-		channelFilter = get(map, "last_channel", channelFilter);
-
-		wakeupEnabled = getBoolean(map, "key_wakeup_enabled", wakeupEnabled);
-		wakeupUrl = get(map, "key_wakeup_url", wakeupUrl);
-		wakeupUser = get(map, "key_wakeup_user", wakeupUser);
-		wakeupPassword = get(map, "key_wakeup_password", wakeupPassword);
-		wakeupMethod = get(map, "key_wakeup_method", wakeupMethod);
-		wolCustomBroadcast = get(map, "key_wol_custom_broadcast",
-				wolCustomBroadcast);
-		mac = get(map, "key_wakeup_wol_mac", mac);
-
-		connectionTimeout = getInteger(map, "key_conntimeout_key",
-				connectionTimeout);
-		readTimeout = getInteger(map, "key_vdr_readtimeout", readTimeout);
-		timeout = getInteger(map, "key_vdr_timeout", timeout);
-
-		timerPreMargin = getInteger(map, "timer_pre_start_buffer",
-				timerPreMargin);
-		timerPostMargin = getInteger(map, "timer_post_end_buffer",
-				timerPostMargin);
-		timerDefaultPriority = getInteger(map, "timer_default_priority",
-				timerDefaultPriority);
-		timerDefaultLifetime = getInteger(map, "timer_default_lifetime",
-				timerDefaultLifetime);
-
-		streamPort = getInteger(map, "streamingport", streamPort);
-		streamingPassword = get(map, "key_streaming_password",
-				streamingPassword);
-		streamingUsername = get(map, "key_streaming_username",
-				streamingUsername);
-		encoding = get(map, "key_vdr_encoding", encoding);
-		streamFormat = get(map, "livetv_streamformat", streamFormat);
-		remuxCommand = get(map, "remux_command", remuxCommand);
-		remuxParameter = get(map, "remux_parameter", remuxParameter);
-		enableRemux = getBoolean(map, "remux_enable", enableRemux);
-
-		enableRecStreaming = getBoolean(map, "key_rec_stream_enable",
-				enableRecStreaming);
-		livePort = getInteger(map, "key_live_port", livePort);
-		recStreamMethod = get(map, "key_recstream_method", recStreamMethod);
-
-	}
-
-	public void init(Map<String, Object> map) {
-		name = get(map, "vdr_name", name);
+		init(map);
+/*
+		name = get(map, "vdr_name");
 		host = get(map, "vdr_host");
 		port = getInteger(map, "vdr_port");
 		password = get(map, "vdr_password");
@@ -641,19 +600,20 @@ public class Vdr {
 		channelFilter = get(map, "last_channel");
 
 		wakeupEnabled = getBoolean(map, "key_wakeup_enabled");
-		wakeupUrl = get(map, "key_wakeup_url", "0.0.0.0");
-		wakeupUser = get(map, "key_wakeup_user", "");
-		wakeupPassword = get(map, "key_wakeup_password", "");
-		wakeupMethod = get(map, "key_wakeup_method", "wol");
-		wolCustomBroadcast = get(map, "key_wol_custom_broadcast", "");
-		mac = get(map, "key_wakeup_wol_mac", "");
+		wakeupUrl = get(map, "key_wakeup_url");
+		wakeupUser = get(map, "key_wakeup_user");
+		wakeupPassword = get(map, "key_wakeup_password");
+		wakeupMethod = get(map, "key_wakeup_method");
+		wolCustomBroadcast = get(map, "key_wol_custom_broadcast");
+		mac = get(map, "key_wakeup_wol_mac");
 
 		connectionTimeout = getInteger(map, "key_conntimeout_key");
 		readTimeout = getInteger(map, "key_vdr_readtimeout");
 		timeout = getInteger(map, "key_vdr_timeout");
 
-		timerPreMargin = getInteger(map, "timer_pre_start_buffer", 5);
-		timerPostMargin = getInteger(map, "timer_post_end_buffer", 30);
+		timerPreMargin = getInteger(map, "timer_pre_start_buffer"
+				);
+		timerPostMargin = getInteger(map, "timer_post_end_buffer");
 		timerDefaultPriority = getInteger(map, "timer_default_priority");
 		timerDefaultLifetime = getInteger(map, "timer_default_lifetime");
 
@@ -669,8 +629,49 @@ public class Vdr {
 		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
 		livePort = getInteger(map, "key_live_port");
 		recStreamMethod = get(map, "key_recstream_method");
-		serverTimeZone = get(map, "key_imezone", TimeZone.getDefault());
+		*/
+	}
 
+	public void init(Map<String, Object> map) {
+		name = get(map, "vdr_name", "VDR");
+		host = get(map, "vdr_host", "0.0.0.0");
+		port = getInteger(map, "vdr_port", 6420);
+		password = get(map, "vdr_password", "");
+		secure = getBoolean(map, "vdr_secure");
+
+		filterChannels = getBoolean(map, "limit_channels", true);
+		channelFilter = get(map, "last_channel", "");
+
+		wakeupEnabled = getBoolean(map, "key_wakeup_enabled", false);
+		wakeupUrl = get(map, "key_wakeup_url", "");
+		wakeupUser = get(map, "key_wakeup_user", "");
+		wakeupPassword = get(map, "key_wakeup_password", "");
+		wakeupMethod = get(map, "key_wakeup_method", "wol");
+		wolCustomBroadcast = get(map, "key_wol_custom_broadcast", "");
+		mac = get(map, "key_wakeup_wol_mac", "");
+
+		connectionTimeout = getInteger(map, "key_conntimeout_key", 10);
+		readTimeout = getInteger(map, "key_vdr_readtimeout", 10);
+		timeout = getInteger(map, "key_vdr_timeout", 60);
+
+		timerPreMargin = getInteger(map, "timer_pre_start_buffer", 5);
+		timerPostMargin = getInteger(map, "timer_post_end_buffer", 30);
+		timerDefaultPriority = getInteger(map, "timer_default_priority", 50);
+		timerDefaultLifetime = getInteger(map, "timer_default_lifetime",99);
+
+		streamPort = getInteger(map, "streamingport", 3000);
+		streamingPassword = get(map, "key_streaming_password", "");
+		streamingUsername = get(map, "key_streaming_username", "");
+		encoding = get(map, "key_vdr_encoding", "utf-8");
+		streamFormat = get(map, "livetv_streamformat", "TS");
+		remuxCommand = get(map, "remux_command", "EXT");
+		remuxParameter = get(map, "remux_parameter", "");
+		enableRemux = getBoolean(map, "remux_enable");
+
+		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
+		livePort = getInteger(map, "key_live_port", 8008);
+		recStreamMethod = get(map, "key_recstream_method", "vdr-live");
+		serverTimeZone = get(map, "key_imezone", TimeZone.getDefault().getID());
 	}
 
 }
