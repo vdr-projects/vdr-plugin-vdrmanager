@@ -3,10 +3,13 @@ package de.bjusystems.vdrmanager.data;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
+import de.bjusystems.vdrmanager.app.VdrManagerApp;
+import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.gui.Utils;
 
 /**
@@ -153,8 +156,11 @@ public class Timer extends Event implements Timerable {
 		line.append(flags).append(":");
 		line.append(channelNumber).append(":");
 
-		final Calendar cal = new GregorianCalendar();
+		final Calendar cal = Calendar.getInstance();
 		cal.setTime(start);
+
+		cal.setTimeZone(TimeZone.getTimeZone(Preferences.get().getCurrentVdr().getServerTimeZone()));
+
 		line.append((weekdays.equals("-------") == false ? weekdays + "@" : "") + String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
 				cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH)));
 		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY),
