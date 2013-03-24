@@ -47,7 +47,7 @@ SOFILE = libvdr-$(PLUGIN).so
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o sock.o vdrmanagerthread.o select.o handler.o helpers.o
+OBJS = $(PLUGIN).o sock.o vdrmanagerthread.o select.o handler.o helpers.o compressor.o
 
 ### The main target:
 

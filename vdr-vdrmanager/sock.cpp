@@ -5,6 +5,7 @@
 #include <vdr/plugin.h>
 #include "sock.h"
 #include "helpers.h"
+#include "compressor.h"
 
 static int clientno = 0;
 
@@ -60,10 +61,12 @@ cVdrmanagerServerSocket::cVdrmanagerServerSocket() :
 cVdrmanagerServerSocket::~cVdrmanagerServerSocket() {
 }
 
-bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp) {
-	// save password
-	this->password = password;
+bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp, int compressionMode) {
+
+  this->password = password;
 	this->forceCheckSvdrp = forceCheckSvrp;
+	this->compressionMode = compressionMode;
+
 	// create socket
 	sock = socket(PF_INET, SOCK_STREAM, 0);
 	if (sock < 0) {
@@ -111,7 +114,7 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
 	int newsock = accept(sock, (struct sockaddr *) &clientname, &size);
 	if (newsock > 0) {
 		// create client socket
-		newsocket = new cVdrmanagerClientSocket(password);
+		newsocket = new cVdrmanagerClientSocket(password, compressionMode);
 		if (!newsocket->Attach(newsock)) {
 			delete newsocket;
 			return NULL;
@@ -138,12 +141,20 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
 /*
  * cVdrmonClientSocket
  */
-cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password) {
-	readbuf = writebuf = "";
+cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int compressionMode) {
+	readbuf = "";
+	writebuf = "";
+	sendbuf = NULL;
+	sendsize = 0;
+	sendoffset = 0;
 	disconnected = false;
+	initDisconnect = false;
 	client = ++clientno;
 	this->password = password;
+	this->compressionMode = compressionMode;
 	login = false;
+	compression = false;
+	initCompression = false;
 }
 
 cVdrmanagerClientSocket::~cVdrmanagerClientSocket() {
@@ -212,42 +223,74 @@ bool cVdrmanagerClientSocket::Disconnected() {
 }
 
 void cVdrmanagerClientSocket::Disconnect() {
-	disconnected = true;
+	initDisconnect = true;
 }
 
 bool cVdrmanagerClientSocket::PutLine(string line) {
-	//TODO http://projects.vdr-developer.org/issues/790
-	//string line2 = cHelpers::compress_string(line);
-	//unsigned long  l =  line.size();
-	//unsigned long  l2 = line2.size();
-	//if(l2 == 0){
-		//l2 = 1;
-	//}
-	//dsyslog("[vdrmanager] PutLine, line size is %lu, with zlib it would be %lu (factor %lu)", l, l2, l/l2);
-	// add line to write buffer
-	writebuf += line;
 
-	// data present?
-	if (writebuf.length() > 0) {
+  // fill writebuf
+  if (line.length() > 0) {
+    writebuf += line;
+    return true;
+  }
+
+	// initialize sendbuf if needed
+  if (sendbuf == NULL) {
+    if (!compression) {
+      sendbuf = (char *)malloc(writebuf.length()+1);
+      strcpy(sendbuf, writebuf.c_str());
+      sendsize = writebuf.length();
+    } else {
+      Compress();
+    }
+    sendoffset = 0;
+    writebuf.clear();
+  }
+
+  // send data
+  if (sendsize > 0) {
+
 		// write so many bytes as possible
-		int rc = write(sock, writebuf.c_str(), writebuf.length());
+		int rc = write(sock, sendbuf + sendoffset, sendsize);
 		if (rc < 0 && errno != EAGAIN)
 		{
 			LOG_ERROR;
+
+			if (sendbuf != NULL) {
+			  free(sendbuf);
+			  sendbuf = NULL;
+			}
+
 			return false;
 		}
+		sendsize -= rc;
+		sendoffset += rc;
+	}
 
-		// move the remainder
-		if (rc > 0)
-			writebuf = writebuf.substr(rc, writebuf.length() - rc);
+  if (sendsize == 0) {
+
+    if (sendbuf != NULL) {
+      free(sendbuf);
+      sendbuf = NULL;
+    }
+
+	  if (initCompression) {
+	    isyslog("Compression is activated now");
+	    initCompression = false;
+	    compression = true;
+	  }
+
+	  if (initDisconnect) {
+	    initDisconnect = false;
+	    disconnected = true;
+	  }
 	}
 
 	return true;
 }
 
 bool cVdrmanagerClientSocket::Flush() {
-	string empty = "";
-	return PutLine(empty);
+	return PutLine("");
 }
 
 bool cVdrmanagerClientSocket::Attach(int fd) {
@@ -260,7 +303,7 @@ int cVdrmanagerClientSocket::GetClientId() {
 }
 
 bool cVdrmanagerClientSocket::WritePending() {
-	return writebuf.length() > 0;
+	return sendoffset < sendsize;
 }
 
 bool cVdrmanagerClientSocket::IsLoggedIn() {
@@ -269,4 +312,43 @@ bool cVdrmanagerClientSocket::IsLoggedIn() {
 
 void cVdrmanagerClientSocket::SetLoggedIn() {
 	login = true;
+}
+
+void cVdrmanagerClientSocket::ActivateCompression() {
+
+  string mode = "NONE";
+  switch (compressionMode) {
+  case COMPRESSION_GZIP:
+    mode = "GZIP";
+    initCompression = true;
+    break;
+  case COMPRESSION_ZLIB:
+    mode = "ZLIB";
+    initCompression = true;
+    break;
+  default:
+    mode = "NONE";
+    break;
+  }
+
+  PutLine("!OK " + mode + "\r\n");
+}
+
+void cVdrmanagerClientSocket::Compress() {
+  cCompressor compressor = cCompressor();
+
+  switch (compressionMode) {
+  case COMPRESSION_GZIP:
+    compressor.CompressGzip(writebuf);
+    break;
+  case COMPRESSION_ZLIB:
+    compressor.CompressZlib(writebuf);
+    break;
+  }
+
+  sendbuf = compressor.GetData();
+  sendsize = compressor.getDataSize();
+
+  double ratio = 1.0 * writebuf.length() / sendsize;
+  isyslog("Compression stats: raw %ld, compressed %ld, ratio %f:1", writebuf.length(), sendsize, ratio);
 }
