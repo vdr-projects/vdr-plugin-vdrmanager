@@ -1,12 +1,10 @@
 package de.bjusystems.vdrmanager.gui;
 
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
-import android.app.TimePickerDialog.OnTimeSetListener;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -27,13 +25,14 @@ import de.bjusystems.vdrmanager.data.Preferences;
 /**
  * This class is used for showing what's
  * current running on all channels
+
  * @author bju
  */
 public class EpgSearchTimesListActivity extends Activity
-				implements OnClickListener, OnTimeSetListener {
+				implements OnClickListener{
 
 	ArrayAdapter<EpgSearchTimeValue> adapter;
-	
+
 	List<EpgSearchTimeValue> values;
 
 	@Override
@@ -44,7 +43,7 @@ public class EpgSearchTimesListActivity extends Activity
 		setContentView(R.layout.epg_search_times_list);
 
 		setTitle(R.string.epg_search_times_window);
-		
+
 		// Create adapter for ListView
 		adapter = new ArrayAdapter<EpgSearchTimeValue>(this, R.layout.epg_search_times_item);
 		final ListView listView = (ListView) findViewById(R.id.epg_search_times_list);
@@ -60,13 +59,28 @@ public class EpgSearchTimesListActivity extends Activity
 	}
 
 	public void onClick(final View v) {
-		final Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 		// show time selection
-		final TimePickerDialog dialog = new TimePickerDialog(this, this, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), Preferences.get().isUse24hFormat());
-		dialog.show();
+		final TimePicker timePicker = new TimePicker(this);
+		timePicker.setIs24HourView(Preferences.get().isUse24hFormat());
+		new AlertDialog.Builder(this)
+        .setTitle(R.string.set_time)
+        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	onTimeSet(timePicker.getCurrentHour(), timePicker.getCurrentMinute());
+            }
+        })
+        .setNegativeButton(android.R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                            int which) {
+                    	dialog.dismiss();
+                    }
+                }).setView(timePicker).show();
 	}
 
-	public void onTimeSet(final TimePicker view, final int hourOfDay, final int minute) {
+	public void onTimeSet(final int hourOfDay, final int minute) {
 
 		final EpgSearchTimeValue time = new EpgSearchTimeValue(values.size(), String.format("%02d:%02d", hourOfDay, minute));
 		values.add(time);
