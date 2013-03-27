@@ -393,5 +393,6 @@
     <string name="probing">Probing %1$s …</string>
 	<string name="no_results">No results…</string>
 	<string name="recording_started">Recording started</string>
+	<string name="set_time">Set time</string>
 	<!-- … -->
 </resources>
