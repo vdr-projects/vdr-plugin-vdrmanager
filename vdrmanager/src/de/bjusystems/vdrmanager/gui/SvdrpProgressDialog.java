@@ -23,6 +23,8 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 		this.client = client;
 		progress = new ProgressDialog(context);
 		progress.setOnCancelListener(this);
+		progress.setCancelable(true);
+		progress.setCanceledOnTouchOutside(false);
 	}
 
 	public void svdrpEvent(final SvdrpEvent sevent) {

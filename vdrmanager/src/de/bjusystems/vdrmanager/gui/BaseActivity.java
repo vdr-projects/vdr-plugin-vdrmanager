@@ -4,6 +4,8 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -205,7 +207,14 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		super.onCreate(savedInstanceState);
 		Preferences.setLocale(this);
 		progress = new ProgressDialog(this);
-
+		progress.setCancelable(false);
+		progress.setCanceledOnTouchOutside(false);
+//		progress.setOnCancelListener(new OnCancelListener() {
+//			@Override
+//			public void onCancel(DialogInterface dialog) {
+//
+//			}
+//		});
 
 		initActionBar();
 

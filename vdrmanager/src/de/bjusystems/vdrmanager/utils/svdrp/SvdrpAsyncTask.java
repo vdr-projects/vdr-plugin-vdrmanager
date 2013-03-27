@@ -155,4 +155,8 @@ public class SvdrpAsyncTask<Result, Client extends SvdrpClient<Result>> extends
 	public void svdrpEvent(Result result) {
 		results.add(result);
 	}
+
+	public void abort(){
+		client.abort();
+	}
 }
