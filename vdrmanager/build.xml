@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="VDR-Manager" default="help">
+<project name="VdrManagerActivity" default="help">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
          It contains the path to the SDK. It should *NOT* be checked into
          Version Control Systems. -->
-    <loadproperties srcFile="local.properties" />
+    <property file="local.properties" />
 
     <!-- The ant.properties file can be created by you. It is only edited by the
          'android' tool to add properties to it.
@@ -28,6 +28,15 @@
          -->
     <property file="ant.properties" />
 
+    <!-- if sdk.dir was not set from one of the property file, then
+         get it from the ANDROID_HOME env var.
+         This must be done before we load project.properties since
+         the proguard config can use sdk.dir -->
+    <property environment="env" />
+    <condition property="sdk.dir" value="${env.ANDROID_HOME}">
+        <isset property="env.ANDROID_HOME" />
+    </condition>
+
     <!-- The project.properties file is created and updated by the 'android'
          tool, as well as ADT.
 
@@ -41,25 +50,23 @@
 
     <!-- quick check on sdk.dir -->
     <fail
-            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project'"
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
             unless="sdk.dir"
     />
 
-
-<!-- extension targets. Uncomment the ones where you want to do custom work
-     in between standard targets -->
-<!--
-    <target name="-pre-build">
-    </target>
-    <target name="-pre-compile">
-    </target>
-
-    /* This is typically used for code obfuscation.
-       Compiled code location: ${out.classes.absolute.dir}
-       If this is not done in place, override ${out.dex.input.absolute.dir} */
-    <target name="-post-compile">
-    </target>
--->
+    <!--
+        Import per project custom build rules if present at the root of the project.
+        This is the place to put custom intermediary targets such as:
+            -pre-build
+            -pre-compile
+            -post-compile (This is typically used for code obfuscation.
+                           Compiled code location: ${out.classes.absolute.dir}
+                           If this is not done in place, override ${out.dex.input.absolute.dir})
+            -post-package
+            -post-build
+            -pre-clean
+    -->
+    <import file="custom_rules.xml" optional="true" />
 
     <!-- Import the actual build file.
 
@@ -81,107 +88,5 @@
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
-	<tstamp>
-			<format property="builddatetime" pattern="dd-MM-yyyy_HH.mm"/>
-	</tstamp>
-	<xmlproperty file="AndroidManifest.xml" prefix="mymanifest" collapseAttributes="true"/>
-	
-	  <target name="-set-snapshot-mode" depends="-set-mode-check">
-	        <property name="out.packaged.file" location="${out.absolute.dir}/${ant.project.name}-release-unsigned.apk" />
-	        <property name="out.final.file" location="${out.absolute.dir}/${ant.project.name}-${mymanifest.manifest.android:versionName}-SNAPSHOT-${builddatetime}.apk" />
-
-	        <!-- record the current build target -->
-	        <property name="build.target" value="release" />
-
-	        <property name="build.is.instrumented" value="false" />
-
-	        <!-- release mode is only valid if the manifest does not explicitly
-	             set debuggable to true. default is false. -->
-	        <xpath input="AndroidManifest.xml" expression="/manifest/application/@android:debuggable"
-	                output="build.is.packaging.debug" default="false"/>
-
-	        <!-- signing mode: release -->
-	        <property name="build.is.signing.debug" value="false" />
-
-	        <if condition="${build.is.packaging.debug}">
-	            <then>
-	                <echo>*************************************************</echo>
-	                <echo>****  Android Manifest has debuggable=true   ****</echo>
-	                <echo>**** Doing DEBUG packaging with RELEASE keys ****</echo>
-	                <echo>*************************************************</echo>
-	            </then>
-	            <else>
-	                <!-- property only set in release mode.
-	                     Useful for if/unless attributes in target node
-	                     when using Ant before 1.8 -->
-	                <property name="build.is.mode.release" value="true"/>
-	            </else>
-	        </if>
-	    </target>
-	
-
-	  <target name="-set-release-mode" depends="-set-mode-check">
-	        <property name="out.packaged.file" location="${out.absolute.dir}/${ant.project.name}-release-unsigned.apk" />
-	        <property name="out.final.file" location="${out.absolute.dir}/${ant.project.name}-${mymanifest.manifest.android:versionName}.apk" />
-
-	        <!-- record the current build target -->
-	        <property name="build.target" value="release" />
-
-	        <property name="build.is.instrumented" value="false" />
-
-	        <!-- release mode is only valid if the manifest does not explicitly
-	             set debuggable to true. default is false. -->
-	        <xpath input="AndroidManifest.xml" expression="/manifest/application/@android:debuggable"
-	                output="build.is.packaging.debug" default="false"/>
-
-	        <!-- signing mode: release -->
-	        <property name="build.is.signing.debug" value="false" />
-
-	        <if condition="${build.is.packaging.debug}">
-	            <then>
-	                <echo>*************************************************</echo>
-	                <echo>****  Android Manifest has debuggable=true   ****</echo>
-	                <echo>**** Doing DEBUG packaging with RELEASE keys ****</echo>
-	                <echo>*************************************************</echo>
-	            </then>
-	            <else>
-	                <!-- property only set in release mode.
-	                     Useful for if/unless attributes in target node
-	                     when using Ant before 1.8 -->
-	                <property name="build.is.mode.release" value="true"/>
-	            </else>
-	        </if>
-	    </target>
-	
-	 <target name="snapshot"
-	                depends="-set-snapshot-mode, -release-obfuscation-check, -package, -release-prompt-for-password, -release-nosign"
-	                if="has.keystore"
-	                description="Builds the application. The generated apk file must be signed before
-	                            it is published.">
-
-	        <!-- only create apk if *not* a library project -->
-	        <do-only-if-not-library elseText="Library project: do not create apk..." >
-	            <sequential>
-	                <property name="out.unaligned.file" location="${out.absolute.dir}/${ant.project.name}-release-unaligned.apk" />
-
-	                <!-- Signs the APK -->
-	                <echo>Signing final apk...</echo>
-	                <signjar
-	                        jar="${out.packaged.file}"
-	                        signedjar="${out.unaligned.file}"
-	                        keystore="${key.store}"
-	                        storepass="${key.store.password}"
-	                        alias="${key.alias}"
-	                        keypass="${key.alias.password}"
-	                        verbose="${verbose}" />
-
-	                <!-- Zip aligns the APK -->
-	                <zipalign-helper in.package="${out.unaligned.file}"
-	                                           out.package="${out.final.file}" />
-	                <echo>Release Package: ${out.final.file}</echo>
-	            </sequential>
-	        </do-only-if-not-library>
-	        <record-build-info />
-	    </target>
 
 </project>
