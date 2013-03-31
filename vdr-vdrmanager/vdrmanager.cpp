@@ -12,6 +12,7 @@
 #include <vdr/device.h>
 #include <vdr/player.h>
 #include "vdrmanagerthread.h"
+#include "compressor.h"
 
 #define VDRMANAGER_PORT		6420
 
@@ -24,8 +25,8 @@ private:
 	cVdrManagerThread * Thread;
 	int port;
 	const char * password;
-	bool forceCheckSvdrp;
-	bool forceDelete;
+	bool forceCheckSvdrp = false;
+	int compressionMode = COMPRESSION_NONE;
 protected:
 public:
 	cVdrManager(void);
@@ -57,7 +58,6 @@ cVdrManager::cVdrManager(void) {
 	port = VDRMANAGER_PORT;
 	password = "";
 	forceCheckSvdrp = false;
-	forceDelete = false;
 }
 
 cVdrManager::~cVdrManager() {
@@ -73,12 +73,16 @@ cMenuSetupPage * cVdrManager::SetupMenu(void) {
 }
 
 const char * cVdrManager::CommandLineHelp(void) {
-	return "  -p port          port number to listen to\n  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n  -s               force check against svdrphosts.conf, even if a password was given\n  -f               force delete of a timer or a recording even if they are active\n";
+	return
+	    "  -p port          port number to listen to\n"
+	    "  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n"
+	    "  -s               force check against svdrphosts.conf, even if a password was given\n"
+	    "  -c compression   selects the compression mode to use (zlib or gzip). Default is zlib";
 }
 
 bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "p:P:s:f")) != -1)
+	while ((c = getopt(argc, argv, "c:p:P:sf")) != -1)
 		switch (c) {
 		case 'p':
 			port = atoi(optarg);
@@ -89,16 +93,16 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 		case 's':
 			forceCheckSvdrp = true;
 			break;
-		case 'f':
-			forceDelete = true;
-			break;
+		case 'c':
+		  if (optarg[0] == 'g') {
+		    compressionMode = COMPRESSION_GZIP;
+		  } else if (optarg[0] == 'z') {
+		    compressionMode = COMPRESSION_ZLIB;
+		  } else {
+		    compressionMode = COMPRESSION_ZLIB;
+		  }
+		  break;
 		case '?':
-			if (optopt == 'c') {
-				fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-			} else if (isprint(optopt))
-				fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-			else
-				fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
 			return false;
 		default:
 			return false;
@@ -115,7 +119,7 @@ bool cVdrManager::Initialize(void) {
 // Initialize any background activities the plugin shall perform.
 
 // Start any background activities the plugin shall perform.
-	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp);
+	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp, compressionMode);
 
 	return Thread != NULL;
 }
