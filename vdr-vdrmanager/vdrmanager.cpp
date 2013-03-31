@@ -16,7 +16,7 @@
 
 #define VDRMANAGER_PORT		6420
 
-static const char *VERSION = "0.9";
+static const char *VERSION = "0.10";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
 class cVdrManager: public cPlugin {
@@ -25,8 +25,8 @@ private:
 	cVdrManagerThread * Thread;
 	int port;
 	const char * password;
-	bool forceCheckSvdrp = false;
-	int compressionMode = COMPRESSION_NONE;
+	bool forceCheckSvdrp;
+	int compressionMode;
 protected:
 public:
 	cVdrManager(void);
@@ -73,16 +73,15 @@ cMenuSetupPage * cVdrManager::SetupMenu(void) {
 }
 
 const char * cVdrManager::CommandLineHelp(void) {
-	return
-	    "  -p port          port number to listen to\n"
-	    "  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n"
-	    "  -s               force check against svdrphosts.conf, even if a password was given\n"
-	    "  -c compression   selects the compression mode to use (zlib or gzip). Default is zlib";
+	return "   -p port          port number to listen to\n"
+			"  -P password      password (none if not given). No password forces check against svdrphosts.conf.\n"
+			"  -s               force check against svdrphosts.conf, even if a password was given\n"
+			"  -c compression   selects the compression mode to use (zlib or gzip). Default is zlib";
 }
 
 bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "c:p:P:sf")) != -1)
+	while ((c = getopt(argc, argv, "c::p:P:s")) != -1)
 		switch (c) {
 		case 'p':
 			port = atoi(optarg);
@@ -94,14 +93,16 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 			forceCheckSvdrp = true;
 			break;
 		case 'c':
-		  if (optarg[0] == 'g') {
-		    compressionMode = COMPRESSION_GZIP;
-		  } else if (optarg[0] == 'z') {
-		    compressionMode = COMPRESSION_ZLIB;
-		  } else {
-		    compressionMode = COMPRESSION_ZLIB;
-		  }
-		  break;
+			if (!optarg) {
+				compressionMode = COMPRESSION_ZLIB;
+			} else if (optarg[0] == 'g') {
+				compressionMode = COMPRESSION_GZIP;
+			} else if (optarg[0] == 'z') {
+				compressionMode = COMPRESSION_ZLIB;
+			} else {
+				return false;
+			}
+			break;
 		case '?':
 			return false;
 		default:
@@ -119,7 +120,8 @@ bool cVdrManager::Initialize(void) {
 // Initialize any background activities the plugin shall perform.
 
 // Start any background activities the plugin shall perform.
-	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp, compressionMode);
+	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp,
+			compressionMode);
 
 	return Thread != NULL;
 }
