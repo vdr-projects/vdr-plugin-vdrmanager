@@ -21,7 +21,6 @@ import com.j256.ormlite.android.AndroidDatabaseResults;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
@@ -75,10 +74,10 @@ public class VdrManagerActivity extends SherlockActivity implements
 		findViewById(R.id.action_menu_recordings).setOnClickListener(this);
 		findViewById(R.id.action_menu_timers).setOnClickListener(this);
 		findViewById(R.id.action_menu_epg).setOnClickListener(this);
-		View v = findViewById(R.id.action_menu_search);
-		if (v != null) {
-			v.setOnClickListener(this);
-		}
+//		View v = findViewById(R.id.action_menu_search);
+//		if (v != null) {
+//			v.setOnClickListener(this);
+//		}
 		findViewById(R.id.main_logo).setOnClickListener(this);
 		actionMenuWakup = findViewById(R.id.action_menu_wakeup);
 
@@ -136,8 +135,8 @@ public class VdrManagerActivity extends SherlockActivity implements
 			break;
 		}
 		case R.id.main_menu_info: {
-			if(!isFinishing()){
-				return true;
+			if(isFinishing()){
+				break;
 			}
 			About.show(this);
 			break;
@@ -266,9 +265,9 @@ public class VdrManagerActivity extends SherlockActivity implements
 		case R.id.action_menu_epg:
 			startActivity(TimeEpgListActivity.class);
 			break;
-		case R.id.action_menu_search:
-			onSearchRequested();
-			break;
+//		case R.id.action_menu_search:
+//			onSearchRequested();
+//			break;
 		case R.id.action_menu_wakeup:
 			final AsyncWakeupTask wakeupTask = new AsyncWakeupTask(this);
 			wakeupTask.execute();
