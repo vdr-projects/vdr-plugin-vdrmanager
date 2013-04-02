@@ -79,6 +79,10 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 		return TYPE_ITEM;
 	}
 
+	public static class EventListItemHeaderHolder {
+		TextView header;
+	}
+
 	private boolean canReuseConvertView(View convertView, int itemViewType){
 		if(convertView == null){
 			return false;
@@ -89,12 +93,13 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 		}
 
 		if(itemViewType == TYPE_HEADER){
-			return o instanceof de.bjusystems.vdrmanager.gui.EventAdapter.EventListItemHeaderHolder;
+			return o instanceof EventListItemHeaderHolder;
 		}
 
 		return false;
 
 	}
+
 
 	@Override
 	public View getView(final int position, View convertView,
@@ -233,10 +238,6 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 			itemHolder.duration.setText(getContext().getString(
 					R.string.epg_duration_template_live, rest, dura));
 		}
-	}
-
-	class EventListItemHeaderHolder {
-		public TextView header;
 	}
 
 
