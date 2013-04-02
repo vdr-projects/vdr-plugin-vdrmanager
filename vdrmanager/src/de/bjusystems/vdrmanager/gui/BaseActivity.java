@@ -387,7 +387,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	@Override
 	public void svdrpEvent(SvdrpEvent event, Throwable t) {
-		Utils.say(this, t.getLocalizedMessage());
+		progress.dismiss();
+		Utils.say(this, t.getMessage());
 	}
 
 	protected void addListener(SvdrpAsyncTask<Result, SvdrpClient<Result>> task) {

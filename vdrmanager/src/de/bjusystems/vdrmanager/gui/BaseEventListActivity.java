@@ -51,7 +51,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	private SimpleGestureFilter detector;
 
-	protected EventAdapter adapter;
+	protected BaseEventAdapter<EventListItem> adapter;
 
 	protected String highlight = null;
 

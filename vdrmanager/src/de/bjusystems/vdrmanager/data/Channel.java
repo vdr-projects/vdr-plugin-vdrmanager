@@ -63,6 +63,7 @@ public class Channel implements Parcelable {
 	}
 
 	public Channel(final String channelData) {
+		System.err.println(channelData);
 		String[] words = StringUtils.splitPreserveAllTokens(channelData,
 				C.DATA_SEPARATOR);
 		this.number = Integer.valueOf(words[0].substring(1));

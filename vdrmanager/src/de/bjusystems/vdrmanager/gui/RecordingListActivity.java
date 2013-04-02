@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -20,6 +25,8 @@ import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.data.RecordingListItem;
+import de.bjusystems.vdrmanager.data.Recording.Folder;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
@@ -35,24 +42,33 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 public class RecordingListActivity extends BaseEventListActivity<Recording>
 		implements OnItemLongClickListener {
 
-	//RecordingClient recordingClient;
+	// RecordingClient recordingClient;
 
-	//public static final int MENU_GROUP_CHANNEL = 2;
+	// public static final int MENU_GROUP_CHANNEL = 2;
 
 	public static final int ASC = 0;
 
 	public static final int DESC = 1;
 
-	protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
+	// protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
 
+	private static Map<String, List<Recording>> CACHE = new TreeMap<String, List<Recording>>();
+
+	public static final Map<String, Set<String>> FOLDERS = new TreeMap<String, Set<String>>();
+
+	private String currentFolder = Recording.ROOT_FOLDER;
 
 	private int ASC_DESC = ASC;
+
+	private static final List<Recording> EMPTY = new ArrayList<Recording>(0);
+
+	private Stack<String> stack = new Stack<String>();
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// create an adapter
+
 		adapter = new RecordingAdapter(this);
 
 		// attach adapter to ListView
@@ -115,6 +131,25 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	// }
 	// }
 
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+
+		final RecordingListItem item = (RecordingListItem) adapter
+				.getItem(position);
+		if (item.isFolder()) {
+			if(currentFolder.equals(Recording.ROOT_FOLDER)){
+				currentFolder = item.folder;
+			} else {
+				currentFolder = currentFolder + Recording.FOLDERDELIMCHAR + item.folder;
+			}
+			stack.push(currentFolder);
+			fillAdapter();
+		} else {
+			super.onItemClick(parent, view, position, id);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -138,7 +173,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected void prepareDetailsViewData(EventListItem event) {
 		getApp().setCurrentEvent(event.getEvent());
-		getApp().setCurrentEpgList(CACHE);
+		getApp().setCurrentEpgList(CACHE.get(currentFolder));
 	}
 
 	@Override
@@ -167,9 +202,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		super.onCreateContextMenu(menu, v, menuInfo);
 		//
 		// http://projects.vdr-developer.org/issues/863
-		//if (Utils.isLive(item)) {
-			menu.removeItem(R.id.epg_item_menu_live_tv);
-		//}
+		// if (Utils.isLive(item)) {
+		menu.removeItem(R.id.epg_item_menu_live_tv);
+		// }
 	}
 
 	@Override
@@ -212,7 +247,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 
 		// get timer client
-		 RecordingClient recordingClient = new RecordingClient();
+		RecordingClient recordingClient = new RecordingClient();
 
 		// create backgound task
 		final SvdrpAsyncTask<Recording, SvdrpClient<Recording>> task = new SvdrpAsyncTask<Recording, SvdrpClient<Recording>>(
@@ -248,16 +283,16 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		/* */
 		switch (sortBy) {
 		case MENU_GROUP_DEFAULT: {
-			sortItemsByTime(CACHE, true);
+			sortItemsByTime(CACHE.get(currentFolder), true);
 			break;
 		}
 		case MENU_GROUP_ALPHABET: {
-			Collections.sort(CACHE, new TitleComparator());
+			Collections.sort(CACHE.get(currentFolder), new TitleComparator());
 			break;
 		}
-		//case MENU_GROUP_CHANNEL: {
-		   //sortItemsByChannel(results);
-		//}
+		// case MENU_GROUP_CHANNEL: {
+		// sortItemsByChannel(results);
+		// }
 		}
 	}
 
@@ -265,8 +300,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	protected void fillAdapter() {
 
 		adapter.clear();
-
-		if (CACHE.isEmpty()) {
+		List<Recording> list = CACHE.get(currentFolder);
+		if (list == null || list.isEmpty()) {
 			return;
 		}
 
@@ -275,16 +310,41 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		Calendar cal = Calendar.getInstance();
 		int day = -1;
 
-		for (final Event rec : CACHE) {
+		Set<String> folders = FOLDERS.get(currentFolder);
+		if (folders != null) {
+			for (String f : folders) {
+				RecordingListItem recordingListItem = new RecordingListItem(f);
+				recordingListItem.folder = f;
+				adapter.add(recordingListItem);
+			}
+		}
+
+		for (final Event rec : CACHE.get(currentFolder)) {
 			cal.setTime(rec.getStart());
 			int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
 				day = eday;
-				adapter.add(new EventListItem(new DateFormatter(cal)
+				adapter.add(new RecordingListItem(new DateFormatter(cal)
 						.getDailyHeader()));
 			}
-			adapter.add(new EventListItem((Recording) rec));
+			adapter.add(new RecordingListItem((Recording) rec));
 			adapter.notifyDataSetChanged();
+		}
+
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (stack.isEmpty()) {
+			super.onBackPressed();
+		} else {
+			stack.pop();
+			if (stack.isEmpty()) {
+				currentFolder = "";
+			} else {
+				currentFolder = stack.peek();
+			}
+			fillAdapter();
 		}
 
 	}
@@ -292,13 +352,53 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected boolean finishedSuccessImpl(List<Recording> results) {
 		clearCache();
-		for(Recording r :results){
-			CACHE.add(r);
+		for (Recording r : results) {
+			String folder = r.getFolder();
+			if (folder.length() > 0) {
+				String[] split = folder.split(Recording.FOLDERDELIMCHAR);
+				String key = null;
+				String value = null;
+				if(split.length == 1){
+					key = Recording.ROOT_FOLDER ;
+					value = split[0];
+				} else {
+					value = split[split.length - 1];
+					//StringBuilder sb = new StringBuilder();
+					//String sep = "";
+					//for(int i = 0; i < split.length - 1; ++i){
+						//sb.append(sep).append(split[i]);
+						//sep = Recording.FOLDERDELIMCHAR;
+					//}
+					key = folder.subSequence(0, folder.length() - (value.length()+1) ).toString();
+
+				}
+
+				Set<String> list = FOLDERS.get(key);
+				if(list == null){
+					list = new TreeSet<String>();
+					FOLDERS.put(key, list);
+				}
+
+				list.add(value);
+
+				//a b
+				//a
+				//c
+				//a~b > k
+
+
+			}
+			List<Recording> list = CACHE.get(folder);
+			if (list == null) {
+				list = new ArrayList<Recording>();
+				CACHE.put(folder, list);
+			}
+			list.add(r);
 		}
+
 		pushResultCountToTitle();
 		fillAdapter();
 		return adapter.isEmpty() == false;
-
 	}
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -312,9 +412,20 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		return LIST_NAVIGATION_RECORDINGS;
 	}
 
+	public void clearCache() {
+		CACHE.clear();
+		FOLDERS.clear();
+	}
+
 	@Override
 	protected List<Recording> getCACHE() {
-		return CACHE;
+
+		List<Recording> list = CACHE.get(currentFolder);
+
+		if (list != null) {
+			return list;
+		}
+		return EMPTY;
 	}
 
 }
