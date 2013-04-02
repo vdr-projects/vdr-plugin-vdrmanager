@@ -81,13 +81,13 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 		Object holder = null;
 		if (convertView == null || (convertView != null && convertView.getTag() instanceof EventListItemFolderHolder) == false) {
 			convertView = inflater.inflate(R.layout.folder_item, null);
-			holder = getHeaderViewHolder(item, convertView);
+			holder = getFolderViewHolder(item, convertView);
 			convertView.setTag(holder);
 		} else {
 			holder = convertView.getTag();
 		}
 
-		((EventListItemHeaderHolder) holder).header.setText(item.getHeader());
+		((EventListItemFolderHolder) holder).folder.setText(item.folder);
 		return convertView;
 	}
 
