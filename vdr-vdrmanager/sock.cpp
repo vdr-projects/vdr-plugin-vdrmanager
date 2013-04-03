@@ -303,7 +303,7 @@ int cVdrmanagerClientSocket::GetClientId() {
 }
 
 bool cVdrmanagerClientSocket::WritePending() {
-	return sendoffset < sendsize;
+	return sendsize > 0;
 }
 
 bool cVdrmanagerClientSocket::IsLoggedIn() {

@@ -22,9 +22,8 @@ private:
   int port;
   const char * password;
   bool forceCheckSvdrp;
-  int compressionMode;
 public:
-  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp, int compressionMode);
+  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp);
   virtual void Action(void);
   void Shutdown();
 private:

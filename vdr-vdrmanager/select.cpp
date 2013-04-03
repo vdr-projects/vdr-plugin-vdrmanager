@@ -108,9 +108,8 @@ bool cSelect::Action() {
 }
 
 void cSelect::CreatePollfds() {
-	// construct pollfd array
-	// we need one pollfd for the eventpipe,
-	// the serversocket and each clientsocket
+
+  // we poll for the server socket and for each client socket
 	pollfds = new struct pollfd[clientsocketcount + 1];
 	pollfds[0].fd = serversocket->GetSocket();
 	pollfds[0].events = POLLIN;
@@ -119,9 +118,10 @@ void cSelect::CreatePollfds() {
 	int i = 1;
 	while (curnode) {
 		pollfds[i].fd = curnode->socket->GetSocket();
-		pollfds[i].events = POLLIN;
-		if (curnode->socket->WritePending())
+		pollfds[i].events = POLLIN | POLLHUP;
+		if (curnode->socket->WritePending()) {
 			pollfds[i].events |= POLLOUT;
+		}
 		pollfds[i++].revents = 0;
 		curnode = curnode->next;
 	}
@@ -149,17 +149,17 @@ bool cSelect::Poll() {
 	for (int i = 1; i < clientsocketcount + 1; i++) {
 		cVdrmanagerClientSocket * sock = GetClientSocket(pollfds[i].fd);
 		if (sock) {
-			if (pollfds[i].revents & (POLLIN | POLLHUP)) {
+      if (pollfds[i].revents & POLLOUT) {
+        // possibly outstanding writes
+        sock->Flush();
+      } else if (pollfds[i].revents & (POLLIN | POLLHUP)) {
 				// client request
 				handler->HandleClientRequest(sock);
+			}
 
-				// disconnect?
-				if (sock->Disconnected()) {
-					RemoveClientSocket(sock);
-				}
-			} else if (pollfds[i].revents & POLLOUT) {
-				// possibly outstanding writes
-				sock->Flush();
+      // disconnect?
+      if (sock->Disconnected()) {
+        RemoveClientSocket(sock);
 			}
 		}
 	}

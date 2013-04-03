@@ -31,6 +31,8 @@ public:
   static string ToUpper(string text);
   static string ToLower(string text);
   static string Trim(string text);
+  static string decompress_string(const string& str);
+  static string compress_string(const string& str, int compressionlevel = Z_BEST_COMPRESSION);
   static long 	Duration(cRecording* recording);
 private:
   static string SafeCall(string (*)());

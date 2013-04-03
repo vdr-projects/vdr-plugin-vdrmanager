@@ -5,7 +5,6 @@
 #ifndef _VDRMON_SOCK
 #define _VDRMON_SOCK
 
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string>
@@ -18,7 +17,6 @@ protected:
   int sock;
   const char * password;
   bool forceCheckSvdrp;
-  int compressionMode;
 protected:
   cVdrmanagerSocket();
   bool IsPasswordSet();
@@ -35,18 +33,11 @@ class cVdrmanagerClientSocket : public cVdrmanagerSocket
 private:
   string readbuf;
   string writebuf;
-  char * sendbuf;
-  size_t sendsize;
-  size_t sendoffset;
   bool disconnected;
-  bool initDisconnect;
   int client;
   bool login;
-  bool compression;
-  bool initCompression;
-  int compressionMode;
 public:
-  cVdrmanagerClientSocket(const char * password, int compressionMode);
+  cVdrmanagerClientSocket(const char * password);
   virtual ~cVdrmanagerClientSocket();
   bool Attach(int fd);
   bool IsLineComplete();
@@ -60,8 +51,6 @@ public:
   bool WritePending();
   bool IsLoggedIn();
   void SetLoggedIn();
-  void ActivateCompression();
-  void Compress();
 };
 
 class cVdrmanagerServerSocket : public cVdrmanagerSocket
@@ -69,7 +58,7 @@ class cVdrmanagerServerSocket : public cVdrmanagerSocket
 public:
   cVdrmanagerServerSocket();
   virtual ~cVdrmanagerServerSocket();
-  bool Create(int port, const char * password, bool forceCheckSvdrp, int compressionMode);
+  bool Create(int port, const char * password, bool forceCheckSvdrp);
   cVdrmanagerClientSocket * Accept();
 };
 

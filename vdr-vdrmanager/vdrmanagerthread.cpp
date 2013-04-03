@@ -8,13 +8,12 @@
 #include "select.h"
 #include "helpers.h"
 
-cVdrManagerThread::cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp, int compressionMode)
+cVdrManagerThread::cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp)
 {
   select = NULL;
   this -> port = port;
   this -> password = password;
   this -> forceCheckSvdrp = forceCheckSvdrp;
-  this -> compressionMode = compressionMode;
 }
 
 cVdrManagerThread::~cVdrManagerThread()
@@ -44,7 +43,7 @@ bool cVdrManagerThread::Init()
 
   // create server socket
   cVdrmanagerServerSocket * sock = new cVdrmanagerServerSocket();
-  if (sock == NULL || !sock->Create(port, password, forceCheckSvdrp, compressionMode))
+  if (sock == NULL || !sock->Create(port, password, forceCheckSvdrp))
     return false;
 
   // register server socket

@@ -1,11 +1,5 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
-
-2013-04-xx: Version 0.10 (http://projects.vdr-developer.org/versions/show/328)
-- Bug #1314: -f has not function, remove it. Deleting timers is always beeing forced
-- Feature #790: use some compression (zlib, gzip) to compress responses server sides
-- Feature #1319: Recording Folders
-
 2013-01-xx: Version 0.9 (http://projects.vdr-developer.org/versions/show/312)
 - Improved Timer/Recording deletion
 - Improved recording information (recordings command)
@@ -45,7 +39,7 @@ VDR Plugin 'vdrmanager' Revision History
 2011-11-06: Version 0.3
 - Check against svdrphosts.conf file only if a) forced via command
   line argument -s or no password was specified via -P
-- arguments parsing by getopts
+- arguments parsing by getopts 
 
 2011-10-12: Version 0.2
 - Recording Info via recordings command
