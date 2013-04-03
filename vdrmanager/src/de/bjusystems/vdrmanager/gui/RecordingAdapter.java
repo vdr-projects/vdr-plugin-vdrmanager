@@ -57,12 +57,14 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 
 	class EventListItemFolderHolder {
 		public TextView folder;
+		public TextView count;
 	}
 
 	protected EventListItemFolderHolder getFolderViewHolder(EventListItem item,
 			View view) {
 		EventListItemFolderHolder itemHolder = new EventListItemFolderHolder();
 		itemHolder.folder = (TextView) view.findViewById(R.id.header_item);
+		itemHolder.count = (TextView) view.findViewById(R.id.count);
 		return itemHolder;
 	}
 
@@ -78,16 +80,17 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 			return super.getView(position, convertView, parent);
 		}
 
-		Object holder = null;
+		EventListItemFolderHolder holder = null;
 		if (convertView == null || (convertView != null && convertView.getTag() instanceof EventListItemFolderHolder) == false) {
 			convertView = inflater.inflate(R.layout.folder_item, null);
 			holder = getFolderViewHolder(item, convertView);
 			convertView.setTag(holder);
 		} else {
-			holder = convertView.getTag();
+			holder = (EventListItemFolderHolder) convertView.getTag();
 		}
 
-		((EventListItemFolderHolder) holder).folder.setText(item.folder);
+		holder.folder.setText(item.folder);
+		holder.count.setText(String.valueOf(item.count));
 		return convertView;
 	}
 

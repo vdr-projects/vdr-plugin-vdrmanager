@@ -3,6 +3,7 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +27,6 @@ import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.RecordingListItem;
-import de.bjusystems.vdrmanager.data.Recording.Folder;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
@@ -67,7 +67,6 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 
 		adapter = new RecordingAdapter(this);
 
@@ -138,10 +137,11 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		final RecordingListItem item = (RecordingListItem) adapter
 				.getItem(position);
 		if (item.isFolder()) {
-			if(currentFolder.equals(Recording.ROOT_FOLDER)){
+			if (currentFolder.equals(Recording.ROOT_FOLDER)) {
 				currentFolder = item.folder;
 			} else {
-				currentFolder = currentFolder + Recording.FOLDERDELIMCHAR + item.folder;
+				currentFolder = currentFolder + Recording.FOLDERDELIMCHAR
+						+ item.folder;
 			}
 			stack.push(currentFolder);
 			fillAdapter();
@@ -315,6 +315,11 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			for (String f : folders) {
 				RecordingListItem recordingListItem = new RecordingListItem(f);
 				recordingListItem.folder = f;
+				String sf = currentFolder.length() > 0 ? currentFolder + Recording.FOLDERDELIMCHAR + f : f;
+				List<Recording> list2 = CACHE.get(sf);
+				if (list2 != null) {
+					recordingListItem.count = list2.size();
+				}
 				adapter.add(recordingListItem);
 			}
 		}
@@ -358,34 +363,39 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				String[] split = folder.split(Recording.FOLDERDELIMCHAR);
 				String key = null;
 				String value = null;
-				if(split.length == 1){
-					key = Recording.ROOT_FOLDER ;
+				if (split.length == 1) {
+					key = Recording.ROOT_FOLDER;
 					value = split[0];
 				} else {
 					value = split[split.length - 1];
-					//StringBuilder sb = new StringBuilder();
-					//String sep = "";
-					//for(int i = 0; i < split.length - 1; ++i){
-						//sb.append(sep).append(split[i]);
-						//sep = Recording.FOLDERDELIMCHAR;
-					//}
-					key = folder.subSequence(0, folder.length() - (value.length()+1) ).toString();
+					// StringBuilder sb = new StringBuilder();
+					// String sep = "";
+					// for(int i = 0; i < split.length - 1; ++i){
+					// sb.append(sep).append(split[i]);
+					// sep = Recording.FOLDERDELIMCHAR;
+					// }
+					key = folder.subSequence(0,
+							folder.length() - (value.length() + 1)).toString();
 
 				}
 
 				Set<String> list = FOLDERS.get(key);
-				if(list == null){
-					list = new TreeSet<String>();
+				if (list == null) {
+					list = new TreeSet<String>(new Comparator<String>() {
+						@Override
+						public int compare(String lhs, String rhs) {
+							return lhs.compareToIgnoreCase(rhs);
+						}
+					});
 					FOLDERS.put(key, list);
 				}
 
 				list.add(value);
 
-				//a b
-				//a
-				//c
-				//a~b > k
-
+				// a b
+				// a
+				// c
+				// a~b > k
 
 			}
 			List<Recording> list = CACHE.get(folder);

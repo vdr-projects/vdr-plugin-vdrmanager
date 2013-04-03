@@ -166,6 +166,8 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 			Recording r = (Recording) item.getEvent();
 			if (r.getTimerStopTime() != null) {
 				itemHolder.state.setImageResource(R.drawable.timer_recording);
+			} else {
+				itemHolder.state.setImageResource(R.drawable.timer_none);
 			}
 		} else if (item.getEvent() instanceof Timerable == true) {
 			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();

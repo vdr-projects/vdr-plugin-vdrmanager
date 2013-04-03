@@ -5,6 +5,8 @@ public class RecordingListItem extends EventListItem {
 
 	public String folder;
 
+	public Integer count = 0;
+
 	public RecordingListItem(Recording rec) {
 		super(rec);
 	}
