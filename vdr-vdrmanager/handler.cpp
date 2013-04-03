@@ -17,6 +17,8 @@ bool cHandler::HandleNewClient(cVdrmanagerClientSocket * sock)
 
 bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
 {
+  bool closeSocket = true;
+
   while(sock->Read())
   {
     // get lines
@@ -48,6 +50,12 @@ bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
           sock->SetLoggedIn();
           sock->PutLine("!OK\r\n");
         }
+        closeSocket = false;
+      }
+      else if (cmd == "COMPRESS")
+      {
+        sock->ActivateCompression();
+        closeSocket = false;
       }
       else if (cmd == "TIMERS")
       {
@@ -97,9 +105,15 @@ bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
       else if (cmd == "QUIT")
       {
         // close socket
-        sock->PutLine(string("Good bye! :-)\n"));
+        sock->PutLine(string("Good bye! :-)\r\n"));
         sock->Disconnect();
       }
+
+      if (closeSocket) {
+        sock->Disconnect();
+      }
+
+      sock->Flush();
     }
   }
 

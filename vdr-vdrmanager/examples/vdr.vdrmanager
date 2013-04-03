@@ -5,4 +5,5 @@
 #   -p port          port number to listen to\n"
 #   -P password      password (none if not given)"
 #   -s               force check against svdrphosts.conf";
-_EXTRAOPTS="-p 6420 -P change"
+#   -c               selects the compression mode to use (zlib or gzip). Default is zlib"
+_EXTRAOPTS="-p 6420 -P change -c"
