@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
@@ -64,6 +65,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	private Stack<String> stack = new Stack<String>();
 
+	private TextView folderInfo;
+
+	private TextView currentCount;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,6 +77,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 		// attach adapter to ListView
 		listView = (ListView) findViewById(R.id.recording_list);
+		folderInfo = (TextView) findViewById(R.id.folder_info);
+		currentCount = (TextView) findViewById(R.id.current_count);
 		listView.setAdapter(adapter);
 
 		// set click listener
@@ -148,6 +155,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		} else {
 			super.onItemClick(parent, view, position, id);
 		}
+	}
+
+	private void updateCurrentFolderInfo() {
+		folderInfo.setText("/" + currentFolder.replaceAll("~", "/"));
+		List<Recording> list = CACHE.get(currentFolder);
+		currentCount.setText(String.valueOf(list.size()));
 	}
 
 	/*
@@ -305,6 +318,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			return;
 		}
 
+		updateCurrentFolderInfo();
+
 		sort();
 
 		Calendar cal = Calendar.getInstance();
@@ -315,7 +330,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			for (String f : folders) {
 				RecordingListItem recordingListItem = new RecordingListItem(f);
 				recordingListItem.folder = f;
-				String sf = currentFolder.length() > 0 ? currentFolder + Recording.FOLDERDELIMCHAR + f : f;
+				String sf = currentFolder.length() > 0 ? currentFolder
+						+ Recording.FOLDERDELIMCHAR + f : f;
 				List<Recording> list2 = CACHE.get(sf);
 				if (list2 != null) {
 					recordingListItem.count = list2.size();

@@ -4,16 +4,33 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<LinearLayout android:layout_height="fill_parent"
+	<LinearLayout android:layout_height="fill_parent" android:orientation="vertical"
 		android:layout_width="fill_parent" android:id="@+id/main_content">
-		<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+		  <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:padding="2dp" android:paddingLeft="5dp" android:paddingRight="5dp" >
+            <TextView
+                android:id="@+id/folder_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+            <TextView android:id="@+id/current_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+		<ListView
 			android:id="@+id/recording_list" android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_alignWithParentIfMissing="true"
 			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
 			android:cacheColorHint="?android:attr/colorBackground" />
 	</LinearLayout>
-	
+
 	<LinearLayout android:orientation="vertical"
 		android:id="@+id/no_connection_layout" android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
