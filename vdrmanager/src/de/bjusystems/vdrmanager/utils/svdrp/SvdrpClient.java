@@ -205,7 +205,7 @@ public abstract class SvdrpClient<Result> {
       // connect
       informListener(SvdrpEvent.CONNECTING);
 
-      if (true || Preferences.get().isSecure()) {
+      if (Preferences.get().isSecure()) {
         socket = new MySSLSocketFactory(true).createSocket();
       } else {
         socket = new Socket();

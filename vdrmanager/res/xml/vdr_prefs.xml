@@ -28,7 +28,6 @@
             android:title="@string/vdr_password_title" />
 
         <CheckBoxPreference
-            android:enabled="false"
             android:key="@string/vdr_ssl_key"
             android:summary="@string/vdr_ssl_summary"
             android:title="@string/vdr_ssl_title" />
