@@ -17,6 +17,14 @@ public class RecordingListItem extends EventListItem {
 
 
 
+	@Override
+	public String getTitle() {
+		if(isFolder()){
+			return folder;
+		}
+		return super.getTitle();
+	}
+	
 	public boolean isFolder() {
 
 		return folder != null;

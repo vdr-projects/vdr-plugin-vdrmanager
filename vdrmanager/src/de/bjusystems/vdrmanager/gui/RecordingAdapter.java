@@ -29,15 +29,20 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	public int getViewTypeCount() {
 		return 3;
 	}
-
+	
 	@Override
-	public void add(EventListItem object) {
-		items.add(object);
-		// if (object.isHeader()) {
-		// sections.add(object.getHeader());
-		// }
-		super.add(object);
+	protected boolean isHeader(EventListItem item) {
+		if(item instanceof RecordingListItem == false){
+			return item.isHeader();
+		}
+		
+		if(((RecordingListItem)item).isFolder() ){
+			return false;
+		}
+		
+		return item.isHeader();
 	}
+
 
 	@Override
 	public int getItemViewType(int position) {
@@ -89,7 +94,7 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 			holder = (EventListItemFolderHolder) convertView.getTag();
 		}
 
-		holder.folder.setText(item.folder);
+		holder.folder.setText(Utils.highlight(item.folder, highlight));
 		holder.count.setText(String.valueOf(item.count));
 		return convertView;
 	}
@@ -98,4 +103,13 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	public RecordingListItem getItem(int position) {
 		return (RecordingListItem) super.getItem(position);
 	}
+//	
+//	protected void addSuper(RecordingListItem item) {
+//		super.addSuper(item);
+//	}
+//
+//	protected void clearSuper() {
+//		super.clear();
+//	}
+
 }

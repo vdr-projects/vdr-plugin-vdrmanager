@@ -111,7 +111,7 @@ public abstract class Event {
 			}
 			return TextUtils.substring(description, 0, 30) + "…";
 		}
-		return shortText;
+		return "";
 	}
 
 	public String getDescription() {

@@ -277,6 +277,10 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 	public void setHideChannelName(boolean hideChannelName) {
 		this.hideChannelName = hideChannelName;
 	}
+	
+	protected boolean isHeader(EventListItem item){
+		return item.isHeader();
+	}
 
 	// TODO implement locking in performFiltering, check the parent class
 	// http://stackoverflow.com/questions/5846385/how-to-update-android-listview-with-dynamic-data-in-real-time
@@ -292,7 +296,7 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 				highlight = arg0.toString().toLowerCase();
 				ArrayList<EventListItem> result = new ArrayList<EventListItem>();
 				for (EventListItem event : items) {
-					if (event.isHeader()) {
+					if (isHeader(event)) {
 						prevHead = event;
 						// result.add(event);
 						continue;
