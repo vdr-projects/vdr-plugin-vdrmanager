@@ -14,37 +14,37 @@ import de.bjusystems.vdrmanager.data.Timer;
  */
 public class TimerClient extends SvdrpClient<Timer> {
 
-	/** channel names for timer */
-	Map<String, Channel> channels;
+  /** channel names for timer */
+  Map<String, Channel> channels;
 
-	/**
-	 * Constructor
-	 * @param host host
-	 * @param port port
-	 * @param ssl use ssl
-	 */
-	public TimerClient() {
-		super();
-		this.channels = new HashMap<String, Channel>();
-	}
+  /**
+   * Constructor
+   * @param host host
+   * @param port port
+   * @param ssl use ssl
+   */
+  public TimerClient(final CertificateProblemListener certificateProblemListener) {
+    super(certificateProblemListener);
+    this.channels = new HashMap<String, Channel>();
+  }
 
-	/**
-	 * Starts the EPG request
-	 * @param parameter parameter for lste
-	 */
-	@Override
-	public synchronized void run()   {
-		runCommand("timers");
-	}
+  /**
+   * Starts the EPG request
+   * @param parameter parameter for lste
+   */
+  @Override
+  public synchronized void run()   {
+    runCommand("timers");
+  }
 
-	@Override
-	public Timer parseAnswer(final String line) {
-		return new Timer(line);
-	}
+  @Override
+  public Timer parseAnswer(final String line) {
+    return new Timer(line);
+  }
 
-	@Override
-	public int getProgressTextId() {
-		return R.string.progress_timers_loading;
-	}
+  @Override
+  public int getProgressTextId() {
+    return R.string.progress_timers_loading;
+  }
 }
 

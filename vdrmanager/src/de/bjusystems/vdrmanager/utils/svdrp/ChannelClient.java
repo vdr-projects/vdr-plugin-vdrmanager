@@ -17,168 +17,168 @@ import de.bjusystems.vdrmanager.data.Preferences;
  *
  */
 public class ChannelClient extends SvdrpClient<Channel> implements
-		SvdrpListener, SvdrpResultListener<Channel> {
+SvdrpListener, SvdrpResultListener<Channel> {
 
-	private static final ArrayList<String> channelGroups = new ArrayList<String>();
+  private static final ArrayList<String> channelGroups = new ArrayList<String>();
 
-	private static final ArrayList<String> channelSources = new ArrayList<String>();
+  private static final ArrayList<String> channelSources = new ArrayList<String>();
 
-	private static LinkedHashMap<String, ArrayList<Channel>> groupChannels = new LinkedHashMap<String, ArrayList<Channel>>();
+  private static LinkedHashMap<String, ArrayList<Channel>> groupChannels = new LinkedHashMap<String, ArrayList<Channel>>();
 
-	private static TreeMap<String, ArrayList<Channel>> providerChannels = new TreeMap<String, ArrayList<Channel>>();
+  private static TreeMap<String, ArrayList<Channel>> providerChannels = new TreeMap<String, ArrayList<Channel>>();
 
-	private static TreeMap<String, ArrayList<Channel>> sourceChannels = new TreeMap<String, ArrayList<Channel>>();
+  private static TreeMap<String, ArrayList<Channel>> sourceChannels = new TreeMap<String, ArrayList<Channel>>();
 
-	private static ArrayList<Channel> channels = new ArrayList<Channel>();
+  private static ArrayList<Channel> channels = new ArrayList<Channel>();
 
-	private static Map<String, Channel> idChannels = new HashMap<String, Channel>();
+  private static Map<String, Channel> idChannels = new HashMap<String, Channel>();
 
-	public static Map<String, Channel> getIdChannels() {
-		return idChannels;
-	}
+  public static Map<String, Channel> getIdChannels() {
+    return idChannels;
+  }
 
-	private static boolean inited = false;
+  private static boolean inited = false;
 
-	public ChannelClient() {
-		super();
-		// if (useCache == false) {
-		// clearCache();
-		// }
-		addSvdrpListener(this);
-		addSvdrpResultListener(this);
-	}
+  public ChannelClient(final CertificateProblemListener certificateProblemListener) {
+    super(certificateProblemListener);
+    // if (useCache == false) {
+    // clearCache();
+    // }
+    addSvdrpListener(this);
+    addSvdrpResultListener(this);
+  }
 
-	public static void clearCache() {
-		channelSources.clear();
-		sourceChannels.clear();
-		channelGroups.clear();
-		groupChannels.clear();
-		providerChannels.clear();
-		channels.clear();
-		idChannels.clear();
-		inited = false;
-	}
+  public static void clearCache() {
+    channelSources.clear();
+    sourceChannels.clear();
+    channelGroups.clear();
+    groupChannels.clear();
+    providerChannels.clear();
+    channels.clear();
+    idChannels.clear();
+    inited = false;
+  }
 
-	public static ArrayList<String> getChannelGroups() {
-		return channelGroups;
-	}
+  public static ArrayList<String> getChannelGroups() {
+    return channelGroups;
+  }
 
-	public static ArrayList<String> getChannelSources() {
-		return channelSources;
-	}
+  public static ArrayList<String> getChannelSources() {
+    return channelSources;
+  }
 
 
-	public static HashMap<String, ArrayList<Channel>> getGroupChannels() {
-		return groupChannels;
-	}
+  public static HashMap<String, ArrayList<Channel>> getGroupChannels() {
+    return groupChannels;
+  }
 
-	public static TreeMap<String, ArrayList<Channel>> getProviderChannels() {
-		return providerChannels;
-	}
+  public static TreeMap<String, ArrayList<Channel>> getProviderChannels() {
+    return providerChannels;
+  }
 
-	public static TreeMap<String, ArrayList<Channel>> getSourceChannels() {
-		return sourceChannels;
-	}
+  public static TreeMap<String, ArrayList<Channel>> getSourceChannels() {
+    return sourceChannels;
+  }
 
-	public static ArrayList<Channel> getChannels() {
-		return channels;
-	}
+  public static ArrayList<Channel> getChannels() {
+    return channels;
+  }
 
-	/**
-	 * Constructor
-	 *
-	 * @param host
-	 *            host
-	 * @param port
-	 *            port
-	 * @param ssl
-	 *            use ssl
-	 */
-	// public ChannelClient() {
-	// this(true);
-	//
-	// }
+  /**
+   * Constructor
+   *
+   * @param host
+   *            host
+   * @param port
+   *            port
+   * @param ssl
+   *            use ssl
+   */
+  // public ChannelClient() {
+  // this(true);
+  //
+  // }
 
-	/**
-	 * Starts the EPG request
-	 *
-	 * @param parameter
-	 *            parameter for lste
-	 */
-	@Override
-	synchronized public void run() {
-		if (inited == true) {
-			informListener(SvdrpEvent.CACHE_HIT);
-		} else {
-			runCommand("channels " + Preferences.get().getChannels());
-		}
-	}
+  /**
+   * Starts the EPG request
+   *
+   * @param parameter
+   *            parameter for lste
+   */
+  @Override
+  synchronized public void run() {
+    if (inited == true) {
+      informListener(SvdrpEvent.CACHE_HIT);
+    } else {
+      runCommand("channels " + Preferences.get().getChannels());
+    }
+  }
 
-	@Override
-	public Channel parseAnswer(final String line) {
-		return new Channel(line);
-	}
+  @Override
+  public Channel parseAnswer(final String line) {
+    return new Channel(line);
+  }
 
-	@Override
-	public int getProgressTextId() {
-		return R.string.progress_channels_loading;
-	}
+  @Override
+  public int getProgressTextId() {
+    return R.string.progress_channels_loading;
+  }
 
-	ArrayList<Channel> currentChannels = new ArrayList<Channel>();
+  ArrayList<Channel> currentChannels = new ArrayList<Channel>();
 
-	String currentGroup;
+  String currentGroup;
 
-	private void addSourceChannel(Channel c){
-		ArrayList<Channel> channels = sourceChannels.get(c.getSource());
+  private void addSourceChannel(final Channel c){
+    ArrayList<Channel> channels = sourceChannels.get(c.getSource());
 
-		if(channels == null){
-			channels = new ArrayList<Channel>();
-			sourceChannels.put(c.getSource(), channels);
-			channelSources.add(c.getSource());
-		}
-		channels.add(c);
-	}
+    if(channels == null){
+      channels = new ArrayList<Channel>();
+      sourceChannels.put(c.getSource(), channels);
+      channelSources.add(c.getSource());
+    }
+    channels.add(c);
+  }
 
-	private void received(Channel c) {
+  private void received(final Channel c) {
 
-		if (c.isGroupSeparator()) {
-			currentGroup = c.getName();
-			channelGroups.add(currentGroup);
-			currentChannels = new ArrayList<Channel>();
-			groupChannels.put(c.getName(), currentChannels);
-		} else {
+    if (c.isGroupSeparator()) {
+      currentGroup = c.getName();
+      channelGroups.add(currentGroup);
+      currentChannels = new ArrayList<Channel>();
+      groupChannels.put(c.getName(), currentChannels);
+    } else {
 
-			addSourceChannel(c);
+      addSourceChannel(c);
 
-			if (channelGroups.isEmpty()) {// receiver channel with no previous
-											// group
-				channelGroups.add("");
-				groupChannels.put("", currentChannels);
-			}
+      if (channelGroups.isEmpty()) {// receiver channel with no previous
+        // group
+        channelGroups.add("");
+        groupChannels.put("", currentChannels);
+      }
 
-			c.setGroup(currentGroup);
-			channels.add(c);
-			idChannels.put(c.getId(), c);
-			currentChannels.add(c);
-			String provider = c.getProvider();
-			ArrayList<Channel> pchannels = providerChannels.get(provider);
-			if (pchannels == null) {
-				pchannels = new ArrayList<Channel>();
-				providerChannels.put(provider, pchannels);
-			}
-			pchannels.add(c);
-		}
-	}
+      c.setGroup(currentGroup);
+      channels.add(c);
+      idChannels.put(c.getId(), c);
+      currentChannels.add(c);
+      final String provider = c.getProvider();
+      ArrayList<Channel> pchannels = providerChannels.get(provider);
+      if (pchannels == null) {
+        pchannels = new ArrayList<Channel>();
+        providerChannels.put(provider, pchannels);
+      }
+      pchannels.add(c);
+    }
+  }
 
-	@Override
-	public void svdrpEvent(Channel c) {
-		received(c);
-	}
+  @Override
+  public void svdrpEvent(final Channel c) {
+    received(c);
+  }
 
-	@Override
-	public void svdrpEvent(SvdrpEvent event) {
-		if (event == SvdrpEvent.FINISHED_SUCCESS) {
-			inited = true;
-		}
-	}
+  @Override
+  public void svdrpEvent(final SvdrpEvent event) {
+    if (event == SvdrpEvent.FINISHED_SUCCESS) {
+      inited = true;
+    }
+  }
 }

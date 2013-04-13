@@ -35,7 +35,7 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
   /** the trust managers */
   private X509TrustManager[] trustManagers;
 
-  public MySSLSocketFactory(final boolean acceptAllCertificates)
+  public MySSLSocketFactory(final boolean acceptAllCertificates, final CertificateProblemListener certProblemListener)
       throws KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
 
     super(null);
@@ -50,7 +50,7 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
     if (acceptAllCertificates) {
       initInsecureTrustManagers();
     } else {
-      initSecureTrustManagers();
+      initSecureTrustManagers(certProblemListener);
     }
 
     // create SSL context
@@ -81,10 +81,11 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
   /**
    * initialize the trust managers validating certificates
    * @param acceptAllCertificates accept all certificates
+   * @param certProblemListener listener to inform about certificate problems
    * @throws NoSuchAlgorithmException
    * @throws KeyStoreException
    */
-  private void initSecureTrustManagers() throws NoSuchAlgorithmException, KeyStoreException {
+  private void initSecureTrustManagers(final CertificateProblemListener certProblemListener) throws NoSuchAlgorithmException, KeyStoreException {
 
     final List<X509TrustManager> trustManagerList = new ArrayList<X509TrustManager>();
 
@@ -123,9 +124,20 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
                 lastException = e;
               }
             }
-            if (lastException != null) {
-              throw lastException;
+
+            switch (certProblemListener.reportProblem(chain, authType)) {
+            case ACCEPT_ONCE:
+              return;
+            case ACCEPT_FOREVER:
+              saveCertificate(chain, authType);
+              return;
+            default:
+              if (lastException != null) {
+                throw lastException;
+              }
+              break;
             }
+
 
             throw new CertificateException("Certificate not validated");
           }
@@ -174,5 +186,13 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
       }
     }
     return null;
+  }
+
+  /**
+   * Saves the certificate
+   * @param chain certificate chain
+   * @param authType authentication type
+   */
+  private void saveCertificate(final X509Certificate[] chain, final String authType) {
   }
 }

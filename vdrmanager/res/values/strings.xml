@@ -393,5 +393,20 @@
     <string name="probing">Probing %1$s …</string>
 	<string name="no_results">No results…</string>
 	<string name="recording_started">Recording started</string>
-	<!-- … -->
+	
+	<!--
+	     SSL related messages
+	 -->
+	
+	<string name="certificate_problem_message_title">Certificate warning</string> 
+  <string name="certificate_problem_message_text" formatted="false">
+	    The server certificate was not accepted:\n
+	    Hostname: %s\n
+	    Fingerprint: %s\n
+	    Issuer: %s
+  </string>
+  <string name="certificate_accept_once">Continue</string>
+  <string name="certificate_accepted_forever">Remember certificate</string>
+  <string name="certificate_not_accepted">Abort</string>
+  	 	 
 </resources>
