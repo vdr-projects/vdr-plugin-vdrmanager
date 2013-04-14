@@ -32,13 +32,12 @@ public class CertificateProblemDialog implements CertificateProblemListener {
     final Semaphore semaphore = new Semaphore(0, true);
 
     // certificate properties
-    final String host = "myhost.de";
-    final String key = "Key";
-    final String fingerprint = "Fingerprint";
-    final String issuer = "Issuer";
+    final String host = chain[0].getSubjectDN().getName().split(",")[0].replace("CN=", "").trim();
+    final String creationDate = chain[0].getNotBefore().toLocaleString();
+    final String validUntil = chain[0].getNotAfter().toLocaleString();
 
     // message
-    final CharSequence message = String.format(activity.getString(R.string.certificate_problem_message_text), host, key, fingerprint, issuer);
+    final CharSequence message = String.format(activity.getString(R.string.certificate_problem_message_text), host, creationDate, validUntil);
 
     // create dialog builder
     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);

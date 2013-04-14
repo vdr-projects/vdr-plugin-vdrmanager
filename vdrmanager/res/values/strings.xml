@@ -400,10 +400,13 @@
 	
 	<string name="certificate_problem_message_title">Certificate warning</string> 
   <string name="certificate_problem_message_text" formatted="false">
-	    The server certificate was not accepted:\n
-	    Hostname: %s\n
-	    Fingerprint: %s\n
-	    Issuer: %s
+The server certificate was not accepted:\n
+Hostname:\n
+ %s\n
+Created:\n
+ %s\n
+Valid until:\n
+ %s
   </string>
   <string name="certificate_accept_once">Continue</string>
   <string name="certificate_accepted_forever">Remember certificate</string>
