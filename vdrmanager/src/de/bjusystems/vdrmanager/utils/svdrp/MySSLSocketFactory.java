@@ -1,6 +1,9 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -19,6 +22,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
+import de.bjusystems.vdrmanager.app.VdrManagerApp;
+
 
 /**
  * SSLSocketFactory
@@ -26,8 +34,11 @@ import javax.net.ssl.X509TrustManager;
  */
 public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactory {
 
+  /** The key store file */
+  private final String keyStoreFile = "KeyStore";
+
   /** the key store */
-  private KeyStore keyStore;
+  private KeyStore appKeyStore;
 
   /** the real socket factory */
   private final SSLSocketFactory sslFactory;
@@ -35,18 +46,24 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
   /** the trust managers */
   private X509TrustManager[] trustManagers;
 
+  /** the current activity */
+  private final Activity activity;
+
   public MySSLSocketFactory(final boolean acceptAllCertificates, final CertificateProblemListener certProblemListener)
       throws KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
 
     super(null);
 
+    // save context
+    this.activity = certProblemListener.getCurrentActivity();
+
     // accept all host names
     this.setHostnameVerifier(org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
-    // load the keystore
+    // load the key store
     initKeyStore();
 
-    // init the trust managers
+    // initialize the trust managers
     if (acceptAllCertificates) {
       initInsecureTrustManagers();
     } else {
@@ -74,8 +91,18 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
    */
   private void initKeyStore() throws KeyStoreException {
 
-    keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-    // keyStore.load(...);
+    try {
+      appKeyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+
+      try {
+        final InputStream stream = activity.openFileInput(keyStoreFile);
+        appKeyStore.load(stream, null);
+      } catch (final FileNotFoundException e) {
+        appKeyStore.load(null);
+      }
+    } catch (final Exception e) {
+      throw new KeyStoreException(e);
+    }
   }
 
   /**
@@ -89,15 +116,23 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
 
     final List<X509TrustManager> trustManagerList = new ArrayList<X509TrustManager>();
 
-    // init the trust manager accepting certificates contained in the key store
+    // initialize the trust manager accepting certificates contained in the session key store
     TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("X509");
-    trustManagerFactory.init(keyStore);
+    trustManagerFactory.init(((VdrManagerApp)activity.getApplication()).getSessionKeyStore());
     X509TrustManager trustManager = getTrustManager(trustManagerFactory);
     if (trustManager != null) {
       trustManagerList.add(trustManager);
     }
 
-    // init the trust manager accepting certificates accepted from the system
+    // initialize the trust manager accepting certificates contained in the permanent key store
+    trustManagerFactory = TrustManagerFactory.getInstance("X509");
+    trustManagerFactory.init(appKeyStore);
+    trustManager = getTrustManager(trustManagerFactory);
+    if (trustManager != null) {
+      trustManagerList.add(trustManager);
+    }
+
+    // initialize the trust manager accepting certificates accepted from the system
     trustManagerFactory = TrustManagerFactory.getInstance("X509");
     trustManagerFactory.init((KeyStore)null);
     trustManager = getTrustManager(trustManagerFactory);
@@ -127,9 +162,10 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
 
             switch (certProblemListener.reportProblem(chain, authType)) {
             case ACCEPT_ONCE:
+              saveCertificate(chain, authType, false);
               return;
             case ACCEPT_FOREVER:
-              saveCertificate(chain, authType);
+              saveCertificate(chain, authType, true);
               return;
             default:
               if (lastException != null) {
@@ -193,6 +229,25 @@ public class MySSLSocketFactory extends org.apache.http.conn.ssl.SSLSocketFactor
    * @param chain certificate chain
    * @param authType authentication type
    */
-  private void saveCertificate(final X509Certificate[] chain, final String authType) {
+  private void saveCertificate(final X509Certificate[] chain, final String authType, final boolean permanently) {
+
+    // get the certificate alias
+    final String alias = chain[0].getSubjectDN().toString();
+
+    // key store to use
+    final KeyStore saveKeyStore = permanently ? appKeyStore : ((VdrManagerApp)activity.getApplication()).getSessionKeyStore();
+
+    // store the certificate for this alias
+    try {
+      saveKeyStore.setCertificateEntry(alias, chain[0]);
+
+      // the session key store is not saved
+      if (permanently) {
+        final FileOutputStream stream = activity.openFileOutput(keyStoreFile, Context.MODE_PRIVATE);
+        saveKeyStore.store(stream, null);
+      }
+    } catch (final Exception e) {
+      Log.e(getClass().getName(), "Can't save certificate for ' " + alias +  "' as trusted");
+    }
   }
 }

@@ -90,4 +90,9 @@ public class CertificateProblemDialog implements CertificateProblemListener {
 
     return action;
   }
+
+  @Override
+  public Activity getCurrentActivity() {
+    return activity;
+  }
 }

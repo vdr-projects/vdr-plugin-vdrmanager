@@ -2,6 +2,8 @@ package de.bjusystems.vdrmanager.utils.svdrp;
 
 import java.security.cert.X509Certificate;
 
+import android.app.Activity;
+
 /**
  * Interface for reporting problems with the SSL certificate
  * @author bju
@@ -28,4 +30,10 @@ public interface CertificateProblemListener {
    * @param authType authentication type
    */
   CertificateProblemAction reportProblem(final X509Certificate[] chain, final String authType);
+
+  /**
+   * Gets the current activity
+   * @return activity
+   */
+  Activity getCurrentActivity();
 }
