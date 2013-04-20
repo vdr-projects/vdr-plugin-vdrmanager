@@ -287,7 +287,9 @@ string cHelpers::DelRecording(cRecording * recording) {
 	if (!recording || recording->Delete()) {
 		cReplayControl::ClearLastReplayed(FileName);
 		Recordings.DelByName(FileName);
+#if VDRVERSNUM > 10727
 		cVideoDiskUsage::ForceCheck();
+#endif
 	}
 
 	return "START\r\nEND\r\n";
@@ -823,8 +825,10 @@ string cHelpers::ToText(const cEvent * event) {
 			event->Schedule()->ChannelID());
 
 // search assigned timer
-	eTimerMatch TimerMatch = tmNone;
-	cTimer * eventTimer = Timers.GetMatch(event, &TimerMatch);
+
+	//eTimerMatch TimerMatch = tmNone;
+	cTimer * eventTimer = Timers.GetMatch(event);
+
 //	if(eventTimer){
 //
 //	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
