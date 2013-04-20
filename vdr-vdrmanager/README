@@ -8,6 +8,6 @@ This helper plugin allows remote programming VDR using
 VDR-Manager running on Android devices.
 
 Installation:
-- It's already debianized, so it can be build just by dpkg-buildpackage -b in the source folder
-- gentoo ebuilds can also be downloaded from the download section
-- Otherwise use Makfile 
+http://www.vdr-wiki.de/wiki/index.php/Plugin_Installation
+
+If you use a vdr version lower then 1.7.36, use Makefile.pre.1.7.36
