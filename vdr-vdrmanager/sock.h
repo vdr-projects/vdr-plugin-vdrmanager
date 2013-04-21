@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string>
+#include <openssl/ssl.h>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ protected:
   int sock;
   const char * password;
   bool forceCheckSvdrp;
+  bool useSSL;
 protected:
   cVdrmanagerSocket();
   bool IsPasswordSet();
@@ -26,6 +28,7 @@ public:
   int GetSocket();
   bool MakeDontBlock();
   const char * GetPassword();
+  void LogSSLError();
 };
 
 class cVdrmanagerClientSocket : public cVdrmanagerSocket
@@ -36,6 +39,7 @@ private:
   bool disconnected;
   int client;
   bool login;
+  SSL * sslContext;
 public:
   cVdrmanagerClientSocket(const char * password);
   virtual ~cVdrmanagerClientSocket();
@@ -51,15 +55,19 @@ public:
   bool WritePending();
   bool IsLoggedIn();
   void SetLoggedIn();
+  bool InitSSL(SSL_CTX * sslContext);
 };
 
 class cVdrmanagerServerSocket : public cVdrmanagerSocket
 {
+private:
+  SSL_CTX * sslContext;
 public:
   cVdrmanagerServerSocket();
   virtual ~cVdrmanagerServerSocket();
-  bool Create(int port, const char * password, bool forceCheckSvdrp);
+  bool Create(int port, const char * password, bool forceCheckSvdrp, bool useSSL, const char * pemFile);
   cVdrmanagerClientSocket * Accept();
+  bool InitSSL(const char * pemFile);
 };
 
 #endif

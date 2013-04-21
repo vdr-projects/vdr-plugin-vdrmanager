@@ -25,6 +25,8 @@ private:
 	int port;
 	const char * password;
 	bool forceCheckSvdrp;
+	bool useSSL;
+	const char * pemFile;
 	bool forceDelete;
 protected:
 public:
@@ -58,6 +60,8 @@ cVdrManager::cVdrManager(void) {
 	password = "";
 	forceCheckSvdrp = false;
 	forceDelete = false;
+	useSSL = false;
+	pemFile = NULL;
 }
 
 cVdrManager::~cVdrManager() {
@@ -78,8 +82,12 @@ const char * cVdrManager::CommandLineHelp(void) {
 
 bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "p:P:s:f")) != -1)
+	while ((c = getopt(argc, argv, "c:p:P:s:f")) != -1)
 		switch (c) {
+		case 'c':
+		  pemFile = optarg;
+		  useSSL = true;
+		  break;
 		case 'p':
 			port = atoi(optarg);
 			break;
@@ -115,7 +123,7 @@ bool cVdrManager::Initialize(void) {
 // Initialize any background activities the plugin shall perform.
 
 // Start any background activities the plugin shall perform.
-	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp);
+	Thread = new cVdrManagerThread(port, password, forceCheckSvdrp, useSSL, pemFile);
 
 	return Thread != NULL;
 }

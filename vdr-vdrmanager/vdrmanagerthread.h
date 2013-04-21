@@ -22,14 +22,17 @@ private:
   int port;
   const char * password;
   bool forceCheckSvdrp;
+  bool useSSL;
+  const char * pemFile;
 public:
-  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp);
+  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp, bool useSSL, const char * pemFile);
   virtual void Action(void);
   void Shutdown();
 private:
   virtual ~cVdrManagerThread();
   void Cleanup();
   bool Init();
+  bool InitSSL();
 };
 
 #endif

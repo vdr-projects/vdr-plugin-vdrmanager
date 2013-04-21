@@ -3,6 +3,8 @@
  */
 #include <unistd.h>
 #include <vdr/plugin.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 #include "sock.h"
 #include "helpers.h"
 
@@ -13,6 +15,9 @@ static int clientno = 0;
  */
 cVdrmanagerSocket::cVdrmanagerSocket() {
 	sock = -1;
+	useSSL = false;
+	password = "";
+	forceCheckSvdrp = false;
 }
 
 cVdrmanagerSocket::~cVdrmanagerSocket() {
@@ -50,20 +55,37 @@ const char * cVdrmanagerSocket::GetPassword() {
 	return password;
 }
 
+void cVdrmanagerSocket::LogSSLError() {
+
+  char * error = ERR_error_string(ERR_get_error(), NULL);
+
+  esyslog("SSL error: %s", error);
+
+}
+
 /*
  * cVdrmonServerSocket
  */
-cVdrmanagerServerSocket::cVdrmanagerServerSocket() :
-		cVdrmanagerSocket() {
+cVdrmanagerServerSocket::cVdrmanagerServerSocket() : cVdrmanagerSocket() {
+
+  sslContext = NULL;
 }
 
 cVdrmanagerServerSocket::~cVdrmanagerServerSocket() {
 }
 
-bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp) {
-	// save password
+bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp,
+                                     bool useSSL, const char * pemFile) {
+
 	this->password = password;
 	this->forceCheckSvdrp = forceCheckSvrp;
+	this->useSSL = useSSL;
+
+  // create SSL context
+  if (useSSL && !InitSSL(pemFile)) {
+    return false;
+  }
+
 	// create socket
 	sock = socket(PF_INET, SOCK_STREAM, 0);
 	if (sock < 0) {
@@ -117,6 +139,12 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
 			return NULL;
 		}
 
+		// Attach client SSL
+		if (!newsocket->InitSSL(sslContext)) {
+		  delete newsocket;
+		  return NULL;
+		}
+
 		if (!IsPasswordSet() || forceCheckSvdrp == true) {
 			bool accepted = SVDRPhosts.Acceptable(clientname.sin_addr.s_addr);
 			if (!accepted) {
@@ -127,14 +155,35 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
 			}
 			dsyslog(
 					"[vdrmanager] connect from %s, port %hd - %s", inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port), accepted ? "accepted" : "DENIED");
+
 		}
-	} else if (errno != EINTR && errno != EAGAIN
-		)
+	} else if (errno != EINTR && errno != EAGAIN) {
 		LOG_ERROR;
+	}
 
 	return newsocket;
 }
 
+bool cVdrmanagerServerSocket::InitSSL(const char * pemFile) {
+
+  sslContext = SSL_CTX_new(SSLv3_server_method());
+  if (sslContext == NULL) {
+    LogSSLError();
+    return false;
+  }
+
+  if (SSL_CTX_use_certificate_file(sslContext, pemFile, SSL_FILETYPE_PEM) != 1) {
+    LogSSLError();
+    return false;
+  }
+
+  if (SSL_CTX_use_PrivateKey_file(sslContext, pemFile, SSL_FILETYPE_PEM) != 1) {
+    LogSSLError();
+    return false;
+  }
+
+  return true;
+}
 /*
  * cVdrmonClientSocket
  */
@@ -147,6 +196,10 @@ cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password) {
 }
 
 cVdrmanagerClientSocket::~cVdrmanagerClientSocket() {
+
+  if (sslContext) {
+    SSL_free(sslContext);
+  }
 }
 
 bool cVdrmanagerClientSocket::IsLineComplete() {
@@ -184,13 +237,24 @@ bool cVdrmanagerClientSocket::GetLine(string& line) {
 }
 
 bool cVdrmanagerClientSocket::Read() {
+
 	if (Disconnected())
 		return false;
 
 	int rc;
 	bool len = 0;
 	char buf[2001];
-	while ((rc = read(sock, buf, sizeof(buf) - 1)) > 0) {
+
+	for(;;) {
+	  if (useSSL) {
+	    rc = read(sock, buf, sizeof(buf)-1);
+	  } else {
+	    rc = SSL_read(sslContext, buf, sizeof(buf)-1);
+	  }
+
+	  if (rc <= 0)
+	    break;
+
 		buf[rc] = 0;
 		readbuf += buf;
 		len += rc;
@@ -229,8 +293,12 @@ bool cVdrmanagerClientSocket::PutLine(string line) {
 
 	// data present?
 	if (writebuf.length() > 0) {
-		// write so many bytes as possible
-		int rc = write(sock, writebuf.c_str(), writebuf.length());
+	  int rc;
+	  if (useSSL) {
+	    rc = SSL_write(sslContext, writebuf.c_str(), writebuf.length());
+	  } else {
+	    rc = write(sock, writebuf.c_str(), writebuf.length());
+	  }
 		if (rc < 0 && errno != EAGAIN)
 		{
 			LOG_ERROR;
@@ -269,4 +337,22 @@ bool cVdrmanagerClientSocket::IsLoggedIn() {
 
 void cVdrmanagerClientSocket::SetLoggedIn() {
 	login = true;
+}
+
+bool::cVdrmanagerClientSocket::InitSSL(SSL_CTX * sslContext) {
+
+  // create a new SSL context
+  this->sslContext = SSL_new(sslContext);
+  if (this->sslContext == NULL) {
+    LOG_ERROR_STR("Error creating new SSL context");
+    return false;
+  }
+
+  // connect context to the socket
+  if (SSL_set_fd(this->sslContext, sock) != 1) {
+    SSL_free(this->sslContext);
+    this->sslContext = NULL;
+    LOG_ERROR_STR("Error connecting SSL and socket");
+    return false;
+  }
 }
