@@ -337,4 +337,24 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
     <item>Aufzeichnungen</item>
     <item>Timer</item>
   </string-array>
+  
+    <!--
+       SSL related messages
+   -->
+  
+  <string name="certificate_problem_message_title">Zertifikat-Warnung</string> 
+  <string name="certificate_problem_message_text" formatted="false">
+Das Zertifikat des Servers wurde nicht akzeptiert:\n\n
+Hostname:\n
+ %s\n
+Gültig ab:\n
+ %s\n
+Gültig bis:\n
+ %s\n\n
+Was wollen Sie tun?
+  </string>
+  <string name="certificate_accept_once">Einmal akzeptieren</string>
+  <string name="certificate_accepted_forever">Immer akzeptieren</string>
+  <string name="certificate_not_accepted">Nicht akzeptieren</string>
+  
 </resources>

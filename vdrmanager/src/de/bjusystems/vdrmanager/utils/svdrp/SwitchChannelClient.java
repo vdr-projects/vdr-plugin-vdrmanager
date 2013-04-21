@@ -11,45 +11,47 @@ import de.bjusystems.vdrmanager.R;
  */
 public class SwitchChannelClient extends SvdrpClient<String> {
 
-	private Integer nr;
+  private Integer nr;
 
-	private String chid;
+  private String chid;
 
-	public SwitchChannelClient(Integer nr){
-		this.nr = nr;
-	}
+  public SwitchChannelClient(final Integer nr, final CertificateProblemListener certificateProblemListener){
+    this(certificateProblemListener);
+    this.nr = nr;
+  }
 
-	public SwitchChannelClient(String chid){
-		this.chid = chid;
-	}
+  public SwitchChannelClient(final String chid, final CertificateProblemListener certificateProblemListener){
+    this(certificateProblemListener);
+    this.chid = chid;
+  }
 
-	/**
-	 * Constructor
-	 */
-	public SwitchChannelClient() {
-		super();
-	}
+  /**
+   * Constructor
+   */
+  public SwitchChannelClient(final CertificateProblemListener certificateProblemListener) {
+    super(certificateProblemListener);
+  }
 
-	/**
-	 * Starts the wakeup request
-	 */
-	@Override
-	public void run()   {
-		if(nr != null){
-			runCommand("SETCHANNEL " + String.valueOf(nr));
-		} else {
-			runCommand("SETCHANNEL " + chid);
-		}
-	}
+  /**
+   * Starts the wakeup request
+   */
+  @Override
+  public void run()   {
+    if(nr != null){
+      runCommand("SETCHANNEL " + String.valueOf(nr));
+    } else {
+      runCommand("SETCHANNEL " + chid);
+    }
+  }
 
-	@Override
-	public String parseAnswer(final String line) {
-		return line;
-	}
+  @Override
+  public String parseAnswer(final String line) {
+    return line;
+  }
 
-	@Override
-	public int getProgressTextId() {
-		return R.string.progress_switching;
-	}
+  @Override
+  public int getProgressTextId() {
+    return R.string.progress_switching;
+  }
 
 }

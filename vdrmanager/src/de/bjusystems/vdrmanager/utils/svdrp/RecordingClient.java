@@ -5,19 +5,27 @@ import de.bjusystems.vdrmanager.data.Recording;
 
 public class RecordingClient extends SvdrpClient<Recording> {
 
-	@Override
-	protected Recording parseAnswer(String line) {
-		return new Recording(line);
-	}
+  /**
+   * Constructor
+   * @param certificateProblemListener
+   */
+  public RecordingClient(final CertificateProblemListener certificateProblemListener) {
+    super(certificateProblemListener);
+  }
 
-	@Override
-	public int getProgressTextId() {
-		return R.string.progress_recordings_loading;
-	}
+  @Override
+  protected Recording parseAnswer(final String line) {
+    return new Recording(line);
+  }
 
-	@Override
-	public synchronized void run()   {
-		runCommand("recordings");
-	}
+  @Override
+  public int getProgressTextId() {
+    return R.string.progress_recordings_loading;
+  }
+
+  @Override
+  public synchronized void run()   {
+    runCommand("recordings");
+  }
 
 }

@@ -41,417 +41,421 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * @author bju
  */
 public class RecordingListActivity extends BaseEventListActivity<Recording>
-		implements OnItemLongClickListener {
-
-	// RecordingClient recordingClient;
-
-	// public static final int MENU_GROUP_CHANNEL = 2;
-
-	public static final int ASC = 0;
-
-	public static final int DESC = 1;
-
-	// protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
-
-	private static Map<String, List<Recording>> CACHE = new TreeMap<String, List<Recording>>();
-
-	public static final Map<String, Set<String>> FOLDERS = new TreeMap<String, Set<String>>();
-
-	private String currentFolder = Recording.ROOT_FOLDER;
-
-	private int ASC_DESC = ASC;
-
-	private static final List<Recording> EMPTY = new ArrayList<Recording>(0);
-
-	private Stack<String> stack = new Stack<String>();
-
-	private TextView folderInfo;
-
-	private TextView currentCount;
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		adapter = new RecordingAdapter(this);
-
-		// attach adapter to ListView
-		listView = (ListView) findViewById(R.id.recording_list);
-		folderInfo = (TextView) findViewById(R.id.folder_info);
-		currentCount = (TextView) findViewById(R.id.current_count);
-		listView.setAdapter(adapter);
-
-		// set click listener
-		listView.setOnItemLongClickListener(this);
-		// register EPG item click
-		listView.setOnItemClickListener(this);
-		// context menu wanted
-		registerForContextMenu(listView);
-		listView.setFastScrollEnabled(true);
-		listView.setTextFilterEnabled(true);
-		// start query
-		startRecordingQuery();
-	}
-
-	protected int getAvailableSortByEntries() {
-		return R.array.recordings_group_by;
-	};
-
-	// AlertDialog groupByDialog = null;
-
-	// @Override
-	// public boolean onOptionsItemSelected(
-	// final com.actionbarsherlock.view.MenuItem item) {
-	//
-	// switch (item.getItemId()) {
-	// case R.id.menu_groupby:
-	// // case MENU_PROVIDER:
-	// // case MENU_NAME:
-	// if (groupByDialog == null) {
-	// groupByDialog = new AlertDialog.Builder(this)
-	// .setTitle(R.string.menu_groupby)
-	// .setIcon(android.R.drawable.ic_menu_sort_alphabetically)
-	// .setSingleChoiceItems(getAvailableGroupByEntries(),
-	// groupBy, new DialogInterface.OnClickListener() {
-	// public void onClick(DialogInterface dialog,
-	// int which) {
-	// if (groupBy == which) {
-	// ASC_DESC = ASC_DESC == ASC ? DESC
-	// : ASC;
-	// } else {
-	// groupBy = which;
-	// ASC_DESC = ASC;
-	// }
-	// // fillAdapter();
-	// groupByDialog.dismiss();
-	// say("Comming soon...");
-	// }
-	// }).create();
-	// }
-	//
-	// groupByDialog.show();
-	//
-	// return true;
-	// default:
-	// return super.onOptionsItemSelected(item);
-	// }
-	// }
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-
-		final RecordingListItem item = (RecordingListItem) adapter
-				.getItem(position);
-		if (item.isFolder()) {
-			if (currentFolder.equals(Recording.ROOT_FOLDER)) {
-				currentFolder = item.folder;
-			} else {
-				currentFolder = currentFolder + Recording.FOLDERDELIMCHAR
-						+ item.folder;
-			}
-			stack.push(currentFolder);
-			fillAdapter();
-		} else {
-			super.onItemClick(parent, view, position, id);
-		}
-	}
-
-	private void updateCurrentFolderInfo() {
-		folderInfo.setText("/" + currentFolder.replaceAll("~", "/"));
-		List<Recording> list = CACHE.get(currentFolder);
-		currentCount.setText(String.valueOf(list.size()));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
-	 * .view.Menu)
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.menu.recording_list_menu, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
-
-	@Override
-	protected void prepareDetailsViewData(EventListItem event) {
-		getApp().setCurrentEvent(event.getEvent());
-		getApp().setCurrentEpgList(CACHE.get(currentFolder));
-	}
-
-	@Override
-	public void onCreateContextMenu(final ContextMenu menu, final View v,
-			final ContextMenuInfo menuInfo) {
-
-		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		final EventListItem item = adapter.getItem(info.position);
-		if (item.isHeader()) {
-			return;
-		}
-
-		if (v.getId() == R.id.recording_list) {
-			final MenuInflater inflater = getMenuInflater();
-			// set menu title
-			final EventFormatter formatter = new EventFormatter(item);
-			menu.setHeaderTitle(formatter.getTitle());
-
-			inflater.inflate(R.menu.recording_list_item_menu, menu);
-			if (Preferences.get().isEnableRecStream() == false) {
-				menu.removeItem(R.id.recording_item_menu_stream);
-			}
-
-		}
-
-		super.onCreateContextMenu(menu, v, menuInfo);
-		//
-		// http://projects.vdr-developer.org/issues/863
-		// if (Utils.isLive(item)) {
-		menu.removeItem(R.id.epg_item_menu_live_tv);
-		// }
-	}
-
-	@Override
-	public boolean onContextItemSelected(final MenuItem item) {
-
-		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-				.getMenuInfo();
-		final EventListItem event = adapter.getItem(info.position);
-		Recording rec = (Recording) event.getEvent();
-		switch (item.getItemId()) {
-		case R.id.recording_item_menu_delete: {
-			DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
-				@Override
-				public void finished(SvdrpEvent event) {
-					if (event == SvdrpEvent.FINISHED_SUCCESS) {
-						backupViewSelection();
-						refresh();
-					}
-				}
-			};
-			drt.start();
-			break;
-		}
-		case R.id.recording_item_menu_stream: {
-			Utils.streamRecording(this, rec);
-			// say("Sorry, not yet. It would be. File -> " + rec.getFileName());
-			break;
-		}
-
-		default:
-			return super.onContextItemSelected(item);
-		}
-		return true;
-	}
-
-	private void startRecordingQuery() {
-
-		if (checkInternetConnection() == false) {
-			return;
-		}
-
-		// get timer client
-		RecordingClient recordingClient = new RecordingClient();
-
-		// create backgound task
-		final SvdrpAsyncTask<Recording, SvdrpClient<Recording>> task = new SvdrpAsyncTask<Recording, SvdrpClient<Recording>>(
-				recordingClient);
-
-		// create progress dialog
-
-		addListener(task);
-
-		// start task
-		task.run();
-	}
-
-	protected void retry() {
-		startRecordingQuery();
-	}
-
-	protected void refresh() {
-		startRecordingQuery();
-	}
-
-	@Override
-	protected int getMainLayout() {
-		return R.layout.recording_list;
-	}
-
-	@Override
-	protected String getWindowTitle() {
-		return getString(R.string.action_menu_recordings);
-	}
-
-	protected void sort() {
-		/* */
-		switch (sortBy) {
-		case MENU_GROUP_DEFAULT: {
-			sortItemsByTime(CACHE.get(currentFolder), true);
-			break;
-		}
-		case MENU_GROUP_ALPHABET: {
-			Collections.sort(CACHE.get(currentFolder), new TitleComparator());
-			break;
-		}
-		// case MENU_GROUP_CHANNEL: {
-		// sortItemsByChannel(results);
-		// }
-		}
-	}
-
-	@Override
-	protected void fillAdapter() {
-
-		adapter.clear();
-		List<Recording> list = CACHE.get(currentFolder);
-		if (list == null || list.isEmpty()) {
-			return;
-		}
-
-		updateCurrentFolderInfo();
-
-		sort();
-
-		Calendar cal = Calendar.getInstance();
-		int day = -1;
-
-		Set<String> folders = FOLDERS.get(currentFolder);
-		if (folders != null) {
-			for (String f : folders) {
-				RecordingListItem recordingListItem = new RecordingListItem(f);
-				recordingListItem.folder = f;
-				String sf = currentFolder.length() > 0 ? currentFolder
-						+ Recording.FOLDERDELIMCHAR + f : f;
-				List<Recording> list2 = CACHE.get(sf);
-				if (list2 != null) {
-					recordingListItem.count = list2.size();
-				}
-				adapter.add(recordingListItem);
-			}
-		}
-
-		for (final Event rec : CACHE.get(currentFolder)) {
-			cal.setTime(rec.getStart());
-			int eday = cal.get(Calendar.DAY_OF_YEAR);
-			if (eday != day) {
-				day = eday;
-				adapter.add(new RecordingListItem(new DateFormatter(cal)
-						.getDailyHeader()));
-			}
-			adapter.add(new RecordingListItem((Recording) rec));
-			adapter.notifyDataSetChanged();
-		}
-
-	}
-
-	@Override
-	public void onBackPressed() {
-		if (stack.isEmpty()) {
-			super.onBackPressed();
-		} else {
-			stack.pop();
-			if (stack.isEmpty()) {
-				currentFolder = "";
-			} else {
-				currentFolder = stack.peek();
-			}
-			fillAdapter();
-		}
-
-	}
-
-	@Override
-	protected boolean finishedSuccessImpl(List<Recording> results) {
-		clearCache();
-		for (Recording r : results) {
-			String folder = r.getFolder();
-			if (folder.length() > 0) {
-				String[] split = folder.split(Recording.FOLDERDELIMCHAR);
-				String key = null;
-				String value = null;
-				if (split.length == 1) {
-					key = Recording.ROOT_FOLDER;
-					value = split[0];
-				} else {
-					value = split[split.length - 1];
-					// StringBuilder sb = new StringBuilder();
-					// String sep = "";
-					// for(int i = 0; i < split.length - 1; ++i){
-					// sb.append(sep).append(split[i]);
-					// sep = Recording.FOLDERDELIMCHAR;
-					// }
-					key = folder.subSequence(0,
-							folder.length() - (value.length() + 1)).toString();
-
-				}
-
-				Set<String> list = FOLDERS.get(key);
-				if (list == null) {
-					list = new TreeSet<String>(new Comparator<String>() {
-						@Override
-						public int compare(String lhs, String rhs) {
-							return lhs.compareToIgnoreCase(rhs);
-						}
-					});
-					FOLDERS.put(key, list);
-				}
-
-				list.add(value);
-
-				// a b
-				// a
-				// c
-				// a~b > k
-
-			}
-			List<Recording> list = CACHE.get(folder);
-			if (list == null) {
-				list = new ArrayList<Recording>();
-				CACHE.put(folder, list);
-			}
-			list.add(r);
-		}
-
-		pushResultCountToTitle();
-		fillAdapter();
-		return adapter.isEmpty() == false;
-	}
-
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-
-		return false;
-	}
-
-	@Override
-	protected int getListNavigationIndex() {
-		return LIST_NAVIGATION_RECORDINGS;
-	}
-
-	public void clearCache() {
-		CACHE.clear();
-		FOLDERS.clear();
-	}
-
-	@Override
-	protected List<Recording> getCACHE() {
-
-		List<Recording> list = CACHE.get(currentFolder);
-
-		if (list != null) {
-			return list;
-		}
-		return EMPTY;
-	}
-
+implements OnItemLongClickListener {
+
+  // RecordingClient recordingClient;
+
+  // public static final int MENU_GROUP_CHANNEL = 2;
+
+  public static final int ASC = 0;
+
+  public static final int DESC = 1;
+
+  // protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
+
+  private static Map<String, List<Recording>> CACHE = new TreeMap<String, List<Recording>>();
+
+  public static final Map<String, Set<String>> FOLDERS = new TreeMap<String, Set<String>>();
+
+  private String currentFolder = Recording.ROOT_FOLDER;
+
+  private final int ASC_DESC = ASC;
+
+  private static final List<Recording> EMPTY = new ArrayList<Recording>(0);
+
+  private final Stack<String> stack = new Stack<String>();
+
+  private TextView folderInfo;
+
+  private TextView currentCount;
+
+  @Override
+  protected void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    adapter = new RecordingAdapter(this);
+
+    // attach adapter to ListView
+    listView = (ListView) findViewById(R.id.recording_list);
+    folderInfo = (TextView) findViewById(R.id.folder_info);
+    currentCount = (TextView) findViewById(R.id.current_count);
+    listView.setAdapter(adapter);
+
+    // set click listener
+    listView.setOnItemLongClickListener(this);
+    // register EPG item click
+    listView.setOnItemClickListener(this);
+    // context menu wanted
+    registerForContextMenu(listView);
+    listView.setFastScrollEnabled(true);
+    listView.setTextFilterEnabled(true);
+    // start query
+    startRecordingQuery();
+  }
+
+  @Override
+  protected int getAvailableSortByEntries() {
+    return R.array.recordings_group_by;
+  };
+
+  // AlertDialog groupByDialog = null;
+
+  // @Override
+  // public boolean onOptionsItemSelected(
+  // final com.actionbarsherlock.view.MenuItem item) {
+  //
+  // switch (item.getItemId()) {
+  // case R.id.menu_groupby:
+  // // case MENU_PROVIDER:
+  // // case MENU_NAME:
+  // if (groupByDialog == null) {
+  // groupByDialog = new AlertDialog.Builder(this)
+  // .setTitle(R.string.menu_groupby)
+  // .setIcon(android.R.drawable.ic_menu_sort_alphabetically)
+  // .setSingleChoiceItems(getAvailableGroupByEntries(),
+  // groupBy, new DialogInterface.OnClickListener() {
+  // public void onClick(DialogInterface dialog,
+  // int which) {
+  // if (groupBy == which) {
+  // ASC_DESC = ASC_DESC == ASC ? DESC
+  // : ASC;
+  // } else {
+  // groupBy = which;
+  // ASC_DESC = ASC;
+  // }
+  // // fillAdapter();
+  // groupByDialog.dismiss();
+  // say("Comming soon...");
+  // }
+  // }).create();
+  // }
+  //
+  // groupByDialog.show();
+  //
+  // return true;
+  // default:
+  // return super.onOptionsItemSelected(item);
+  // }
+  // }
+
+  @Override
+  public void onItemClick(final AdapterView<?> parent, final View view, final int position,
+      final long id) {
+
+    final RecordingListItem item = (RecordingListItem) adapter
+        .getItem(position);
+    if (item.isFolder()) {
+      if (currentFolder.equals(Recording.ROOT_FOLDER)) {
+        currentFolder = item.folder;
+      } else {
+        currentFolder = currentFolder + Recording.FOLDERDELIMCHAR
+            + item.folder;
+      }
+      stack.push(currentFolder);
+      fillAdapter();
+    } else {
+      super.onItemClick(parent, view, position, id);
+    }
+  }
+
+  private void updateCurrentFolderInfo() {
+    folderInfo.setText("/" + currentFolder.replaceAll("~", "/"));
+    final List<Recording> list = CACHE.get(currentFolder);
+    currentCount.setText(String.valueOf(list.size()));
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
+   * .view.Menu)
+   */
+  @Override
+  public boolean onCreateOptionsMenu(
+      final com.actionbarsherlock.view.Menu menu) {
+    final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+    inflater.inflate(R.menu.recording_list_menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+  }
+
+  @Override
+  protected void prepareDetailsViewData(final EventListItem event) {
+    getApp().setCurrentEvent(event.getEvent());
+    getApp().setCurrentEpgList(CACHE.get(currentFolder));
+  }
+
+  @Override
+  public void onCreateContextMenu(final ContextMenu menu, final View v,
+      final ContextMenuInfo menuInfo) {
+
+    final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+    final EventListItem item = adapter.getItem(info.position);
+    if (item.isHeader()) {
+      return;
+    }
+
+    if (v.getId() == R.id.recording_list) {
+      final MenuInflater inflater = getMenuInflater();
+      // set menu title
+      final EventFormatter formatter = new EventFormatter(item);
+      menu.setHeaderTitle(formatter.getTitle());
+
+      inflater.inflate(R.menu.recording_list_item_menu, menu);
+      if (Preferences.get().isEnableRecStream() == false) {
+        menu.removeItem(R.id.recording_item_menu_stream);
+      }
+
+    }
+
+    super.onCreateContextMenu(menu, v, menuInfo);
+    //
+    // http://projects.vdr-developer.org/issues/863
+    // if (Utils.isLive(item)) {
+    menu.removeItem(R.id.epg_item_menu_live_tv);
+    // }
+  }
+
+  @Override
+  public boolean onContextItemSelected(final MenuItem item) {
+
+    final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+        .getMenuInfo();
+    final EventListItem event = adapter.getItem(info.position);
+    final Recording rec = (Recording) event.getEvent();
+    switch (item.getItemId()) {
+    case R.id.recording_item_menu_delete: {
+      final DeleteRecordingTask drt = new DeleteRecordingTask(this, rec) {
+        @Override
+        public void finished(final SvdrpEvent event) {
+          if (event == SvdrpEvent.FINISHED_SUCCESS) {
+            backupViewSelection();
+            refresh();
+          }
+        }
+      };
+      drt.start();
+      break;
+    }
+    case R.id.recording_item_menu_stream: {
+      Utils.streamRecording(this, rec);
+      // say("Sorry, not yet. It would be. File -> " + rec.getFileName());
+      break;
+    }
+
+    default:
+      return super.onContextItemSelected(item);
+    }
+    return true;
+  }
+
+  private void startRecordingQuery() {
+
+    if (checkInternetConnection() == false) {
+      return;
+    }
+
+    // get timer client
+    final RecordingClient recordingClient = new RecordingClient(getCertificateProblemDialog());
+
+    // create backgound task
+    final SvdrpAsyncTask<Recording, SvdrpClient<Recording>> task = new SvdrpAsyncTask<Recording, SvdrpClient<Recording>>(
+        recordingClient);
+
+    // create progress dialog
+
+    addListener(task);
+
+    // start task
+    task.run();
+  }
+
+  @Override
+  protected void retry() {
+    startRecordingQuery();
+  }
+
+  @Override
+  protected void refresh() {
+    startRecordingQuery();
+  }
+
+  @Override
+  protected int getMainLayout() {
+    return R.layout.recording_list;
+  }
+
+  @Override
+  protected String getWindowTitle() {
+    return getString(R.string.action_menu_recordings);
+  }
+
+  protected void sort() {
+    /* */
+    switch (sortBy) {
+    case MENU_GROUP_DEFAULT: {
+      sortItemsByTime(CACHE.get(currentFolder), true);
+      break;
+    }
+    case MENU_GROUP_ALPHABET: {
+      Collections.sort(CACHE.get(currentFolder), new TitleComparator());
+      break;
+    }
+    // case MENU_GROUP_CHANNEL: {
+    // sortItemsByChannel(results);
+    // }
+    }
+  }
+
+  @Override
+  protected void fillAdapter() {
+
+    adapter.clear();
+    final List<Recording> list = CACHE.get(currentFolder);
+    if (list == null || list.isEmpty()) {
+      return;
+    }
+
+    updateCurrentFolderInfo();
+
+    sort();
+
+    final Calendar cal = Calendar.getInstance();
+    int day = -1;
+
+    final Set<String> folders = FOLDERS.get(currentFolder);
+    if (folders != null) {
+      for (final String f : folders) {
+        final RecordingListItem recordingListItem = new RecordingListItem(f);
+        recordingListItem.folder = f;
+        final String sf = currentFolder.length() > 0 ? currentFolder
+            + Recording.FOLDERDELIMCHAR + f : f;
+        final List<Recording> list2 = CACHE.get(sf);
+        if (list2 != null) {
+          recordingListItem.count = list2.size();
+        }
+        adapter.add(recordingListItem);
+      }
+    }
+
+    for (final Event rec : CACHE.get(currentFolder)) {
+      cal.setTime(rec.getStart());
+      final int eday = cal.get(Calendar.DAY_OF_YEAR);
+      if (eday != day) {
+        day = eday;
+        adapter.add(new RecordingListItem(new DateFormatter(cal)
+        .getDailyHeader()));
+      }
+      adapter.add(new RecordingListItem((Recording) rec));
+      adapter.notifyDataSetChanged();
+    }
+
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (stack.isEmpty()) {
+      super.onBackPressed();
+    } else {
+      stack.pop();
+      if (stack.isEmpty()) {
+        currentFolder = "";
+      } else {
+        currentFolder = stack.peek();
+      }
+      fillAdapter();
+    }
+
+  }
+
+  @Override
+  protected boolean finishedSuccessImpl(final List<Recording> results) {
+    clearCache();
+    for (final Recording r : results) {
+      final String folder = r.getFolder();
+      if (folder.length() > 0) {
+        final String[] split = folder.split(Recording.FOLDERDELIMCHAR);
+        String key = null;
+        String value = null;
+        if (split.length == 1) {
+          key = Recording.ROOT_FOLDER;
+          value = split[0];
+        } else {
+          value = split[split.length - 1];
+          // StringBuilder sb = new StringBuilder();
+          // String sep = "";
+          // for(int i = 0; i < split.length - 1; ++i){
+          // sb.append(sep).append(split[i]);
+          // sep = Recording.FOLDERDELIMCHAR;
+          // }
+          key = folder.subSequence(0,
+              folder.length() - (value.length() + 1)).toString();
+
+        }
+
+        Set<String> list = FOLDERS.get(key);
+        if (list == null) {
+          list = new TreeSet<String>(new Comparator<String>() {
+            @Override
+            public int compare(final String lhs, final String rhs) {
+              return lhs.compareToIgnoreCase(rhs);
+            }
+          });
+          FOLDERS.put(key, list);
+        }
+
+        list.add(value);
+
+        // a b
+        // a
+        // c
+        // a~b > k
+
+      }
+      List<Recording> list = CACHE.get(folder);
+      if (list == null) {
+        list = new ArrayList<Recording>();
+        CACHE.put(folder, list);
+      }
+      list.add(r);
+    }
+
+    pushResultCountToTitle();
+    fillAdapter();
+    return adapter.isEmpty() == false;
+  }
+
+  @Override
+  public boolean onItemLongClick(final AdapterView<?> arg0, final View arg1, final int arg2,
+      final long arg3) {
+
+    return false;
+  }
+
+  @Override
+  protected int getListNavigationIndex() {
+    return LIST_NAVIGATION_RECORDINGS;
+  }
+
+  @Override
+  public void clearCache() {
+    CACHE.clear();
+    FOLDERS.clear();
+  }
+
+  @Override
+  protected List<Recording> getCACHE() {
+
+    final List<Recording> list = CACHE.get(currentFolder);
+
+    if (list != null) {
+      return list;
+    }
+    return EMPTY;
+  }
 }

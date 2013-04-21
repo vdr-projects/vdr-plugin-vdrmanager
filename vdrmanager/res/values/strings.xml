@@ -395,4 +395,24 @@
 	<string name="recording_started">Recording started</string>
 	<string name="set_time">Set time</string>
 	<!-- … -->
+	
+	<!--
+	     SSL related messages
+	 -->
+	
+	<string name="certificate_problem_message_title">Certificate warning</string> 
+  <string name="certificate_problem_message_text" formatted="false">
+The server certificate was not accepted:\n\n
+Hostname:\n
+ %s\n
+Valid from:\n
+ %s\n
+Valid until:\n
+ %s\n\n
+What do you want to do?
+  </string>
+  <string name="certificate_accept_once">Accept once</string>
+  <string name="certificate_accepted_forever">Accept forever</string>
+  <string name="certificate_not_accepted">Abort</string>
+  	 	 
 </resources>

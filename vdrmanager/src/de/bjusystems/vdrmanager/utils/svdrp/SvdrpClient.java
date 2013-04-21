@@ -15,8 +15,6 @@ import java.util.TimerTask;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Preferences;
@@ -39,14 +37,16 @@ public abstract class SvdrpClient<Result> {
   private InputStream inputStream;
   /** flag for stopping the current request */
   private boolean abort;
-  /** listener */
+  /** listener for events */
   private final List<SvdrpListener> svdrpListeners = new ArrayList<SvdrpListener>();
-
+  /** listeners for results */
   private final List<SvdrpResultListener<Result>> svdrpResultListeners = new ArrayList<SvdrpResultListener<Result>>();
-
+  /** listeners for exceptions */
   private final List<SvdrpExceptionListener> svdrpExceptionListeners = new ArrayList<SvdrpExceptionListener>();
-
+  /** listeners for finished job */
   private final List<SvdrpFinishedListener<Result>> svdrpFinishedListeners = new ArrayList<SvdrpFinishedListener<Result>>();
+  /** listener for certificate problems set by caller */
+  private final CertificateProblemListener certificateProblemListener;
 
   /** list of results */
   // private final List<Result> results = new ArrayList<Result>();
@@ -89,8 +89,9 @@ public abstract class SvdrpClient<Result> {
    * @param prefs
    *            Preferences
    */
-  protected SvdrpClient() {
+  protected SvdrpClient(final CertificateProblemListener certificateProblemListener) {
     // results.clear();
+    this.certificateProblemListener = certificateProblemListener;
   }
 
   /**
@@ -209,12 +210,8 @@ public abstract class SvdrpClient<Result> {
       // connect
       informListener(SvdrpEvent.CONNECTING);
 
-      if (false && Preferences.get().isSecure()) {
-
-        final SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory
-            .getDefault(); // Erzeugt eine SSLSocketFactory mit
-        // Standartkonfiguration
-        socket = factory.createSocket();
+      if (Preferences.get().isSecure()) {
+        socket = new MySSLSocketFactory(false, certificateProblemListener).createSocket();
       } else {
         socket = new Socket();
       }
@@ -244,6 +241,11 @@ public abstract class SvdrpClient<Result> {
         }
       }, delay);
       informListener(SvdrpEvent.CONNECTED);
+
+      // create streams
+      outputStream = socket.getOutputStream();
+      inputStream = socket.getInputStream();
+
     } catch (final SocketTimeoutException sote) {
       Log.w(TAG, sote);
       if (abort) {
@@ -262,11 +264,6 @@ public abstract class SvdrpClient<Result> {
       }
       return false;
     }
-
-    // create streams
-    outputStream = socket.getOutputStream();
-    inputStream = socket.getInputStream();
-
 
     // password needed?
     informListener(SvdrpEvent.LOGIN);
@@ -503,5 +500,4 @@ public abstract class SvdrpClient<Result> {
       listener.svdrpEvent(result);
     }
   }
-
 }

@@ -21,6 +21,7 @@ import com.j256.ormlite.android.AndroidDatabaseResults;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
@@ -50,7 +51,7 @@ public class VdrManagerActivity extends SherlockActivity implements
 		// }
 
 		if (Preferences.initVDR(this) == false) {
-			Intent intent = new Intent();
+      final Intent intent = new Intent();
 			intent.setClass(this, VdrListActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
@@ -239,8 +240,18 @@ public class VdrManagerActivity extends SherlockActivity implements
 	@Override
 	public void onBackPressed() {
 		if (Preferences.get().isQuiteOnBackButton()) {
+      finish();
+    } else {
 			super.onBackPressed();
 		}
+
+    try {
+      // reassign a new and empty key store
+      ((VdrManagerApp)getApplication()).initSessionKeyStore();
+    } catch (final Exception e) {
+      Log.e(getClass().getName(), "Can't clear session key store");
+    }
+
 	}
 
 	public void startActivity(Class<?> clazz) {
