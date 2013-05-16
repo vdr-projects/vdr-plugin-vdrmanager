@@ -4,7 +4,7 @@ import java.util.Date;
 
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
-
+import de.bjusystems.vdrmanager.gui.Utils;
 import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
 /**
@@ -46,13 +46,7 @@ public class Epg extends Event implements Timerable {
 
 	public void setTimer(final Timer timer) {
 		this.timer = timer;
-		if (start.before(timer.getStart())) {
-			timerMatch = TimerMatch.End;
-		} else if (stop.after(timer.getStop())) {
-			timerMatch = TimerMatch.Begin;
-		} else {
-			timerMatch = TimerMatch.Full;
-		}
+		timerMatch = Utils.getTimerMatch(this, timer);
 	}
 
 	public TimerState getTimerState() {

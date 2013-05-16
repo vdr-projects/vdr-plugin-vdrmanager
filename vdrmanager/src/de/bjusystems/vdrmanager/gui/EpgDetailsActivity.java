@@ -71,17 +71,17 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 	private String highlight = null;
 
-	private Event cEvent;
+	//private Event cEvent;
 
 	// private ImageView state;
 
 	private boolean modifed = false;
 
-	private int current;
+	//private int current;
 
 	private ViewPager pager;
 
-	private Timerable timerable = null;
+	//private Timerable timerable = null;
 
 	class Adapter extends PagerAdapter implements TitleProvider {
 
@@ -156,10 +156,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			finish();
 		}
 
-		cEvent = epg;
+		final Event cEvent = epg;
 
 		if (epg instanceof Timerable) {
-			timerable = (Timerable) epg;
+			//timerable = (Timerable) cEvent;
 		}
 
 		new VoidAsyncTask() {
@@ -206,9 +206,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 				// TitlePageIndicator indicator = (TitlePageIndicator)
 				// findViewById(R.id.indicator);
 				pager.setAdapter(adapter);
-				cEvent = epgs.get(counter);
+				//cEvent = epgs.get(counter);
 				pager.setCurrentItem(counter);
-				current = counter;
+				onPageSelected(counter);
+				//current = counter;
 				// indicator.setViewPager(pager);
 
 				// publishEPG(epg);
@@ -234,6 +235,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 	public void publishEPG(final View view, int position) {
 
 		Event event = epgs.get(position);
+
+		Timerable timerable = null;
+
+		if(event instanceof Timerable){
+			timerable = (Timerable)event;
+		}
 
 		view.setTag(event);
 		// view.setTag(event);
@@ -293,10 +300,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 				.findViewById(R.id.epg_detail_description);
 		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
 
-		if (cEvent.getAudio().isEmpty() == false) {
+		if (event.getAudio().isEmpty() == false) {
 			final TextView audioTracks = (TextView) view
 					.findViewById(R.id.epg_detail_audio);
-			audioTracks.setText(Utils.formatAudio(this, cEvent.getAudio()));
+			audioTracks.setText(Utils.formatAudio(this, event.getAudio()));
 		} else {
 			view.findViewById(R.id.audio_image).setVisibility(View.GONE);
 		}
@@ -466,6 +473,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 	}
 
 	public void onClick(final View v) {
+
+		final Event cEvent = epgs.get(pager.getCurrentItem());
+
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
 			if (cEvent instanceof Recording) {
@@ -478,8 +488,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			final ArrayAdapter<Wrapper> ada = new ArrayAdapter<Wrapper>(this,
 					android.R.layout.simple_dropdown_item_1line);
 			final Timer timer = getTimer(cEvent);
+			TimerMatch tm = Utils.getTimerMatch(cEvent, timer);
 			// remove unneeded menu items
-			if (timer != null) {
+			if (timer != null && tm == TimerMatch.Full) {
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_modify));
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_delete));
 				if (timer.isEnabled()) {
@@ -489,7 +500,6 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 				}
 			} else if (cEvent instanceof Recording) {
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_delete));
-
 			} else {
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_add));
 				if (Utils.isLive(cEvent) && (cEvent instanceof Timerable) && ((Timerable)cEvent).getTimer() == null) {
@@ -501,7 +511,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 						public void onClick(DialogInterface dialog, int which) {
 							final Timer t;
 							if (timer == null) {
-								t = timerable.createTimer();
+								//t = timerable.createTimer();
+								t = null;
 							} else {
 								t = timer;
 							}
@@ -631,8 +642,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+
+		Event cEvent = epgs.get(pager.getCurrentItem());
+
 		if (item.getItemId() == R.id.epg_details_menu_share) {
 			shareEvent(cEvent);
 			return true;
@@ -678,7 +691,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			return;
 		}
 
-		pager.getAdapter().notifyDataSetChanged();
+
 		// View view = pager.getChildAt(current);
 		// ImageView state = (ImageView)
 		// view.findViewById(R.id.epg_timer_state);
@@ -692,9 +705,9 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			// : R.drawable.timer_active);
 		} else if (requestCode == TimerDetailsActivity.REQUEST_CODE_TIMER_EDIT) {
 			modifed = true;
-
 			// ??
 		}
+		pager.getAdapter().notifyDataSetChanged();
 	}
 
 	@Override
@@ -707,19 +720,19 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		}
 	}
 
-	public void onPageScrollStateChanged(int arg0) {
+	public void onPageScrollStateChanged(int state){
 	}
 
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
 	}
 
-	public void onPageSelected(int arg0) {
-		current = arg0;
-		cEvent = epgs.get(current);
+	public void onPageSelected(int position) {
+
+		Event cEvent = epgs.get(position);
 		String cn = cEvent.getChannelName();
 		// View view = pager.getChildAt(arg0);
 		// state = (ImageView) view.findViewById(R.id.epg_timer_state);
-		setTitle(getString(R.string.epg_of_a_channel, cn, current + 1,
+	setTitle(getString(R.string.epg_of_a_channel, cn, position + 1,
 				epgs.size()));
 	}
 

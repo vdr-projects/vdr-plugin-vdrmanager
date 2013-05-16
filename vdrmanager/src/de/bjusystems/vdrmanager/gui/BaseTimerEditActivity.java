@@ -14,6 +14,7 @@ import de.bjusystems.vdrmanager.data.EpgCache;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.Timer;
+import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
@@ -114,7 +115,10 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 		inflater.inflate(R.menu.epg_list_item_menu, menu);
 		Timer timer = getTimer(item);
 		// remove unneeded menu items
-		if (timer != null) {
+		if (timer == null || (Utils.getTimerMatch(item, timer) == TimerMatch.Full == false)) { //Bug #1372
+			super.onCreateContextMenu(menu, v, menuInfo);
+		} else {
+
 			menu.findItem(R.id.epg_item_menu_timer_add).setVisible(false);
 			menu.findItem(R.id.epg_item_menu_timer_modify).setVisible(true);
 			menu.findItem(R.id.epg_item_menu_timer_delete).setVisible(true);
@@ -126,7 +130,7 @@ public abstract class BaseTimerEditActivity<T extends Event> extends
 							: R.string.epg_item_menu_timer_enable);
 		}
 
-		super.onCreateContextMenu(menu, v, menuInfo);
+
 	}
 
 	protected Timer createTimer(EventListItem item) {

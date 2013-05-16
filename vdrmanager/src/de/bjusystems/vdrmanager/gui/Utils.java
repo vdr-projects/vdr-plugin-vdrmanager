@@ -35,6 +35,7 @@ import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
+import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
@@ -465,4 +466,20 @@ public class Utils {
 
   }
 
+  public static TimerMatch getTimerMatch(Event event, Timer timer){
+	  if(timer == null){
+		  return null;
+	  }
+	  TimerMatch timerMatch = null;
+	  Date start = event.getStart();
+	  Date stop = event.getStop();
+	  if (start.before(timer.getStart())) {
+			timerMatch = TimerMatch.End;
+		} else if (stop.after(timer.getStop())) {
+			timerMatch = TimerMatch.Begin;
+		} else {
+			timerMatch = TimerMatch.Full;
+		}
+	  return timerMatch;
+  }
 }
