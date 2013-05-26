@@ -476,6 +476,15 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 		final Event cEvent = epgs.get(pager.getCurrentItem());
 
+
+		final Timerable timerable;
+
+		if(cEvent instanceof Timerable){
+			timerable = (Timerable)cEvent;
+		} else {
+			return;
+		}
+
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
 			if (cEvent instanceof Recording) {
@@ -511,8 +520,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 						public void onClick(DialogInterface dialog, int which) {
 							final Timer t;
 							if (timer == null) {
-								//t = timerable.createTimer();
-								t = null;
+								t = timerable.createTimer();
 							} else {
 								t = timer;
 							}
