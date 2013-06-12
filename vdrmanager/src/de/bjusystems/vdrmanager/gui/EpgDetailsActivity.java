@@ -477,13 +477,6 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		final Event cEvent = epgs.get(pager.getCurrentItem());
 
 
-		final Timerable timerable;
-
-		if(cEvent instanceof Timerable){
-			timerable = (Timerable)cEvent;
-		} else {
-			return;
-		}
 
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
@@ -510,11 +503,22 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			} else if (cEvent instanceof Recording) {
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_delete));
 			} else {
+
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_add));
 				if (Utils.isLive(cEvent) && (cEvent instanceof Timerable) && ((Timerable)cEvent).getTimer() == null) {
 					ada.add(new Wrapper(R.string.epg_item_menu_timer_record));
 				}
 			}
+
+			final Timerable timerable;
+
+			if(cEvent instanceof Timerable){
+				timerable = (Timerable)cEvent;
+			} else {
+				return;
+			}
+
+
 			new AlertDialog.Builder(this)
 					.setAdapter(ada, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
