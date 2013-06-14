@@ -58,6 +58,7 @@ cVdrManager::cVdrManager(void) {
 	port = VDRMANAGER_PORT;
 	password = "";
 	forceCheckSvdrp = false;
+	compressionMode = COMPRESSION_NONE;
 }
 
 cVdrManager::~cVdrManager() {
