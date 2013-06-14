@@ -290,7 +290,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
     }
 
-   
+
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         mCurrentPage = position;
         mCurrentOffset = positionOffsetPixels;
@@ -424,7 +424,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-      
+
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
