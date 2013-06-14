@@ -7,9 +7,10 @@ import java.util.Date;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
 
-public class Recording extends Event{
+public class Recording extends Event {
 
 	public static String ROOT_FOLDER = "";
+
 	public static final String FOLDERDELIMCHAR = "~";
 
 	public class Folder {
@@ -20,15 +21,15 @@ public class Recording extends Event{
 
 		private String path;
 
-		public boolean isRoot(){
+		public boolean isRoot() {
 			return parent == null;
 		}
 
-		public String getFullPath(){
-			if(this.path != null){
+		public String getFullPath() {
+			if (this.path != null) {
 				return this.path;
 			}
-			if(isRoot()){
+			if (isRoot()) {
 				this.path = "";
 			} else {
 				this.path = parent.getFullPath() + "/" + name;
@@ -39,11 +40,12 @@ public class Recording extends Event{
 
 		@Override
 		public boolean equals(Object o) {
-			if(o == this){
+			if (o == this) {
 				return true;
 			}
-			return ((Folder)o).name.equals(this.name);
+			return ((Folder) o).name.equals(this.name);
 		}
+
 		@Override
 		public int hashCode() {
 			return name.hashCode();
@@ -51,54 +53,58 @@ public class Recording extends Event{
 
 		@Override
 		public String toString() {
-			return name + "("+path+")";
+			return name + "(" + path + ")";
 		}
 	};
 
-	public Recording(String line)  {
-		final String[] words = StringUtils.splitPreserveAllTokens(line, C.DATA_SEPARATOR);
+	public Recording(String line) {
+		final String[] words = StringUtils.splitPreserveAllTokens(line,
+				C.DATA_SEPARATOR);
 		int idx = 0;
 		index = Integer.valueOf(words[idx++]);
 		start = new Date(Long.parseLong(words[idx++]) * 1000);
-		stop = new Date(Long.parseLong(words[idx++]) *  1000);
+		stop = new Date(Long.parseLong(words[idx++]) * 1000);
 		channelName = mapSpecialChars(words[idx++]);
 		eventTitle = mapSpecialChars(words[idx++]);
 		shortText = mapSpecialChars(words[idx++]);
 		description = mapSpecialChars(words[idx++]);
 		fileName = mapSpecialChars(words[idx++]);
 		fileSize = Integer.valueOf(words[idx++]);
-		if(idx < words.length){
+		if (idx < words.length) {
 			channelId = words[idx++];
 		}
-		if(idx < words.length){
+		if (idx < words.length) {
 			realDuration = Long.parseLong(words[idx++]) * 1000;
 		}
 
-		if(idx < words.length){
+		if (idx < words.length) {
 			devInode = mapSpecialChars(words[idx++]);
 		}
 
-		if(idx  < words.length) { //timer
+		if (idx < words.length) { // timer
 			String data = words[idx++];
-			if(data != null && data.length() > 0){
+			if (data != null && data.length() > 0) {
 				timerStopTime = new Date(Long.parseLong(data) * 1000L);
 			}
 		}
 
-		if(idx  < words.length) { //name
+		if (idx < words.length) { // name
 			String titleRaw = words[idx];
 			int idxdel = titleRaw.lastIndexOf(FOLDERDELIMCHAR);
-			if(idxdel == -1){
+			if (idxdel == -1) {
 				title = titleRaw;
 				folder = ROOT_FOLDER;
 			} else {
-				title = titleRaw.substring(idxdel+1);
+				title = titleRaw.substring(idxdel + 1);
 
 				String foldersRaw = titleRaw.substring(0, idxdel);
 
 				folder = foldersRaw;
 
 			}
+		} else {
+			title = eventTitle;
+			folder = ROOT_FOLDER;
 		}
 
 	}
@@ -118,7 +124,8 @@ public class Recording extends Event{
 	private String eventTitle = null;
 
 	/**
-	 * If it is not null, recording is on going or will be on going until this date;
+	 * If it is not null, recording is on going or will be on going until this
+	 * date;
 	 */
 	private Date timerStopTime = null;
 
@@ -148,18 +155,19 @@ public class Recording extends Event{
 
 	/**
 	 * in millis
+	 *
 	 * @return
 	 */
 	public long getRealDuration() {
 		return realDuration;
 	}
 
-	public long getDuration(){
-		if(timerStopTime != null){
+	public long getDuration() {
+		if (timerStopTime != null) {
 			return timerStopTime.getTime() - start.getTime();
 		}
 
-		if(realDuration != -1){
+		if (realDuration != -1) {
 			return realDuration;
 		}
 		return super.getDuration();
@@ -189,7 +197,7 @@ public class Recording extends Event{
 		this.fileName = fileName;
 	}
 
-	public String toCommandLine(){
+	public String toCommandLine() {
 		return String.valueOf(index);
 	}
 
@@ -198,7 +206,6 @@ public class Recording extends Event{
 		return title;
 	}
 
-
 	public String getFolder() {
 		return folder;
 	}
@@ -206,6 +213,5 @@ public class Recording extends Event{
 	public void setFolder(String folder) {
 		this.folder = folder;
 	}
-
 
 }
