@@ -268,4 +268,91 @@
   <string-array name="recstream_entries">
     <item>Plugin VDR Live</item>
   </string-array>
+
+
+  <!-- EPG Content -->
+
+<string name="Content$Show__Game_Show">Spettacolo/Gioco a premi</string>
+<string name="Content$Athletics">Atletica</string>
+<string name="Content$Musical__Opera">Musical/Opera</string>
+<string name="Content$Tourism__Travel">Turismo/Viaggi</string>
+<string name="Content$Languages">Lingue</string>
+<string name="Content$Documentary">Documentario</string>
+<string name="Content$Further_Education">Altra educazione</string>
+<string name="Content$Martial_Sports">Arti marziali</string>
+<string name="Content$Equestrian">Equitazione</string>
+<string name="Content$Fine_Arts">Arti fine</string>
+<string name="Content$Folk__Tradional_Music">Musica Tradizionale/Folclore</string>
+<string name="Content$Original_Language">Lingua madre</string>
+<string name="Content$Economics__Social_Advisory">Economia/Consulenza sociale</string>
+<string name="Content$News_Magazine">Settimanale di attualità</string>
+<string name="Content$Arts__Culture_Magazine">Arte/Settimanale di cultura</string>
+<string name="Content$Movie__Drama">Film/Dramma</string>
+<string name="Content$Pre-school_Childrens_Programme">Programmi per ragazzi prescolastici</string>
+<string name="Content$Fitness_and_Health">Culturismo &amp; Salute</string>
+<string name="Content$Film__Cinema">Film/Cinema</string>
+<string name="Content$Cooking">Cucina</string>
+<string name="Content$News__Current_Affairs">Notizie/Ultima ora</string>
+<string name="Content$Entertainment_Programme_for_6_to_14">Programmi di intrattenimento da 6 a 14</string>
+<string name="Content$Music__Ballet__Dance">Musica/Balletto/Danza</string>
+<string name="Content$New_Media">Nuovo programma</string>
+<string name="Content$Black_and_White">Bianco &amp; Nero</string>
+<string name="Content$Informational__Educational__School_Programme">Informativo/Educativo/Programma scolastico</string>
+<string name="Content$Handicraft">Artigianato</string>
+<string name="Content$Remarkable_People">Personaggi importanti</string>
+<string name="Content$Adventure__Western__War">Avventura/Western/Guerra</string>
+<string name="Content$Science_Fiction__Fantasy__Horror">Finzione/Fantasia/Horror</string>
+<string name="Content$Water_Sport">Sport acquatici</string>
+<string name="Content$Football__Soccer">Calcio</string>
+<string name="Content$Foreign_Countries__Expeditions">Paesi esteri/Spedizioni</string>
+<string name="Content$Variety_Show">Spettacolo di varietà</string>
+<string name="Content$Education__Science__Factual">Educazione/Scienza/Fatti</string>
+<string name="Content$Jazz">Jazz</string>
+<string name="Content$Adult_Movie__Drama">Film per adulti/Dramma</string>
+<string name="Content$Comedy">Commedia</string>
+<string name="Content$Unpublished">Non pubblicato</string>
+<string name="Content$Social__Political__Economics">Società/Politica/Economia</string>
+<string name="Content$Entertainment_Programme_for_10_to_16">Programmi di intrattenimento da 10 a 16</string>
+<string name="Content$Popular_Culture__Traditional_Arts">Cultura popolare/Arti tradizionali</string>
+<string name="Content$Leisure__Hobbies">Tempo libero/Hobby</string>
+<string name="Content$Detective__Thriller">Investigativo/Giallo</string>
+<string name="Content$Serious__Classical_Music">Musica Classica/Seria</string>
+<string name="Content$Discussion__Inverview__Debate">Discussione/Intervista/Dibattito</string>
+<string name="Content$Social__Spiritual_Sciences">Società/Scienze spirituali</string>
+<string name="Content$Soap__Melodrama__Folkloric">Telenovella/Melodramma/Folcloristico</string>
+<string name="Content$Ballet">Balletto</string>
+<string name="Content$Fashion">Moda</string>
+<string name="Content$Winter_Sports">Sport invernali</string>
+<string name="Content$Cartoons__Puppets">Cartoni/Pupazzi</string>
+<string name="Content$Sports">Sport</string>
+<string name="Content$Technology__Natural_Sciences">Tecnologia/Scienze naturali</string>
+<string name="Content$Literature">Letteratura</string>
+<string name="Content$Motor_Sport">Sport motoristici</string>
+<string name="Content$Sport_Magazine">Settimanale di sport</string>
+<string name="Content$Romance">Romanzo</string>
+<string name="Content$Arts__Culture">Arte/Cultura</string>
+<string name="Content$Serious__Classical__Religious__Historical_Movie__Drama">Serio/Classico/Religioso/Film storico/Dramma</string>
+<string name="Content$News__Weather_Report">Notizie/Previsioni meteo</string>
+<string name="Content$Special_Event">Evento speciale</string>
+<string name="Content$Childrens__Youth_Programme">Programmi per ragazzi/giovani</string>
+<string name="Content$Gardening">Giardinaggio</string>
+<string name="Content$Rock__Pop">Rock/Pop</string>
+<string name="Content$Religion">Religione</string>
+<string name="Content$Nature__Animals__Environment">Natura/Animali/Ambiente</string>
+<string name="Content$Broadcasting__Press">Trasmissione/Stampa</string>
+<string name="Content$Talk_Show">Talk Show</string>
+<string name="Content$Live_Broadcast">Trasmissione dal vivo</string>
+<string name="Content$Advertisement__Shopping">Pubblicità/Acquisti</string>
+<string name="Content$Performing_Arts">Arti di rendimento</string>
+<string name="Content$Experimental_Film__Video">Film sperimentale/Video</string>
+<string name="Content$Magazine__Report__Documentary">Settimanale/Reportage/Documentario</string>
+<string name="Content$Tennis__Squash">Tennis/Squash</string>
+<string name="Content$Game_Show__Quiz__Contest">Gioco a premi/Quiz/Gara</string>
+<string name="Content$Medicine__Physiology__Psychology">Medicina/Filosofia/Psicologia</string>
+<string name="Content$Motoring">Motori</string>
+<string name="Content$Team_Sports">Sport di squadra</string>
+
+<!-- EPG Content END -->
+
+
 </resources>

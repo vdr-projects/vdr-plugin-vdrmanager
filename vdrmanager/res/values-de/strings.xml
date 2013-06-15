@@ -337,12 +337,12 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
     <item>Aufzeichnungen</item>
     <item>Timer</item>
   </string-array>
-  
+
     <!--
        SSL related messages
    -->
-  
-  <string name="certificate_problem_message_title">Zertifikat-Warnung</string> 
+
+  <string name="certificate_problem_message_title">Zertifikat-Warnung</string>
   <string name="certificate_problem_message_text" formatted="false">
 Das Zertifikat des Servers wurde nicht akzeptiert:\n\n
 Hostname:\n
@@ -356,5 +356,93 @@ Was wollen Sie tun?
   <string name="certificate_accept_once">Einmal akzeptieren</string>
   <string name="certificate_accepted_forever">Immer akzeptieren</string>
   <string name="certificate_not_accepted">Nicht akzeptieren</string>
-  
+
+
+
+<!-- EPG Content -->
+
+
+<string name="Content$Show__Game_Show">Show/Spielshow</string>
+<string name="Content$Athletics">Athletik</string>
+<string name="Content$Musical__Opera">Musical/Oper</string>
+<string name="Content$Tourism__Travel">Tourismus/Reisen</string>
+<string name="Content$Languages">Sprachen</string>
+<string name="Content$Documentary">Dokumentation</string>
+<string name="Content$Further_Education">Weiterbildung</string>
+<string name="Content$Martial_Sports">Kampfsport</string>
+<string name="Content$Equestrian">Reitsport</string>
+<string name="Content$Fine_Arts">Bildende Künste</string>
+<string name="Content$Folk__Tradional_Music">Volks/Traditionelle Musik</string>
+<string name="Content$Original_Language">Originalsprache</string>
+<string name="Content$Economics__Social_Advisory">Wirtschafts/Gesellschaftsberatung</string>
+<string name="Content$News_Magazine">Nachrichtenmagazin</string>
+<string name="Content$Arts__Culture_Magazine">Kunst/Kulturmagazin</string>
+<string name="Content$Movie__Drama">Film/Drama</string>
+<string name="Content$Pre-school_Childrens_Programme">Programm für Vorschulkinder</string>
+<string name="Content$Fitness_and_Health">Fitness &amp; Gesundheit</string>
+<string name="Content$Film__Cinema">Film/Kino</string>
+<string name="Content$Cooking">Kochen</string>
+<string name="Content$News__Current_Affairs">Aktuelle Angelegenheiten</string>
+<string name="Content$Entertainment_Programme_for_6_to_14">Unterhaltungsprogramm für 6 bis 14</string>
+<string name="Content$Music__Ballet__Dance">Musik/Ballett/Tanz</string>
+<string name="Content$New_Media">Neue Medien</string>
+<string name="Content$Black_and_White">Schwarz-weiß</string>
+<string name="Content$Informational__Educational__School_Programme">Informations/Lehr/Schul-Programm</string>
+<string name="Content$Handicraft">Handwerk</string>
+<string name="Content$Remarkable_People">Bemerkenswerte Leute</string>
+<string name="Content$Adventure__Western__War">Abenteuer/Western/Krieg</string>
+<string name="Content$Science_Fiction__Fantasy__Horror">Science-Fiction/Fantasy/Horror</string>
+<string name="Content$Water_Sport">Wassersport</string>
+<string name="Content$Football__Soccer">Football/Fußball</string>
+<string name="Content$Foreign_Countries__Expeditions">Ausland/Expeditionen</string>
+<string name="Content$Variety_Show">Variete-Show</string>
+<string name="Content$Education__Science__Factual">Ausbildung/Wissenschaft/Sachlich</string>
+<string name="Content$Jazz">Jazz</string>
+<string name="Content$Adult_Movie__Drama">Erwachsenen-Film/Drama</string>
+<string name="Content$Comedy">Komödie</string>
+<string name="Content$Unpublished">Unveröffentlicht</string>
+<string name="Content$Social__Political__Economics">Gesellschaft/Politik/Wirtschaft</string>
+<string name="Content$Entertainment_Programme_for_10_to_16">Unterhaltungsprogramm für 10 bis 16</string>
+<string name="Content$Popular_Culture__Traditional_Arts">Pop-Kultur/Traditionelle Künste</string>
+<string name="Content$Leisure__Hobbies">Freizeit/Hobbies</string>
+<string name="Content$Detective__Thriller">Detektiv/Thriller</string>
+<string name="Content$Serious__Classical_Music">Ernste/Klassische Musik</string>
+<string name="Content$Discussion__Inverview__Debate">Diskussion/Interview/Debatte</string>
+<string name="Content$Social__Spiritual_Sciences">Sozial/Geisteswissenschaften</string>
+<string name="Content$Soap__Melodrama__Folkloric">Seife/Melodram/Folklore</string>
+<string name="Content$Ballet">Ballett</string>
+<string name="Content$Fashion">Mode</string>
+<string name="Content$Winter_Sports">Wintersport</string>
+<string name="Content$Cartoons__Puppets">Zeichentrick/Puppen</string>
+<string name="Content$Sports">Sport</string>
+<string name="Content$Technology__Natural_Sciences">Technik/Naturwissenschaften</string>
+<string name="Content$Literature">Literatur</string>
+<string name="Content$Motor_Sport">Motorsport</string>
+<string name="Content$Sport_Magazine">Sportmagazin</string>
+<string name="Content$Romance">Romanze</string>
+<string name="Content$Arts__Culture">Kunst/Kultur</string>
+<string name="Content$Serious__Classical__Religious__Historical_Movie__Drama">Ernst/Klassik/Religion/Historischer Film/Drama</string>
+<string name="Content$News__Weather_Report">Wetterbericht</string>
+<string name="Content$Special_Event">Besonderes Ereignis</string>
+<string name="Content$Childrens__Youth_Programme">Kinder/Jugendprogramm</string>
+<string name="Content$Gardening">Gartenbau</string>
+<string name="Content$Rock__Pop">Rock/Pop</string>
+<string name="Content$Religion">Religion</string>
+<string name="Content$Nature__Animals__Environment">Natur/Tiere/Umwelt</string>
+<string name="Content$Broadcasting__Press">Rundfunk/Presse</string>
+<string name="Content$Talk_Show">Talkshow</string>
+<string name="Content$Live_Broadcast">Live-Sendung</string>
+<string name="Content$Advertisement__Shopping">Werbung/Einkaufen</string>
+<string name="Content$Performing_Arts">Darstellende Künste</string>
+<string name="Content$Experimental_Film__Video">Experimentalfilm/Video</string>
+<string name="Content$Magazine__Report__Documentary">Magazin/Bericht/Dokumentation</string>
+<string name="Content$Tennis__Squash">Tennis/Squash</string>
+<string name="Content$Game_Show__Quiz__Contest">Spielshow/Quiz/Wettbewerb</string>
+<string name="Content$Medicine__Physiology__Psychology">Medizin/Physiologie/Psychologie</string>
+<string name="Content$Motoring">Autofahren</string>
+<string name="Content$Team_Sports">Mannschaftssport</string>
+
+<!--  EPG Content END -->
+
+
 </resources>

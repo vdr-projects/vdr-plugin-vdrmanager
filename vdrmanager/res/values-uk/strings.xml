@@ -263,4 +263,89 @@ herrlado&lt;herrlado@gmail.com&gt;
   <string-array name="recstream_entries">
     <item>Додаток VDR live</item>
   </string-array>
+
+  <!-- EPG Content -->
+
+
+<string name="Content$Show__Game_Show">Шоу//Ігри</string>
+<string name="Content$Athletics">Атлетика</string>
+<string name="Content$Musical__Opera">Мюзикл/Опера</string>
+<string name="Content$Tourism__Travel">Туризм/Подорожі</string>
+<string name="Content$Languages">Мови</string>
+<string name="Content$Documentary">Документальне</string>
+<string name="Content$Further_Education">Дальше навчання</string>
+<string name="Content$Martial_Sports">Військовий спорт</string>
+<string name="Content$Equestrian">Кінний спорт</string>
+<string name="Content$Fine_Arts">Образотворче мистецтво</string>
+<string name="Content$Folk__Tradional_Music">Фльк/Традиційна музика</string>
+<string name="Content$Original_Language">Оригінальна мова</string>
+<string name="Content$Economics__Social_Advisory">Економіка/Соціальний порадник</string>
+<string name="Content$News_Magazine">Журнал новин</string>
+<string name="Content$Arts__Culture_Magazine">Мистецтво/Культурний журнал</string>
+<string name="Content$Movie__Drama">Фільм/Драма</string>
+<string name="Content$Pre-school_Childrens_Programme">Дошкільні дитячі програми</string>
+<string name="Content$Fitness_and_Health">Фітнес і здоров’я</string>
+<string name="Content$Film__Cinema">Кінофільм</string>
+<string name="Content$Cooking">Готування їжі</string>
+<string name="Content$News__Current_Affairs">Новини/Поточні події</string>
+<string name="Content$Entertainment_Programme_for_6_to_14">Програми для дітей від 6 до 14 років</string>
+<string name="Content$Music__Ballet__Dance">Музика/Балет/Танці</string>
+<string name="Content$New_Media">Нові медія</string>
+<string name="Content$Black_and_White">Чорне і біле</string>
+<string name="Content$Informational__Educational__School_Programme">Інформаційні/Навчальні/Шкільна програма</string>
+<string name="Content$Handicraft">Ремісниче</string>
+<string name="Content$Remarkable_People">Незвичайні люди</string>
+<string name="Content$Adventure__Western__War">Пригоди/Вестерн/Війна</string>
+<string name="Content$Science_Fiction__Fantasy__Horror">Наукова фантастика/Фантастика/Жахи</string>
+<string name="Content$Water_Sport">Водний спорт</string>
+<string name="Content$Football__Soccer">Футбол</string>
+<string name="Content$Foreign_Countries__Expeditions">Зарубіжні країни/Експедиції</string>
+<string name="Content$Variety_Show">Вар’єте</string>
+<string name="Content$Education__Science__Factual">Навчання/Наука/Факти</string>
+<string name="Content$Jazz">Джаз</string>
+<string name="Content$Adult_Movie__Drama">Кіно для дорослих/Драма</string>
+<string name="Content$Comedy">Комедія</string>
+<string name="Content$Unpublished">Неопубліковане</string>
+<string name="Content$Social__Political__Economics">Соцільне/Політичне/Економічне</string>
+<string name="Content$Entertainment_Programme_for_10_to_16">Програми для дітей від 10 до 16 років</string>
+<string name="Content$Popular_Culture__Traditional_Arts">Популярна культура/Традиційне мистецтво</string>
+<string name="Content$Leisure__Hobbies">Відпочинок/Хоббі</string>
+<string name="Content$Detective__Thriller">Детектив/Тріллер</string>
+<string name="Content$Serious__Classical_Music">Серйозна/Класична музика</string>
+<string name="Content$Discussion__Inverview__Debate">Дискусія/Інтерв’ю/Дебати</string>
+<string name="Content$Social__Spiritual_Sciences">Соціальна/Духовна наука</string>
+<string name="Content$Soap__Melodrama__Folkloric">Мильна опера/Мелодрама/Фольклор</string>
+<string name="Content$Ballet">Балет</string>
+<string name="Content$Fashion">Мода</string>
+<string name="Content$Winter_Sports">Зимовий спорт</string>
+<string name="Content$Cartoons__Puppets">Мультфільми</string>
+<string name="Content$Sports">Спорт</string>
+<string name="Content$Technology__Natural_Sciences">Технологія/Природничі науки</string>
+<string name="Content$Literature">Література</string>
+<string name="Content$Motor_Sport">Моторний спорт</string>
+<string name="Content$Sport_Magazine">Спортивний журнал</string>
+<string name="Content$Romance">Романс</string>
+<string name="Content$Arts__Culture">Мистецтво/Культура</string>
+<string name="Content$Serious__Classical__Religious__Historical_Movie__Drama">Серйозне/Класика/Релігія/Історія/Драма</string>
+<string name="Content$News__Weather_Report">Новини/Спорт</string>
+<string name="Content$Special_Event">Спеціальні події</string>
+<string name="Content$Childrens__Youth_Programme">Дитяче/Молодіжні програми</string>
+<string name="Content$Gardening">Сад/Город</string>
+<string name="Content$Rock__Pop">Рок/Поп</string>
+<string name="Content$Religion">Релігія</string>
+<string name="Content$Nature__Animals__Environment">Природа/Тварини/Навколишнє оточення</string>
+<string name="Content$Broadcasting__Press">Трансляція/Преса</string>
+<string name="Content$Talk_Show">Ток шоу</string>
+<string name="Content$Live_Broadcast">Трансляція</string>
+<string name="Content$Advertisement__Shopping">Реклама/Закупи</string>
+<string name="Content$Performing_Arts">Дресирування</string>
+<string name="Content$Experimental_Film__Video">Експериментальний фільм/Відео</string>
+<string name="Content$Magazine__Report__Documentary">Журнал/Рапорт/Документальне</string>
+<string name="Content$Tennis__Squash">Теніс/Сквош</string>
+<string name="Content$Game_Show__Quiz__Contest">Ігрове шоу/Тести</string>
+<string name="Content$Medicine__Physiology__Psychology">Медицина/Фізіологія/Психологія</string>
+<string name="Content$Motoring">Автомобільна справа</string>
+<string name="Content$Team_Sports">Спортивні команди</string>
+
+  <!--  EPG Content END -->
 </resources>

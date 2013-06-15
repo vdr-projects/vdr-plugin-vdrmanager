@@ -395,12 +395,12 @@
 	<string name="recording_started">Recording started</string>
 	<string name="set_time">Set time</string>
 	<!-- … -->
-	
+
 	<!--
 	     SSL related messages
 	 -->
-	
-	<string name="certificate_problem_message_title">Certificate warning</string> 
+
+	<string name="certificate_problem_message_title">Certificate warning</string>
   <string name="certificate_problem_message_text" formatted="false">
 The server certificate was not accepted:\n\n
 Hostname:\n
@@ -414,5 +414,89 @@ What do you want to do?
   <string name="certificate_accept_once">Accept once</string>
   <string name="certificate_accepted_forever">Accept forever</string>
   <string name="certificate_not_accepted">Abort</string>
-  	 	 
+
+<!--  EPG Content -->
+<string name="Content$Movie__Drama">Movie/Drama</string>
+<string name="Content$Detective__Thriller">Detective/Thriller</string>
+<string name="Content$Adventure__Western__War">Adventure/Western/War</string>
+<string name="Content$Science_Fiction__Fantasy__Horror">Science Fiction/Fantasy/Horror</string>
+<string name="Content$Comedy">Comedy</string>
+<string name="Content$Soap__Melodrama__Folkloric">Soap/Melodrama/Folkloric</string>
+<string name="Content$Romance">Romance</string>
+<string name="Content$Serious__Classical__Religious__Historical_Movie__Drama">Serious/Classical/Religious/Historical Movie/Drama</string>
+<string name="Content$Adult_Movie__Drama">Adult Movie/Drama</string>
+<string name="Content$News__Current_Affairs">News/Current Affairs</string>
+<string name="Content$News__Weather_Report">News/Weather Report</string>
+<string name="Content$News_Magazine">News Magazine</string>
+<string name="Content$Documentary">Documentary</string>
+<string name="Content$Discussion__Inverview__Debate">Discussion/Inverview/Debate</string>
+<string name="Content$Show__Game_Show">Show/Game Show</string>
+<string name="Content$Game_Show__Quiz__Contest">Game Show/Quiz/Contest</string>
+<string name="Content$Variety_Show">Variety Show</string>
+<string name="Content$Talk_Show">Talk Show</string>
+<string name="Content$Sports">Sports</string>
+<string name="Content$Special_Event">Special Event</string>
+<string name="Content$Sport_Magazine">Sport Magazine</string>
+<string name="Content$Football__Soccer">Football/Soccer</string>
+<string name="Content$Tennis__Squash">Tennis/Squash</string>
+<string name="Content$Team_Sports">Team Sports</string>
+<string name="Content$Athletics">Athletics</string>
+<string name="Content$Motor_Sport">Motor Sport</string>
+<string name="Content$Water_Sport">Water Sport</string>
+<string name="Content$Winter_Sports">Winter Sports</string>
+<string name="Content$Equestrian">Equestrian</string>
+<string name="Content$Martial_Sports">Martial Sports</string>
+<string name="Content$Childrens__Youth_Programme">Children\'s/Youth Programme</string>
+<string name="Content$Preschool_Childrens_Programme">Pre-school Children\'s Programme</string>
+<string name="Content$Entertainment_Programme_for_6_to_14">Entertainment Programme for 6 to 14</string>
+<string name="Content$Entertainment_Programme_for_10_to_16">Entertainment Programme for 10 to 16</string>
+<string name="Content$Informational__Educational__School_Programme">Informational/Educational/School Programme</string>
+<string name="Content$Cartoons__Puppets">Cartoons/Puppets</string>
+<string name="Content$Music__Ballet__Dance">Music/Ballet/Dance</string>
+<string name="Content$Rock__Pop">Rock/Pop</string>
+<string name="Content$Serious__Classical_Music">Serious/Classical Music</string>
+<string name="Content$Folk__Tradional_Music">Folk/Tradional Music</string>
+<string name="Content$Jazz">Jazz</string>
+<string name="Content$Musical__Opera">Musical/Opera</string>
+<string name="Content$Ballet">Ballet</string>
+<string name="Content$Arts__Culture">Arts/Culture</string>
+<string name="Content$Performing_Arts">Performing Arts</string>
+<string name="Content$Fine_Arts">Fine Arts</string>
+<string name="Content$Religion">Religion</string>
+<string name="Content$Popular_Culture__Traditional_Arts">Popular Culture/Traditional Arts</string>
+<string name="Content$Literature">Literature</string>
+<string name="Content$Film__Cinema">Film/Cinema</string>
+<string name="Content$Experimental_Film__Video">Experimental Film/Video</string>
+<string name="Content$Broadcasting__Press">Broadcasting/Press</string>
+<string name="Content$New_Media">New Media</string>
+<string name="Content$Arts__Culture_Magazine">Arts/Culture Magazine</string>
+<string name="Content$Fashion">Fashion</string>
+<string name="Content$Social__Political__Economics">Social/Political/Economics</string>
+<string name="Content$Magazine__Report__Documentary">Magazine/Report/Documentary</string>
+<string name="Content$Economics__Social_Advisory">Economics/Social Advisory</string>
+<string name="Content$Remarkable_People">Remarkable People</string>
+<string name="Content$Education__Science__Factual">Education/Science/Factual</string>
+<string name="Content$Nature__Animals__Environment">Nature/Animals/Environment</string>
+<string name="Content$Technology__Natural_Sciences">Technology/Natural Sciences</string>
+<string name="Content$Medicine__Physiology__Psychology">Medicine/Physiology/Psychology</string>
+<string name="Content$Foreign_Countries__Expeditions">Foreign Countries/Expeditions</string>
+<string name="Content$Social__Spiritual_Sciences">Social/Spiritual Sciences</string>
+<string name="Content$Further_Education">Further Education</string>
+<string name="Content$Languages">Languages</string>
+<string name="Content$Leisure__Hobbies">Leisure/Hobbies</string>
+<string name="Content$Tourism__Travel">Tourism/Travel</string>
+<string name="Content$Handicraft">Handicraft</string>
+<string name="Content$Motoring">Motoring</string>
+<string name="Content$Fitness_and_Health">Fitness &amp; Health</string>
+<string name="Content$Cooking">Cooking</string>
+<string name="Content$Advertisement__Shopping">Advertisement/Shopping</string>
+<string name="Content$Gardening">Gardening</string>
+<string name="Content$Original_Language">Original Language</string>
+<string name="Content$Black_and_White">Black &amp; White</string>
+<string name="Content$Unpublished">Unpublished</string>
+<string name="Content$Live_Broadcast">Live Broadcas</string>
+<string name="Content$Unknown"></string>
+<!--  EPG Content END -->
+
+
 </resources>
