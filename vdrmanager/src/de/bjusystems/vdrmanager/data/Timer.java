@@ -2,14 +2,11 @@ package de.bjusystems.vdrmanager.data;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-
+import android.text.TextUtils;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
-import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.gui.Utils;
 
 /**
@@ -141,6 +138,11 @@ public class Timer extends Event implements Timerable {
 				+ prefs.getTimerPostMargin() * 60000);
 
 		this.title = event.getTitle();
+		if(Utils.isSerie(event.getContent())){
+			if(TextUtils.isEmpty(event.getShortText()) == false){
+				this.title+="~"+event.getShortText();
+			}
+		}
 		this.description = event.getDescription();
 	}
 

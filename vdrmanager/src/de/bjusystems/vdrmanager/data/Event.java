@@ -23,6 +23,12 @@ public abstract class Event {
 	protected Date start;
 	protected Date stop;
 	protected String rawAudio;
+	protected int[] content = {};
+
+
+	public int[] getContent() {
+		return content;
+	}
 
 	private List<AudioTrack> audio;
 

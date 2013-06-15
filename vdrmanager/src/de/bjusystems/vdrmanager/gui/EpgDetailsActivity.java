@@ -301,11 +301,20 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		textView.setText(Utils.highlight(formatter.getDescription(), highlight));
 
 		if (event.getAudio().isEmpty() == false) {
+			view.findViewById(R.id.audio_block).setVisibility(View.VISIBLE);
 			final TextView audioTracks = (TextView) view
 					.findViewById(R.id.epg_detail_audio);
 			audioTracks.setText(Utils.formatAudio(this, event.getAudio()));
 		} else {
-			view.findViewById(R.id.audio_image).setVisibility(View.GONE);
+			view.findViewById(R.id.audio_block).setVisibility(View.GONE);
+		}
+
+		TextView contentView = ((TextView)view.findViewById(R.id.epg_detail_cats));
+		if(event.getContent().length > 0){
+			contentView.setVisibility(View.VISIBLE);
+			contentView.setText(Utils.getContenString(this, event.getContent()));
+		} else {
+			contentView.setVisibility(View.GONE);
 		}
 
 		// copy color for separator lines
