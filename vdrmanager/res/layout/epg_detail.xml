@@ -107,7 +107,7 @@
 
             <View style="@style/Line" />
 
-            <LinearLayout
+            <LinearLayout android:id="@+id/audio_block"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -125,6 +125,13 @@
                     android:layout_marginLeft="5dp"
                     android:text="" />
             </LinearLayout>
+
+            <TextView
+                    android:id="@+id/epg_detail_cats"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thriller, Comedy" />
+
         </LinearLayout>
     </ScrollView>
 

@@ -38,6 +38,19 @@ public class Epg extends Event implements Timerable {
 		shortText = words.length > 6 ? mapSpecialChars(words[6]) : "";
 		channelId = words.length > 7 ? mapSpecialChars(words[7]) : "";
 		rawAudio = words.length > 8 ? mapSpecialChars(words[8]) : "";
+		if (words.length > 9) {
+			String contents = words[9].trim();
+			if (contents.length() > 0) {
+				String[] caray = contents.split(" ");
+				if (caray.length > 0) {
+					content = new int[caray.length];
+					for (int i = 0; i < caray.length; ++i) {
+						content[i] = Integer.valueOf(caray[i]);
+					}
+				}
+			}
+
+		}
 	}
 
 	public Timer getTimer() {
