@@ -89,7 +89,7 @@ public class Recording extends Event {
 		}
 
 		if (idx < words.length) { // name
-			String titleRaw = words[idx];
+			String titleRaw = mapSpecialChars(words[idx]);
 			int idxdel = titleRaw.lastIndexOf(FOLDERDELIMCHAR);
 			if (idxdel == -1) {
 				title = titleRaw;
