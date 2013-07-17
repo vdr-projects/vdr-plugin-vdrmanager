@@ -713,7 +713,7 @@ string cHelpers::ToText(cRecording * recording) {
 
 	result += ":";
 	//Feature #1319
-	result += recording->Name();
+	result += MapSpecialChars(recording->Name());
 
 	result += "\r\n";
 	return result;
