@@ -29,8 +29,8 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
-public class VdrListActivity extends ListActivity
-		implements OnItemClickListener, OnItemLongClickListener {
+public class VdrListActivity extends ListActivity implements
+		OnItemClickListener, OnItemLongClickListener {
 
 	private static final String TAG = VdrListActivity.class.getName();
 
@@ -77,13 +77,6 @@ public class VdrListActivity extends ListActivity
 		populateIntent();
 
 		setContentView(R.layout.vdr_list_add_delete);
-
-		findViewById(R.id.add_item).setOnClickListener(
-				new View.OnClickListener() {
-					public void onClick(View v) {
-						editVdr(null);
-					}
-				});
 
 		// initCursor();
 		final Vdr cur = Preferences.get().getCurrentVdr();
@@ -245,8 +238,12 @@ public class VdrListActivity extends ListActivity
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								if (DBAccess.get(VdrListActivity.this).getVdrDAO().deleteById(
-										adapter.getItem(position).getId()) > 0) {
+								if (DBAccess
+										.get(VdrListActivity.this)
+										.getVdrDAO()
+										.deleteById(
+												adapter.getItem(position)
+														.getId()) > 0) {
 									if (Preferences.get().getCurrentVdrContext(
 											VdrListActivity.this) == id) {
 										Preferences.setCurrentVdr(
@@ -280,6 +277,9 @@ public class VdrListActivity extends ListActivity
 			Intent intent = IntentUtils.newIntent(this,
 					BackupSettingsActivity.class);
 			startActivity(intent);
+			return true;
+		} else if (item.getItemId() == R.id.main_menu_vdrlist_add) {
+			editVdr(null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
