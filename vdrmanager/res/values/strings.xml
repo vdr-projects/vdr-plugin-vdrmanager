@@ -404,11 +404,11 @@
   <string name="certificate_problem_message_text" formatted="false">
 The server certificate was not accepted:\n\n
 Hostname:\n
- %s\n
+ %1$s\n
 Valid from:\n
- %s\n
+ %2$s\n
 Valid until:\n
- %s\n\n
+ %3$s\n\n
 What do you want to do?
   </string>
   <string name="certificate_accept_once">Accept once</string>
@@ -497,6 +497,7 @@ What do you want to do?
 <string name="Content$Live_Broadcast">Live Broadcas</string>
 <string name="Content$Unknown"></string>
 <!--  EPG Content END -->
+<string name="type_to_filter">type to filter</string>
 
 
 </resources>

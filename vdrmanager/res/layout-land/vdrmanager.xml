@@ -50,7 +50,7 @@
 			android:layout_height="wrap_content" android:orientation="horizontal">
 
 			<Button android:text="@string/action_menu_wakeup"
-				xmlns:android="http://schemas.android.com/apk/res/android" android:layout_weight="1"
+				android:layout_weight="1"
 				android:padding="3dip"
 				android:drawableTop="@drawable/btn_wakeup" android:layout_width="wrap_content"
 				android:id="@+id/action_menu_wakeup" android:layout_height="wrap_content"
