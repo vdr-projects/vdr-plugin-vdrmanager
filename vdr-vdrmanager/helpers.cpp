@@ -693,7 +693,7 @@ string cHelpers::ToText(cRecording * recording) {
 	struct stat st;
 	if (stat(recording->FileName(), &st) == 0) {
 		result += MapSpecialChars(
-				cString::sprintf("%lu:%lu.rec", st.st_dev, st.st_ino));
+				cString::sprintf("%lu:%llu.rec", st.st_dev, st.st_ino));
 	} else {
 		result += "";
 	}
