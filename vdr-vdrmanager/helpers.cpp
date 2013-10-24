@@ -100,7 +100,19 @@ string cHelpers::GetTimersIntern() {
 
 string cHelpers::GetRecordingsIntern() {
 
-	string result = "START\r\n";
+	int FreeMB, UsedMB;
+#if APIVERSNUM < 20102
+	int Percent = VideoDiskSpace(&FreeMB, &UsedMB);
+#else
+	int Percent = cVideoDirectory::VideoDiskSpace(&FreeMB, &UsedMB);
+#endif
+
+	std::stringstream sstm;
+
+	sstm << "START|"<<(FreeMB + UsedMB)<<":" << FreeMB<<":"<<Percent << "\r\n";
+
+	string result = sstm.str();
+
 	//iterate through all recordings
 	cRecording* recording = NULL;
 	for (int i = 0; i < Recordings.Count(); i++) {
@@ -272,12 +284,21 @@ string cHelpers::DelRecording(cRecording * recording) {
 
 	cString FileName = recording->FileName();
 
+#if VDRVERSNUM < 20102
 	if (cCutter::Active(recording->FileName())) {
 		cCutter::Stop();
 		recording = Recordings.GetByName(FileName); // cCutter::Stop() might have deleted it if it was the edited version
 		// we continue with the code below even if recording is NULL,
 		// in order to have the menu updated etc.
 	}
+#else
+	if (RecordingsHandler.GetUsage(FileName)) {
+		RecordingsHandler.Del(FileName);
+		recording = Recordings.GetByName(FileName); // RecordingsHandler.Del() might have deleted it if it was the edited version
+		// we continue with the code below even if recording is NULL,
+		// in order to have the menu updated etc.
+	}
+#endif
 
 	if (cReplayControl::NowReplaying()
 			&& strcmp(cReplayControl::NowReplaying(), FileName) == 0) {
@@ -370,7 +391,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		Timers.Add(newTimer.get());
 		Timers.SetModified();
-		dsyslog( "[vdrmanager] timer %s added", *newTimer->ToDescr());
+		dsyslog("[vdrmanager] timer %s added", *newTimer->ToDescr());
 		newTimer.release();
 		break;
 	}
@@ -448,8 +469,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		*oldTimer = copy;
 		Timers.SetModified();
-		dsyslog(
-				"[vdrmanager] timer %s modified (%s)", *oldTimer->ToDescr(), oldTimer->HasFlags(tfActive) ? "active" : "inactive");
+		dsyslog("[vdrmanager] timer %s modified (%s)", *oldTimer->ToDescr(),
+				oldTimer->HasFlags(tfActive) ? "active" : "inactive");
 
 		break;
 	}
@@ -471,8 +492,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		toggleTimer->OnOff();
 		Timers.SetModified();
-		dsyslog(
-				"[vdrmanager] timer %s toggled %s", *toggleTimer->ToDescr(), toggleTimer->HasFlags(tfActive) ? "on" : "off");
+		dsyslog("[vdrmanager] timer %s toggled %s", *toggleTimer->ToDescr(),
+				toggleTimer->HasFlags(tfActive) ? "on" : "off");
 		break;
 	}
 	default:
@@ -546,20 +567,19 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 	return result + "END\r\n";
 }
 
-
 //copied from vdr-live
 
-long cHelpers::Duration(cRecording* recording)
-{
+long cHelpers::Duration(cRecording* recording) {
 	long RecLength = 0;
-	if (!recording->FileName()) return 0;
+	if (!recording->FileName())
+		return 0;
 #if VDRVERSNUM < 10704
 	cString filename = cString::sprintf("%s%s", recording->FileName(), INDEXFILESUFFIX);
 	if (*filename) {
 		if (access(filename, R_OK) == 0) {
 			struct stat buf;
 			if (stat(filename, &buf) == 0) {
-				struct tIndex { int offset; uchar type; uchar number; short reserved; };
+				struct tIndex {int offset; uchar type; uchar number; short reserved;};
 				int delta = buf.st_size % sizeof(tIndex);
 				if (delta) {
 					delta = sizeof(tIndex) - delta;
@@ -580,16 +600,15 @@ long cHelpers::Duration(cRecording* recording)
 	return recording->LengthInSeconds() / 60;
 #endif
 	if (RecLength == 0) {
-		cString lengthFile = cString::sprintf("%s%s", recording->FileName(), LENGTHFILESUFFIX);
+		cString lengthFile = cString::sprintf("%s%s", recording->FileName(),
+				LENGTHFILESUFFIX);
 		ifstream length(*lengthFile);
-		if(length)
+		if (length)
 			length >> RecLength;
 	}
 
 	return RecLength;
 }
-
-
 
 string cHelpers::ToText(cRecording * recording) {
 	const cRecordingInfo * info = recording->Info();
@@ -655,7 +674,7 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
- if (info->Title()) {
+	if (info->Title()) {
 		result += MapSpecialChars(info->Title());
 #if APIVERSNUM >= 10705
 	} else if (event->Title()) {
@@ -693,7 +712,7 @@ string cHelpers::ToText(cRecording * recording) {
 	struct stat st;
 	if (stat(recording->FileName(), &st) == 0) {
 		result += MapSpecialChars(
-				cString::sprintf("%lu:%llu.rec", st.st_dev, st.st_ino));
+				cString::sprintf("%lu:%llu.rec", (unsigned long) st.st_dev, (unsigned long long) st.st_ino));
 	} else {
 		result += "";
 	}
@@ -701,10 +720,10 @@ string cHelpers::ToText(cRecording * recording) {
 	result += ":";
 
 	cRecordControl *rc = cRecordControls::GetRecordControl(
-				recording->FileName());
-	if(rc){
+			recording->FileName());
+	if (rc) {
 		cTimer *timer = rc->Timer();
-		if(timer){
+		if (timer) {
 			char buf[100];
 			snprintf(buf, sizeof(buf) - 1, "%lu", timer->StopTime());
 			result += buf;
@@ -867,14 +886,14 @@ string cHelpers::ToText(const cEvent * event) {
 	result += ":";
 
 	if (event->Contents(0)) {
-			string sep = "";
-	        for (int i = 0; event->Contents(i); i++){
-	        	uchar c = event->Contents(i);
-	        	result += sep;
-	        	snprintf(buf, sizeof(buf) - 1, "%u", c);
-	        	result += buf;
-	        	sep = " ";
-	        }
+		string sep = "";
+		for (int i = 0; event->Contents(i); i++) {
+			uchar c = event->Contents(i);
+			result += sep;
+			snprintf(buf, sizeof(buf) - 1, "%u", c);
+			result += buf;
+			sep = " ";
+		}
 	}
 	result += "\r\n";
 
