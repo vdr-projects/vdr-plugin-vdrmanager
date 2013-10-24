@@ -671,7 +671,7 @@ public class Vdr {
 		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
 		livePort = getInteger(map, "key_live_port", 8008);
 		recStreamMethod = get(map, "key_recstream_method", "vdr-live");
-		serverTimeZone = get(map, "key_imezone", TimeZone.getDefault().getID());
+		serverTimeZone = get(map, "key_timezone", TimeZone.getDefault().getID());
 	}
 
 }
