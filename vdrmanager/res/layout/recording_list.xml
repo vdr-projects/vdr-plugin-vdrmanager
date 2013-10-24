@@ -44,14 +44,15 @@
         android:id="@+id/recording_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/channel_info"
+            android:layout_above="@+id/driver_info_container"
             android:layout_alignWithParentIfMissing="true"
             android:layout_below="@+id/rec_folder_info"
             android:layout_centerHorizontal="true"
             android:cacheColorHint="?android:attr/colorBackground" />
 
         <LinearLayout
-            android:id="@+id/channel_info"
+            android:visibility="gone"
+            android:id="@+id/driver_info_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
