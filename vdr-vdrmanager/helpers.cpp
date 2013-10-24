@@ -109,7 +109,8 @@ string cHelpers::GetRecordingsIntern() {
 
 	std::stringstream sstm;
 
-	sstm << "START|"<<(FreeMB + UsedMB)<<":" << FreeMB<<":"<<Percent << "\r\n";
+	sstm << "START|" << (FreeMB + UsedMB) << ":" << FreeMB << ":" << Percent
+			<< "\r\n";
 
 	string result = sstm.str();
 
@@ -712,7 +713,8 @@ string cHelpers::ToText(cRecording * recording) {
 	struct stat st;
 	if (stat(recording->FileName(), &st) == 0) {
 		result += MapSpecialChars(
-				cString::sprintf("%lu:%llu.rec", (unsigned long) st.st_dev, (unsigned long long) st.st_ino));
+				cString::sprintf("%lu:%llu.rec", (unsigned long) st.st_dev,
+						(unsigned long long) st.st_ino));
 	} else {
 		result += "";
 	}
