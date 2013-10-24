@@ -34,7 +34,7 @@ import de.bjusystems.vdrmanager.data.Vdr;
 
 public class VdrSharedPreferencesImpl implements SharedPreferences {
 
-	private static final String TAG = "SharedPreferencesImpl";
+	private static final String TAG = VdrSharedPreferencesImpl.class.getSimpleName();
 
 	private static final boolean DEBUG = false;
 
