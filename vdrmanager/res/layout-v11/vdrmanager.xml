@@ -58,19 +58,24 @@
 				android:textColor="#FFF" />
 		</LinearLayout>
 
-		<LinearLayout android:layout_width="fill_parent" android:padding="10dip"
-			android:layout_height="wrap_content" android:orientation="horizontal">
+		<RelativeLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal"
+		    android:padding="10dip" >
 
-
-			<Button android:text="@string/action_menu_wakeup"
-				android:padding="5dip"
-				android:drawableTop="@drawable/btn_wakeup" android:layout_width="wrap_content"
-				android:id="@+id/action_menu_wakeup" android:layout_height="wrap_content"
-
-				android:cacheColorHint="?android:attr/colorBackground"
-				android:background="@android:drawable/list_selector_background"
-				android:textColor="#FFF" />
-		</LinearLayout>
+		    <Button
+		        android:id="@+id/action_menu_wakeup"
+		        android:layout_centerInParent="true"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:background="@android:drawable/list_selector_background"
+		        android:cacheColorHint="?android:attr/colorBackground"
+		        android:drawableTop="@drawable/btn_wakeup"
+		        android:padding="5dip"
+		        android:text="@string/action_menu_wakeup"
+		        android:textColor="#FFF" />
+		</RelativeLayout>
 
 </LinearLayout>
 </ScrollView>
