@@ -499,5 +499,7 @@ What do you want to do?
 <!--  EPG Content END -->
 <string name="type_to_filter">type to filter</string>
 
+<string name="drive_info">Free %1$s GB of %2$s GB (%3$s%%)</string>
+
 
 </resources>
