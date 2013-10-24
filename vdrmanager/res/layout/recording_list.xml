@@ -4,49 +4,107 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<LinearLayout android:layout_height="fill_parent" android:orientation="vertical"
-		android:layout_width="fill_parent" android:id="@+id/main_content">
-		  <LinearLayout
+
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/rec_folder_info"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:orientation="horizontal"
-            android:paddingTop="2dp" android:paddingBottom="2dp" android:paddingLeft="5dp" android:paddingRight="5dp" >
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+			>
+
+
             <TextView
                 android:id="@+id/folder_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                />
-            <TextView android:id="@+id/current_count"
+                android:text="Text"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/current_count"
+                android:text="Test Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+ <ListView
+        android:id="@+id/recording_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/channel_info"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/rec_folder_info"
+            android:layout_centerHorizontal="true"
+            android:cacheColorHint="?android:attr/colorBackground" />
+
+        <LinearLayout
+            android:id="@+id/channel_info"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/back"
+            android:orientation="horizontal"
+            android:padding="2dp" >
+
+            <ImageView
+                android:id="@+id/drive_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                />
+                android:src="@drawable/ic_drive" />
+
+            <TextView
+                android:id="@+id/drive_info"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="" />
         </LinearLayout>
-		  
-		<ListView
-			android:id="@+id/recording_list" android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:layout_alignWithParentIfMissing="true"
-			android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-			android:cacheColorHint="?android:attr/colorBackground" />
-	</LinearLayout>
+    </RelativeLayout>
 
-	<LinearLayout android:orientation="vertical"
-		android:id="@+id/no_connection_layout" android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-		<LinearLayout android:layout_height="fill_parent"
-			android:gravity="center" android:layout_width="fill_parent"
-			android:orientation="horizontal">
-			<TextView android:text="@string/no_connection"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:textSize="18dip" />
-			<ImageView android:src="@drawable/sad"
-				android:layout_height="wrap_content" android:layout_width="wrap_content" />
-			<Button android:text="@string/no_connection_retry"
-				android:textSize="18dip" android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:id="@+id/retry_button" />
+    <LinearLayout
+        android:id="@+id/no_connection_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-		</LinearLayout>
-	</LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_connection"
+                android:textSize="18dip" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/sad" />
+
+            <Button
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_connection_retry"
+                android:textSize="18dip" />
+        </LinearLayout>
+    </LinearLayout>
+
 </ViewFlipper>
