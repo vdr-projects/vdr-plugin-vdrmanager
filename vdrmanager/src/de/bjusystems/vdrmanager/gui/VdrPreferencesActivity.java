@@ -467,6 +467,9 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			return;
 		}
 
+		//never mind, onResume also registers this, but the listenres are held in a map (as key) so that no double occurance
+		pref.registerOnSharedPreferenceChangeListener(this);
+
 		if (requestCode == REQUEST_CODE_PICK_A_TIME_ZONE) {
 			String ntz = data.getStringExtra("new_tz");
 			if (ntz != null) {
