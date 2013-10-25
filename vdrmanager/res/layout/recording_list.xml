@@ -14,50 +14,43 @@
             android:id="@+id/rec_folder_info"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:orientation="horizontal"
             android:paddingBottom="2dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:paddingTop="2dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-			>
-
+            android:paddingTop="2dp" >
 
             <TextView
                 android:id="@+id/folder_info"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Text"
                 android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/current_count"
-                android:text="Test Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-
-
- <ListView
-        android:id="@+id/recording_list"
+        <ListView
+            android:id="@+id/recording_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/driver_info_container"
-            android:layout_alignWithParentIfMissing="true"
             android:layout_below="@+id/rec_folder_info"
             android:layout_centerHorizontal="true"
             android:cacheColorHint="?android:attr/colorBackground" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/driver_info_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginTop="4dp"
             android:background="@drawable/back"
+            android:layout_alignWithParentIfMissing="true"
             android:orientation="horizontal"
             android:padding="2dp" >
 
@@ -65,14 +58,15 @@
                 android:id="@+id/drive_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_drive" />
+                android:src="@drawable/ic_drive"
+                android:contentDescription="@string/drive_img"/>
 
             <TextView
                 android:id="@+id/drive_info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="" />
+               />
         </LinearLayout>
     </RelativeLayout>
 
@@ -80,32 +74,26 @@
         android:id="@+id/no_connection_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical" >
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center"
-            android:orientation="horizontal" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_connection"
+            android:textSize="18sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_connection"
-                android:textSize="18dip" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sad" android:contentDescription="@string/sad_img"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/sad" />
-
-            <Button
-                android:id="@+id/retry_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_connection_retry"
-                android:textSize="18dip" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/retry_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_connection_retry"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </ViewFlipper>
