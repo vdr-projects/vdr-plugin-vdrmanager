@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
@@ -78,7 +77,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	private int totalMB = -1;
 
-	private int usedMB = -1;
+	private int freeMB = -1;
 
 	private int percent = -1;
 
@@ -492,10 +491,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			}
 
 			totalMB = Integer.valueOf(split[0]);
-			usedMB = Integer.valueOf(split[1]);
+			freeMB = Integer.valueOf(split[1]);
 			percent = Integer.valueOf(split[2]);
 			driverInfoContainer.setVisibility(View.VISIBLE);
-			driverInfo.setText(getString(R.string.drive_info, (totalMB - usedMB) / 1024, totalMB / 1024, percent));
+			driverInfo.setText(getString(R.string.drive_info, (freeMB) / 1024, totalMB / 1024, 100 - percent));
 		} catch (Exception ex) {
 			Log.w(TAG, ex.getMessage(), ex);
 		}
