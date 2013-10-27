@@ -48,25 +48,39 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_marginTop="4dp"
             android:background="@drawable/back"
-            android:layout_alignWithParentIfMissing="true"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="2dp" >
 
-            <ImageView
-                android:id="@+id/drive_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_drive"
-                android:contentDescription="@string/drive_img"/>
-
-            <TextView
-                android:id="@+id/drive_info"
+            <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-               />
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:id="@+id/drive_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/drive_img"
+                    android:src="@drawable/ic_drive" />
+
+                <TextView
+                    android:id="@+id/drive_info"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/drive_info_pb"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:indeterminate="false"
+                android:progress="40" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -86,7 +100,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sad" android:contentDescription="@string/sad_img"/>
+            android:contentDescription="@string/sad_img"
+            android:src="@drawable/sad" />
 
         <Button
             android:id="@+id/retry_button"

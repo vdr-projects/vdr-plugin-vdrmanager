@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Event;
@@ -75,6 +76,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	private View driverInfoContainer;
 
+	private ProgressBar drive_info_pb;
+
 	private int totalMB = -1;
 
 	private int freeMB = -1;
@@ -92,6 +95,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		folderInfo = (TextView) findViewById(R.id.folder_info);
 		driverInfoContainer = findViewById(R.id.driver_info_container);
 		driverInfo = (TextView) driverInfoContainer.findViewById(R.id.drive_info);
+		drive_info_pb = (ProgressBar) driverInfoContainer.findViewById(R.id.drive_info_pb);
 		currentCount = (TextView) findViewById(R.id.current_count);
 		listView.setAdapter(adapter);
 
@@ -495,6 +499,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 			percent = Integer.valueOf(split[2]);
 			driverInfoContainer.setVisibility(View.VISIBLE);
 			driverInfo.setText(getString(R.string.drive_info, (freeMB) / 1024, totalMB / 1024, 100 - percent));
+			drive_info_pb.setProgress(percent);
 		} catch (Exception ex) {
 			Log.w(TAG, ex.getMessage(), ex);
 		}
