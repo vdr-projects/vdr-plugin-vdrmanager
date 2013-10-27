@@ -15,6 +15,7 @@
         android:targetSdkVersion="18" />
 
     <application
+
         android:theme="@style/Theme.Sherlock"
         android:name=".app.VdrManagerApp"
         android:hardwareAccelerated="true"
@@ -147,6 +148,7 @@
             android:configChanges="orientation|locale|screenSize" />
 
         <provider
+            android:exported="false"
             android:name=".data.db.EPGSearchSuggestionsProvider"
             android:authorities="de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider" />
 
