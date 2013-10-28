@@ -31,6 +31,7 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.RecordingListItem;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
+import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -94,8 +95,10 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		listView = (ListView) findViewById(R.id.recording_list);
 		folderInfo = (TextView) findViewById(R.id.folder_info);
 		driverInfoContainer = findViewById(R.id.driver_info_container);
-		driverInfo = (TextView) driverInfoContainer.findViewById(R.id.drive_info);
-		drive_info_pb = (ProgressBar) driverInfoContainer.findViewById(R.id.drive_info_pb);
+		driverInfo = (TextView) driverInfoContainer
+				.findViewById(R.id.drive_info);
+		drive_info_pb = (ProgressBar) driverInfoContainer
+				.findViewById(R.id.drive_info_pb);
 		currentCount = (TextView) findViewById(R.id.current_count);
 		listView.setAdapter(adapter);
 
@@ -482,24 +485,32 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	public void start(String meta) {
+	public void start(final String meta) {
 		if (meta == null) {
 			return;
 		}
-
 		try {
-			String[] split = meta.split(":");
-			if (split.length != 3) {
-				Log.w(TAG, "Recoring list meta ist wrong");
-				return;
-			}
 
-			totalMB = Integer.valueOf(split[0]);
-			freeMB = Integer.valueOf(split[1]);
-			percent = Integer.valueOf(split[2]);
-			driverInfoContainer.setVisibility(View.VISIBLE);
-			driverInfo.setText(getString(R.string.drive_info, (freeMB) / 1024, totalMB / 1024, 100 - percent));
-			drive_info_pb.setProgress(percent);
+			runOnUiThread(new Runnable() {
+				public void run() {
+
+					// stuff that updates ui
+
+					String[] split = meta.split(":");
+					if (split.length != 3) {
+						Log.w(TAG, "Recoring list meta ist wrong");
+						return;
+					}
+
+					totalMB = Integer.valueOf(split[0]);
+					freeMB = Integer.valueOf(split[1]);
+					percent = Integer.valueOf(split[2]);
+					driverInfoContainer.setVisibility(View.VISIBLE);
+					driverInfo.setText(getString(R.string.drive_info,
+							(freeMB) / 1024, totalMB / 1024, 100 - percent));
+					drive_info_pb.setProgress(percent);
+				}
+			});
 		} catch (Exception ex) {
 			Log.w(TAG, ex.getMessage(), ex);
 		}
