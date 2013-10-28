@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.bjusystems.vdrmanager"
     android:versionCode="1000"
-    android:versionName="10-beta" >
+    android:versionName="10-beta2" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
