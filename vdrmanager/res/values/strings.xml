@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="action_menu_channels">Channels</string>
     <string name="action_menu_timers">Timers</string>
@@ -400,8 +400,9 @@
 	     SSL related messages
 	 -->
 
-	<string name="certificate_problem_message_title">Certificate warning</string>
-  <string name="certificate_problem_message_text" formatted="false">
+
+  <string name="certificate_problem_message_title">Certificate warning</string>
+<string name="certificate_problem_message_text" formatted="false">
 The server certificate was not accepted:\n\n
 Hostname:\n
  %1$s\n
@@ -502,6 +503,7 @@ What do you want to do?
 <string name="drive_info">Free %1$s GB of %2$s GB (%3$s%%)</string>
 <string name="drive_img">Drive</string>
 <string name="sad_img">Sad</string>
+<string name="search">Search</string>
 
 
 </resources>
