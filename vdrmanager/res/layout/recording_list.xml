@@ -54,33 +54,21 @@
             android:orientation="vertical"
             android:padding="2dp" >
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/drive_info"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:id="@+id/drive_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/drive_img"
-                    android:src="@drawable/ic_drive" />
-
-                <TextView
-                    android:id="@+id/drive_info"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_drive"
+                android:drawablePadding="5dp"
+                android:gravity="center" >
+            </TextView>
 
             <ProgressBar
                 android:id="@+id/drive_info_pb"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="1dip"
-                android:indeterminate="false"
-                android:progress="40" />
+                android:indeterminate="false" />
         </LinearLayout>
     </RelativeLayout>
 
