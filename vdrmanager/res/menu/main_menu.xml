@@ -11,7 +11,7 @@
         android:actionViewClass="com.actionbarsherlock.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="always"
-        android:title="Search"/>
+        android:title="@stirng/search"/>
     <item
         android:id="@+id/main_menu_preferences"
         android:icon="@android:drawable/ic_menu_preferences"
