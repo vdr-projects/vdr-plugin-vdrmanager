@@ -531,16 +531,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			new AlertDialog.Builder(this)
 					.setAdapter(ada, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
-							final Timer t;
-							if (timer == null) {
-								t = timerable.createTimer();
-							} else {
-								t = timer;
-							}
-							getApp().setCurrentTimer(t);
 							Wrapper w = ada.getItem(which);
 							switch (w.id) {
 							case R.string.epg_item_menu_timer_add: {
+								getApp().setCurrentTimer(timerable.createTimer());
 								final Intent intent = new Intent();
 								intent.setClass(EpgDetailsActivity.this,
 										TimerDetailsActivity.class);
@@ -552,6 +546,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 								break;
 							}
 							case R.string.epg_item_menu_timer_modify: {
+								getApp().setCurrentTimer(timer);
 								final Intent intent = new Intent();
 								intent.setClass(EpgDetailsActivity.this,
 										TimerDetailsActivity.class);

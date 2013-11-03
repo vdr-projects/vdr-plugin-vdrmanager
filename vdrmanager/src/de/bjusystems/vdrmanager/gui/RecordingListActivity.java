@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,6 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.RecordingListItem;
 import de.bjusystems.vdrmanager.tasks.DeleteRecordingTask;
-import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.RecordingClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
@@ -179,10 +179,9 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 	}
 
-	private void updateCurrentFolderInfo() {
+	private void updateCurrentFolderInfo( int size) {
 		folderInfo.setText("/" + currentFolder.replaceAll("~", "/"));
-		final List<Recording> list = CACHE.get(currentFolder);
-		currentCount.setText(String.valueOf(list.size()));
+		currentCount.setText(String.valueOf(size));
 	}
 
 	/*
@@ -208,7 +207,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	@Override
 	protected void prepareDetailsViewData(final EventListItem event) {
 		getApp().setCurrentEvent(event.getEvent());
-		getApp().setCurrentEpgList(CACHE.get(currentFolder));
+		getApp().setCurrentEpgList(CACHEget(currentFolder));
 	}
 
 	@Override
@@ -323,11 +322,11 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		/* */
 		switch (sortBy) {
 		case MENU_GROUP_DEFAULT: {
-			sortItemsByTime(CACHE.get(currentFolder), true);
+			sortItemsByTime(CACHEget(currentFolder), true);
 			break;
 		}
 		case MENU_GROUP_ALPHABET: {
-			Collections.sort(CACHE.get(currentFolder), new TitleComparator());
+			Collections.sort(CACHEget(currentFolder), new TitleComparator());
 			break;
 		}
 		// case MENU_GROUP_CHANNEL: {
@@ -336,16 +335,40 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 	}
 
+	private List<Recording> CACHEget(String currentFolder) {
+		List<Recording> list = CACHE.get(currentFolder);
+		if (list != null) {
+			return list;
+		}
+		return EMPTY;
+	}
+
+	private int getCountInFolder(String base, String folder) {
+
+		if (base.equals(Recording.ROOT_FOLDER) == false) {
+			folder = base + Recording.FOLDERDELIMCHAR + folder;
+		}
+		int count = CACHEget(folder).size();
+
+		Set<String> set = FOLDERS.get(folder);
+
+		if (set == null) {
+			return count;
+		}
+
+		for (String f : set) {
+			count += getCountInFolder(folder, f);
+		}
+
+		return count;
+	}
+
 	@Override
 	protected void fillAdapter() {
 
 		adapter.clear();
-		final List<Recording> list = CACHE.get(currentFolder);
-		if (list == null || list.isEmpty()) {
-			return;
-		}
+		List<Recording> list = CACHEget(currentFolder);
 
-		updateCurrentFolderInfo();
 
 		sort();
 
@@ -353,22 +376,26 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		int day = -1;
 
 		final Set<String> folders = FOLDERS.get(currentFolder);
+		int currenFolderSum = 0;
 		if (folders != null) {
 			for (final String f : folders) {
 				final RecordingListItem recordingListItem = new RecordingListItem(
 						f);
 				recordingListItem.folder = f;
-				final String sf = currentFolder.length() > 0 ? currentFolder
-						+ Recording.FOLDERDELIMCHAR + f : f;
-				final List<Recording> list2 = CACHE.get(sf);
-				if (list2 != null) {
-					recordingListItem.count = list2.size();
-				}
+				// final String sf = currentFolder.length() > 0 ? currentFolder
+				// + Recording.FOLDERDELIMCHAR + f : f;
+				// final List<Recording> list2 = CACHE.get(sf);
+				// if (list2 != null) {
+				recordingListItem.count = getCountInFolder(currentFolder, f);
+				currenFolderSum += recordingListItem.count;
+				// }
 				adapter.add(recordingListItem);
 			}
 		}
 
-		for (final Event rec : CACHE.get(currentFolder)) {
+		updateCurrentFolderInfo(list.size() + currenFolderSum);
+
+		for (final Event rec : CACHEget(currentFolder)) {
 			cal.setTime(rec.getStart());
 			final int eday = cal.get(Calendar.DAY_OF_YEAR);
 			if (eday != day) {
@@ -436,6 +463,15 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 				list.add(value);
 
+				if (key.equals(Recording.ROOT_FOLDER) == false) {
+					Set<String> set = FOLDERS.get(Recording.ROOT_FOLDER);
+					if (set == null) {
+						set = new HashSet<String>();
+						FOLDERS.put(key, set);
+					}
+					set.add(key);
+				}
+
 				// a b
 				// a
 				// c
@@ -498,7 +534,7 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 					String[] split = meta.split(":");
 					if (split.length != 3) {
-						Log.w(TAG, "Recoring list meta ist wrong");
+						Log.w(TAG, "Recoring list meta is wrong");
 						return;
 					}
 
