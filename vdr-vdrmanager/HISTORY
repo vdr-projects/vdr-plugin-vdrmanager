@@ -1,10 +1,16 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
 
-2013-04-xx: Version 0.10 (http://projects.vdr-developer.org/versions/show/328)
+2013-12-25: Version 0.10 (http://projects.vdr-developer.org/versions/show/328)
 - Bug #1314: -f has not function, remove it. Deleting timers is always beeing forced
+- Bug #1325: Response stream is blocked until client sends new data
+- Bug #1532: Streaming Recordings issues
 - Feature #790: use some compression (zlib, gzip) to compress responses server sides
 - Feature #1319: Recording Folders
+- Feature #1386: Add Content Flags as found in svdrp to the event line
+- Feature #1570: Support for VDR >= 2.1.2
+- Feature #1571: Transfer Recording Space Information wit recordings listing command
+
 
 2013-01-xx: Version 0.9 (http://projects.vdr-developer.org/versions/show/312)
 - Improved Timer/Recording deletion
