@@ -126,6 +126,9 @@ OnItemClickListener {
       @Override
       public int compare(final Timer item1, final Timer item2) {
         if (item1.isRecurring()) {
+        	if(item2.isRecurring()){
+        		return 0;
+        	}
           return 1;
         }
         if (item2.isRecurring()) {
