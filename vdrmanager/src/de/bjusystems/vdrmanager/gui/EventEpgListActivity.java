@@ -282,6 +282,9 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private static final ArrayList<Epg> EMPTY = new ArrayList<Epg>(0);
 
 	private ArrayList<Epg> getCache() {
+		if(currentChannel == null){
+			return EMPTY;
+		}
 		final ArrayList<Epg> arrayList = EpgCache.CACHE.get(currentChannel
 				.getId());
 		if (arrayList == null) {
