@@ -404,9 +404,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 						.getDailyHeader()));
 			}
 			adapter.add(new RecordingListItem((Recording) rec));
-			adapter.notifyDataSetChanged();
 		}
-
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
