@@ -218,7 +218,10 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 		case R.id.timer_details_save: {
 			timer.setTitle(tView.title.getText().toString());
-
+			timer.setVps(tView.vps.isChecked());
+			timer.setPriority(getIntOr0(tView.priority));
+			timer.setLifetime(getIntOr0(tView.lifecycle));
+			
 			createTimer(timer);
 			// say(R.string.done);
 			break;
