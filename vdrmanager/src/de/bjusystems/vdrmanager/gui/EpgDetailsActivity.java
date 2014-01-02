@@ -47,7 +47,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
- *
+ * 
  * @author bju
  */
 public class EpgDetailsActivity extends ICSBaseActivity implements
@@ -71,17 +71,19 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 	private String highlight = null;
 
-	//private Event cEvent;
+	// private Event cEvent;
 
 	// private ImageView state;
 
 	private boolean modifed = false;
 
-	//private int current;
+	// private int current;
 
 	private ViewPager pager;
 
-	//private Timerable timerable = null;
+	private Adapter adapter;
+
+	// private Timerable timerable = null;
 
 	class Adapter extends PagerAdapter implements TitleProvider {
 
@@ -159,8 +161,13 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		final Event cEvent = epg;
 
 		if (epg instanceof Timerable) {
-			//timerable = (Timerable) cEvent;
+			// timerable = (Timerable) cEvent;
 		}
+
+		adapter = new Adapter();
+		pager = (ViewPager) findViewById(R.id.viewpager);
+		pager.setOnPageChangeListener(this);
+		pager.setAdapter(adapter);
 
 		new VoidAsyncTask() {
 
@@ -199,17 +206,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			@Override
 			protected void onPostExecute(Void result) {
 
-				Adapter adapter = new Adapter();
-				ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
-				EpgDetailsActivity.this.pager = pager;
-				pager.setOnPageChangeListener(EpgDetailsActivity.this);
-				// TitlePageIndicator indicator = (TitlePageIndicator)
-				// findViewById(R.id.indicator);
-				pager.setAdapter(adapter);
-				//cEvent = epgs.get(counter);
+				// cEvent = epgs.get(counter);
 				pager.setCurrentItem(counter);
 				onPageSelected(counter);
-				//current = counter;
+				// current = counter;
 				// indicator.setViewPager(pager);
 
 				// publishEPG(epg);
@@ -238,8 +238,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 		Timerable timerable = null;
 
-		if(event instanceof Timerable){
-			timerable = (Timerable)event;
+		if (event instanceof Timerable) {
+			timerable = (Timerable) event;
 		}
 
 		view.setTag(event);
@@ -309,10 +309,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			view.findViewById(R.id.audio_block).setVisibility(View.GONE);
 		}
 
-		TextView contentView = ((TextView)view.findViewById(R.id.epg_detail_cats));
-		if(event.getContent().length > 0){
+		TextView contentView = ((TextView) view
+				.findViewById(R.id.epg_detail_cats));
+		if (event.getContent().length > 0) {
 			contentView.setVisibility(View.VISIBLE);
-			contentView.setText(Utils.getContenString(this, event.getContent()));
+			contentView
+					.setText(Utils.getContenString(this, event.getContent()));
 		} else {
 			contentView.setVisibility(View.GONE);
 		}
@@ -485,8 +487,6 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 		final Event cEvent = epgs.get(pager.getCurrentItem());
 
-
-
 		switch (v.getId()) {
 		case R.id.epg_event_livetv:
 			if (cEvent instanceof Recording) {
@@ -514,19 +514,19 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			} else {
 
 				ada.add(new Wrapper(R.string.epg_item_menu_timer_add));
-				if (Utils.isLive(cEvent) && (cEvent instanceof Timerable) && ((Timerable)cEvent).getTimer() == null) {
+				if (Utils.isLive(cEvent) && (cEvent instanceof Timerable)
+						&& ((Timerable) cEvent).getTimer() == null) {
 					ada.add(new Wrapper(R.string.epg_item_menu_timer_record));
 				}
 			}
 
 			final Timerable timerable;
 
-			if(cEvent instanceof Timerable){
-				timerable = (Timerable)cEvent;
+			if (cEvent instanceof Timerable) {
+				timerable = (Timerable) cEvent;
 			} else {
 				return;
 			}
-
 
 			new AlertDialog.Builder(this)
 					.setAdapter(ada, new DialogInterface.OnClickListener() {
@@ -534,7 +534,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 							Wrapper w = ada.getItem(which);
 							switch (w.id) {
 							case R.string.epg_item_menu_timer_add: {
-								getApp().setCurrentTimer(timerable.createTimer());
+								getApp().setCurrentTimer(
+										timerable.createTimer());
 								final Intent intent = new Intent();
 								intent.setClass(EpgDetailsActivity.this,
 										TimerDetailsActivity.class);
@@ -574,7 +575,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 									@Override
 									public void finished(SvdrpEvent event) {
 										modifed = true;
-										EpgCache.CACHE.remove(timer.getChannelId());
+										EpgCache.CACHE.remove(timer
+												.getChannelId());
 										say(R.string.recording_started);
 									}
 								};
@@ -658,7 +660,8 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
 
 		Event cEvent = epgs.get(pager.getCurrentItem());
 
@@ -707,7 +710,6 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			return;
 		}
 
-
 		// View view = pager.getChildAt(current);
 		// ImageView state = (ImageView)
 		// view.findViewById(R.id.epg_timer_state);
@@ -723,7 +725,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			modifed = true;
 			// ??
 		}
-		pager.getAdapter().notifyDataSetChanged();
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -736,10 +738,11 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		}
 	}
 
-	public void onPageScrollStateChanged(int state){
+	public void onPageScrollStateChanged(int state) {
 	}
 
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+	public void onPageScrolled(int position, float positionOffset,
+			int positionOffsetPixels) {
 	}
 
 	public void onPageSelected(int position) {
@@ -748,7 +751,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		String cn = cEvent.getChannelName();
 		// View view = pager.getChildAt(arg0);
 		// state = (ImageView) view.findViewById(R.id.epg_timer_state);
-	setTitle(getString(R.string.epg_of_a_channel, cn, position + 1,
+		setTitle(getString(R.string.epg_of_a_channel, cn, position + 1,
 				epgs.size()));
 	}
 
