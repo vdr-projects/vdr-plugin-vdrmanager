@@ -1,5 +1,7 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
+2014-01-02: Version 0.11 (http://projects.vdr-developer.org/versions/show/339)
+- Bug #1661: Link libz (Makefile)
 
 2013-12-25: Version 0.10 (http://projects.vdr-developer.org/versions/show/328)
 - Bug #1314: -f has not function, remove it. Deleting timers is always beeing forced
