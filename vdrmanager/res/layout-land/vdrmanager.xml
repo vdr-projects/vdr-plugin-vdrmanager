@@ -1,63 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-<LinearLayout
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical" android:padding="10dip">
-	<ImageView android:id="@+id/main_logo" android:layout_width="fill_parent"
-		android:layout_height="80dip" android:src="@drawable/vdr_logo" android:paddingBottom="5dip" />
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="10dip" >
 
-	<!-- <ListView android:id="@+id/vdrmanager_menu" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_below="@id/main_logo"/> -->
+        <ImageView
+            android:id="@+id/main_logo"
+            android:layout_width="fill_parent"
+            android:layout_height="80dip"
+            android:paddingBottom="5dip"
+            android:src="@drawable/vdr_logo" />
 
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:orientation="horizontal" android:padding="3dip">
-			<Button android:text="@string/action_menu_channels"
+        <!--
+         <ListView android:id="@+id/vdrmanager_menu" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_below="@id/main_logo"/>
+        -->
 
-				android:drawableTop="@drawable/btn_channels" android:layout_width="wrap_content"
-				android:id="@+id/action_menu_channels" android:layout_height="wrap_content"
-				android:textColor="#FFF" android:layout_weight="1"
-				android:cacheColorHint="?android:attr/colorBackground"
-				android:background="@android:drawable/list_selector_background"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dip" >
 
+            <Button
+                android:id="@+id/action_menu_channels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/list_selector_background"
+                android:cacheColorHint="?android:attr/colorBackground"
+                android:drawableTop="@drawable/btn_channels"
+                android:text="@string/action_menu_channels"
+                android:textColor="#FFF" />
 
-			<Button android:text="@string/action_menu_recordings"
-		 android:padding="3dip"
-				android:drawableTop="@drawable/btn_recordings" android:layout_width="wrap_content"
-				android:id="@+id/action_menu_recordings" android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:cacheColorHint="?android:attr/colorBackground"
-				android:background="@android:drawable/list_selector_background"
-				 android:textColor="#FFF"
-				/>
+            <Button
+                android:id="@+id/action_menu_recordings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/list_selector_background"
+                android:cacheColorHint="?android:attr/colorBackground"
+                android:drawableTop="@drawable/btn_recordings"
+                android:padding="3dip"
+                android:text="@string/action_menu_recordings"
+                android:textColor="#FFF" />
 
-			<Button
+            <Button
+                android:id="@+id/action_menu_timers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/list_selector_background"
+                android:cacheColorHint="?android:attr/colorBackground"
+                android:drawableTop="@drawable/btn_timer"
+                android:padding="3dip"
+                android:text="@string/action_menu_timers"
+                android:textColor="#FFF" />
+        </LinearLayout>
 
-			    android:id="@+id/action_menu_timers"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_weight="1"
-			    android:background="@android:drawable/list_selector_background"
-			    android:cacheColorHint="?android:attr/colorBackground"
-			    android:drawableTop="@drawable/btn_timer"
-			    android:padding="3dip"
-			    android:text="@string/action_menu_timers"
-			    android:textColor="#FFF" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
 
-		</LinearLayout>
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button
+                android:id="@+id/action_menu_epg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/list_selector_background"
+                android:cacheColorHint="?android:attr/colorBackground"
+                android:drawableTop="@drawable/btn_epglist"
+                android:text="@string/action_menu_epg"
+                android:textColor="#FFF" />
 
-			<Button android:text="@string/action_menu_wakeup"
-				android:layout_weight="1"
-				android:padding="3dip"
-				android:drawableTop="@drawable/btn_wakeup" android:layout_width="wrap_content"
-				android:id="@+id/action_menu_wakeup" android:layout_height="wrap_content"
-				android:cacheColorHint="?android:attr/colorBackground"
-				android:background="@android:drawable/list_selector_background"
-				android:textColor="#FFF" />
-		</LinearLayout>
+            <Button
+                android:id="@+id/action_menu_wakeup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/list_selector_background"
+                android:cacheColorHint="?android:attr/colorBackground"
+                android:drawableTop="@drawable/btn_wakeup"
+                android:padding="3dip"
+                android:text="@string/action_menu_wakeup"
+                android:textColor="#FFF" />
+        </LinearLayout>
+    </LinearLayout>
 
-</LinearLayout>
-	</ScrollView>
+</ScrollView>
