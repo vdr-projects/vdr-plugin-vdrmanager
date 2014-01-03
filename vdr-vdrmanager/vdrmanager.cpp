@@ -16,7 +16,7 @@
 
 #define VDRMANAGER_PORT		6420
 
-static const char *VERSION = "0.10";
+static const char *VERSION = "0.11";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
 class cVdrManager: public cPlugin {
