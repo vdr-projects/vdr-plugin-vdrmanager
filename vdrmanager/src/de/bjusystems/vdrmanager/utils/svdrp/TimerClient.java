@@ -19,9 +19,7 @@ public class TimerClient extends SvdrpClient<Timer> {
 
   /**
    * Constructor
-   * @param host host
-   * @param port port
-   * @param ssl use ssl
+   * @param certificateProblemListener CertificateProblemListener
    */
   public TimerClient(final CertificateProblemListener certificateProblemListener) {
     super(certificateProblemListener);
@@ -30,11 +28,10 @@ public class TimerClient extends SvdrpClient<Timer> {
 
   /**
    * Starts the EPG request
-   * @param parameter parameter for lste
    */
   @Override
   public synchronized void run()   {
-    runCommand("timers");
+    runCommand("timers conflicts");
   }
 
   @Override

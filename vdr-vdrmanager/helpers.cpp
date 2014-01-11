@@ -18,18 +18,21 @@
 #include <vdr/cutter.h>
 #include <vdr/sources.h>
 #include <fstream>
+#include "epgsearch/services.h"
 
 #define TIMER_SEP		"#|#|#"
 // Taken from vdr-ive
 #define INDEXFILESUFFIX   "/index.vdr"
 #define LENGTHFILESUFFIX  "/length.vdr"
 
+static char ServiceInterface[] = "Epgsearch-services-v1.1";
+
 string cHelpers::GetRecordings(string args) {
 	return SafeCall(GetRecordingsIntern);
 }
 
 string cHelpers::GetTimers(string args) {
-	return SafeCall(GetTimersIntern);
+	return SafeCall(GetTimersIntern, args);
 }
 
 string cHelpers::GetChannels(string args) {
@@ -86,13 +89,22 @@ string cHelpers::SearchEvents(string args) {
 	return SafeCall(SearchEventsIntern, Trim(wantedChannels), Trim(pattern));
 }
 
-string cHelpers::GetTimersIntern() {
+string cHelpers::GetTimersIntern(string options) {
+
+  // timer conflicts wanted?
+  set<string> conflicts;
+  if (options.find("conflicts") != string::npos) {
+    conflicts = GetTimerConflicts();
+    if (conflicts.empty()) {
+      conflicts.insert("");
+    }
+  }
 
 	string result = "START\r\n";
 
 	// iterate through all timers
 	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
-		result += ToText(timer);
+		result += ToText(timer, conflicts);
 	}
 
 	return result + "END\r\n";
@@ -740,7 +752,7 @@ string cHelpers::ToText(cRecording * recording) {
 	return result;
 }
 
-string cHelpers::ToText(cTimer * timer) {
+string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 
 	const cChannel * channel = timer->Channel();
 	const char * channelName = channel->Name();
@@ -835,6 +847,16 @@ string cHelpers::ToText(cTimer * timer) {
 
 	result += ConvertWeekdays(timer->WeekDays());
 
+	if (!conflicts.empty()) {
+	  ostringstream index;
+	  index << timer->Index()+1;
+	  if (conflicts.find(index.str()) != conflicts.end()) {
+	    result += ":1";
+	  } else {
+	    result += ":0";
+	  }
+	}
+
 	result += "\r\n";
 
 	return result;
@@ -900,7 +922,7 @@ string cHelpers::ToText(const cEvent * event) {
 	result += "\r\n";
 
 	if (eventTimer) {
-		result += ToText(eventTimer);
+		result += ToText(eventTimer, set<string>());
 	}
 
 	return result;
@@ -1177,4 +1199,50 @@ int cHelpers::ConvertWeekdays(std::string v) {
 	if (str[6] == 'S')
 		res += 1;
 	return res;
+}
+
+set<string> cHelpers::GetTimerConflicts() {
+
+  Epgsearch_services_v1_1 service;
+  set<string> timers;
+  if (cPluginManager::CallFirstService(ServiceInterface, &service)) {
+    cServiceHandler_v1_1* handler = dynamic_cast<cServiceHandler_v1_1*>(service.handler.get());
+    if (handler) {
+      list< string > conflicts = service.handler->TimerConflictList();
+      for (list<string>::iterator it = conflicts.begin(); it != conflicts.end(); it++) {
+        string line = *it;
+        size_t sep = line.find(':');
+        line = line.substr(sep+1);
+
+        while (!line.empty()) {
+          sep = line.find(':');
+          string conflict;
+          if (sep == string::npos) {
+            conflict = line;
+            line = "";
+          } else {
+            conflict = line.substr(0, sep);
+            line = line.substr(sep+1);
+          }
+
+          sep = conflict.rfind('|');
+          conflict = conflict.substr(sep+1);
+          while(!conflict.empty()) {
+            sep = conflict.find('#');
+            string timer;
+            if (sep == string::npos) {
+              timer = conflict;
+              conflict = "";
+            } else {
+              timer = conflict.substr(0, sep);
+              conflict = conflict.substr(sep+1);
+            }
+            timers.insert(timer);
+          }
+        }
+      }
+    }
+  }
+
+  return timers;
 }

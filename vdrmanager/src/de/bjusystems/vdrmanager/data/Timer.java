@@ -32,6 +32,7 @@ public class Timer extends Event implements Timerable {
 	private int priority;
 	private int lifetime;
 	private String weekdays = "-------";
+    private boolean conflict;
 
 	public void setPriority(int priority) {
 		this.priority = priority;
@@ -58,8 +59,6 @@ public class Timer extends Event implements Timerable {
 	 *
 	 * @param timerData
 	 *            result line
-	 * @param channels
-	 *            list of channels
 	 */
 	public Timer(final String timerData) {
 
@@ -103,6 +102,10 @@ public class Timer extends Event implements Timerable {
 			this.weekdays = values[13];
 		}
 
+        if (values.length > 14) {
+            this.conflict = values[14].equals("1");
+        }
+
 
 		description = Utils.mapSpecialChars(description);
 	}
@@ -118,6 +121,7 @@ public class Timer extends Event implements Timerable {
 		t.stop = new Date(stop.getTime());
 		t.title = title;
 		t.weekdays = weekdays;
+        t.conflict = conflict;
 		return t;
 	}
 
@@ -216,6 +220,10 @@ public class Timer extends Event implements Timerable {
 		return (flags & RECORDING) == RECORDING;
 	}
 
+    public boolean isConflict() {
+        return conflict;
+    }
+
 	public void setStart(final Date start) {
 		this.start = start;
 	}
@@ -251,7 +259,11 @@ public class Timer extends Event implements Timerable {
 
 	@Override
 	public TimerMatch getTimerMatch() {
-		return TimerMatch.Full;
+
+        if (isConflict())
+            return TimerMatch.Conflict;
+
+        return TimerMatch.Full;
 	}
 
 

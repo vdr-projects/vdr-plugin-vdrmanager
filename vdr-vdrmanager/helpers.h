@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <sstream>
 #include <queue>
+#include <set>
 
 
 using namespace std;
@@ -36,7 +37,7 @@ private:
   static string SafeCall(string (*)());
   static string SafeCall(string (*)(string), string arg);
   static string SafeCall(string (*)(string, string), string arg1, string arg2);
-  static string GetTimersIntern();
+  static string GetTimersIntern(string options);
   static string GetRecordingsIntern();
   static string GetChannelsIntern(string wantedChannels);
   static string SetChannelIntern(string wantedChannel);
@@ -51,7 +52,7 @@ private:
   static string MapSpecialChars(const cString text);
   static string MapSpecialChars(const string text);
   static string ToText(const cEvent * event);
-  static string ToText(cTimer * timer);
+  static string ToText(cTimer * timer, set<string> conflicts);
   static string ToText(cRecording * recording);
   static string GetAudioTracks(const cChannel* channel);
   static string replaceAll(const string& where, const string& what, const string& replacement);
@@ -63,5 +64,5 @@ private:
   static int ConvertWeekdays(string v);
   static queue<int> ConvertToBinary(int v);
   static string DelRecording(cRecording * r);
-
+  static set<string> GetTimerConflicts();
 };

@@ -138,4 +138,8 @@ public abstract class Event {
 		}
 		return String.valueOf(channelNumber);
 	}
+
+    public boolean isConflict() {
+        return false;
+    }
 }

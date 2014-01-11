@@ -445,16 +445,18 @@ public class Utils {
 	}
 
 	public static int getTimerStateDrawable(final TimerMatch match,
-			final int full, final int begin, final int end) {
-		if (match == TimerMatch.Full) {
-			return full;
-		}
+			final int full, final int begin, final int end, final int conflict) {
 
-		if (match == TimerMatch.Begin) {
-			return begin;
-		}
-
-		return end;
+        switch (match) {
+        case Begin:
+            return begin;
+        case End:
+            return end;
+        case Conflict:
+            return conflict;
+        default:
+            return full;
+        }
 	}
 
 	public static String formatAudio(final Context context,

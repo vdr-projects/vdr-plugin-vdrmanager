@@ -169,26 +169,29 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 			} else {
 				itemHolder.state.setImageResource(R.drawable.timer_none);
 			}
-		} else if (item.getEvent() instanceof Timerable == true) {
+		} else if (item.getEvent() instanceof Timerable) {
 			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();
 			switch (((Timerable) item.getEvent()).getTimerState()) {
 			case Active:
 				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(
 						match, R.drawable.timer_active,
 						R.drawable.timer_active_begin,
-						R.drawable.timer_active_end));
+						R.drawable.timer_active_end,
+                        R.drawable.timer_active_conflict));
 				break;
 			case Inactive:
 				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(
 						match, R.drawable.timer_inactive,
 						R.drawable.timer_inactive_begin,
-						R.drawable.timer_inactive_end));
+						R.drawable.timer_inactive_end,
+                        R.drawable.timer_inactive));
 				break;
 			case Recording:
 				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(
 						match, R.drawable.timer_recording,
 						R.drawable.timer_recording_begin,
-						R.drawable.timer_recording_end));
+						R.drawable.timer_recording_end,
+                        R.drawable.timer_recording_conflict));
 				break;
 			case None:
 				itemHolder.state.setImageResource(R.drawable.timer_none);

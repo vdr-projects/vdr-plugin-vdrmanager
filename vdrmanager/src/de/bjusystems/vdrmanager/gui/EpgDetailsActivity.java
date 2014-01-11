@@ -273,20 +273,24 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			switch (timerable.getTimerState()) {
 			case Active:
 				setState(state, Utils.getTimerStateDrawable(match,
-						R.drawable.timer_active, R.drawable.timer_active_begin,
-						R.drawable.timer_active_end));
+						R.drawable.timer_active,
+                        R.drawable.timer_active_begin,
+						R.drawable.timer_active_end,
+                        R.drawable.timer_active_conflict));
 				break;
 			case Inactive:
 				setState(state, Utils.getTimerStateDrawable(match,
 						R.drawable.timer_inactive,
 						R.drawable.timer_inactive_begin,
-						R.drawable.timer_inactive_end));
+						R.drawable.timer_inactive_end,
+                        R.drawable.timer_inactive));
 				break;
 			case Recording:
 				setState(state, Utils.getTimerStateDrawable(match,
 						R.drawable.timer_recording,
 						R.drawable.timer_recording_begin,
-						R.drawable.timer_recording_end));
+						R.drawable.timer_recording_end,
+                        R.drawable.timer_recording_conflict));
 				break;
 			default:
 				setState(state, R.drawable.timer_none);
@@ -611,12 +615,14 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 						res = Utils.getTimerStateDrawable(match,
 								R.drawable.timer_inactive,
 								R.drawable.timer_inactive_begin,
-								R.drawable.timer_inactive_end);
+								R.drawable.timer_inactive_end,
+                                R.drawable.timer_inactive);
 					} else if (state == TimerState.Inactive) {
 						Utils.getTimerStateDrawable(match,
 								R.drawable.timer_active,
 								R.drawable.timer_active_begin,
-								R.drawable.timer_active_end);
+								R.drawable.timer_active_end,
+                                R.drawable.timer_active_conflict);
 						res = R.drawable.timer_active;
 					}
 					if (res != -1) {
