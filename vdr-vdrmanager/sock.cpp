@@ -350,5 +350,5 @@ void cVdrmanagerClientSocket::Compress() {
   sendsize = compressor.getDataSize();
 
   double ratio = 1.0 * writebuf.length() / sendsize;
-  isyslog("Compression stats: raw %ld, compressed %ld, ratio %f:1", writebuf.length(), sendsize, ratio);
+  dsyslog("[vdrmanager] Compression stats: raw %ld, compressed %ld, ratio %f:1", writebuf.length(), sendsize, ratio);
 }
