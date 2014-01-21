@@ -803,8 +803,8 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 	result += ":";
 	result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
 	const cEvent * event = timer->Event();
-	dsyslog("[vdrmanager] timer's event is NULL. Try find it");
 	if (!event) {
+		dsyslog("[vdrmanager] timer's event is NULL. Try find it");
 		cChannel * channel = Channels.GetByChannelID(
 				timer->Channel()->GetChannelID());
 		if (channel) {
@@ -857,6 +857,12 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 		}
 	}
 
+	result += ":";
+	if (event && event->Vps()) {
+		snprintf(buf, sizeof(buf) - 1, "%lu", event->Vps());
+		result += buf;
+	}
+
 	result += "\r\n";
 
 	return result;
@@ -870,7 +876,6 @@ string cHelpers::ToText(const cEvent * event) {
 // search assigned timer
 
 	//eTimerMatch TimerMatch = tmNone;
-	cTimer * eventTimer = Timers.GetMatch(event);
 
 //	if(eventTimer){
 //
@@ -927,6 +932,8 @@ string cHelpers::ToText(const cEvent * event) {
 	}
 
 	result += "\r\n";
+
+	cTimer * eventTimer = Timers.GetMatch(event);
 
 	if (eventTimer) {
 		result += ToText(eventTimer, set<string>());
