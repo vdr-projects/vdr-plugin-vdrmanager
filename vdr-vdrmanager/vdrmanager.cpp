@@ -19,7 +19,7 @@
 #define VDRMANAGER_CRT_FILE   "/etc/vdr/plugins/vdrmanager/vdrmanager.pem"
 #define VDRMANAGER_KEY_FILE   "/etc/vdr/plugins/vdrmanager/vdrmanager.pem"
 
-static const char *VERSION = "0.11";
+static const char *VERSION = "0.12";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
 
 class cVdrManager: public cPlugin {
@@ -83,12 +83,12 @@ cMenuSetupPage * cVdrManager::SetupMenu(void) {
 }
 
 const char * cVdrManager::CommandLineHelp(void) {
-	return
-	    "  -p port[,sslport]     port number to listen to (sslport = port+1 if not given\n"
-			"  -P password           password (none if not given). No password forces check against svdrphosts.conf.\n"
-			"  -s                    force check against svdrphosts.conf, even if a password was given\n"
-			"  -c compression        selects the compression mode to use (zlib or gzip). Default is zlib\n"
-	    "  -k certfile[,keyfile] cert and key file for SSL (or one file for both)";
+	return  "  -p port                port number to listen to\n"
+			"  -P password            password (none if not given). No password forces check against svdrphosts.conf.\n"
+			"  -s                     force check against svdrphosts.conf, even if a password was given\n"
+			"  -c compression         selects the compression mode to use ('z' for zlib or 'g' for gzip and 'n' for none).\n"
+			"                         Zlib compression is enabled as default or is default compression if youf specify -c without arguments";
+			"  -k certfile[,keyfile]  cert and key file for SSL (or one file for both)";
 }
 
 bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
@@ -98,11 +98,11 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 		case 'p':
 			port = atoi(optarg);
 			{
-			  const char * sep = strchr(optarg, ',');
-			  if (sep)
-			    sslport = atoi(sep+1);
-			  else
-			    sslport = port+1;
+				const char * sep = strchr(optarg, ',');
+				if (sep)
+					sslport = atoi(sep + 1);
+				else
+					sslport = port + 1;
 			}
 			break;
 		case 'P':
@@ -118,21 +118,22 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 				compressionMode = COMPRESSION_GZIP;
 			} else if (optarg[0] == 'z') {
 				compressionMode = COMPRESSION_ZLIB;
+			} else if (optarg[0] == 'n') {
+				compressionMode = COMPRESSION_NONE;
 			} else {
 				return false;
 			}
 			break;
-		case 'k':
-		  {
-		    const char * sep = strchr(optarg, ',');
-		    if (sep == NULL) {
-		      certFile = keyFile = optarg;
-		    } else {
-		      certFile = strndup(optarg, sep-optarg);
-		      keyFile = sep;
-		    }
-		  }
-		  break;
+		case 'k': {
+			const char * sep = strchr(optarg, ',');
+			if (sep == NULL) {
+				certFile = keyFile = optarg;
+			} else {
+				certFile = strndup(optarg, sep - optarg);
+				keyFile = sep;
+			}
+		}
+			break;
 		case '?':
 			return false;
 		default:
@@ -143,7 +144,7 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	if (port <= 0)
 		port = VDRMANAGER_PORT;
 	if (sslport <= 0)
-	  sslport = port+1;
+		sslport = port + 1;
 
 	return true;
 }
@@ -153,7 +154,7 @@ bool cVdrManager::Initialize(void) {
 
 // Start any background activities the plugin shall perform.
 	Thread = new cVdrManagerThread(port, sslport, password, forceCheckSvdrp,
-			                           compressionMode, certFile, keyFile);
+			compressionMode, certFile, keyFile);
 
 	return Thread != NULL;
 }
