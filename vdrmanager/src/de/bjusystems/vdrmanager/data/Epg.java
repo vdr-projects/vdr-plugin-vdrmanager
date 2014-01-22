@@ -2,6 +2,7 @@ package de.bjusystems.vdrmanager.data;
 
 import java.util.Date;
 
+import android.text.TextUtils;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.gui.Utils;
@@ -9,7 +10,7 @@ import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
 /**
  * Class for EPG events
- *
+ * 
  * @author bju
  */
 public class Epg extends Event implements Timerable {
@@ -50,6 +51,11 @@ public class Epg extends Event implements Timerable {
 				}
 			}
 
+		}
+		if (words.length > 10) {
+			if (TextUtils.isEmpty(words[10]) == false) {
+				vps = Long.valueOf(words[10]) * 1000;
+			}
 		}
 	}
 

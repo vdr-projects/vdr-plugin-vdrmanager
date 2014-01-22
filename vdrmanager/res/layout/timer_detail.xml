@@ -110,7 +110,7 @@
 			</LinearLayout>
 			</LinearLayout>
 			
-			 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+			 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/timer_block">
 			      <TextView android:width="80dp" android:text="@string/timer_detail_use_vps" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 			      <CheckBox android:id="@+id/timer_detail_vps" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
 			 </LinearLayout>

@@ -7,9 +7,9 @@ import android.text.TextUtils;
 
 /**
  * Basisc class for all Events
- *
+ * 
  * @author bju,lado
- *
+ * 
  */
 public abstract class Event {
 
@@ -22,9 +22,11 @@ public abstract class Event {
 	protected String description;
 	protected Date start;
 	protected Date stop;
+
 	protected String rawAudio;
 	protected int[] content = {};
-
+	
+	protected long vps = 0;
 
 	public int[] getContent() {
 		return content;
@@ -40,13 +42,12 @@ public abstract class Event {
 		return audio;
 	}
 
-
-	public long getDuration(){
+	public long getDuration() {
 		long millis = getStop().getTime() - getStart().getTime();
 		return millis;
 	}
 
-	public Event(){
+	public Event() {
 
 	}
 
@@ -88,6 +89,8 @@ public abstract class Event {
 		start = event.getStart();
 		stop = event.getStop();
 		rawAudio = event.rawAudio;
+		content = event.content;
+		vps = event.vps;
 	}
 
 	public Long getChannelNumber() {
@@ -105,7 +108,6 @@ public abstract class Event {
 	public String getChannelId() {
 		return channelId;
 	}
-
 
 	public String getShortText() {
 		if (TextUtils.isEmpty(shortText) == false) {
@@ -132,14 +134,23 @@ public abstract class Event {
 		return stop;
 	}
 
-	public String getStreamId(){
-		if(channelId  != null){
+	public String getStreamId() {
+		if (channelId != null) {
 			return channelId;
 		}
 		return String.valueOf(channelNumber);
 	}
 
-    public boolean isConflict() {
-        return false;
-    }
+	public boolean isConflict() {
+		return false;
+	}
+
+	public boolean hasVPS() {
+		return vps > 0;
+	}
+
+	public long getVPS() {
+		return vps;
+	}
+
 }

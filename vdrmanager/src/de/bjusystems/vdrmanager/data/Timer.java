@@ -11,17 +11,16 @@ import de.bjusystems.vdrmanager.gui.Utils;
 
 /**
  * Class for timer data
- *
+ * 
  * @author bju
  */
 public class Timer extends Event implements Timerable {
 
-
-//			 tfActive    = 0x0001,
-//             tfInstant   = 0x0002,
-//             tfVps       = 0x0004,
-//             tfRecording = 0x0008,
-//             tfAll       = 0xFFFF,
+	// tfActive = 0x0001,
+	// tfInstant = 0x0002,
+	// tfVps = 0x0004,
+	// tfRecording = 0x0008,
+	// tfAll = 0xFFFF,
 	private static final int ACTIVE = 1;
 	private static final int INSTANT = 2;
 	private static final int VPS = 4;
@@ -32,31 +31,28 @@ public class Timer extends Event implements Timerable {
 	private int priority;
 	private int lifetime;
 	private String weekdays = "-------";
-    private boolean conflict;
+	private boolean conflict;
+
 
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 
-
 	public void setLifetime(int lifetime) {
 		this.lifetime = lifetime;
 	}
-
 
 	public String getWeekdays() {
 		return weekdays;
 	}
 
-
 	public void setWeekdays(String weekdays) {
 		this.weekdays = weekdays;
 	}
 
-
 	/**
 	 * Constructs a timer from SvdrpHelper result line
-	 *
+	 * 
 	 * @param timerData
 	 *            result line
 	 */
@@ -87,31 +83,39 @@ public class Timer extends Event implements Timerable {
 		this.description = values.length > 9 ? values[9] : "";// aux
 
 		// 10 and 11 are optional if there where event with this timer
-		this.shortText = values.length > 10 ? Utils
-				.mapSpecialChars(values[10]) : "";
+		this.shortText = values.length > 10 ? Utils.mapSpecialChars(values[10])
+				: "";
 
 		if (values.length > 11) {
 			this.description = values[11]; // if real description, set it
 		}
 
-		if(values.length > 12 ){
+		if (values.length > 12) {
 			this.channelId = values[12];
 		}
 
-		if(values.length > 13) {
+		if (values.length > 13) {
 			this.weekdays = values[13];
 		}
 
-        if (values.length > 14) {
-            this.conflict = values[14].equals("1");
-        }
-
+		if (values.length > 14) {
+			this.conflict = values[14].equals("1");
+		}
 
 		description = Utils.mapSpecialChars(description);
+
+		if (values.length > 15) {
+			if (TextUtils.isEmpty(values[15]) == false) {
+				vps = Long.valueOf(values[15]) * 1000;
+			} else if (isVps()) {
+				vps = start.getTime();
+			}
+
+		}
+
 	}
 
-
-	public Timer copy(){
+	public Timer copy() {
 		Timer t = new Timer(this);
 		t.flags = flags;
 		t.number = number;
@@ -121,36 +125,34 @@ public class Timer extends Event implements Timerable {
 		t.stop = new Date(stop.getTime());
 		t.title = title;
 		t.weekdays = weekdays;
-        t.conflict = conflict;
+		t.conflict = conflict;
+		t.vps = vps;
 		return t;
 	}
 
 	public Timer(final Event event) {
-		final Preferences prefs = Preferences.getPreferences();
 
 		this.number = 0;
 		this.flags = ACTIVE;
 		this.channelNumber = event.getChannelNumber();
 		this.channelName = event.getChannelName();
 		this.channelId = event.getChannelId();
-		this.priority = prefs.getTimerDefaultPriority();
-		this.lifetime = prefs.getTimerDefaultLifetime();
 
-		this.start = new Date(event.getStart().getTime()
-				- prefs.getTimerPreMargin() * 60000);
-		this.stop = new Date(event.getStop().getTime()
-				+ prefs.getTimerPostMargin() * 60000);
+		this.start = event.getStart();
+
+		this.stop = event.getStop();
 
 		this.title = event.getTitle();
-		if(Utils.isSerie(event.getContent())){
-			if(TextUtils.isEmpty(event.getShortText()) == false){
-				this.title+="~"+event.getShortText();
+		if (Utils.isSerie(event.getContent())) {
+			if (TextUtils.isEmpty(event.getShortText()) == false) {
+				this.title += "~" + event.getShortText();
 			}
 		}
 		this.description = event.getDescription();
+		this.vps = event.getVPS();
 	}
 
-	public boolean isRecurring(){
+	public boolean isRecurring() {
 		return weekdays.equals("-------") == false;
 	}
 
@@ -158,17 +160,20 @@ public class Timer extends Event implements Timerable {
 
 		final StringBuilder line = new StringBuilder();
 
-		//line.append(number).append(":");
+		// line.append(number).append(":");
 		line.append(flags).append(":");
 		line.append(channelNumber).append(":");
 
 		final Calendar cal = Calendar.getInstance();
 		cal.setTime(start);
 
-		cal.setTimeZone(TimeZone.getTimeZone(Preferences.get().getCurrentVdr().getServerTimeZone()));
+		cal.setTimeZone(TimeZone.getTimeZone(Preferences.get().getCurrentVdr()
+				.getServerTimeZone()));
 
-		line.append((weekdays.equals("-------") == false ? weekdays + "@" : "") + String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
-				cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH)));
+		line.append((weekdays.equals("-------") == false ? weekdays + "@" : "")
+				+ String.format("%04d-%02d-%02d:", cal.get(Calendar.YEAR),
+						cal.get(Calendar.MONTH) + 1,
+						cal.get(Calendar.DAY_OF_MONTH)));
 		line.append(String.format("%02d%02d:", cal.get(Calendar.HOUR_OF_DAY),
 				cal.get(Calendar.MINUTE)));
 
@@ -220,9 +225,9 @@ public class Timer extends Event implements Timerable {
 		return (flags & RECORDING) == RECORDING;
 	}
 
-    public boolean isConflict() {
-        return conflict;
-    }
+	public boolean isConflict() {
+		return conflict;
+	}
 
 	public void setStart(final Date start) {
 		this.start = start;
@@ -232,8 +237,8 @@ public class Timer extends Event implements Timerable {
 		this.stop = stop;
 	}
 
-	public void setVps(boolean useVps){
-		if(useVps){
+	public void setVps(boolean useVps) {
+		if (useVps) {
 			flags = flags | VPS;
 		} else {
 			flags = flags & ~VPS;
@@ -256,16 +261,12 @@ public class Timer extends Event implements Timerable {
 		return new Timer(this);
 	}
 
-
 	@Override
 	public TimerMatch getTimerMatch() {
 
-        if (isConflict())
-            return TimerMatch.Conflict;
+		if (isConflict())
+			return TimerMatch.Conflict;
 
-        return TimerMatch.Full;
+		return TimerMatch.Full;
 	}
-
-
-
 }

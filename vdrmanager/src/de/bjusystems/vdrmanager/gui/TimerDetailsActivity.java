@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,9 +30,11 @@ import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.EpgCache;
 import de.bjusystems.vdrmanager.data.EventFormatter;
+import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
 import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
+import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
@@ -43,6 +46,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 	public static final int REQUEST_CODE_TIMER_EDIT = 35;
 
 	public static final int REQUEST_CODE_TIMER_ADD = 36;
+
+	private CharSequence prevStart;
+
+	private CharSequence prevEnd;
+
+	private CharSequence prevDate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +86,9 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.modifyButton.setOnClickListener(this);
 		tView.repeat.setOnClickListener(this);
 		setContentView(view);
-		timer = getApp().getCurrentTimer();
-		original = timer.copy();
+		timer = getApp().getCurrentTimer().copy();
+		original = getApp().getCurrentTimer().copy();
+
 		int op = getIntent().getExtras().getInt(Intents.TIMER_OP);
 		switch (op) {
 		case Intents.ADD_TIMER:
@@ -94,6 +104,64 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			finish();
 		}
 
+		if (timer.isVps() == false && timer.hasVPS() == false) {
+			findViewById(R.id.timer_block).setVisibility(View.GONE);
+		} else {
+			tView.vps
+					.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(CompoundButton buttonView,
+								boolean isChecked) {
+							if (isChecked == true) {
+								vpsChecked(false);
+							} else {
+								vpsUnchecked();
+							}
+						}
+					});
+		}
+	}
+
+	private void vpsChecked(boolean initial) {
+
+		if (initial == false) {
+			prevStart = tView.startField.getText();
+			prevEnd = tView.endField.getText();
+			prevDate = tView.dateField.getText();
+		}
+
+		DateFormatter formatter = new DateFormatter(new Date(original.getVPS()));
+		String date = formatter.getDateString();
+		tView.startField.setEnabled(false);
+		tView.startField.setText(formatter.getTimeString());
+		timer.setStart(new Date(timer.getVPS()));
+
+		DateFormatter stopF = new DateFormatter(original.getStop());
+
+		tView.endField.setEnabled(false);
+		tView.endField.setText(stopF.getTimeString());
+		timer.setStop(original.getStop());
+
+		tView.dateField.setEnabled(false);
+		tView.dateField.setText(date);
+
+	}
+
+	private void vpsUnchecked() {
+		if (prevStart != null) {
+			tView.startField.setText(prevStart);
+		}
+		tView.startField.setEnabled(true);
+
+		if (prevEnd != null) {
+			tView.endField.setText(prevEnd);
+		}
+		tView.endField.setEnabled(true);
+
+		if (prevDate != null) {
+			tView.dateField.setText(prevDate);
+		}
+		tView.dateField.setEnabled(true);
 	}
 
 	public class EditTimerViewHolder {
@@ -121,39 +189,67 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 	Timer original;
 
+	private void updateDates(Date start, Date stop) {
+		DateFormatter startF = new DateFormatter(start);
+		DateFormatter endF = new DateFormatter(stop);
+		tView.startField.setText(startF.getTimeString());
+		tView.endField.setText(endF.getTimeString());
+		tView.dateField.setText(startF.getDateString());
+	}
+
 	private void updateDisplay(TimerOperation op) {
 		updateDisplay();
+
 		switch (op) {
 		case CREATE:
 			tView.modifyButton.setVisibility(View.GONE);
 			tView.saveButton.setVisibility(View.VISIBLE);
 			tView.saveButton.setText(R.string.timer_details_create_title);
+			Preferences prefs = Preferences.get();
+			tView.priority.setText(String.valueOf(prefs
+					.getTimerDefaultPriority()));
+			tView.lifecycle.setText(String.valueOf(prefs
+					.getTimerDefaultLifetime()));
+
+			Date start = new Date(timer.getStart().getTime()
+					- prefs.getTimerPreMargin() * 60000);
+
+			Date end = new Date(timer.getStop().getTime()
+					+ prefs.getTimerPostMargin() * 60000);
+
+			updateDates(start, end);
 			break;
 		case MODIFY:
 			tView.saveButton.setVisibility(View.GONE);
 			tView.modifyButton.setVisibility(View.VISIBLE);
 			tView.saveButton.setText(R.string.timer_details_save_title);
+			tView.priority.setText(String.valueOf(timer.getPriority()));
+			tView.lifecycle.setText(String.valueOf(timer.getLifetime()));
+			if (timer.isVps()) {
+				vpsChecked(true);
+			} else {
+				updateDates(timer.getStart(), timer.getStop());
+			}
+
 			break;
+		default:
+			throw new RuntimeException("Unknown Operation: " + op);
 		}
+
 	}
 
 	private void updateDisplay() {
-		EventFormatter f = new EventFormatter(timer, true);
 		tView.channel.setText(timer.getChannelNumber() + " "
 				+ timer.getChannelName());
 		// tView.title.setText(timer.isVps() ?
 		// getString(R.string.timer_detail_title_vps, f.getTitle()) :
 		// f.getTitle());
+		EventFormatter f = new EventFormatter(timer, true);
 		tView.title.setText(f.getTitle());
-		tView.dateField.setText(f.getDate());
-		tView.startField.setText(f.getTime());
-		tView.endField.setText(f.getStop());
-		tView.vps.setChecked(timer.isVps());
-		tView.priority.setText(String.valueOf(timer.getPriority()));
-		tView.lifecycle.setText(String.valueOf(timer.getLifetime()));
 		tView.repeat.setText(getSelectedItems().toString(this, true));
 		EpgCache.CACHE.remove(timer.getChannelId());
 		EpgCache.NEXT_REFRESH.remove(timer.getChannelId());
+		tView.vps.setChecked(timer.isVps());
 
 	}
 
@@ -221,7 +317,7 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			timer.setVps(tView.vps.isChecked());
 			timer.setPriority(getIntOr0(tView.priority));
 			timer.setLifetime(getIntOr0(tView.lifecycle));
-			
+
 			createTimer(timer);
 			// say(R.string.done);
 			break;
@@ -235,10 +331,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 					weekdays[Calendar.THURSDAY], weekdays[Calendar.FRIDAY],
 					weekdays[Calendar.SATURDAY], weekdays[Calendar.SUNDAY], };
 
-			final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(getSelectedItems().mDays);
+			final DaysOfWeek mNewDaysOfWeek = new DaysOfWeek(
+					getSelectedItems().mDays);
 
 			final AlertDialog b = new AlertDialog.Builder(this)
-					.setMultiChoiceItems(values, getSelectedItems().getBooleanArray(),
+					.setMultiChoiceItems(values,
+							getSelectedItems().getBooleanArray(),
 							new DialogInterface.OnMultiChoiceClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which, boolean isChecked) {
@@ -251,15 +349,25 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 								public void onClick(DialogInterface dialog,
 										int which) {
 									StringBuilder sb = new StringBuilder(7);
-									sb.append(mNewDaysOfWeek.isSet(0) ? 'M' : '-');
-									sb.append(mNewDaysOfWeek.isSet(1) ? 'T' : '-');
-									sb.append(mNewDaysOfWeek.isSet(2) ? 'W' : '-');
-									sb.append(mNewDaysOfWeek.isSet(3) ? 'T' : '-');
-									sb.append(mNewDaysOfWeek.isSet(4) ? 'F' : '-');
-									sb.append(mNewDaysOfWeek.isSet(5) ? 'S' : '-');
-									sb.append(mNewDaysOfWeek.isSet(6) ? 'S' : '-');
+									sb.append(mNewDaysOfWeek.isSet(0) ? 'M'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(1) ? 'T'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(2) ? 'W'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(3) ? 'T'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(4) ? 'F'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(5) ? 'S'
+											: '-');
+									sb.append(mNewDaysOfWeek.isSet(6) ? 'S'
+											: '-');
 									timer.setWeekdays(sb.toString());
-									tView.repeat.setText(mNewDaysOfWeek.toString(TimerDetailsActivity.this, true));
+									tView.repeat.setText(mNewDaysOfWeek
+											.toString(
+													TimerDetailsActivity.this,
+													true));
 								}
 							}).create();
 
@@ -275,7 +383,6 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		if (str.length() != 7) {
 			return dow;
 		}
-
 
 		dow.set(0, str.charAt(0) == 'M');
 		dow.set(1, str.charAt(1) == 'T');
@@ -308,14 +415,14 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			timer.setStop(calculateTime(timer.getStop(), hourOfDay, minute,
 					timer.getStart()));
 		}
-		updateDisplay();
+		updateDates(timer.getStart(), timer.getStop());
 	}
 
 	public void onDateSet(final DatePicker view, final int year,
 			final int monthOfYear, final int dayOfMonth) {
 		timer.setStart(calculateDate(timer.getStart(), year, monthOfYear,
 				dayOfMonth));
-		updateDisplay();
+		updateDates(timer.getStart(), timer.getStop());
 	}
 
 	private Date calculateDate(final Date oldDate, final int year,
