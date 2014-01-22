@@ -17,11 +17,15 @@ SLOT="0"
 LICENSE="GPL-2"
 IUSE="-stream"
 
-DEPEND=">=media-video/vdr-2
-		dev-libs/openssl
-		sys-libs/zlib
-		app-arch/gzip"
-RDEPEND="stream? ( media-plugins/vdr-streamdev[server] )"
+IUSE="-stream ssl +compress"
+
+DEPEND=">=media-video/vdr-2"
+RDEPEND="
+        stream? ( media-plugins/vdr-streamdev[server] )
+        ssl? ( dev-libs/openssl )
+        compress? ( sys-libs/zlib
+                     app-arch/gzip )
+"
 
 VDRMANAGER_SSL_KEY_DIR="/etc/vdr/plugins/vdrmanager"
 VDRMANAGER_SSL_KEY_FILE="${VDRMANAGER_SSL_KEY_DIR}/vdrmanager"
