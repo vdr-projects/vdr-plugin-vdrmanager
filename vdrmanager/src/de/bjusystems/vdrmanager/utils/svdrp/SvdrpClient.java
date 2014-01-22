@@ -301,6 +301,7 @@ public abstract class SvdrpClient<Result> {
 	protected void disconnect() throws IOException {
 		informListener(SvdrpEvent.DISCONNECTING);
 		if (socket != null && socket.isConnected()) {
+            writeLine("quit");
 			socket.close();
 			socket = null;
 		}

@@ -125,7 +125,7 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
   <string name="vdr_password_title">VDR Plugin Passwort</string>
   <string name="vdr_password_summary">Passwort für das VDR Plugin</string>
   <string name="vdr_ssl_title">Sichere Verbindung</string>
-  <string name="vdr_ssl_summary">Verwende SSL für Verbindungen (aktuell nicht implementiert)</string>
+  <string name="vdr_ssl_summary">Verwende SSL für Verbindungen</string>
   <string name="channel_filter_preferences">Kanaleinstellungen</string>
   <string name="channel_filter_filter_title">Begrenze Kanäle</string>
   <string name="channel_filter_filter_summary">Nur ausgewählte Kanäle verwenden</string>

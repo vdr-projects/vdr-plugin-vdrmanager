@@ -20,11 +20,15 @@ class cVdrManagerThread : public cThread {
 private:
   cSelect * select;
   int port;
+  int sslPort;
   const char * password;
   bool forceCheckSvdrp;
   int compressionMode;
+  const char * certFile;
+  const char * keyFile;
 public:
-  cVdrManagerThread(int port, const char * password, bool forceCheckSvdrp, int compressionMode);
+  cVdrManagerThread(int port, int sslPort, const char * password, bool forceCheckSvdrp, int compressionMode,
+                    const char * certFile, const char * keyFile);
   virtual void Action(void);
   void Shutdown();
 private:

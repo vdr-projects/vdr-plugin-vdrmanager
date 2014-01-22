@@ -120,7 +120,7 @@ herrlado&lt;herrlado@gmail.com&gt;
   <string name="vdr_password_title">Пароль додатку VDR</string>
   <string name="vdr_password_summary">Пароль для додатка VDR</string>
   <string name="vdr_ssl_title">Безпечне підключення</string>
-  <string name="vdr_ssl_summary">Використовувати SSL для підключень (в даний час не підтримується)</string>
+  <string name="vdr_ssl_summary">Використовувати SSL для підключень</string>
   <string name="channel_filter_preferences">Налаштування каналу</string>
   <string name="channel_filter_filter_title">Обмеження на канали</string>
   <string name="channel_filter_filter_summary">Вокористовувати тільки дані канали</string>

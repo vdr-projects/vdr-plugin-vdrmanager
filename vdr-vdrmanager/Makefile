@@ -47,7 +47,7 @@ SOFILE = libvdr-$(PLUGIN).so
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o sock.o vdrmanagerthread.o select.o handler.o helpers.o compressor.o
+OBJS = $(PLUGIN).o sock.o serversock.o clientsock.o vdrmanagerthread.o select.o handler.o helpers.o compressor.o
 
 ### The main target:
 
@@ -96,7 +96,7 @@ install-i18n: $(I18Nmsgs)
 ### Targets:
 
 $(SOFILE): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ -lz
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ -lz -lssl
 
 install-lib: $(SOFILE)
 	install -D $^ $(LIBDIR)/$^.$(APIVERSION)

@@ -7,7 +7,8 @@
 
 #include <string>
 #include <sys/select.h>
-#include "sock.h"
+#include "clientsock.h"
+#include "serversock.h"
 #include "handler.h"
 
 struct node;
@@ -17,6 +18,7 @@ private:
   node * clientsockets;
   int clientsocketcount;
   cVdrmanagerServerSocket * serversocket;
+  cVdrmanagerServerSocket * sslServersocket;
   cHandler * handler;
   struct pollfd * pollfds;
   bool stopped;
@@ -26,13 +28,13 @@ public:
   cSelect();
   virtual ~cSelect();
   void DispatchVdrEvent(string event);
-  void SetServerSocket(cVdrmanagerServerSocket * sock);
+  void SetServerSockets(cVdrmanagerServerSocket * sock, cVdrmanagerServerSocket * sslSock);
   void AddClientSocket(cVdrmanagerClientSocket * sock);
   void RemoveClientSocket(cVdrmanagerClientSocket * sock);
   bool Action();
   bool Stop();
 private:
-  void CreatePollfds();
+  int CreatePollfds();
   cVdrmanagerClientSocket * GetClientSocket(int fd);
   bool Poll();
   void NotifyClients(string event);

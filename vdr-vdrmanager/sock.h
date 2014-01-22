@@ -8,7 +8,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <openssl/ssl.h>
 #include <string>
+
+#define SSL_NO_RETRY       0
+#define SSL_RETRY_READ     1
+#define SSL_RETRY_WRITE    2
 
 using namespace std;
 
@@ -28,49 +33,6 @@ public:
   int GetSocket();
   bool MakeDontBlock();
   const char * GetPassword();
-};
-
-class cVdrmanagerClientSocket : public cVdrmanagerSocket
-{
-private:
-  string readbuf;
-  string writebuf;
-  char * sendbuf;
-  size_t sendsize;
-  size_t sendoffset;
-  bool disconnected;
-  bool initDisconnect;
-  int client;
-  bool login;
-  bool compression;
-  bool initCompression;
-  int compressionMode;
-public:
-  cVdrmanagerClientSocket(const char * password, int compressionMode);
-  virtual ~cVdrmanagerClientSocket();
-  bool Attach(int fd);
-  bool IsLineComplete();
-  bool GetLine(string& line);
-  bool PutLine(string line);
-  bool Read();
-  bool Disconnected();
-  void Disconnect();
-  bool Flush();
-  int GetClientId();
-  bool WritePending();
-  bool IsLoggedIn();
-  void SetLoggedIn();
-  void ActivateCompression();
-  void Compress();
-};
-
-class cVdrmanagerServerSocket : public cVdrmanagerSocket
-{
-public:
-  cVdrmanagerServerSocket();
-  virtual ~cVdrmanagerServerSocket();
-  bool Create(int port, const char * password, bool forceCheckSvdrp, int compressionMode);
-  cVdrmanagerClientSocket * Accept();
 };
 
 #endif

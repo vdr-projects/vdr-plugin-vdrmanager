@@ -56,7 +56,13 @@ bool cCompressor::CompressGzip(string text) {
     close(in_fd[0]);
     close(out_fd[1]);
 
-    write(in_fd[1], text.c_str(), text.length());
+    if (write(in_fd[1], text.c_str(), text.length()) != text.length())
+    {
+      close(in_fd[1]);
+      close(out_fd[0]);
+      return false;
+    }
+
     close(in_fd[1]);
 
     char buf[32*1024];

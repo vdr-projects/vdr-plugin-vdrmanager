@@ -144,7 +144,7 @@
     <string name="vdr_password_title">VDR plugin password</string>
     <string name="vdr_password_summary">Password for the VDR plugin</string>
     <string name="vdr_ssl_title">Secure connect</string>
-    <string name="vdr_ssl_summary">Use SSL for connections (currently not supported)</string>
+    <string name="vdr_ssl_summary">Use SSL for connections</string>
 
     <!-- channel filter preferences -->
     <string name="channel_filter_preferences">Channel settings</string>

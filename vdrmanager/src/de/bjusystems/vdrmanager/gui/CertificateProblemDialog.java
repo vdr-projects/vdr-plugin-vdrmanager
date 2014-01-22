@@ -32,7 +32,14 @@ public class CertificateProblemDialog implements CertificateProblemListener {
     final Semaphore semaphore = new Semaphore(0, true);
 
     // certificate properties
-    final String host = chain[0].getSubjectDN().getName().split(",")[0].replace("CN=", "").trim();
+    final String[] values = chain[0].getSubjectDN().getName().split(",");
+    String host = "???";
+    for(String value : values) {
+      if (value.contains("CN=")) {
+        host = value.replace("CN=", "").trim();
+        break;
+      }
+    }
     final String creationDate = chain[0].getNotBefore().toLocaleString();
     final String validUntil = chain[0].getNotAfter().toLocaleString();
 

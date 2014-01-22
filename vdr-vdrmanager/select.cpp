@@ -17,6 +17,7 @@ struct node {
 
 cSelect::cSelect() {
 	serversocket = NULL;
+	sslServersocket = NULL;
 	clientsockets = NULL;
 	clientsocketcount = 0;
 	handler = new cHandler;
@@ -29,6 +30,8 @@ cSelect::cSelect() {
 cSelect::~cSelect() {
 	if (serversocket)
 		delete serversocket;
+	if (sslServersocket)
+	  delete sslServersocket;
 
 	while (clientsockets) {
 		node * next = clientsockets->next;
@@ -44,8 +47,9 @@ cSelect::~cSelect() {
 		delete pollfds;
 }
 
-void cSelect::SetServerSocket(cVdrmanagerServerSocket * sock) {
+void cSelect::SetServerSockets(cVdrmanagerServerSocket * sock, cVdrmanagerServerSocket * sslSock) {
 	serversocket = sock;
+	sslServersocket = sslSock;
 }
 
 void cSelect::AddClientSocket(cVdrmanagerClientSocket * sock) {
@@ -107,31 +111,58 @@ bool cSelect::Action() {
 	return true;
 }
 
-void cSelect::CreatePollfds() {
+int cSelect::CreatePollfds() {
+
+  int i = 0;
+
+  int count = clientsocketcount + (sslServersocket ? 2 : 1);
 
   // we poll for the server socket and for each client socket
-	pollfds = new struct pollfd[clientsocketcount + 1];
-	pollfds[0].fd = serversocket->GetSocket();
-	pollfds[0].events = POLLIN;
+	pollfds = new struct pollfd[count];
+
+	pollfds[i].fd = serversocket->GetSocket();
+	pollfds[i].revents = 0;
+  pollfds[i++].events = POLLIN;
+
+  if (sslServersocket) {
+    pollfds[i].fd = sslServersocket->GetSocket();
+    pollfds[i].revents = 0;
+    pollfds[i++].events = POLLIN;
+  }
 
 	node * curnode = clientsockets;
-	int i = 1;
 	while (curnode) {
-		pollfds[i].fd = curnode->socket->GetSocket();
-		pollfds[i].events = POLLIN | POLLHUP;
-		if (curnode->socket->WritePending()) {
-			pollfds[i].events |= POLLOUT;
+	  cVdrmanagerClientSocket * sock = curnode->socket;
+		pollfds[i].fd = sock->GetSocket();
+		if (sock->IsSSL()) {
+		  if (sock->GetSslWantsSelect() == SSL_ERROR_WANT_READ) {
+		    pollfds[i].events = POLLIN | POLLHUP;
+		  } else if (sock->GetSslWantsSelect() == SSL_ERROR_WANT_WRITE) {
+		    pollfds[i].events = POLLOUT;
+		  } else {
+		    pollfds[i].events = POLLIN | POLLHUP;
+		    if (sock->WritePending())
+		      pollfds[i].events |= POLLOUT;
+		  }
+		} else {
+		  pollfds[i].events = POLLIN | POLLHUP;
+		  if (curnode->socket->WritePending())
+		    pollfds[i].events |= POLLOUT;
 		}
 		pollfds[i++].revents = 0;
 		curnode = curnode->next;
 	}
+
+	return count;
 }
 
 bool cSelect::Poll() {
+
 	// poll for events
-	CreatePollfds();
+	int count = CreatePollfds();
+
 	int rc = 0;
-	while ((rc = poll(pollfds, clientsocketcount + 1, -1)) < 0) {
+	while ((rc = poll(pollfds, count, -1)) < 0) {
 		if (errno != EINTR)
 			break;
 	}
@@ -146,10 +177,16 @@ bool cSelect::Poll() {
 		return true;
 
 	// client requests or outstanding writes
-	for (int i = 1; i < clientsocketcount + 1; i++) {
+	for (int i = (sslServersocket ? 2 : 1); i < count; i++) {
 		cVdrmanagerClientSocket * sock = GetClientSocket(pollfds[i].fd);
 		if (sock) {
-      if (pollfds[i].revents & POLLOUT) {
+		  if ((pollfds[i].revents & (POLLIN|POLLOUT)) && sock->GetSslReadWrite() != SSL_NO_RETRY) {
+		    if (sock->GetSslReadWrite() == SSL_RETRY_READ) {
+		      handler->HandleClientRequest(sock);
+		    } else {
+		      sock->Flush();
+		    }
+		  } else if (pollfds[i].revents & POLLOUT) {
         // possibly outstanding writes
         sock->Flush();
       } else if (pollfds[i].revents & (POLLIN | POLLHUP)) {
@@ -165,15 +202,22 @@ bool cSelect::Poll() {
 	}
 
 	// new client?
-	if (pollfds[0].revents & POLLIN) {
-		// get client socket
-		cVdrmanagerClientSocket * sock = serversocket->Accept();
-		if (sock) {
-			// Add client socket
-			AddClientSocket(sock);
-			// Send current data
-			handler->HandleNewClient(sock);
-		}
+	for(int i = 0; i < (sslServersocket ? 2 : 1); i++) {
+    if (pollfds[i].revents & POLLIN) {
+      // get client socket
+      cVdrmanagerClientSocket * sock;
+      if (i == 0)
+        sock = serversocket->Accept();
+      else
+        sock = sslServersocket->Accept();
+
+      if (sock) {
+        // Add client socket
+        AddClientSocket(sock);
+        // Send current data
+        handler->HandleNewClient(sock);
+      }
+    }
 	}
 
 	delete pollfds;
