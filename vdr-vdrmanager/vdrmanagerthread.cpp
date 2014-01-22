@@ -64,7 +64,7 @@ bool cVdrManagerThread::Init()
     }
   } else {
     sslSock = NULL;
-    isyslog("[vdrmanager] SSL key files %s and %s can't be read. SSL disabled.", certFile, keyFile);
+    esyslog("[vdrmanager] SSL key files %s and %s can't be read. SSL disabled.", certFile, keyFile);
   }
 
   // register server sockets

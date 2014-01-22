@@ -25,8 +25,6 @@ bool cHandler::HandleClientRequest(cVdrmanagerClientSocket * sock)
     string line;
     sock->GetLine(line);
 
-    isyslog("[vdrmanager] got %s", line.c_str());
-
     // parse request
     size_t space = line.find(' ');
     string cmd;
