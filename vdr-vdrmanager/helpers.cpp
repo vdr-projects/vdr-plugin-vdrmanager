@@ -91,14 +91,14 @@ string cHelpers::SearchEvents(string args) {
 
 string cHelpers::GetTimersIntern(string options) {
 
-  // timer conflicts wanted?
-  set<string> conflicts;
-  if (options.find("conflicts") != string::npos) {
-    conflicts = GetTimerConflicts();
-    if (conflicts.empty()) {
-      conflicts.insert("");
-    }
-  }
+	// timer conflicts wanted?
+	set<string> conflicts;
+	if (options.find("conflicts") != string::npos) {
+		conflicts = GetTimerConflicts();
+		if (conflicts.empty()) {
+			conflicts.insert("");
+		}
+	}
 
 	string result = "START\r\n";
 
@@ -614,7 +614,7 @@ long cHelpers::Duration(cRecording* recording) {
 #endif
 	if (RecLength == 0) {
 		cString lengthFile = cString::sprintf("%s%s", recording->FileName(),
-				LENGTHFILESUFFIX);
+		LENGTHFILESUFFIX);
 		ifstream length(*lengthFile);
 		if (length)
 			length >> RecLength;
@@ -803,8 +803,8 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 	result += ":";
 	result += MapSpecialChars(timer->Aux() ? timer->Aux() : "");
 	const cEvent * event = timer->Event();
-	dsyslog("[vdrmanager] timer's event is NULL. Try find it");
 	if (!event) {
+		dsyslog("[vdrmanager] timer's event is NULL. Try find it");
 		cChannel * channel = Channels.GetByChannelID(
 				timer->Channel()->GetChannelID());
 		if (channel) {
@@ -848,13 +848,19 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 	result += ConvertWeekdays(timer->WeekDays());
 
 	if (!conflicts.empty()) {
-	  ostringstream index;
-	  index << timer->Index()+1;
-	  if (conflicts.find(index.str()) != conflicts.end()) {
-	    result += ":1";
-	  } else {
-	    result += ":0";
-	  }
+		ostringstream index;
+		index << timer->Index() + 1;
+		if (conflicts.find(index.str()) != conflicts.end()) {
+			result += ":1";
+		} else {
+			result += ":0";
+		}
+	}
+
+	result += ":";
+	if (event && event->Vps()) {
+		snprintf(buf, sizeof(buf) - 1, "%lu", event->Vps());
+		result += buf;
 	}
 
 	result += "\r\n";
@@ -870,7 +876,6 @@ string cHelpers::ToText(const cEvent * event) {
 // search assigned timer
 
 	//eTimerMatch TimerMatch = tmNone;
-	cTimer * eventTimer = Timers.GetMatch(event);
 
 //	if(eventTimer){
 //
@@ -919,7 +924,16 @@ string cHelpers::ToText(const cEvent * event) {
 			sep = " ";
 		}
 	}
+
+	result += ":";
+	if (event->Vps()) {
+		snprintf(buf, sizeof(buf) - 1, "%lu", event->Vps());
+		result += buf;
+	}
+
 	result += "\r\n";
+
+	cTimer * eventTimer = Timers.GetMatch(event);
 
 	if (eventTimer) {
 		result += ToText(eventTimer, set<string>());
@@ -1203,46 +1217,48 @@ int cHelpers::ConvertWeekdays(std::string v) {
 
 set<string> cHelpers::GetTimerConflicts() {
 
-  Epgsearch_services_v1_1 service;
-  set<string> timers;
-  if (cPluginManager::CallFirstService(ServiceInterface, &service)) {
-    cServiceHandler_v1_1* handler = dynamic_cast<cServiceHandler_v1_1*>(service.handler.get());
-    if (handler) {
-      list< string > conflicts = service.handler->TimerConflictList();
-      for (list<string>::iterator it = conflicts.begin(); it != conflicts.end(); it++) {
-        string line = *it;
-        size_t sep = line.find(':');
-        line = line.substr(sep+1);
+	Epgsearch_services_v1_1 service;
+	set<string> timers;
+	if (cPluginManager::CallFirstService(ServiceInterface, &service)) {
+		cServiceHandler_v1_1* handler =
+				dynamic_cast<cServiceHandler_v1_1*>(service.handler.get());
+		if (handler) {
+			list<string> conflicts = service.handler->TimerConflictList();
+			for (list<string>::iterator it = conflicts.begin();
+					it != conflicts.end(); it++) {
+				string line = *it;
+				size_t sep = line.find(':');
+				line = line.substr(sep + 1);
 
-        while (!line.empty()) {
-          sep = line.find(':');
-          string conflict;
-          if (sep == string::npos) {
-            conflict = line;
-            line = "";
-          } else {
-            conflict = line.substr(0, sep);
-            line = line.substr(sep+1);
-          }
+				while (!line.empty()) {
+					sep = line.find(':');
+					string conflict;
+					if (sep == string::npos) {
+						conflict = line;
+						line = "";
+					} else {
+						conflict = line.substr(0, sep);
+						line = line.substr(sep + 1);
+					}
 
-          sep = conflict.rfind('|');
-          conflict = conflict.substr(sep+1);
-          while(!conflict.empty()) {
-            sep = conflict.find('#');
-            string timer;
-            if (sep == string::npos) {
-              timer = conflict;
-              conflict = "";
-            } else {
-              timer = conflict.substr(0, sep);
-              conflict = conflict.substr(sep+1);
-            }
-            timers.insert(timer);
-          }
-        }
-      }
-    }
-  }
+					sep = conflict.rfind('|');
+					conflict = conflict.substr(sep + 1);
+					while (!conflict.empty()) {
+						sep = conflict.find('#');
+						string timer;
+						if (sep == string::npos) {
+							timer = conflict;
+							conflict = "";
+						} else {
+							timer = conflict.substr(0, sep);
+							conflict = conflict.substr(sep + 1);
+						}
+						timers.insert(timer);
+					}
+				}
+			}
+		}
+	}
 
-  return timers;
+	return timers;
 }
