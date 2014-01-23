@@ -3,7 +3,11 @@
  */
 #include <unistd.h>
 #include <vdr/plugin.h>
+
+#if VDRMANAGER_USE_SSL
 #include <openssl/err.h>
+#endif
+
 #include "serversock.h"
 #include "helpers.h"
 #include "compressor.h"
@@ -19,8 +23,10 @@ cVdrmanagerServerSocket::cVdrmanagerServerSocket() : cVdrmanagerSocket() {
 }
 
 cVdrmanagerServerSocket::~cVdrmanagerServerSocket() {
+#if VDRMANAGER_USE_SSL
   if (sslCtx)
     SSL_CTX_free(sslCtx);
+#endif
 }
 
 bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp, int compressionMode,
@@ -68,6 +74,8 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 		return false;
 	}
 
+#if VDRMANAGER_USE_SSL
+
   if (certFile) {
     isyslog("[vdrmanager] initialize SSL");
 
@@ -104,6 +112,7 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 
    SSL_CTX_set_mode(sslCtx, SSL_MODE_ENABLE_PARTIAL_WRITE);
   }
+#endif
 
 	return true;
 }

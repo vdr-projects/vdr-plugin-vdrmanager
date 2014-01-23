@@ -3,7 +3,6 @@
  */
 #include <unistd.h>
 #include <vdr/plugin.h>
-#include <openssl/err.h>
 #include "sock.h"
 #include "helpers.h"
 #include "compressor.h"

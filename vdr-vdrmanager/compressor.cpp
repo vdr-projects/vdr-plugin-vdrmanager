@@ -5,14 +5,21 @@
  *      Author: bju
  */
 
-#include "compressor.h"
+#if VDRMANAGER_USE_ZLIB || VDRMANAGER_USE_GZIP
 
-#include <zlib.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include "compressor.h"
+
+#if VDRMANAGER_USE_ZLIB
+#include <zlib.h>
 
 #define CHUNK 16384
+#endif
+
 
 cCompressor::cCompressor() {
   size = 0;
@@ -22,6 +29,8 @@ cCompressor::cCompressor() {
 cCompressor::~cCompressor() {
 
 }
+
+#if VDRMANAGER_USE_GZIP
 
 bool cCompressor::CompressGzip(string text) {
 
@@ -94,6 +103,10 @@ bool cCompressor::CompressGzip(string text) {
   return true;
 }
 
+#endif
+
+#if VDRMANAGER_USE_ZLIB
+
 bool cCompressor::CompressZlib(string text) {
 
   int ret, flush;
@@ -160,6 +173,8 @@ bool cCompressor::CompressZlib(string text) {
   return true;
 }
 
+#endif
+
 char * cCompressor::GetData() {
   return data;
 }
@@ -168,3 +183,4 @@ size_t cCompressor::getDataSize() {
   return size;
 }
 
+#endif

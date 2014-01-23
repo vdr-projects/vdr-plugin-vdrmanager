@@ -15,9 +15,25 @@
 #include "compressor.h"
 
 #define VDRMANAGER_PORT		    6420
+
+#if VDRMANAGER_USE_SSL
 #define VDRMANAGER_SSL_PORT   6421
 #define VDRMANAGER_CRT_FILE   "/etc/vdr/plugins/vdrmanager/vdrmanager.pem"
 #define VDRMANAGER_KEY_FILE   "/etc/vdr/plugins/vdrmanager/vdrmanager.pem"
+#endif
+
+#define VDRMANAGER_ARGS_COMMON "p:P:s"
+#if VDRMANAGER_USE_SSL
+#define VDRMANAGER_ARGS_SSL "k:"
+#else
+#define VDRMANAGER_ARGS_SSL
+#endif
+#if VDRMNAGER_USE_GZIP || VDRMANAGER_USE_ZLIB
+#define VDRMANAGER_ARGS_COMPRESS "c::"
+#else
+#define VDRMANAGER_ARGS_COMPRESS
+#endif
+#define VDRMANAGER_ARGS VDRMANAGER_ARGS_COMMON VDRMANAGER_ARGS_SSL VDRMANAGER_ARGS_COMPRESS
 
 static const char *VERSION = "0.12";
 static const char *DESCRIPTION = "VDR-Manager support plugin";
@@ -27,12 +43,14 @@ private:
 	// Add any member variables or functions you may need here.
 	cVdrManagerThread * Thread;
 	int port;
-	int sslport;
 	const char * password;
 	bool forceCheckSvdrp;
 	int compressionMode;
+#if VDRMANAGER_USE_SSL
+  int sslport;
 	const char * certFile;
 	const char * keyFile;
+#endif
 protected:
 public:
 	cVdrManager(void);
@@ -62,12 +80,14 @@ cVdrManager::cVdrManager(void) {
 	// VDR OBJECTS TO EXIST OR PRODUCE ANY OUTPUT!
 	Thread = NULL;
 	port = VDRMANAGER_PORT;
-	sslport = VDRMANAGER_SSL_PORT;
 	password = "";
 	forceCheckSvdrp = false;
 	compressionMode = COMPRESSION_NONE;
+#if VDRMANAGER_USE_SSL
+  sslport = VDRMANAGER_SSL_PORT;
 	certFile = VDRMANAGER_CRT_FILE;
 	keyFile = VDRMANAGER_KEY_FILE;
+#endif
 }
 
 cVdrManager::~cVdrManager() {
@@ -88,15 +108,19 @@ const char * cVdrManager::CommandLineHelp(void) {
 			"  -s                     force check against svdrphosts.conf, even if a password was given\n"
 			"  -c compression         selects the compression mode to use ('z' for zlib or 'g' for gzip and 'n' for none).\n"
 			"                         Zlib compression is enabled as default or is default compression if youf specify -c without arguments";
-			"  -k certfile[,keyfile]  cert and key file for SSL (or one file for both)";
+#if VDRMANAGER_USE_SSL
+			"  -k certfile[,keyfile]  cert and key file for SSL (or one file for both)"
+#endif
+	;
 }
 
 bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "c::p:P:st:k:")) != -1)
+	while ((c = getopt(argc, argv, VDRMANAGER_ARGS)) != -1)
 		switch (c) {
 		case 'p':
 			port = atoi(optarg);
+#if VDRMANAGER_USE_SSL
 			{
 				const char * sep = strchr(optarg, ',');
 				if (sep)
@@ -104,6 +128,7 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 				else
 					sslport = port + 1;
 			}
+#endif
 			break;
 		case 'P':
 			password = optarg;
@@ -111,6 +136,7 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 		case 's':
 			forceCheckSvdrp = true;
 			break;
+#if VDRMANAGER_USE_GZIP || VDRMANAGER_USE_ZLIB
 		case 'c':
 			if (!optarg) {
 				compressionMode = COMPRESSION_ZLIB;
@@ -124,27 +150,34 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 				return false;
 			}
 			break;
-		case 'k': {
-			const char * sep = strchr(optarg, ',');
-			if (sep == NULL) {
-				certFile = keyFile = optarg;
-			} else {
-				certFile = strndup(optarg, sep - optarg);
-				keyFile = sep;
-			}
-		}
+#endif
+#if VDRMANAGER_USE_SSL
+		case 'k':
+		  {
+		    const char * sep = strchr(optarg, ',');
+		    if (sep == NULL) {
+		      certFile = keyFile = optarg;
+		    } else {
+		      certFile = strndup(optarg, sep - optarg);
+		      keyFile = sep;
+		    }
+		  }
 			break;
+#endif
 		case '?':
 			return false;
 		default:
 			return false;
 		}
 
-// default port
+	// default port
 	if (port <= 0)
 		port = VDRMANAGER_PORT;
+
+#if VDRMANAGER_USE_SSL
 	if (sslport <= 0)
 		sslport = port + 1;
+#endif
 
 	return true;
 }
@@ -153,8 +186,16 @@ bool cVdrManager::Initialize(void) {
 // Initialize any background activities the plugin shall perform.
 
 // Start any background activities the plugin shall perform.
-	Thread = new cVdrManagerThread(port, sslport, password, forceCheckSvdrp,
-			compressionMode, certFile, keyFile);
+	Thread = new cVdrManagerThread(port,
+#if VDRMANAGER_USE_SSL
+	    sslport,
+#endif
+	    password, forceCheckSvdrp
+			, compressionMode
+#if VDRMANAGER_USE_SSL
+			, certFile, keyFile
+#endif
+			);
 
 	return Thread != NULL;
 }

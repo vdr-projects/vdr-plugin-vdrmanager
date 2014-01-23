@@ -15,13 +15,14 @@ SRC_URI="mirror://vdr-developerorg/${VERSION}/${P}.tar.gz"
 KEYWORDS="~x86 ~amd64"
 SLOT="0"
 LICENSE="GPL-2"
-IUSE="-stream"
+IUSE="-stream +ssl +zlib -gzip"
 
 DEPEND=">=media-video/vdr-2
-		dev-libs/openssl
-		sys-libs/zlib
-		app-arch/gzip"
-RDEPEND="stream? ( media-plugins/vdr-streamdev[server] )"
+        ssl? ( dev-libs/openssl )
+        zlib? ( sys-libs/zlib )"
+RDEPEND="stream? ( media-plugins/vdr-streamdev[server] )
+         gzip? ( app-arch/gzip )
+         $DEPEND"
 
 VDRMANAGER_SSL_KEY_DIR="/etc/vdr/plugins/vdrmanager"
 VDRMANAGER_SSL_KEY_FILE="${VDRMANAGER_SSL_KEY_DIR}/vdrmanager"
@@ -48,12 +49,21 @@ make_vdrmanager_cert() {
 	fperms 600 "${ROOT}${VDRMANAGER_SSL_KEY_FILE}.pem"
 }
 
+src_prepare() {
+
+	use ssl  || BUILD_PARAMS="$BUILD_PARAMS VDRMANAGER_USE_SSL=0"
+	use gzip || BUILD_PARAMS="$BUILD_PARAMS VDRMANAGER_USE_GZIP=0"
+	use zlib || BUILD_PARAMS="$BUILD_PARAMS VDRMANAGER_USE_ZLIB=0"
+
+	vdr-plugin-2_src_prepare
+}
+
 pkg_postinst() {
 	vdr-plugin-2_pkg_postinst
 
 	einfo "Add a password to /etc/conf.d/vdr.vdrmanager"
 
-	if use ssl ; then
+	if use ssl; then
 		if path_exists -a "${ROOT}${VDRMANAGER_SSL_KEY_FILE}.pem"; then
 			einfo "found an existing SSL cert, to create a new SSL cert, run:\n"
 			einfo "emerge --config ${PN}"
@@ -61,6 +71,13 @@ pkg_postinst() {
 			einfo "No SSL cert found, creating a default one now"
 			make_vdrmanager_cert
 		fi
+		einfo
+	fi
+
+	if use gzip; then
+		einfo 'The plugin was installed with USE flag "gzip" set.'
+		einfo 'You must install app-arch/gzip to use the gzip'
+		einfo 'compression method.'
 	fi
 }
 

@@ -134,6 +134,7 @@ int cSelect::CreatePollfds() {
 	while (curnode) {
 	  cVdrmanagerClientSocket * sock = curnode->socket;
 		pollfds[i].fd = sock->GetSocket();
+#if VDRMANAGER_USE_SSL
 		if (sock->IsSSL()) {
 		  if (sock->GetSslWantsSelect() == SSL_ERROR_WANT_READ) {
 		    pollfds[i].events = POLLIN | POLLHUP;
@@ -145,10 +146,13 @@ int cSelect::CreatePollfds() {
 		      pollfds[i].events |= POLLOUT;
 		  }
 		} else {
+#endif
 		  pollfds[i].events = POLLIN | POLLHUP;
 		  if (curnode->socket->WritePending())
 		    pollfds[i].events |= POLLOUT;
+#if VDRMANAGER_USE_SSL
 		}
+#endif
 		pollfds[i++].revents = 0;
 		curnode = curnode->next;
 	}
@@ -180,13 +184,16 @@ bool cSelect::Poll() {
 	for (int i = (sslServersocket ? 2 : 1); i < count; i++) {
 		cVdrmanagerClientSocket * sock = GetClientSocket(pollfds[i].fd);
 		if (sock) {
+#if VDRMANAGER_USE_SSL
 		  if ((pollfds[i].revents & (POLLIN|POLLOUT)) && sock->GetSslReadWrite() != SSL_NO_RETRY) {
 		    if (sock->GetSslReadWrite() == SSL_RETRY_READ) {
 		      handler->HandleClientRequest(sock);
 		    } else {
 		      sock->Flush();
 		    }
-		  } else if (pollfds[i].revents & POLLOUT) {
+		  } else
+#endif
+		  if (pollfds[i].revents & POLLOUT) {
         // possibly outstanding writes
         sock->Flush();
       } else if (pollfds[i].revents & (POLLIN | POLLHUP)) {

@@ -8,17 +8,27 @@
 #include "select.h"
 #include "helpers.h"
 
-cVdrManagerThread::cVdrManagerThread(int port, int sslPort, const char * password, bool forceCheckSvdrp, int compressionMode,
-                                     const char * certFile, const char * keyFile)
+cVdrManagerThread::cVdrManagerThread(int port,
+#if VDRMANAGER_USE_SSL
+                                     int sslPort,
+#endif
+                                     const char * password, bool forceCheckSvdrp,
+                                     int compressionMode
+#if VDRMANAGER_USE_SSL
+                                     , const char * certFile, const char * keyFile
+#endif
+                                     )
 {
   select = NULL;
   this->port = port;
-  this->sslPort = sslPort;
   this->password = password;
   this->forceCheckSvdrp = forceCheckSvdrp;
   this->compressionMode = compressionMode;
+#if VDRMANAGER_USE_SSL
+  this->sslPort = sslPort;
   this->certFile = certFile;
   this->keyFile = keyFile;
+#endif
 }
 
 cVdrManagerThread::~cVdrManagerThread()
@@ -56,6 +66,7 @@ bool cVdrManagerThread::Init()
   // register server sockets
   select->SetServerSockets(sock, NULL);
 
+#if VDRMANAGER_USE_SSL
   cVdrmanagerServerSocket * sslSock;
   if (!access(certFile, R_OK) && !access(keyFile, R_OK))  {
     sslSock = new cVdrmanagerServerSocket();
@@ -69,6 +80,7 @@ bool cVdrManagerThread::Init()
 
   // register server sockets
   select->SetServerSockets(sock, sslSock);
+#endif
 
   return true;
 }

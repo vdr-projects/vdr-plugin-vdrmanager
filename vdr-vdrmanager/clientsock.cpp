@@ -3,7 +3,11 @@
  */
 #include <unistd.h>
 #include <vdr/plugin.h>
+
+#if VDRMANAGER_USE_SSL
 #include <openssl/err.h>
+#endif
+
 #include "clientsock.h"
 #include "helpers.h"
 #include "compressor.h"
@@ -27,15 +31,19 @@ cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int comp
 	login = false;
 	compression = false;
 	initCompression = false;
+#if VDRMANAGER_USE_SSL
 	ssl = NULL;
 	sslReadWrite = SSL_NO_RETRY;
 	sslWantsSelect = SSL_ERROR_NONE;
+#endif
 }
 
 cVdrmanagerClientSocket::~cVdrmanagerClientSocket() {
+#if VDRMANAGER_USE_SSL
   if (ssl) {
     SSL_free(ssl);
   }
+#endif
 }
 
 bool cVdrmanagerClientSocket::IsLineComplete() {
@@ -73,16 +81,14 @@ bool cVdrmanagerClientSocket::Read() {
 	if (Disconnected())
 		return false;
 
-	sslReadWrite = SSL_NO_RETRY;
-	sslWantsSelect = SSL_ERROR_NONE;
-
 	int rc;
 	for(;;) {
-	  if (ssl) {
+#if VDRMANAGER_USE_SSL
+	  if (ssl)
 	    rc = ReadSSL();
-	  } else {
+	  else
+#endif
 	    rc = ReadNoSSL();
-	  }
 
 	  // something read?
 	  if (rc <= 0)
@@ -138,6 +144,8 @@ int cVdrmanagerClientSocket::ReadNoSSL() {
   return -2;
 }
 
+#if VDRMANAGER_USE_SSL
+
 int cVdrmanagerClientSocket::ReadSSL() {
 
   sslReadWrite = SSL_NO_RETRY;
@@ -174,6 +182,7 @@ int cVdrmanagerClientSocket::ReadSSL() {
   esyslog("[vdrmanager] error reading from SSL (%ld) %s", errorCode, errorText);
   return -2;
 }
+#endif
 
 bool cVdrmanagerClientSocket::Disconnected() {
 	return disconnected;
@@ -199,8 +208,10 @@ bool cVdrmanagerClientSocket::Flush() {
       sendbuf = (char *)malloc(writebuf.length()+1);
       strcpy(sendbuf, writebuf.c_str());
       sendsize = writebuf.length();
+#if VDRMANAGER_USE_GZIP || VDRMANAGER_USE_ZLIB
     } else {
       Compress();
+#endif
     }
     sendoffset = 0;
     writebuf.clear();
@@ -209,11 +220,14 @@ bool cVdrmanagerClientSocket::Flush() {
   // write so many bytes as possible
   int rc;
   for(;sendsize > 0;) {
-    if (ssl) {
+
+#if VDRMANAGER_USE_SSL
+    if (ssl)
       rc = FlushSSL();
-    } else {
+    else
+#endif
       rc = FlushNoSSL();
-    }
+
     if (rc <= 0) {
       break;
     }
@@ -276,6 +290,8 @@ int cVdrmanagerClientSocket::FlushNoSSL() {
   return -1;
 }
 
+#if VDRMANAGER_USE_SSL
+
 int cVdrmanagerClientSocket::FlushSSL() {
 
   sslReadWrite = SSL_NO_RETRY;
@@ -307,12 +323,15 @@ int cVdrmanagerClientSocket::FlushSSL() {
   return -1;
 }
 
+#endif
+
 bool cVdrmanagerClientSocket::Attach(int fd, SSL_CTX * sslCtx) {
 	sock = fd;
 	if (!MakeDontBlock()) {
 	  return false;
 	}
 
+#if VDRMANAGER_USE_SSL
 	if (sslCtx) {
 	  ssl = SSL_new(sslCtx);
     SSL_set_accept_state(ssl);
@@ -320,6 +339,7 @@ bool cVdrmanagerClientSocket::Attach(int fd, SSL_CTX * sslCtx) {
 	  SSL_set_bio(ssl, bio, bio);
 	  BIO_set_nbio(bio, 1);
 	}
+#endif
 
 	return true;
 }
@@ -343,15 +363,20 @@ void cVdrmanagerClientSocket::SetLoggedIn() {
 void cVdrmanagerClientSocket::ActivateCompression() {
 
   string mode = "NONE";
+
   switch (compressionMode) {
+#if VDRMANAGER_USE_GZIP
   case COMPRESSION_GZIP:
     mode = "GZIP";
     initCompression = true;
     break;
+#endif
+#if VDRMANAGER_USE_ZLIB
   case COMPRESSION_ZLIB:
     mode = "ZLIB";
     initCompression = true;
     break;
+#endif
   default:
     mode = "NONE";
     break;
@@ -360,16 +385,22 @@ void cVdrmanagerClientSocket::ActivateCompression() {
   Write("!OK " + mode + "\r\n");
 }
 
+#if VDRMANAGER_USE_GZIP || VDRMANAGER_USE_ZLIB
+
 void cVdrmanagerClientSocket::Compress() {
   cCompressor compressor = cCompressor();
 
   switch (compressionMode) {
+#if VDRMANAGER_USE_GZIP
   case COMPRESSION_GZIP:
     compressor.CompressGzip(writebuf);
     break;
+#endif
+#if VDRMANAGER_USE_ZLIB
   case COMPRESSION_ZLIB:
     compressor.CompressZlib(writebuf);
     break;
+#endif
   }
 
   sendbuf = compressor.GetData();
@@ -378,6 +409,10 @@ void cVdrmanagerClientSocket::Compress() {
   double ratio = 1.0 * writebuf.length() / sendsize;
   dsyslog("[vdrmanager] Compression stats: raw %ld, compressed %ld, ratio %f:1", writebuf.length(), sendsize, ratio);
 }
+
+#endif
+
+#if VDRMANAGER_USE_SSL
 
 int cVdrmanagerClientSocket::GetSslReadWrite() {
   return sslReadWrite;
@@ -390,3 +425,5 @@ int cVdrmanagerClientSocket::GetSslWantsSelect() {
 bool cVdrmanagerClientSocket::IsSSL() {
   return ssl != NULL;
 }
+
+#endif

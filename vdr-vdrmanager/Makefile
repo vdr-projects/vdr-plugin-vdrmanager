@@ -45,6 +45,25 @@ SOFILE = libvdr-$(PLUGIN).so
 
 -DEFINES += -D_GNU_SOURCE -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
+### Conditionally definitions
+
+VDRMANAGER_USE_SSL := 1
+ifneq ($(VDRMANAGER_USE_SSL), 0)
+ADDITIONAL_LIBS = $(shell pkg-config --libs openssl)
+DEFINES += -DVDRMANAGER_USE_SSL=$(VDRMANAGER_USE_SSL)
+endif
+
+VDRMANAGER_USE_ZLIB := 1
+ifneq ($(VDRMANAGER_USE_ZLIB), 0)
+ADDITIONAL_LIBS += $(shell pkg-config --libs zlib)
+DEFINES += -DVDRMANAGER_USE_ZLIB=$(VDRMANAGER_USE_ZLIB)
+endif
+
+VDRMANAGER_USE_GZIP := 1
+ifneq ($(VDRMANAGER_USE_GZIP), 0)
+DEFINES += -DVDRMANAGER_USE_GZIP=$(VDRMANAGER_USE_GZIP)
+endif
+
 ### The object files (add further files here):
 
 OBJS = $(PLUGIN).o sock.o serversock.o clientsock.o vdrmanagerthread.o select.o handler.o helpers.o compressor.o
@@ -96,7 +115,7 @@ install-i18n: $(I18Nmsgs)
 ### Targets:
 
 $(SOFILE): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ -lz -lssl
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ $(ADDITIONAL_LIBS) 
 
 install-lib: $(SOFILE)
 	install -D $^ $(LIBDIR)/$^.$(APIVERSION)

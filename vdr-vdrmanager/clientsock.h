@@ -8,7 +8,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#if VDRMANAGER_USE_SSL
 #include <openssl/ssl.h>
+#else
+#define SSL_CTX void
+#endif
+
 #include <string>
 
 #include "sock.h"
@@ -30,9 +36,11 @@ private:
   bool compression;
   bool initCompression;
   int compressionMode;
+#if VDRMANAGER_USE_SSL
   SSL * ssl;
   int sslReadWrite;
   int sslWantsSelect;
+#endif
 public:
   cVdrmanagerClientSocket(const char * password, int compressionMode);
   virtual ~cVdrmanagerClientSocket();
@@ -42,21 +50,25 @@ public:
   void Write(string line);
   bool Read();
   int ReadNoSSL();
-  int ReadSSL();
-  bool Disconnected();
-  void Disconnect();
   bool Flush();
   int FlushNoSSL();
+#if VDRMANAGER_USE_SSL
+  int ReadSSL();
   int FlushSSL();
+  int GetSslReadWrite();
+  int GetSslWantsSelect();
+  bool IsSSL();
+#endif
+  bool Disconnected();
+  void Disconnect();
   int GetClientId();
   bool WritePending();
   bool IsLoggedIn();
   void SetLoggedIn();
   void ActivateCompression();
+#if VDRMANAGER_USE_GZIP || VDRMANAGER_USE_ZLIB
   void Compress();
-  int GetSslReadWrite();
-  int GetSslWantsSelect();
-  bool IsSSL();
+#endif
 };
 
 #endif
