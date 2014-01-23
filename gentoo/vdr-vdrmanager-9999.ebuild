@@ -46,7 +46,7 @@ make_vdrmanager_cert() {
 
 	rm -f ${ROOT}${VDRMANAGER_SSL_KEY_FILE}.{crt,csr,key}
 	chown vdr:vdr "${ROOT}${VDRMANAGER_SSL_KEY_FILE}.pem"
-	chmod 600 "${ROOT}${VDRMANAGER_SSL_KEY_FILE}.pem"
+	chmod 0600 "${ROOT}${VDRMANAGER_SSL_KEY_FILE}.pem"
 }
 
 src_unpack() {
