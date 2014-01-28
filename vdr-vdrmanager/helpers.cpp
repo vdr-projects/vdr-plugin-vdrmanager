@@ -687,7 +687,7 @@ string cHelpers::ToText(cRecording * recording) {
 	}
 	result += ":";
 
-	if (info->Title()) {
+	if(info->Title()){
 		result += MapSpecialChars(info->Title());
 #if APIVERSNUM >= 10705
 	} else if (event->Title()) {
@@ -747,7 +747,10 @@ string cHelpers::ToText(cRecording * recording) {
 	result += ":";
 	//Feature #1319
 	result += MapSpecialChars(recording->Name());
-
+	//Feature #1699
+	result += ":";
+	snprintf(buf, sizeof(buf) - 1, "%d", recording -> IsNew());
+	result += buf;
 	result += "\r\n";
 	return result;
 }
