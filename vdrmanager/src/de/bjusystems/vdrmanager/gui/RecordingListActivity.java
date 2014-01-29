@@ -2,15 +2,10 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +36,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpStartListener;
 
 /**
  * This class is used for showing what's current running on all channels
- *
+ * 
  * @author bju
  */
 public class RecordingListActivity extends BaseEventListActivity<Recording>
@@ -57,11 +52,13 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	// protected static ArrayList<Recording> CACHE = new ArrayList<Recording>();
 
-	private static Map<String, List<Recording>> CACHE = new TreeMap<String, List<Recording>>();
+	// private static Map<String, List<Recording>> CACHE = new TreeMap<String,
+	// List<Recording>>();
 
-	public static final Map<String, Set<String>> FOLDERS = new TreeMap<String, Set<String>>();
+	// public static final Map<String, Set<String>> FOLDERS = new
+	// TreeMap<String, Set<String>>();
 
-	private String currentFolder = Recording.ROOT_FOLDER;
+	private RecordingDir currentFolder; // Recording.ROOT_FOLDER;
 
 	private final int ASC_DESC = ASC;
 
@@ -85,12 +82,14 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	private int percent = -1;
 
+	private RecordingDir ROOT = new RecordingDir();
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		adapter = new RecordingAdapter(this);
-
+		currentFolder = ROOT; 
 		// attach adapter to ListView
 		listView = (ListView) findViewById(R.id.recording_list);
 		folderInfo = (TextView) findViewById(R.id.folder_info);
@@ -166,27 +165,28 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		final RecordingListItem item = (RecordingListItem) adapter
 				.getItem(position);
 		if (item.isFolder()) {
-			if (currentFolder.equals(Recording.ROOT_FOLDER)) {
-				currentFolder = item.folder;
-			} else {
-				currentFolder = currentFolder + Recording.FOLDERDELIMCHAR
-						+ item.folder;
-			}
-			stack.push(currentFolder);
+			currentFolder = item.folder;
+			// if (currentFolder.equals(Recording.ROOT_FOLDER)) {
+			// currentFolder = item.folder;
+			// } else {
+			// currentFolder = currentFolder + Recording.FOLDERDELIMCHAR
+			// + item.folder;
+			// }
+			// stack.push(currentFolder);
 			fillAdapter();
 		} else {
 			super.onItemClick(parent, view, position, id);
 		}
 	}
 
-	private void updateCurrentFolderInfo( int size) {
-		folderInfo.setText("/" + currentFolder.replaceAll("~", "/"));
+	private void updateCurrentFolderInfo(int size) {
+		folderInfo.setText(currentFolder.getPath());
 		currentCount.setText(String.valueOf(size));
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.bjusystems.vdrmanager.gui.BaseActivity#onCreateOptionsMenu(android
 	 * .view.Menu)
@@ -335,65 +335,36 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		}
 	}
 
-	private List<Recording> CACHEget(String currentFolder) {
-		List<Recording> list = CACHE.get(currentFolder);
-		if (list != null) {
-			return list;
-		}
-		return EMPTY;
+	private List<Recording> CACHEget(RecordingDir currentFolder) {
+		return currentFolder.recordings;
 	}
 
-	private int getCountInFolder(String base, String folder) {
-
-		if (base.equals(Recording.ROOT_FOLDER) == false) {
-			folder = base + Recording.FOLDERDELIMCHAR + folder;
-		}
-		int count = CACHEget(folder).size();
-
-		Set<String> set = FOLDERS.get(folder);
-
-		if (set == null) {
-			return count;
-		}
-
-		for (String f : set) {
-			count += getCountInFolder(folder, f);
-		}
-
-		return count;
-	}
 
 	@Override
 	protected void fillAdapter() {
 
 		adapter.clear();
-		List<Recording> list = CACHEget(currentFolder);
-
 
 		sort();
 
 		final Calendar cal = Calendar.getInstance();
 		int day = -1;
 
-		final Set<String> folders = FOLDERS.get(currentFolder);
-		int currenFolderSum = 0;
-		if (folders != null) {
-			for (final String f : folders) {
-				final RecordingListItem recordingListItem = new RecordingListItem(
-						f);
-				recordingListItem.folder = f;
-				// final String sf = currentFolder.length() > 0 ? currentFolder
-				// + Recording.FOLDERDELIMCHAR + f : f;
-				// final List<Recording> list2 = CACHE.get(sf);
-				// if (list2 != null) {
-				recordingListItem.count = getCountInFolder(currentFolder, f);
-				currenFolderSum += recordingListItem.count;
-				// }
-				adapter.add(recordingListItem);
-			}
+		final Collection<RecordingDir> folders = currentFolder.dirs.values();
+		for (final RecordingDir d : folders) {
+			final RecordingListItem recordingListItem = new RecordingListItem(
+					d.name);
+			recordingListItem.folder = d;
+			// final String sf = currentFolder.length() > 0 ? currentFolder
+			// + Recording.FOLDERDELIMCHAR + f : f;
+			// final List<Recording> list2 = CACHE.get(sf);
+			// if (list2 != null) {
+			// recordingListItem.getCcount = getCountInFolder(currentFolder, f);
+			// }
+			adapter.add(recordingListItem);
 		}
 
-		updateCurrentFolderInfo(list.size() + currenFolderSum);
+		updateCurrentFolderInfo(currentFolder.size());
 
 		for (final Event rec : CACHEget(currentFolder)) {
 			cal.setTime(rec.getStart());
@@ -410,66 +381,103 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	@Override
 	public void onBackPressed() {
-		if (stack.isEmpty()) {
+		if (currentFolder.parent == null) {
 			super.onBackPressed();
-		} else {
-			stack.pop();
-			if (stack.isEmpty()) {
-				currentFolder = "";
-			} else {
-				currentFolder = stack.peek();
-			}
-			fillAdapter();
+			return;
 		}
-
+		currentFolder = currentFolder.parent;
+		fillAdapter();
 	}
+
+//	private List<Recording> readDummy() {
+//
+//		List<Recording> list = new ArrayList<Recording>();
+//		try {
+//			LineNumberReader r = new LineNumberReader(new FileReader(new File(
+//					"/sdcard/vdrmanager.txt")));
+//
+//			String line;
+//
+//			while ((line = r.readLine()) != null) {
+//				Recording rec = null;
+//				try {
+//					rec = new Recording(line);
+//				} catch (Exception ex) {
+//					ex.printStackTrace();
+//				}
+//				list.add(rec);
+//			}
+//
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//
+//		return list;
+//
+//	}
 
 	@Override
 	protected boolean finishedSuccessImpl(final List<Recording> results) {
+
+	//	results.clear();
+	//	results.addAll(readDummy());
+
 		clearCache();
+
 		for (final Recording r : results) {
 			final String folder = r.getFolder();
-			if (folder.length() > 0) {
+
+			if (folder.length() == 0) {
+				ROOT.recordings.add(r);
+			} else {
 				final String[] split = folder.split(Recording.FOLDERDELIMCHAR);
-				String key = null;
-				String value = null;
-				if (split.length == 1) {
-					key = Recording.ROOT_FOLDER;
-					value = split[0];
-				} else {
-					value = split[split.length - 1];
-					// StringBuilder sb = new StringBuilder();
-					// String sep = "";
-					// for(int i = 0; i < split.length - 1; ++i){
-					// sb.append(sep).append(split[i]);
-					// sep = Recording.FOLDERDELIMCHAR;
-					// }
-					key = folder.subSequence(0,
-							folder.length() - (value.length() + 1)).toString();
 
-				}
+				RecordingDir parent = ROOT;
+				RecordingDir dir = null; // "a~b~c";
+				for (int i = 0; i < split.length; ++i) {
+					String dn = split[i];
 
-				Set<String> list = FOLDERS.get(key);
-				if (list == null) {
-					list = new TreeSet<String>(new Comparator<String>() {
-						@Override
-						public int compare(final String lhs, final String rhs) {
-							return lhs.compareToIgnoreCase(rhs);
-						}
-					});
-					FOLDERS.put(key, list);
-				}
-
-				list.add(value);
-
-				if (key.equals(Recording.ROOT_FOLDER) == false) {
-					Set<String> set = FOLDERS.get(Recording.ROOT_FOLDER);
-					if (set == null) {
-						set = new HashSet<String>();
-						FOLDERS.put(key, set);
+					dir = parent.dirs.get(dn);
+					if(dir == null) {
+						dir = new RecordingDir();
+						dir.parent = parent;
+						dir.name = dn;
+						parent.dirs.put(dn, dir);
 					}
-					set.add(key);
+					parent = dir;
 				}
+				dir.recordings.add(r);
+
+				// StringBuilder sb = new StringBuilder();
+				// String sep = "";
+				// for(int i = 0; i < split.length - 1; ++i){
+				// sb.append(sep).append(split[i]);
+				// sep = Recording.FOLDERDELIMCHAR;
+				// }
+				// key = folder.subSequence(0,
+				// folder.length() - (value.length() + 1)).toString();
+
+				// Set<String> list = FOLDERS.get(key);
+				// if (list == null) {
+				// list = new TreeSet<String>(new Comparator<String>() {
+				// @Override
+				// public int compare(final String lhs, final String rhs) {
+				// return lhs.compareToIgnoreCase(rhs);
+				// }
+				// });
+				// FOLDERS.put(key, list);
+				// }
+				//
+				// list.add(value);
+				//
+				// if (key.equals(Recording.ROOT_FOLDER) == false) {
+				// Set<String> set = FOLDERS.get(Recording.ROOT_FOLDER);
+				// if (set == null) {
+				// set = new HashSet<String>();
+				// FOLDERS.put(key, set);
+				// }
+				// set.add(key);
+				// }
 
 				// a b
 				// a
@@ -477,12 +485,12 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 				// a~b > k
 
 			}
-			List<Recording> list = CACHE.get(folder);
-			if (list == null) {
-				list = new ArrayList<Recording>();
-				CACHE.put(folder, list);
-			}
-			list.add(r);
+			// List<Recording> list = CACHE.get(folder);
+			// if (list == null) {
+			// list = new ArrayList<Recording>();
+			// CACHE.put(folder, list);
+			// }
+			// list.add(r);
 		}
 
 		pushResultCountToTitle();
@@ -504,19 +512,15 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 
 	@Override
 	public void clearCache() {
-		CACHE.clear();
-		FOLDERS.clear();
+		ROOT.clear();
+		// CACHE.clear();
+		// FOLDERS.clear();
 	}
 
 	@Override
 	protected List<Recording> getCACHE() {
 
-		final List<Recording> list = CACHE.get(currentFolder);
-
-		if (list != null) {
-			return list;
-		}
-		return EMPTY;
+		return currentFolder.recordings;
 	}
 
 	@Override

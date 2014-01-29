@@ -213,10 +213,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 			Date start = new Date(timer.getStart().getTime()
 					- prefs.getTimerPreMargin() * 60000);
+			timer.setStart(start);
 
 			Date end = new Date(timer.getStop().getTime()
 					+ prefs.getTimerPostMargin() * 60000);
-
+			timer.setStop(end);
+			
 			updateDates(start, end);
 			break;
 		case MODIFY:

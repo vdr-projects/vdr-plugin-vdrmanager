@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 class EventListItemHolder {
 	public ImageView state;
+	public ImageView other;
 	public TextView title;
 	public TextView date;
 	public TextView time;

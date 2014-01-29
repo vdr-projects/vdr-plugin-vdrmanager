@@ -22,8 +22,8 @@ import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.TimerMatch;
 import de.bjusystems.vdrmanager.data.Timerable;
 
-abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T> implements
-		Filterable
+abstract class BaseEventAdapter<T extends EventListItem> extends
+		ArrayAdapter<T> implements Filterable
 // , SectionIndexer
 {
 
@@ -83,23 +83,22 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 		TextView header;
 	}
 
-	private boolean canReuseConvertView(View convertView, int itemViewType){
-		if(convertView == null){
+	private boolean canReuseConvertView(View convertView, int itemViewType) {
+		if (convertView == null) {
 			return false;
 		}
 		Object o = convertView.getTag();
-		if(itemViewType == TYPE_ITEM){
+		if (itemViewType == TYPE_ITEM) {
 			return o instanceof EventListItemHolder;
 		}
 
-		if(itemViewType == TYPE_HEADER){
+		if (itemViewType == TYPE_HEADER) {
 			return o instanceof EventListItemHeaderHolder;
 		}
 
 		return false;
 
 	}
-
 
 	@Override
 	public View getView(final int position, View convertView,
@@ -135,13 +134,15 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 		return convertView;
 	}
 
-	protected EventListItemHolder getEventViewHolder(EventListItem item, View view) {
+	protected EventListItemHolder getEventViewHolder(EventListItem item,
+			View view) {
 
 		EventListItemHolder itemHolder = new EventListItemHolder();
 
 		itemHolder = new EventListItemHolder();
 
 		itemHolder.state = (ImageView) view.findViewById(R.id.timer_item_state);
+		itemHolder.other = (ImageView) view.findViewById(R.id.timer_item_other);
 		itemHolder.time = (TextView) view.findViewById(R.id.timer_item_time);
 		itemHolder.channel = (TextView) view
 				.findViewById(R.id.timer_item_channel);
@@ -168,7 +169,20 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 				itemHolder.state.setImageResource(R.drawable.timer_recording);
 			} else {
 				itemHolder.state.setImageResource(R.drawable.timer_none);
+				itemHolder.other.setVisibility(View.GONE);
+				if (r.isNeww() == true) {
+					itemHolder.state.setImageResource(R.drawable.newrecording);
+					if (r.isCut()) {
+						itemHolder.other.setVisibility(View.VISIBLE);
+						itemHolder.other.setImageResource(R.drawable.schere);
+					} else {
+						itemHolder.other.setVisibility(View.GONE);
+					}
+				} else if (r.isCut()) {
+					itemHolder.state.setImageResource(R.drawable.schere);
+				} 
 			}
+
 		} else if (item.getEvent() instanceof Timerable) {
 			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();
 			switch (((Timerable) item.getEvent()).getTimerState()) {
@@ -177,21 +191,21 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 						match, R.drawable.timer_active,
 						R.drawable.timer_active_begin,
 						R.drawable.timer_active_end,
-                        R.drawable.timer_active_conflict));
+						R.drawable.timer_active_conflict));
 				break;
 			case Inactive:
 				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(
 						match, R.drawable.timer_inactive,
 						R.drawable.timer_inactive_begin,
 						R.drawable.timer_inactive_end,
-                        R.drawable.timer_inactive));
+						R.drawable.timer_inactive));
 				break;
 			case Recording:
 				itemHolder.state.setImageResource(Utils.getTimerStateDrawable(
 						match, R.drawable.timer_recording,
 						R.drawable.timer_recording_begin,
 						R.drawable.timer_recording_end,
-                        R.drawable.timer_recording_conflict));
+						R.drawable.timer_recording_conflict));
 				break;
 			case None:
 				itemHolder.state.setImageResource(R.drawable.timer_none);
@@ -245,7 +259,6 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 		}
 	}
 
-
 	protected EventListItemHeaderHolder getHeaderViewHolder(EventListItem item,
 			View view) {
 		EventListItemHeaderHolder itemHolder = new EventListItemHeaderHolder();
@@ -280,8 +293,8 @@ abstract class BaseEventAdapter<T extends EventListItem> extends ArrayAdapter<T>
 	public void setHideChannelName(boolean hideChannelName) {
 		this.hideChannelName = hideChannelName;
 	}
-	
-	protected boolean isHeader(EventListItem item){
+
+	protected boolean isHeader(EventListItem item) {
 		return item.isHeader();
 	}
 
