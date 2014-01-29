@@ -114,10 +114,10 @@ public abstract class Event {
 			return shortText;
 		}
 		if (TextUtils.isEmpty(description) == false) {
-			if (description.length() < 30) {
+			if (description.length() < 50) {
 				return description;
 			}
-			return TextUtils.substring(description, 0, 30) + "…";
+			return TextUtils.substring(description, 0, 50) + "…";
 		}
 		return "";
 	}
