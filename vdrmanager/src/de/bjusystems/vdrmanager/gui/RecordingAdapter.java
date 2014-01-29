@@ -10,7 +10,6 @@ import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
 import de.bjusystems.vdrmanager.data.RecordingListItem;
 
-
 class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 
 	protected final static int TYPE_FOLDER = 2;
@@ -29,20 +28,19 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	public int getViewTypeCount() {
 		return 3;
 	}
-	
+
 	@Override
 	protected boolean isHeader(EventListItem item) {
-		if(item instanceof RecordingListItem == false){
+		if (item instanceof RecordingListItem == false) {
 			return item.isHeader();
 		}
-		
-		if(((RecordingListItem)item).isFolder() ){
+
+		if (((RecordingListItem) item).isFolder()) {
 			return false;
 		}
-		
+
 		return item.isHeader();
 	}
-
 
 	@Override
 	public int getItemViewType(int position) {
@@ -58,8 +56,6 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 		return TYPE_ITEM;
 	}
 
-
-
 	class EventListItemFolderHolder {
 		public TextView folder;
 		public TextView count;
@@ -73,7 +69,6 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 		return itemHolder;
 	}
 
-
 	@Override
 	public View getView(final int position, View convertView,
 			final ViewGroup parent) {
@@ -86,7 +81,8 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 		}
 
 		EventListItemFolderHolder holder = null;
-		if (convertView == null || (convertView != null && convertView.getTag() instanceof EventListItemFolderHolder) == false) {
+		if (convertView == null
+				|| (convertView != null && convertView.getTag() instanceof EventListItemFolderHolder) == false) {
 			convertView = inflater.inflate(R.layout.folder_item, null);
 			holder = getFolderViewHolder(item, convertView);
 			convertView.setTag(holder);
@@ -94,8 +90,9 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 			holder = (EventListItemFolderHolder) convertView.getTag();
 		}
 
-		holder.folder.setText(Utils.highlight(item.folder, highlight));
-		holder.count.setText(String.valueOf(item.count));
+		holder.folder
+				.setText(Utils.highlight(item.folder.getName(), highlight));
+		holder.count.setText(String.valueOf(item.folder.size()));
 		return convertView;
 	}
 
@@ -103,13 +100,13 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	public RecordingListItem getItem(int position) {
 		return (RecordingListItem) super.getItem(position);
 	}
-//	
-//	protected void addSuper(RecordingListItem item) {
-//		super.addSuper(item);
-//	}
-//
-//	protected void clearSuper() {
-//		super.clear();
-//	}
+	//
+	// protected void addSuper(RecordingListItem item) {
+	// super.addSuper(item);
+	// }
+	//
+	// protected void clearSuper() {
+	// super.clear();
+	// }
 
 }
