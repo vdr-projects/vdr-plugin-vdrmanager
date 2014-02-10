@@ -158,32 +158,9 @@ abstract class BaseEventAdapter<T extends EventListItem> extends
 		return itemHolder;
 	}
 
-	public void fillEventViewHolder(EventListItemHolder itemHolder,
+	protected void handleState(EventListItemHolder itemHolder,
 			EventListItem item) {
-
-		itemHolder.state.setVisibility(View.VISIBLE);
-
-		if (item.getEvent() instanceof Recording) {
-			Recording r = (Recording) item.getEvent();
-			if (r.getTimerStopTime() != null) {
-				itemHolder.state.setImageResource(R.drawable.timer_recording);
-			} else {
-				itemHolder.state.setImageResource(R.drawable.timer_none);
-				itemHolder.other.setVisibility(View.GONE);
-				if (r.isNeww() == true) {
-					itemHolder.state.setImageResource(R.drawable.newrecording);
-					if (r.isCut()) {
-						itemHolder.other.setVisibility(View.VISIBLE);
-						itemHolder.other.setImageResource(R.drawable.schere);
-					} else {
-						itemHolder.other.setVisibility(View.GONE);
-					}
-				} else if (r.isCut()) {
-					itemHolder.state.setImageResource(R.drawable.schere);
-				} 
-			}
-
-		} else if (item.getEvent() instanceof Timerable) {
+		if (item.getEvent() instanceof Timerable) {
 			TimerMatch match = ((Timerable) item.getEvent()).getTimerMatch();
 			switch (((Timerable) item.getEvent()).getTimerState()) {
 			case Active:
@@ -214,6 +191,15 @@ abstract class BaseEventAdapter<T extends EventListItem> extends
 		} else {
 			itemHolder.state.setImageResource(R.drawable.timer_none);
 		}
+
+	}
+
+	public void fillEventViewHolder(EventListItemHolder itemHolder,
+			EventListItem item) {
+
+		itemHolder.state.setVisibility(View.VISIBLE);
+
+		handleState(itemHolder, item);
 
 		final EventFormatter formatter = getEventFormatter(item);
 		itemHolder.time.setText(formatter.getTime());

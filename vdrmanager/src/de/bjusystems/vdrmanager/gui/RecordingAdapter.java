@@ -8,6 +8,7 @@ import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventFormatter;
 import de.bjusystems.vdrmanager.data.EventListItem;
+import de.bjusystems.vdrmanager.data.Recording;
 import de.bjusystems.vdrmanager.data.RecordingListItem;
 
 class RecordingAdapter extends BaseEventAdapter<EventListItem> {
@@ -100,6 +101,7 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	public RecordingListItem getItem(int position) {
 		return (RecordingListItem) super.getItem(position);
 	}
+
 	//
 	// protected void addSuper(RecordingListItem item) {
 	// super.addSuper(item);
@@ -108,5 +110,28 @@ class RecordingAdapter extends BaseEventAdapter<EventListItem> {
 	// protected void clearSuper() {
 	// super.clear();
 	// }
+	protected void handleState(EventListItemHolder itemHolder,
+			EventListItem item) {
+
+		Recording r = (Recording) item.getEvent();
+		if (r.getTimerStopTime() != null) {
+			itemHolder.state.setImageResource(R.drawable.timer_recording);
+		} else {
+			itemHolder.state.setImageResource(R.drawable.timer_none);
+			itemHolder.other.setVisibility(View.GONE);
+			if (r.isNeww() == true) {
+				itemHolder.state.setImageResource(R.drawable.newrecording);
+				if (r.isCut()) {
+					itemHolder.other.setVisibility(View.VISIBLE);
+					itemHolder.other.setImageResource(R.drawable.schere);
+				} else {
+					itemHolder.other.setVisibility(View.GONE);
+				}
+			} else if (r.isCut()) {
+				itemHolder.state.setImageResource(R.drawable.schere);
+			}
+		}
+
+	}
 
 }
