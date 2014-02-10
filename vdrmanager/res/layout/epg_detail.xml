@@ -57,8 +57,8 @@
 
         <ImageView
             android:id="@+id/epg_timer_state"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dip"
             android:visibility="gone" />

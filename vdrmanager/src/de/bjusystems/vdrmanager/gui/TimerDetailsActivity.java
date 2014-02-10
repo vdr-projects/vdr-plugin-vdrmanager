@@ -130,11 +130,11 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			prevDate = tView.dateField.getText();
 		}
 
-		DateFormatter formatter = new DateFormatter(new Date(original.getVPS()));
+		DateFormatter formatter = new DateFormatter(original.getStart());
 		String date = formatter.getDateString();
 		tView.startField.setEnabled(false);
 		tView.startField.setText(formatter.getTimeString());
-		timer.setStart(new Date(timer.getVPS()));
+		timer.setStart(original.getStart());
 
 		DateFormatter stopF = new DateFormatter(original.getStop());
 

@@ -165,7 +165,11 @@ public class Timer extends Event implements Timerable {
 		line.append(channelNumber).append(":");
 
 		final Calendar cal = Calendar.getInstance();
-		cal.setTime(start);
+		if(isVps() == true){
+			cal.setTimeInMillis(vps);
+		} else {
+			cal.setTime(start);
+		}
 
 		cal.setTimeZone(TimeZone.getTimeZone(Preferences.get().getCurrentVdr()
 				.getServerTimeZone()));

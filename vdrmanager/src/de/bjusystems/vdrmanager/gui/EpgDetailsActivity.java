@@ -618,12 +618,12 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 								R.drawable.timer_inactive_end,
                                 R.drawable.timer_inactive);
 					} else if (state == TimerState.Inactive) {
-						Utils.getTimerStateDrawable(match,
+						res = Utils.getTimerStateDrawable(match,
 								R.drawable.timer_active,
 								R.drawable.timer_active_begin,
 								R.drawable.timer_active_end,
                                 R.drawable.timer_active_conflict);
-						res = R.drawable.timer_active;
+						
 					}
 					if (res != -1) {
 						setState(
