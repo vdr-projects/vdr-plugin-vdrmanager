@@ -65,6 +65,9 @@ public abstract class SvdrpClient<Result> {
 
 	private final Timer watchDog = new Timer();
 
+	private String encoding;
+	
+
 	// private NativeDES crypt = new NativeDES();
 
 	public boolean isConnected() {
@@ -97,6 +100,7 @@ public abstract class SvdrpClient<Result> {
 			final CertificateProblemListener certificateProblemListener) {
 		// results.clear();
 		this.certificateProblemListener = certificateProblemListener;
+		encoding = Preferences.get().getEncoding();
 	}
 
 	/**
@@ -364,7 +368,8 @@ public abstract class SvdrpClient<Result> {
 
 		String line = null;
 		try {
-			line = lineBytes.toString(Preferences.get().getEncoding());
+			line = lineBytes.toString(encoding);
+			lineBytes.close();
 		} catch (final UnsupportedEncodingException usex) {
 			Log.w(TAG, usex);
 			line = lineBytes.toString();
