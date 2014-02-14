@@ -54,4 +54,5 @@
 	<string name="vdr_timeout_key">key_vdr_timeout</string>
 	
 	<string name="gui_max_recent_channels_key">key_gui_max_recent_channels</string>
+	<string name="clear_term_after_search_key">key_clear_term_after_search</string>
 </resources>
