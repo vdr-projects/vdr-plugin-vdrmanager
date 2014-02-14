@@ -46,7 +46,7 @@ OnItemClickListener {
     // setContentView(getMainLayout());
 
     // create an adapter
-    adapter = new TimeEventAdapter(this);
+    adapter = new TimerEventAdapter(this);
 
     // attach adapter to ListView
     listView = (ListView) findViewById(R.id.timer_list);
