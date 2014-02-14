@@ -101,6 +101,8 @@ public class Preferences {
 	private boolean showTmdbButton = false;
 
 	private int maxRecentChannels = 10;
+	
+	private boolean clearTermAfterSearch = false;
 
 	public int getMaxRecentChannels() {
 		return maxRecentChannels;
@@ -518,6 +520,8 @@ public class Preferences {
 
 		prefs.maxRecentChannels = getInt(context,
 				R.string.gui_max_recent_channels_key, 10);
+		
+		prefs.clearTermAfterSearch = getBoolean(context, R.string.clear_term_after_search_key, false);
 
 		thePrefs = prefs;
 	}
@@ -769,5 +773,9 @@ public class Preferences {
 		final Configuration config = new Configuration();
 		config.locale = locale;
 		context.getResources().updateConfiguration(config, null);
+	}
+
+	public boolean isClearTermAfterSearch() {
+		return clearTermAfterSearch;
 	}
 }
