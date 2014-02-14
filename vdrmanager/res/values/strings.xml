@@ -355,6 +355,12 @@
         <item>Time</item>
         <item>Alphabet</item>
     </string-array>
+    
+        <string-array name="epg_sort_by_time_alpha_channel">
+        <item>Time</item>
+        <item>Alphabet</item>
+        <item>Channel</item>
+    </string-array>
     <string-array name="epg_sort_by_channels_alpha">
         <item>Channels</item>
         <item>Alphabet</item>
@@ -504,6 +510,11 @@ What do you want to do?
 <string name="drive_img">Drive</string>
 <string name="sad_img">Sad</string>
 <string name="search">Search</string>
+
+<string name="clear_term_after_search_title">Clear Term after Search</string>
+<string name="clear_term_after_search_summary_off">Search term remains after peforming search</string>
+<string name="clear_term_after_search_summary_on">Term gets cleared after performing search</string>
+
 
 
 </resources>
