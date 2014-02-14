@@ -22,17 +22,4 @@ public class TimeEventAdapter extends BaseEventAdapter<EventListItem> {
 	protected EventFormatter getEventFormatter(Event event) {
 		return new EventFormatter(event, true);
 	}
-
-	@Override
-	protected void handleState(EventListItemHolder itemHolder,
-			EventListItem item) {
-		super.handleState(itemHolder, item);
-		Timer r = (Timer) item.getEvent();
-		if (r.isVps()) {
-			itemHolder.other.setVisibility(View.VISIBLE);
-			itemHolder.other.setImageResource(R.drawable.timer_vps);
-		} else {
-			itemHolder.other.setVisibility(View.GONE);
-		}
-	}
 }
