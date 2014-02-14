@@ -70,6 +70,8 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	public static final int MENU_GROUP_DEFAULT = 0;
 
 	public static final int MENU_GROUP_ALPHABET = 1;
+	
+	public static final int MENU_GROUP_CHANNEL = 2;
 
 	protected int sortBy;
 
@@ -388,11 +390,11 @@ public abstract class BaseEventListActivity<T extends Event> extends
 
 	}
 
-	protected void sortItemsByChannel(final List<Event> result) {
-		final Comparator<Event> comparator = new Comparator<Event>() {
+	protected void sortItemsByChannel(final List<T> result) {
+		final Comparator<T> comparator = new Comparator<T>() {
 
 			@Override
-			public int compare(final Event item1, final Event item2) {
+			public int compare(final T item1, final T item2) {
 				return item1.getChannelNumber().compareTo(
 						item2.getChannelNumber());
 			}

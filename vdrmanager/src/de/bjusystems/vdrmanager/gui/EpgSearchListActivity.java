@@ -33,252 +33,252 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 
 /**
  * This class is used for showing what's current running on all channels
- *
+ * 
  * @author bju
  */
 public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
-OnItemClickListener {
+		OnItemClickListener {
 
-  protected static ArrayList<Epg> CACHE = new ArrayList<Epg>();
+	protected static ArrayList<Epg> CACHE = new ArrayList<Epg>();
 
-  @Override
-  protected List<Epg> getCACHE() {
-    return CACHE;
-  }
+	@Override
+	protected List<Epg> getCACHE() {
+		return CACHE;
+	}
 
-  private void initSearch(final Intent intent) {
-    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-      final String query = intent.getStringExtra(SearchManager.QUERY);
-      if (TextUtils.isEmpty(query) == false) {
-        highlight = query.trim();
-        final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
-            this, EPGSearchSuggestionsProvider.AUTHORITY,
-            EPGSearchSuggestionsProvider.MODE);
-        suggestions.saveRecentQuery(query, null);
-      }
-    }
-  }
+	private void initSearch(final Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			final String query = intent.getStringExtra(SearchManager.QUERY);
+			if (TextUtils.isEmpty(query) == false) {
+				highlight = query.trim();
+				final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+						this, EPGSearchSuggestionsProvider.AUTHORITY,
+						EPGSearchSuggestionsProvider.MODE);
+				suggestions.saveRecentQuery(query, null);
+			}
+		}
+	}
 
-  @Override
-  protected void onNewIntent(final Intent intent) {
-    initSearch(intent);
-    startSearch();
-  }
+	@Override
+	protected void onNewIntent(final Intent intent) {
+		initSearch(intent);
+		startSearch();
+	}
 
-  private void startSearch() {
-    startEpgQuery();
-  }
+	private void startSearch() {
+		startEpgQuery();
+	}
 
-  @Override
-  protected String getViewID(){
-    return this.getClass().getSimpleName();
-  }
+	@Override
+	protected String getViewID() {
+		return this.getClass().getSimpleName();
+	}
 
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		Preferences.setLocale(this);
+		// Preferences.init(this);
 
-  @Override
-  protected void onCreate(final Bundle savedInstanceState) {
-    Preferences.setLocale(this);
-    // Preferences.init(this);
+		super.onCreate(savedInstanceState);
 
-    super.onCreate(savedInstanceState);
+		sortBy = Preferences.get(this, getViewID() + "_" + P.EPG_LAST_SORT,
+				MENU_GROUP_CHANNEL);
 
-    sortBy = Preferences.get(this, getViewID() + "_"
-        + P.EPG_LAST_SORT, MENU_GROUP_DEFAULT);
+		final Intent intent = getIntent();
+		initSearch(intent);
+		adapter = new TimeEventAdapter(this);
 
+		// Create adapter for EPG list
+		adapter.setHideDescription(false);
+		listView = (ListView) findViewById(R.id.whatson_list);
+		listView.setAdapter(adapter);
+		listView.setTextFilterEnabled(true);
+		registerForContextMenu(listView);
+		// register EPG item click
+		listView.setOnItemClickListener(this);
+		startSearch();
+	}
 
-    final Intent intent = getIntent();
-    initSearch(intent);
-    adapter = new TimeEventAdapter(this);
+	public void onNothingSelected(final AdapterView<?> arg0) {
+		// startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
+	}
 
-    // Create adapter for EPG list
-    adapter.setHideDescription(false);
-    listView = (ListView) findViewById(R.id.whatson_list);
-    listView.setAdapter(adapter);
-    listView.setTextFilterEnabled(true);
-    registerForContextMenu(listView);
-    // register EPG item click
-    listView.setOnItemClickListener(this);
-    startSearch();
-  }
+	//
 
-  public void onNothingSelected(final AdapterView<?> arg0) {
-    // startTimeEpgQuery(((EpgTimeSpinnerValue)timeSpinner.getAdapter().getItem(0)).getValue());
-  }
+	private void startEpgQuery() {
 
-  //
+		if (checkInternetConnection() == false) {
+			return;
+		}
 
-  private void startEpgQuery() {
+		final EpgSearchParams sp = new EpgSearchParams();
+		sp.setTitle(highlight);
+		setTitle(getWindowTitle());
+		final EpgClient epgClient = new EpgClient(sp,
+				getCertificateProblemDialog());
+		// remove old listeners
+		// epgClient.clearSvdrpListener();
 
-    if (checkInternetConnection() == false) {
-      return;
-    }
+		// create background task
+		final SvdrpAsyncTask<Epg, SvdrpClient<Epg>> task = new SvdrpAsyncTask<Epg, SvdrpClient<Epg>>(
+				epgClient);
 
-    final EpgSearchParams sp = new EpgSearchParams();
-    sp.setTitle(highlight);
-    setTitle(getWindowTitle());
-    final EpgClient epgClient = new EpgClient(sp, getCertificateProblemDialog());
-    // remove old listeners
-    // epgClient.clearSvdrpListener();
+		// create progress
+		addListener(task);
 
-    // create background task
-    final SvdrpAsyncTask<Epg, SvdrpClient<Epg>> task = new SvdrpAsyncTask<Epg, SvdrpClient<Epg>>(
-        epgClient);
+		// start task
+		task.run();
+	}
 
-    // create progress
-    addListener(task);
+	protected void sort() {
+		/* */
+		switch (sortBy) {
 
-    // start task
-    task.run();
-  }
+		case MENU_GROUP_DEFAULT: {
+			sortItemsByTime(CACHE, false);
+			break;
+		}
+		case MENU_GROUP_ALPHABET: {
+			Collections.sort(CACHE, new TitleComparator());
+			break;
+		}
+		case MENU_GROUP_CHANNEL: {
+			sortItemsByChannel(CACHE);
+		}
+		}
+	}
 
-  protected void sort() {
-    /* */
-    switch (sortBy) {
-    case MENU_GROUP_DEFAULT: {
-      //Collections.sort(CACHE, getTimeComparator(false));
-      break;
-    }
-    case MENU_GROUP_ALPHABET: {
-      Collections.sort(CACHE, new TitleComparator());
-      break;
-    }
-    //case MENU_GROUP_CHANNEL: {
-    //sortItemsByChannel(results);
-    //}
-    }
-  }
+	@Override
+	protected int getBaseMenu() {
+		return R.menu.refresh_menu;
+	}
 
+	@Override
+	protected synchronized void fillAdapter() {
 
-  @Override
-  protected int getBaseMenu() {
-    return R.menu.refresh_menu;
-  }
+		adapter.highlight = this.highlight;
 
-  @Override
-  protected synchronized void fillAdapter() {
+		adapter.clear();
 
-    adapter.highlight = this.highlight;
+		if (CACHE.isEmpty()) {
+			return;
+		}
 
-    adapter.clear();
+		sort();
 
-    if(CACHE.isEmpty()){
-      return;
-    }
+		final Calendar cal = Calendar.getInstance();
+		int day = -1;
+		for (final Event e : CACHE) {
+			cal.setTime(e.getStart());
+			final int eday = cal.get(Calendar.DAY_OF_YEAR);
+			if (eday != day) {
+				day = eday;
+				adapter.add(new EventListItem(new DateFormatter(cal)
+						.getDailyHeader()));
+			}
+			adapter.add(new EventListItem(e));
+		}
+		adapter.notifyDataSetChanged();
+	}
 
-    final Calendar cal = Calendar.getInstance();
-    int day = -1;
-    for (final Event e : CACHE) {
-      cal.setTime(e.getStart());
-      final int eday = cal.get(Calendar.DAY_OF_YEAR);
-      if (eday != day) {
-        day = eday;
-        adapter.add(new EventListItem(new DateFormatter(cal)
-        .getDailyHeader()));
-      }
-      adapter.add(new EventListItem(e));
-    }
-    adapter.notifyDataSetChanged();
-  }
+	@Override
+	protected int getAvailableSortByEntries() {
+		return R.array.epg_sort_by_time_alpha_channel;
+	}
 
+	/*
+	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
+	 * cache hit
+	 * 
+	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
+	 */
+	@Override
+	protected boolean finishedSuccessImpl(final List<Epg> results) {
 
-  @Override
-  protected int getAvailableSortByEntries() {
-    return R.array.epg_sort_by_time_alpha;
-  }
+		clearCache();
+		for (final Epg e : results) {
+			CACHE.add(e);
+		}
+		pushResultCountToTitle();
+		fillAdapter();
+		listView.setSelectionAfterHeaderView();
+		return adapter.getCount() > 0;
+	}
 
+	@Override
+	protected void prepareDetailsViewData(final EventListItem item) {
+		final VdrManagerApp app = (VdrManagerApp) getApplication();
+		app.setCurrentEvent(item.getEvent());
+		app.setCurrentEpgList(CACHE);
+	}
 
-  /*
-   * (non-Javadoc) TODO this method also should be used in startEpgQuery on
-   * cache hit
-   *
-   * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
-   */
-  @Override
-  protected boolean finishedSuccessImpl(final List<Epg> results) {
+	@Override
+	protected int getMainLayout() {
+		return R.layout.search_epg_list;
+	}
 
-    clearCache();
-    for(final Epg e : results){
-      CACHE.add(e);
-    }
-    pushResultCountToTitle();
-    fillAdapter();
-    listView.setSelectionAfterHeaderView();
-    return adapter.getCount() > 0;
-  }
+	@Override
+	protected void refresh() {
+		startEpgQuery();
+	}
 
-  @Override
-  protected void prepareDetailsViewData(final EventListItem item) {
-    final VdrManagerApp app = (VdrManagerApp) getApplication();
-    app.setCurrentEvent(item.getEvent());
-    app.setCurrentEpgList(CACHE);
-  }
+	@Override
+	protected void retry() {
+		startEpgQuery();
+	}
 
-  @Override
-  protected int getMainLayout() {
-    return R.layout.search_epg_list;
-  }
+	@Override
+	public boolean onCreateOptionsMenu(
+			final com.actionbarsherlock.view.Menu menu) {
+		// MenuItem item;
+		// item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
+		// R.string.new_timer);
+		// item.setIcon(android.R.drawable.ic_menu_add);;
+		// /item.setAlphabeticShortcut('r');
 
-  @Override
-  protected void refresh() {
-    startEpgQuery();
-  }
+		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.epg_search_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-  @Override
-  protected void retry() {
-    startEpgQuery();
-  }
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.epg_search) {
+			startSearchManager();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-  @Override
-  public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
-    // MenuItem item;
-    // item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
-    // R.string.new_timer);
-    // item.setIcon(android.R.drawable.ic_menu_add);;
-    // /item.setAlphabeticShortcut('r');
+	@Override
+	protected String getWindowTitle() {
+		if (TextUtils.isEmpty(highlight)) {
+			return getString(R.string.epg_by_search);
+		}
 
-    final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
-    inflater.inflate(R.menu.epg_search_menu, menu);
-    return super.onCreateOptionsMenu(menu);
-  }
+		return getString(R.string.epg_by_search_param, highlight);
+	}
 
-  @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
-    if(item.getItemId() == R.id.epg_search){
-      startSearchManager();
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
+	// @Override
+	// public boolean onSearchRequested() {
+	// startSearchManager();
+	// return true;
+	// }
 
-  @Override
-  protected String getWindowTitle() {
-    if (TextUtils.isEmpty(highlight)) {
-      return getString(R.string.epg_by_search);
-    }
+	@Override
+	protected int getListNavigationIndex() {
+		return -1;
+	}
 
-    return getString(R.string.epg_by_search_param, highlight);
-  }
+	@Override
+	protected boolean hasListNavigation() {
+		return false;
+	}
 
-  //@Override
-  //public boolean onSearchRequested() {
-  //startSearchManager();
-  //return true;
-  //}
-
-  @Override
-  protected int getListNavigationIndex() {
-    return -1;
-  }
-
-  @Override
-  protected boolean hasListNavigation() {
-    return false;
-  }
-
-  @Override
-  protected void timerModified(final Timer timer) {
-    clearCache();
-    super.timerModified(timer);
-  }
+	@Override
+	protected void timerModified(final Timer timer) {
+		clearCache();
+		super.timerModified(timer);
+	}
 
 }
