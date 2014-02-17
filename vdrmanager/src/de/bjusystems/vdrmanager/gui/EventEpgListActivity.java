@@ -38,7 +38,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
  * This class is used for showing what's current running on all channels
- *
+ * 
  * @author bju
  */
 public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
@@ -282,7 +282,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	private static final ArrayList<Epg> EMPTY = new ArrayList<Epg>(0);
 
 	private ArrayList<Epg> getCache() {
-		if(currentChannel == null){
+		if (currentChannel == null) {
 			return EMPTY;
 		}
 		final ArrayList<Epg> arrayList = EpgCache.CACHE.get(currentChannel
@@ -326,7 +326,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	/*
 	 * (non-Javadoc) TODO this method also should be used in startEpgQuery on
 	 * cache hit
-	 *
+	 * 
 	 * @see de.bjusystems.vdrmanager.gui.BaseEpgListActivity#finishedSuccess()
 	 */
 	@Override
@@ -395,10 +395,18 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected void prepareDetailsViewData(final EventListItem item) {
+	protected int prepareDetailsViewData(final EventListItem item, int position) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentEvent(item.getEvent());
-		app.setCurrentEpgList(getCache());
+		ArrayList<Epg> cache = getCache();
+		app.setCurrentEpgList(cache);
+		for (int i = 0; i < position; ++i) {
+			if (cache.get(i) == item.getEvent()) {
+				return i;
+			}
+		}
+
+		return 0;
 	}
 
 	@Override

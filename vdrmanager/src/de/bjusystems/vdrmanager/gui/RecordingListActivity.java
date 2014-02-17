@@ -205,9 +205,18 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	}
 
 	@Override
-	protected void prepareDetailsViewData(final EventListItem event) {
+	protected int prepareDetailsViewData(final EventListItem event, int position) {
 		getApp().setCurrentEvent(event.getEvent());
-		getApp().setCurrentEpgList(CACHEget(currentFolder));
+		List<Recording> cachEget = CACHEget(currentFolder);
+		getApp().setCurrentEpgList(cachEget);
+		
+		for(int i = 0; i < position; ++i){
+			if(cachEget.get(i) == event.getEvent()){
+				return i; 
+			}
+		}
+		
+		return 0;
 	}
 
 	@Override

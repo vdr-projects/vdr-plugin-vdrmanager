@@ -125,8 +125,9 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 *
 	 * @param event
 	 */
-	protected void prepareDetailsViewData(final EventListItem event) {
+	protected int prepareDetailsViewData(final EventListItem event, int pos) {
 
+		return 0;
 	}
 
 	/*
@@ -305,15 +306,15 @@ public abstract class BaseEventListActivity<T extends Event> extends
 			return;
 		}
 
-		prepareDetailsViewData(item);
+		int current = prepareDetailsViewData(item, position);
 
 		// show details
 		final Intent intent = new Intent(this, EpgDetailsActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			//	| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (highlight != null) {
 			intent.putExtra(Intents.HIGHLIGHT, highlight);
 		}
+		intent.putExtra(Intents.CURRENT_EPG, current);
 		startActivityForResult(intent,
 				TimerDetailsActivity.REQUEST_CODE_TIMER_MODIFIED);
 	}

@@ -14,4 +14,6 @@ public interface Intents {
 	
 	public static final String EMPTY_CONFIG = "EMPTY_CONFIG";
 	
+	public static final String CURRENT_EPG = "CURRENT_EPG";
+	
 }

@@ -206,10 +206,17 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	protected void prepareDetailsViewData(final EventListItem item) {
+	protected int prepareDetailsViewData(final EventListItem item, int position) {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		app.setCurrentEvent(item.getEvent());
 		app.setCurrentEpgList(CACHE);
+		for(int i = 0; i < position; ++i){
+			if(CACHE.get(i) == item.getEvent()){
+				return i;
+			}
+		}
+
+		return 0;
 	}
 
 	@Override

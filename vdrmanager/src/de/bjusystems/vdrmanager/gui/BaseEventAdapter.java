@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -215,13 +216,14 @@ abstract class BaseEventAdapter<T extends EventListItem> extends
 		itemHolder.title.setText(title);
 		itemHolder.shortText.setText(shortText);
 
-		if (hideDescription == false) {
+		if (TextUtils.isEmpty(formatter.getDescription()) == false
+				&& hideDescription == false) {
 			Pair<Boolean, CharSequence> desc = Utils.highlight2(
 					formatter.getDescription(), highlight);
-			if (desc.first == true) {
-				itemHolder.description.setVisibility(View.VISIBLE);
-				itemHolder.description.setText(desc.second);
-			}
+			itemHolder.description.setVisibility(View.VISIBLE);
+			itemHolder.description.setText(desc.second);
+		} else {
+			itemHolder.description.setVisibility(View.GONE);
 		}
 
 		// TODO better render of duration

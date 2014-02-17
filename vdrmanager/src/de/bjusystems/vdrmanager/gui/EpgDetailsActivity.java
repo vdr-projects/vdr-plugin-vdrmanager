@@ -139,6 +139,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		Intent i = getIntent();
 
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
+		final int preselect = i.getIntExtra(Intents.CURRENT_EPG, 0);
 
 		initActionBar();
 
@@ -189,16 +190,19 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 					return (Void) null;
 				}
 
-				for (Event e : epgs) {
-					if (epg.equals(e)) {
-						break;
-					}
-					counter++;
-				}
+			//	for (Event e : epgs) {
+				//	if (epg.equals(e)) {
+					//	break;
+					//}
+					//counter++;
+				//}
 
-				if (counter == epgs.size()) {// not found?
-					epgs.add(0, cEvent);
-					counter = 0;
+				//if (counter == epgs.size()) {// not found?
+					//epgs.add(0, cEvent);
+					//counter = 0;
+				//}
+				if(preselect < epgs.size()){
+					counter = preselect;
 				}
 				return (Void) null;
 			}
