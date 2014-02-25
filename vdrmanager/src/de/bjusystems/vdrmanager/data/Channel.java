@@ -10,6 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
+import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
 @DatabaseTable
 public class Channel implements Parcelable {
@@ -67,8 +68,8 @@ public class Channel implements Parcelable {
 				C.DATA_SEPARATOR);
 		this.number = Integer.valueOf(words[0].substring(1));
 		if (words.length > 2) {
-			this.name = words[1];
-			this.provider = words[2];
+			this.name = mapSpecialChars(words[1]);
+			this.provider = mapSpecialChars(words[2]);
 			this.id = words[3];
 			this.rawAudio = words[4];
 			if (words.length > 5) {
@@ -77,7 +78,7 @@ public class Channel implements Parcelable {
 				this.source = "Default";
 			}
 		} else {
-			this.name = words[1];
+			this.name =  mapSpecialChars(words[1]);
 			this.id = "-1";
 			this.provider = "Unknown";
 			this.rawAudio = "";

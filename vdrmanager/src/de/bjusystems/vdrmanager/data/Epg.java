@@ -31,7 +31,7 @@ public class Epg extends Event implements Timerable {
 		final String[] words = StringUtils.splitPreserveAllTokens(line,
 				C.DATA_SEPARATOR);
 		channelNumber = Long.valueOf(words[0].substring(1));
-		channelName = words[1];
+		channelName = Utils.mapSpecialChars(words[1]);
 		start = new Date(Long.parseLong(words[2]) * 1000);
 		stop = new Date(Long.parseLong(words[3]) * 1000);
 		title = mapSpecialChars(words[4]);
