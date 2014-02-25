@@ -164,9 +164,9 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 			snprintf(number, sizeof(number) - 1, "C%d", channel->Number());
 			result += number;
 			result += ":";
-			result += channel->Name();
+			result += MapSpecialChars(channel->Name());
 			result += ":";
-			result += channel->Provider();
+			result += MapSpecialChars(channel->Provider());
 			result += ":";
 			result += channel->GetChannelID().ToString();
 			result += ":";
