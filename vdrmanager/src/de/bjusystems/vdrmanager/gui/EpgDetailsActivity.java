@@ -211,6 +211,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			protected void onPostExecute(Void result) {
 
 				// cEvent = epgs.get(counter);
+				adapter.notifyDataSetChanged();
 				pager.setCurrentItem(counter);
 				onPageSelected(counter);
 				// current = counter;
