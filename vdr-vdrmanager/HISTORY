@@ -1,5 +1,10 @@
 VDR Plugin 'vdrmanager' Revision History
 ------------------------------------
+2014-05-31: Version 0.12 (http://projects.vdr-developer.org/versions/show/342)
+- Feature #1687: Enable compression as default
+- Feature #1688: Send VPS Time if presend on an schedule
+- Feature #1700: send flag IsNew to android
+
 2014-01-02: Version 0.11 (http://projects.vdr-developer.org/versions/show/339)
 - Bug #1661: Link libz (Makefile)
 

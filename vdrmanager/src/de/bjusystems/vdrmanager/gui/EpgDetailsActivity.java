@@ -165,10 +165,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 			// timerable = (Timerable) cEvent;
 		}
 
-		adapter = new Adapter();
+		
 		pager = (ViewPager) findViewById(R.id.viewpager);
 		pager.setOnPageChangeListener(this);
-		pager.setAdapter(adapter);
+		
 
 		new VoidAsyncTask() {
 
@@ -209,15 +209,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 			@Override
 			protected void onPostExecute(Void result) {
-
-				// cEvent = epgs.get(counter);
-				adapter.notifyDataSetChanged();
+				adapter = new Adapter();
+				pager.setAdapter(adapter);
 				pager.setCurrentItem(counter);
 				onPageSelected(counter);
-				// current = counter;
-				// indicator.setViewPager(pager);
-
-				// publishEPG(epg);
 			}
 		}.execute((Void) null);
 
