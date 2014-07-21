@@ -4,9 +4,9 @@ import static de.bjusystems.vdrmanager.gui.Utils.mapSpecialChars;
 
 import java.util.Date;
 
-import android.text.TextUtils;
 import de.bjusystems.vdrmanager.StringUtils;
 import de.bjusystems.vdrmanager.app.C;
+import de.bjusystems.vdrmanager.gui.Utils;
 
 public class Recording extends Event {
 
@@ -15,7 +15,7 @@ public class Recording extends Event {
 	public static final String FOLDERDELIMCHAR = "~";
 
 	public Recording(String line) {
-		final String[] words = StringUtils.splitPreserveAllTokens(line,
+		String[] words = StringUtils.splitPreserveAllTokens(line,
 				C.DATA_SEPARATOR);
 		int idx = 0;
 		index = Integer.valueOf(words[idx++]);
@@ -26,7 +26,81 @@ public class Recording extends Event {
 		shortText = mapSpecialChars(words[idx++]);
 		description = mapSpecialChars(words[idx++]);
 		fileName = mapSpecialChars(words[idx++]);
-		fileSize = Integer.valueOf(words[idx++]);
+		try {
+			fileSize = Integer.valueOf(words[idx++]);
+		} catch (NumberFormatException ex) {
+
+			/************** TEMPORARY TO FIX THE BUG UNTIL Server's 0.13 */
+
+			int offset = 0;
+			int count = 0;
+			while(offset != -1){
+				offset = line.indexOf(":", offset + 1);
+				count++;
+				if(count == 5){
+					 words = StringUtils.splitPreserveAllTokens(line.substring(0, offset) + Utils.unMapSpecialChars(":") + line.substring(offset+1), 
+							C.DATA_SEPARATOR);  
+					 break;
+				}
+			}
+			
+			idx = 0;
+			index = Integer.valueOf(words[idx++]);
+			start = new Date(Long.parseLong(words[idx++]) * 1000);
+			stop = new Date(Long.parseLong(words[idx++]) * 1000);
+			channelName = mapSpecialChars(words[idx++]);
+			title = mapSpecialChars(words[idx++]);
+			shortText = mapSpecialChars(words[idx++]);
+			description = mapSpecialChars(words[idx++]);
+			fileName = mapSpecialChars(words[idx++]);
+			fileSize = Integer.valueOf(words[idx++]);
+
+			if (idx < words.length) {
+				channelId = words[idx++];
+			}
+			if (idx < words.length) {
+				realDuration = Long.parseLong(words[idx++]) * 1000;
+			}
+
+			if (idx < words.length) {
+				devInode = mapSpecialChars(words[idx++]);
+			}
+
+			if (idx < words.length) { // timer
+				String data = words[idx++];
+				if (data != null && data.length() > 0) {
+					timerStopTime = new Date(Long.parseLong(data) * 1000L);
+				}
+			}
+
+			if (idx < words.length) { // name
+				String titleRaw = mapSpecialChars(words[idx++]);
+				int idxdel = titleRaw.lastIndexOf(FOLDERDELIMCHAR);
+				if (idxdel == -1) {
+					title = titleRaw;
+					folder = ROOT_FOLDER;
+				} else {
+					title = titleRaw.substring(idxdel + 1);
+					String foldersRaw = titleRaw.substring(0, idxdel);
+					folder = foldersRaw;
+
+				}
+			} else {
+				folder = ROOT_FOLDER;
+			}
+
+			if (idx < words.length) {
+				if (words[idx++].equals("1")) {
+					neww = true;
+				}
+			}
+			if (title.charAt(0) == '%') {
+				cut = true;
+				title = title.substring(1);
+			}
+			return;
+		}
+
 		if (idx < words.length) {
 			channelId = words[idx++];
 		}
@@ -175,7 +249,6 @@ public class Recording extends Event {
 	public boolean isCut() {
 		return cut;
 	}
-
 
 	public boolean isNeww() {
 		return neww;
