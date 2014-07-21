@@ -694,7 +694,7 @@ string cHelpers::ToText(cRecording * recording) {
 		result += MapSpecialChars(event->Title());
 #endif
 	} else {
-		result += recording->Name();
+		result += MapSpecialChars(recording->Name());
 	}
 	result += ":";
 
