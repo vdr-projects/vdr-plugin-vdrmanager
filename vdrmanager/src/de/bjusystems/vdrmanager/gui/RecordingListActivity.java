@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -193,8 +194,8 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+			final Menu menu) {
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.recording_list_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -204,20 +205,20 @@ public class RecordingListActivity extends BaseEventListActivity<Recording>
 		super.onPause();
 	}
 
-	@Override
-	protected int prepareDetailsViewData(final EventListItem event, int position) {
-		getApp().setCurrentEvent(event.getEvent());
-		List<Recording> cachEget = CACHEget(currentFolder);
-		getApp().setCurrentEpgList(cachEget);
-		
-		for(int i = 0; i < position; ++i){
-			if(cachEget.get(i) == event.getEvent()){
-				return i; 
-			}
-		}
-		
-		return 0;
-	}
+//	@Override
+//	protected int prepareDetailsViewData(final EventListItem event, int position) {
+//		getApp().setCurrentEvent(event.getEvent());
+//		List<Recording> cachEget = CACHEget(currentFolder);
+//		getApp().setCurrentEpgList(cachEget);
+//		
+//		for(int i = 0; i < position; ++i){
+//			if(cachEget.get(i) == event.getEvent()){
+//				return i; 
+//			}
+//		}
+//		
+//		return 0;
+//	}
 
 	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View v,

@@ -305,8 +305,9 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
     <item>EXTERN (veraltet)</item>
   </string-array>
   <string-array name="recstream_entries">
-    <item>VDR Live plugin</item>
+    <item>VDR live plugin</item>
     <item>VDR streamdev plugin</item>
+    <item>VDR smattvweb plugin</item>
   </string-array>
   <string-array name="recent_channels_order_entries">
     <item>Am meisten genutzt</item>

@@ -180,6 +180,12 @@ public class Vdr {
 
 	@DatabaseField
 	private String recStreamMethod = "vdr-live";
+	
+	@DatabaseField(columnName="smarttvwebPort")
+	private int smarttvwebPort = 8000;
+	
+	@DatabaseField(columnName="smarttvwebType")
+	private String smarttvwebType="ts";
 
 	@DatabaseField
 	private boolean enableRecStreaming = false;
@@ -584,6 +590,10 @@ public class Vdr {
 		map.put("key_live_port", livePort);
 		map.put("key_recstream_method", recStreamMethod);
 		map.put("key_timezone", serverTimeZone);
+		
+		
+		map.put("key_smarttvweb_port", smarttvwebPort);
+		map.put("key_smarttvweb_recstream_method", smarttvwebType);
 		return map;
 	}
 
@@ -672,6 +682,25 @@ public class Vdr {
 		livePort = getInteger(map, "key_live_port", 8008);
 		recStreamMethod = get(map, "key_recstream_method", "vdr-live");
 		serverTimeZone = get(map, "key_timezone", TimeZone.getDefault().getID());
+		
+		smarttvwebPort=  getInteger(map, "key_smarttvweb_port", 8000);
+		smarttvwebType=  get(map, "key_smarttvweb_recstream_method", "progressive");
+	}
+
+	public int getSmarttvwebPort() {
+		return smarttvwebPort;
+	}
+
+	public void setSmarttvwebPort(int smarttvwebPort) {
+		this.smarttvwebPort = smarttvwebPort;
+	}
+
+	public String getSmarttvwebType() {
+		return smarttvwebType;
+	}
+
+	public void setSmarttvwebType(String smarttvwebType) {
+		this.smarttvwebType = smarttvwebType;
 	}
 
 }

@@ -47,7 +47,6 @@ public class Preferences {
 
 	}
 
-
 	public static boolean get(Context context, String key, boolean defValue) {
 		final SharedPreferences sharedPrefs = getSharedPreferences(context);
 		return sharedPrefs.getBoolean(key, defValue);
@@ -101,7 +100,7 @@ public class Preferences {
 	private boolean showTmdbButton = false;
 
 	private int maxRecentChannels = 10;
-	
+
 	private boolean clearTermAfterSearch = false;
 
 	public int getMaxRecentChannels() {
@@ -391,6 +390,14 @@ public class Preferences {
 		return getCurrentVdr().getStreamFormat();
 	}
 
+	public int getSmarttvewebPort() {
+		return getCurrentVdr().getSmarttvwebPort();
+	}
+
+	public String getSmarttvewebType() {
+		return getCurrentVdr().getSmarttvwebType();
+	}
+
 	/**
 	 * Sets the time values for the epg search
 	 *
@@ -520,8 +527,9 @@ public class Preferences {
 
 		prefs.maxRecentChannels = getInt(context,
 				R.string.gui_max_recent_channels_key, 10);
-		
-		prefs.clearTermAfterSearch = getBoolean(context, R.string.clear_term_after_search_key, false);
+
+		prefs.clearTermAfterSearch = getBoolean(context,
+				R.string.clear_term_after_search_key, false);
 
 		thePrefs = prefs;
 	}

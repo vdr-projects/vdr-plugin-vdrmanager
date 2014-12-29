@@ -32,13 +32,19 @@
     <string-array name="recstream_entry_values">
         <item>vdr-live</item>
         <item>vdr-streamdev</item>
+        <item>vdr-smarttvweb</item>
     </string-array>
 
   <string-array name="recent_channels_order_entry_values">
     <item>most</item>
     <item>last</item>
   </string-array>
-
+  <array name="recstream_smarttvweb_entry_values">
+      	<item>progressive</item>
+        <item>has</item>
+        <item>hls</item>
+      </array>
+  
 
 
 

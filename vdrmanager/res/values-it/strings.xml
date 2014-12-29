@@ -267,6 +267,8 @@
   </string-array>
   <string-array name="recstream_entries">
     <item>Plugin VDR Live</item>
+    <item>Plugin VDR Streamdev</item>
+    <item>Plugin VDR Smattvweb</item>
   </string-array>
 
 

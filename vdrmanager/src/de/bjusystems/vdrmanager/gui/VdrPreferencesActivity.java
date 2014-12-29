@@ -68,7 +68,6 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		super.updateSummary(ep);
 	}
 
-
 	private boolean isNew = false;
 
 	private boolean hasChanged = false;
@@ -137,16 +136,15 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return null;
 	}
 
-//	private String getIp() throws Exception {
-//		final Preferences prefs = Preferences.get();
-//		String host = prefs.getSvdrpHost();
-//		return InetAddress.getByName(host).getHostAddress();
-//	}
+	// private String getIp() throws Exception {
+	// final Preferences prefs = Preferences.get();
+	// String host = prefs.getSvdrpHost();
+	// return InetAddress.getByName(host).getHostAddress();
+	// }
 
 	private void ping(String ip, int port) throws Exception {
 		Socket socket = new Socket();
-		socket.connect(new InetSocketAddress(ip, port),
-				5 * 1000);
+		socket.connect(new InetSocketAddress(ip, port), 5 * 1000);
 		socket.setSoTimeout(5 * 1000);
 	}
 
@@ -171,9 +169,15 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			// PreferenceCategory cat = (PreferenceCategory)
 			// findPreference("key_streaming_category");
 			// cat.removePreference(p);
+		} 
+		
+		if (recstream.equals("vdr-smarttvweb") == false) {
+			Preference p = findPreference("key_smarttvweb_port");
+			p.setEnabled(false);
+			p = findPreference("key_smarttvweb_recstream_method");
+			p.setEnabled(false);
+
 		}
-
-
 
 		// create background task
 
@@ -181,7 +185,7 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 
 		final FetchEditTextPreference macedit = (FetchEditTextPreference) findPreference(getString(R.string.wakeup_wol_mac_key));
 		String mac = vdr.getMac();
-		if(mac == null){
+		if (mac == null) {
 			mac = "";
 		}
 		macedit.setText(mac);
@@ -221,7 +225,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 					@Override
 					protected Void doInBackground(Void... params) {
 						try {
-							String ip = InetAddress.getByName(host).getHostAddress();
+							String ip = InetAddress.getByName(host)
+									.getHostAddress();
 							ping(ip, vdr.getPort());
 							mac = getMacFromArpCache(ip);
 						} catch (Exception ex) {
@@ -260,24 +265,26 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 							return;
 						}
 
-						if(ips.isEmpty()){
-							Utils.say(VdrPreferencesActivity.this, R.string.no_results);
+						if (ips.isEmpty()) {
+							Utils.say(VdrPreferencesActivity.this,
+									R.string.no_results);
 							return;
 						}
 						if (ips.size() == 1) {
 							ipEdit.setEditText(ips.get(0).toString());
 						} else {
-							new AlertDialog.Builder(VdrPreferencesActivity.this).setItems(
-									ips.toArray(new CharSequence[] {}),
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											String ip = ips.get(which);
-											ipEdit.setEditText(ip);
-										}
-									}).show();
+							new AlertDialog.Builder(VdrPreferencesActivity.this)
+									.setItems(
+											ips.toArray(new CharSequence[] {}),
+											new DialogInterface.OnClickListener() {
+												@Override
+												public void onClick(
+														DialogInterface dialog,
+														int which) {
+													String ip = ips.get(which);
+													ipEdit.setEditText(ip);
+												}
+											}).show();
 						}
 
 					}
@@ -329,12 +336,27 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 					"vdr-live");
 			Preference pk = findPreference("key_live_port");
 			if (recstream.equals("vdr-live") == false) {
+
 				pk.setEnabled(false);
 				// PreferenceCategory cat = (PreferenceCategory)
 				// findPreference("key_streaming_category");
 				// cat.removePreference(p);
 			} else {
 				pk.setEnabled(true);
+			}
+
+			if (recstream.equals("vdr-smarttvweb") == false) {
+				p = findPreference("key_smarttvweb_port");
+				p.setEnabled(false);
+				p = findPreference("key_smarttvweb_recstream_method");
+				p.setEnabled(false);
+
+			} else {
+				p = findPreference("key_smarttvweb_port");
+				p.setEnabled(true);
+				p = findPreference("key_smarttvweb_recstream_method");
+				p.setEnabled(true);
+
 			}
 
 			// if(pk)
@@ -440,8 +462,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			finish();
 			return;
 		}
-		if(isNew == true && hasChanged == false) {
-		//if (pref.commits < 2) {// user has not changed anything
+		if (isNew == true && hasChanged == false) {
+			// if (pref.commits < 2) {// user has not changed anything
 			DBAccess.get(this).getVdrDAO().delete(pref.getVdr());
 			finish();
 			return;
@@ -467,7 +489,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 			return;
 		}
 
-		//never mind, onResume also registers this, but the listenres are held in a map (as key) so that no double occurance
+		// never mind, onResume also registers this, but the listenres are held
+		// in a map (as key) so that no double occurance
 		pref.registerOnSharedPreferenceChangeListener(this);
 
 		if (requestCode == REQUEST_CODE_PICK_A_TIME_ZONE) {

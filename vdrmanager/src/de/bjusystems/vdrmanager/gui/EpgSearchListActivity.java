@@ -10,12 +10,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
-import com.actionbarsherlock.view.MenuItem;
-
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Epg;
@@ -205,19 +205,19 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 		return adapter.getCount() > 0;
 	}
 
-	@Override
-	protected int prepareDetailsViewData(final EventListItem item, int position) {
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		app.setCurrentEvent(item.getEvent());
-		app.setCurrentEpgList(CACHE);
-		for(int i = 0; i < position; ++i){
-			if(CACHE.get(i) == item.getEvent()){
-				return i;
-			}
-		}
-
-		return 0;
-	}
+//	@Override
+//	protected int prepareDetailsViewData(final EventListItem item, int position) {
+//		final VdrManagerApp app = (VdrManagerApp) getApplication();
+//		app.setCurrentEvent(item.getEvent());
+//		app.setCurrentEpgList(CACHE);
+//		for (int i = 0; i < position; ++i) {
+//			if (CACHE.get(i) == item.getEvent()) {
+//				return i;
+//			}
+//		}
+//
+//		return 0;
+//	}
 
 	@Override
 	protected int getMainLayout() {
@@ -235,15 +235,14 @@ public class EpgSearchListActivity extends BaseTimerEditActivity<Epg> implements
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		// MenuItem item;
 		// item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
 		// R.string.new_timer);
 		// item.setIcon(android.R.drawable.ic_menu_add);;
 		// /item.setAlphabeticShortcut('r');
 
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.epg_search_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}

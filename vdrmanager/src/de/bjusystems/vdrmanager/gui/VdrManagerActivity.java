@@ -9,14 +9,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.widget.SearchView;
-import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.j256.ormlite.android.AndroidDatabaseResults;
 
 import de.bjusystems.vdrmanager.R;
@@ -28,14 +32,14 @@ import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.utils.wakeup.AsyncWakeupTask;
 
-public class VdrManagerActivity extends SherlockActivity implements
+public class VdrManagerActivity extends ActionBarActivity implements
 		OnClickListener, OnQueryTextListener {
 
 	public static final String TAG = "VdrManagerActivity";
 
 	public static final String VDR_PORTAL = "http://www.vdr-portal.de";
 
-	private com.actionbarsherlock.widget.SearchView search;
+	private SearchView search;
 
 	private View actionMenuWakup;
 
@@ -48,7 +52,7 @@ public class VdrManagerActivity extends SherlockActivity implements
 		// if(Preferences.get().getCurrentVdr() == null){
 		// finish();
 		// return;
-		// }
+		// } android.support.v7.appcompat.R
 
 		if (Preferences.initVDR(this) == false) {
       final Intent intent = new Intent();
@@ -86,13 +90,12 @@ public class VdrManagerActivity extends SherlockActivity implements
 		// createButtons();
 	}
 
-	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 
 		// search = new SearchView(getSupportActionBar().getThemedContext());
-
-		search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		search = (SearchView) MenuItemCompat.getActionView( menu.findItem(R.id.menu_search));
 
 		// search = (SearchView)
 		// .getActionView();
@@ -103,7 +106,7 @@ public class VdrManagerActivity extends SherlockActivity implements
 		search.setSearchableInfo(searchManager
 				.getSearchableInfo(getComponentName()));
 
-		// search.setOnQueryTextListener(this);
+		//search.setOnQueryTextListener(this);
 		return true;
 	}
 
@@ -122,7 +125,7 @@ public class VdrManagerActivity extends SherlockActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(
-			final com.actionbarsherlock.view.MenuItem item) {
+			final MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.main_menu_preferences: {

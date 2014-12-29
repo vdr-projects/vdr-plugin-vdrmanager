@@ -7,15 +7,21 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ViewFlipper;
-
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
@@ -29,7 +35,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpFinishedListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
 
 public abstract class BaseActivity<Result, T extends ListView> extends
-		ICSBaseActivity implements OnClickListener, SvdrpListener,
+		ActionBarActivity implements OnClickListener, SvdrpListener,
 		SvdrpExceptionListener, SvdrpFinishedListener<Result> {
 
 	public static final String TAG = BaseActivity.class.getName();
@@ -48,6 +54,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	// protected SvdrpProgressDialog progress;
 
+	private CharSequence mDrawerTitle;
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private String[] mTitles;
+
 	abstract protected String getWindowTitle();
 
 	abstract protected int getMainLayout();
@@ -57,6 +69,18 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	}
 
 	abstract protected boolean displayingResults();
+
+	/**
+	 * When using the ActionBarDrawerToggle, you must call it during
+	 * onPostCreate() and onConfigurationChanged()...
+	 */
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
 
 	protected boolean isForceRefresh() {
 		if (forceRefresh == false) {
@@ -81,10 +105,15 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		}
 	}
 
+	protected CertificateProblemDialog getCertificateProblemDialog() {
+		return new CertificateProblemDialog(this);
+	}
+
 	@Override
 	public void onConfigurationChanged(final Configuration newConfig) {
 		Preferences.setLocale(this);
 		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override
@@ -143,60 +172,60 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 			return;
 		}
 
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-		getSupportActionBar().setNavigationMode(
-				getSupportActionBar().NAVIGATION_MODE_LIST);
-
-		final ArrayAdapter<CharSequence> mSpinnerAdapter = ArrayAdapter
-				.createFromResource(this, R.array.navigation_array,
-						android.R.layout.simple_spinner_dropdown_item);
-
-		getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter,
-				new OnNavigationListener() {
-
-					private boolean firstHit = true;
-
-					@Override
-					public boolean onNavigationItemSelected(
-							final int itemPosition, final long itemId) {
-
-						if (firstHit == true) {
-							firstHit = false;
-							return false;
-						}
-						switch (itemPosition) {
-
-						case LIST_NAVIGATION_CHANNELS: {
-							startActivity(ChannelListActivity.class);
-							return true;
-						}
-						case LIST_NAVIGATION_EPG_BY_TIME: {
-							startActivity(TimeEpgListActivity.class);
-							return true;
-						}
-
-						case LIST_NAVIGATION_EPG_BY_CHANNEL: {
-							startActivity(EventEpgListActivity.class);
-							return true;
-						}
-
-						case LIST_NAVIGATION_RECORDINGS: {
-							startActivity(RecordingListActivity.class);
-							return true;
-						}
-
-						case LIST_NAVIGATION_TIMERS: {
-							startActivity(TimerListActivity.class);
-							return true;
-						}
-
-						}
-						return false;
-					}
-				});
-		getSupportActionBar().setSelectedNavigationItem(
-				getListNavigationIndex());
+		// getSupportActionBar().setDisplayShowTitleEnabled(false);
+		//
+		// getSupportActionBar().setNavigationMode(
+		// getSupportActionBar().NAVIGATION_MODE_LIST);
+		//
+		// final ArrayAdapter<CharSequence> mSpinnerAdapter = ArrayAdapter
+		// .createFromResource(this, R.array.navigation_array,
+		// android.R.layout.simple_spinner_dropdown_item);
+		//
+		// getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter,
+		// new OnNavigationListener() {
+		//
+		// private boolean firstHit = true;
+		//
+		// @Override
+		// public boolean onNavigationItemSelected(
+		// final int itemPosition, final long itemId) {
+		//
+		// if (firstHit == true) {
+		// firstHit = false;
+		// return false;
+		// }
+		// switch (itemPosition) {
+		//
+		// case LIST_NAVIGATION_CHANNELS: {
+		// startActivity(ChannelListActivity.class);
+		// return true;
+		// }
+		// case LIST_NAVIGATION_EPG_BY_TIME: {
+		// startActivity(TimeEpgListActivity.class);
+		// return true;
+		// }
+		//
+		// case LIST_NAVIGATION_EPG_BY_CHANNEL: {
+		// startActivity(EventEpgListActivity.class);
+		// return true;
+		// }
+		//
+		// case LIST_NAVIGATION_RECORDINGS: {
+		// startActivity(RecordingListActivity.class);
+		// return true;
+		// }
+		//
+		// case LIST_NAVIGATION_TIMERS: {
+		// startActivity(TimerListActivity.class);
+		// return true;
+		// }
+		//
+		// }
+		// return false;
+		// }
+		// });
+		// getSupportActionBar().setSelectedNavigationItem(
+		// getListNavigationIndex());
 
 	}
 
@@ -204,6 +233,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Preferences.setLocale(this);
+		setContentView(getMainLayout());
 		progress = new ProgressDialog(this);
 		progress.setCancelable(false);
 		progress.setCanceledOnTouchOutside(false);
@@ -217,6 +247,8 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		initActionBar();
 
 		initListNavigation();
+
+		initLeftDrawer(savedInstanceState);
 
 		// new OnNavigationListener() {
 		// @Override
@@ -239,6 +271,105 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	}
 
+	protected void initLeftDrawer(final Bundle savedInstanceState) {
+
+		mDrawerTitle = getTitle();
+
+		mTitles = getResources().getStringArray(R.array.navigation_array);
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+		// set a custom shadow that overlays the main content when the drawer
+		// opens
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
+		// set up the drawer's list view with items and click listener
+		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_list_item, mTitles));
+		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		// ActionBarDrawerToggle ties together the the proper interactions
+		// between the sliding drawer and the action bar app icon
+		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+		mDrawerLayout, /* DrawerLayout object */
+		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.string.drawer_open, /* "open drawer" description for accessibility */
+		R.string.drawer_close /* "close drawer" description for accessibility */
+		) {
+			public void onDrawerClosed(View view) {
+				// getSupportActionBar().setTitle(mTitle);
+				//invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				// getSupportActionBar().setTitle(mDrawerTitle);
+				//invalidateOptionsMenu(); // creates call to
+											// onPrepareOptionsMenu()
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+//		if (savedInstanceState == null) {
+//			selectItem(0);
+//		}
+
+	}
+
+	/* The click listner for ListView in the navigation drawer */
+	private class DrawerItemClickListener implements
+			ListView.OnItemClickListener {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			selectItem(position);
+		}
+	}
+
+	private void selectItem(int position) {
+
+		// update selected item and title, then close the drawer
+		mDrawerList.setItemChecked(position, true);
+		// setTitle(mPlanetTitles[position]);
+
+		switch (position) {
+
+		case LIST_NAVIGATION_CHANNELS: {
+			startActivity(ChannelListActivity.class);
+			break;
+		}
+		case LIST_NAVIGATION_EPG_BY_TIME: {
+			startActivity(TimeEpgListActivity.class);
+			break;
+		}
+
+		case LIST_NAVIGATION_EPG_BY_CHANNEL: {
+			startActivity(EventEpgListActivity.class);
+			break;
+		}
+
+		case LIST_NAVIGATION_RECORDINGS: {
+			startActivity(RecordingListActivity.class);
+			break;
+		}
+
+		case LIST_NAVIGATION_TIMERS: {
+			startActivity(TimerListActivity.class);
+			break;
+		}
+		}
+
+		mDrawerLayout.closeDrawer(mDrawerList);
+	}
+
+	protected void initActionBar() {
+		getSupportActionBar().setHomeButtonEnabled(true);
+	}
+
 	public void startActivity(final Class<?> clazz) {
 		final Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setClass(this, clazz);
@@ -251,15 +382,14 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 
 		// MenuItem item;
 		// item = menu.add(MENU_GROUP_REFRESH, MENU_REFRESH, 0,
 		// R.string.refresh);
 		// item.setIcon(R.drawable.ic_menu_refresh);
 		// item.setAlphabeticShortcut('r');
-		final com.actionbarsherlock.view.MenuInflater inf = getSupportMenuInflater();
+		final MenuInflater inf = getMenuInflater();
 		inf.inflate(getBaseMenu(), menu);
 
 		// SearchView searchView = (SearchView)
@@ -276,8 +406,12 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 	// abstract protected SvdrpClient<Result> getClient();
 
 	@Override
-	public boolean onOptionsItemSelected(
-			final com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
+
+		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
 		switch (item.getItemId()) {
 		case R.id.list_refresh:
 			backupViewSelection();
@@ -508,13 +642,4 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 		}
 	}
 
-	/**
-	 * Creates a dialog for showing certificate problems
-	 *
-	 * @return dialog
-	 */
-	@Override
-	protected CertificateProblemDialog getCertificateProblemDialog() {
-		return new CertificateProblemDialog(this);
-	}
 }

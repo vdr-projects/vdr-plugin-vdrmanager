@@ -262,6 +262,8 @@ herrlado&lt;herrlado@gmail.com&gt;
   </string-array>
   <string-array name="recstream_entries">
     <item>Додаток VDR live</item>
+      <item>Додаток VDR streamdev</item>
+        <item>Додаток VDR smattvweb</item>
   </string-array>
 
   <!-- EPG Content -->

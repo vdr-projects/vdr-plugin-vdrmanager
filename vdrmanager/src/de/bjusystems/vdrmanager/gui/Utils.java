@@ -362,6 +362,23 @@ public class Utils {
 					.append(Integer.valueOf(Preferences.get().getStreamPort()))
 					//
 					.append("/").append(rec.getDevInode());
+		} else if (StringUtils.equals(m, "vdr-smarttvweb")) {
+
+			String type = Preferences.get().getSmarttvewebType();
+
+			url.append("http://")
+					.append(Preferences.get().getSvdrpHost())
+					//
+					.append(":")
+					.append(Integer.valueOf(Preferences.get()
+							.getSmarttvewebPort()))
+					//
+					.append(Utils.encodeUrlPath(rec.getFileName()));
+			if (StringUtils.equals(type, "has") == true) {
+				url.append("/manifest-seg.mpd");
+			} else if (StringUtils.equals(type, "hls")) {
+				url.append("/manifest-seg.m3u8");
+			}
 		}
 		return url.toString();
 	}
@@ -420,6 +437,9 @@ public class Utils {
 		t.setGravity(Gravity.CENTER, 0, 0);
 		t.show();
 	}
+	public static String encodeUrlPath(String path){
+		return path.replaceAll("%", "%25");
+	}
 
 	public static void say(final Context ctx, final int msg) {
 		final Toast t = Toast.makeText(ctx, msg, Toast.LENGTH_SHORT);
@@ -447,16 +467,16 @@ public class Utils {
 	public static int getTimerStateDrawable(final TimerMatch match,
 			final int full, final int begin, final int end, final int conflict) {
 
-        switch (match) {
-        case Begin:
-            return begin;
-        case End:
-            return end;
-        case Conflict:
-            return conflict;
-        default:
-            return full;
-        }
+		switch (match) {
+		case Begin:
+			return begin;
+		case End:
+			return end;
+		case Conflict:
+			return conflict;
+		default:
+			return full;
+		}
 	}
 
 	public static String formatAudio(final Context context,

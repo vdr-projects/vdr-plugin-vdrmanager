@@ -8,6 +8,9 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -17,10 +20,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
@@ -394,20 +393,20 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 
 	}
 
-	@Override
-	protected int prepareDetailsViewData(final EventListItem item, int position) {
-		final VdrManagerApp app = (VdrManagerApp) getApplication();
-		app.setCurrentEvent(item.getEvent());
-		ArrayList<Epg> cache = getCache();
-		app.setCurrentEpgList(cache);
-		for (int i = 0; i < position; ++i) {
-			if (cache.get(i) == item.getEvent()) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
+//	@Override
+//	protected int prepareDetailsViewData(final EventListItem item, int position) {
+//		final VdrManagerApp app = (VdrManagerApp) getApplication();
+//		app.setCurrentEvent(item.getEvent());
+//		ArrayList<Epg> cache = getCache();
+//		app.setCurrentEpgList(cache);
+//		for (int i = 0; i < position; ++i) {
+//			if (cache.get(i) == item.getEvent()) {
+//				return i;
+//			}
+//		}
+//
+//		return 0;
+//	}
 
 	@Override
 	protected int getMainLayout() {
@@ -473,7 +472,7 @@ public class EventEpgListActivity extends BaseTimerEditActivity<Epg> implements
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.epg_event_list_menu, menu);
 		return true;
 	}

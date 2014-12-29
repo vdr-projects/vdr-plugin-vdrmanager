@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
@@ -112,20 +114,20 @@ OnItemClickListener {
    * de.bjusystems.vdrmanager.gui.BaseEventListActivity#prepareTimer(de.bjusystems
    * .vdrmanager.data.EventListItem)
    */
-  @Override
-  protected int prepareDetailsViewData(final EventListItem item, int position) {
-    final VdrManagerApp app = (VdrManagerApp) getApplication();
-    // remember event for details view and timer things
-    app.setCurrentEvent(item.getEvent());
-    app.setCurrentEpgList(CACHE);
-	for(int i = 0; i < position; ++i){
-		if(CACHE.get(i) == item.getEvent()){
-			return i;
-		}
-	}
-
-	return 0;
-  }
+//  @Override
+//  protected int prepareDetailsViewData(final EventListItem item, int position) {
+//    final VdrManagerApp app = (VdrManagerApp) getApplication();
+//    // remember event for details view and timer things
+//    app.setCurrentEvent(item.getEvent());
+//    app.setCurrentEpgList(CACHE);
+//	for(int i = 0; i < position; ++i){
+//		if(CACHE.get(i) == item.getEvent()){
+//			return i;
+//		}
+//	}
+//
+//	return 0;
+//  }
 
   protected Comparator<Timer> getTimeComparator(final boolean reverse) {
     return new Comparator<Timer>() {
@@ -264,14 +266,14 @@ OnItemClickListener {
     return R.array.epg_sort_by_time_alpha;
   }
 
-  public boolean onCreateOptionsMenu(final com.actionbarsherlock.view.Menu menu) {
+  public boolean onCreateOptionsMenu(final Menu menu) {
     // MenuItem item;
     // item = menu.add(MENU_GROUP_NEW_TIMER, MENU_NEW_TIMER, 0,
     // R.string.new_timer);
     // item.setIcon(android.R.drawable.ic_menu_add);;
     // /item.setAlphabeticShortcut('r');
 
-    final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+    final MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.timer_list_menu, menu);
     return super.onCreateOptionsMenu(menu);
   }

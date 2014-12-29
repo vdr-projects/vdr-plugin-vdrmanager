@@ -15,7 +15,11 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -50,7 +54,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
  * 
  * @author bju
  */
-public class EpgDetailsActivity extends ICSBaseActivity implements
+public class EpgDetailsActivity extends ActionBarActivity implements
 		OnClickListener, OnPageChangeListener {
 
 	public static final String TAG = "EpgDetailsActivity";
@@ -133,7 +137,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		getSupportActionBar().setHomeButtonEnabled(true);
 		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		Intent i = getIntent();
@@ -141,7 +145,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 		highlight = i.getStringExtra(Intents.HIGHLIGHT);
 		final int preselect = i.getIntExtra(Intents.CURRENT_EPG, 0);
 
-		initActionBar();
+		
 
 		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
@@ -648,10 +652,10 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 	@Override
 	public final boolean onCreateOptionsMenu(
-			com.actionbarsherlock.view.Menu menu) {
+			Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.epg_details, menu);
 
 		// mShareActionProvider = (ShareActionProvider)
@@ -667,7 +671,7 @@ public class EpgDetailsActivity extends ICSBaseActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
+			MenuItem item) {
 
 		Event cEvent = epgs.get(pager.getCurrentItem());
 

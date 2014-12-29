@@ -1,5 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
+import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.EventListItem;
@@ -82,7 +86,6 @@ public abstract class BaseEventListActivity<T extends Event> extends
 		sortBy = Preferences.get(this, getViewID() + "_" + P.EPG_LAST_SORT,
 				MENU_GROUP_DEFAULT);
 		// Attach view
-		setContentView(getMainLayout());
 		setTitle(getWindowTitle());
 		initFlipper();
 		detector = new SimpleGestureFilter(this, this);
@@ -113,9 +116,9 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
+			final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.epg_list_menu, menu);
 		return true;
 	}
@@ -125,7 +128,24 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 *
 	 * @param event
 	 */
-	protected int prepareDetailsViewData(final EventListItem event, int pos) {
+	protected int prepareDetailsViewData(final EventListItem item, int pos) {
+		final VdrManagerApp app = (VdrManagerApp) getApplication();
+		// remember event for details view and timer things
+		app.setCurrentEvent(item.getEvent());
+		ArrayList<Event> current = new ArrayList<Event>();
+		for (int i = 0; i < adapter.getCount(); ++i) {
+			EventListItem item2 = adapter.getItem(i);
+			if(item2.isHeader()){
+				continue;
+			}
+			current.add(item2.getEvent());
+		}
+		app.setCurrentEpgList(current);
+		for (int i = 0; i < pos; ++i) {
+			if (current.get(i) == item.getEvent()) {
+				return i;
+			}
+		}
 
 		return 0;
 	}
@@ -189,7 +209,7 @@ public abstract class BaseEventListActivity<T extends Event> extends
 	 * .view.MenuItem)
 	 */
 	public boolean onOptionsItemSelected(
-			final com.actionbarsherlock.view.MenuItem item) {
+			final MenuItem item) {
 
 		switch (item.getItemId()) {
 

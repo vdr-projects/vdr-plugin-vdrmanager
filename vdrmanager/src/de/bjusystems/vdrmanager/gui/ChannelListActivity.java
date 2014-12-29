@@ -11,21 +11,28 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ListView;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Channel;
@@ -76,12 +83,14 @@ public class ChannelListActivity extends
 		super.onResume();
 	}
 
+
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// Attach view
-		setContentView(getMainLayout());
+		
 		setTitle(getWindowTitle());
 		initFlipper();
 
@@ -98,11 +107,14 @@ public class ChannelListActivity extends
 		listView.setAdapter(adapter);
 		// register context menu
 		registerForContextMenu(listView);
+
+	
+
 		startChannelQuery();
 
 	}
 
-	//
+	
 
 	@Override
 	protected void onPause() {
@@ -247,10 +259,10 @@ public class ChannelListActivity extends
 				public int compare(Channel lhs, Channel rhs) {
 					String lhsn = lhs.getName();
 					String rhsn = rhs.getName();
-					if(lhsn == null){
+					if (lhsn == null) {
 						return 1;
 					}
-					if(rhsn == null){
+					if (rhsn == null) {
 						return -1;
 					}
 					return lhsn.compareToIgnoreCase(rhsn);
@@ -265,17 +277,11 @@ public class ChannelListActivity extends
 		adapter.notifyDataSetChanged();
 	}
 
-	public boolean onPrepareOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
-		return super.onPrepareOptionsMenu(menu);
-	}
-
 	@Override
-	public final boolean onCreateOptionsMenu(
-			final com.actionbarsherlock.view.Menu menu) {
+	public final boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		final com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.channellist, menu);
 
 		return true;
@@ -288,9 +294,8 @@ public class ChannelListActivity extends
 	AlertDialog groupByDialog = null;
 
 	@Override
-	public boolean onOptionsItemSelected(
-			final com.actionbarsherlock.view.MenuItem item) {
-
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		
 		switch (item.getItemId()) {
 		case R.id.channels_groupby:
 			// case MENU_PROVIDER:

@@ -32,7 +32,7 @@ public class DBAccess extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to
 	// increase the database version
 	// Version 3 since 0.6
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	private RuntimeExceptionDao<Vdr, Integer> vdrDAO = null;
 
@@ -91,6 +91,23 @@ public class DBAccess extends OrmLiteSqliteOpenHelper {
 						"UPDATE `vdr` set stz = ?", tz);
 			}
 			
+			if(oldVersion < 4){
+				getVdrDAO()
+				.executeRaw(
+						"ALTER TABLE `vdr` ADD COLUMN smarttvwebType varchar;");
+				getVdrDAO()
+				.executeRaw(
+						"ALTER TABLE `vdr` ADD COLUMN smarttvwebPort int;");
+				
+				getVdrDAO()
+				.executeRaw(
+						"UPDATE `vdr` set smarttvwebPort = ?", "8000");
+				getVdrDAO()
+				.executeRaw(
+						"UPDATE `vdr` set smarttvwebType = ?", "progressive");
+
+
+			}
 
 		} catch (SQLException e) {
 			Log.e(DBAccess.class.getName(), "Can't drop databases", e);

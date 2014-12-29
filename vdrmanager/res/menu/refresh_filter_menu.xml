@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:v7="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/list_refresh"
         android:alphabeticShortcut="r"
         android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom"
+        v7:showAsAction="ifRoom"
         android:title="@string/refresh"/>
 
     <item
         android:id="@+id/list_filter"
         android:alphabeticShortcut="f"
         android:icon="@drawable/ic_menu_filter"
-        android:showAsAction="ifRoom"
+        v7:showAsAction="ifRoom"
         android:title="@string/filter"/>
 </menu>

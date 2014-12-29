@@ -176,6 +176,23 @@
             android:key="key_live_port"
             android:summary="@string/settings_live_port_summary"
             android:title="@string/settings_live_port" />
+          
+          
+        <ListPreference
+            android:dependency="key_rec_stream_enable"
+            android:entries="@array/recstream_smarttvweb_entries"
+            android:entryValues="@array/recstream_smarttvweb_entry_values"
+            android:key="key_smarttvweb_recstream_method"
+            android:summary="@string/recstream_smarttvweb_method_summary"
+            android:title="@string/recstream_smarttvweb_method_title" />
+
+         <EditTextPreference
+            android:defaultValue="8000"
+            android:dependency="key_rec_stream_enable"
+            android:inputType="number"
+            android:key="key_smarttvweb_port"
+            android:summary="@string/settings_smarttvweb_port_summary"
+            android:title="@string/settings_smarttvweb_port" />
     </PreferenceCategory>
 
     <PreferenceScreen android:title="Advanced" >
