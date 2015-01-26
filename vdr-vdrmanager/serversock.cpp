@@ -87,7 +87,7 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
     SSL_load_error_strings();
     SSL_library_init();
 
-    const SSL_METHOD * method = SSLv23_server_method();
+    SSL_METHOD * method = (SSL_METHOD *)SSLv23_server_method();
     sslCtx = SSL_CTX_new(method);
     if (sslCtx == NULL) {
       long errorCode = ERR_get_error();
