@@ -96,6 +96,7 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
       Close();
       return false;
     }
+    SSL_CTX_set_options(sslCtx, SSL_OP_NO_SSLv3);
 
     /* set the local certificate from CertFile */
    SSL_CTX_use_certificate_file(sslCtx, certFile, SSL_FILETYPE_PEM);
