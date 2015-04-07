@@ -1,0 +1,12 @@
+/clientsock.o
+/compressor.o
+/handler.o
+/helpers.o
+/libvdr-vdrmanager.so
+/select.o
+/serversock.o
+/sock.o
+/vdrmanager.o
+/vdrmanagerthread.o
+.settings/*
+.dependencies
