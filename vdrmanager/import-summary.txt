@@ -1,0 +1,108 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* build.xml
+* dev/
+* dev/Edit-cut.png
+* dev/Edit-cut.svg
+* dev/Media-record.svg
+* dev/omdb-logo.png
+* dev/tmdb-logo.png
+* dev/vps.svg
+* libsrc/
+* libsrc/ormlite-android-4.47-sources.jar
+* libsrc/ormlite-core-4.47-sources.jar
+* libsrc/slf4j-android-1.6.1-RC1-sources.jar
+* libsrc/svdrp4j-1.1.0-SNAPSHOT-sources.jar
+* local.properties-RENAME
+* proguard-project.txt
+* proguard.cfg
+* release/
+* release/vdrmanager-10.4.apk
+* release/vdrmanager-10.5.apk
+* release/vdrmanager-12-beta-1.apk
+* release/vdrmanager-12-beta-2.apk
+* release/vdrmanager-12-beta-21.apk
+* release/vdrmanager-12-beta-3.apk
+* release/vdrmanager-12-beta-4.apk
+* release/vdrmanager-12-beta-5.apk
+* release/vdrmanager-12-beta-6.apk
+* release/vdrmanager-12-beta-7.apk
+* release/vdrmanager-12-beta-9.apk
+* release/vdrmanager-12-beta.apk
+* release/vdrmanager-12.10.apk
+* release/vdrmanager-12.11.apk
+* release/vdrmanager-12.12.apk
+* release/vdrmanager-12.9.apk
+* remote_control.png
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:21.0.3
+android-support-v7-appcompat.jar => com.android.support:appcompat-v7:19.1.0
+
+Replaced Libraries with Dependencies:
+-------------------------------------
+The importer recognized the following library projects as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the source files in your project were of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the library replacement in the import wizard and try
+again:
+
+android-support-v7-appcompat => [com.android.support:appcompat-v7:19.1.0]
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app/src/main/AndroidManifest.xml
+* libs/ormlite-android-4.47.jar => app/libs/ormlite-android-4.47.jar
+* libs/ormlite-core-4.47.jar => app/libs/ormlite-core-4.47.jar
+* libs/slf4j-android-1.6.1-RC1.jar => app/libs/slf4j-android-1.6.1-RC1.jar
+* libs/svdrp4j-1.1.0-SNAPSHOT.jar => app/libs/svdrp4j-1.1.0-SNAPSHOT.jar
+* lint.xml => app/lint.xml
+* res/ => app/src/main/res/
+* src/ => app/src/main/java/
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

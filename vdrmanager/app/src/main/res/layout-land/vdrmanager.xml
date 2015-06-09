@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingBottom="20dp"
+    android:orientation="vertical">
+
+    <!-- <ListView android:id="@+id/vdrmanager_menu" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:layout_below="@id/main_logo"/> -->
+
+
+    <ImageView android:id="@+id/main_logo" android:layout_width="fill_parent"
+        android:clickable="true"
+        android:layout_height="80dip" android:src="@drawable/vdr_logo" android:padding="10dip" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/action_menu_channels"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:drawableTop="@drawable/btn_channels"
+            android:text="@string/action_menu_channels"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/action_menu_epg"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:cacheColorHint="?android:attr/colorBackground"
+            android:drawableTop="@drawable/btn_epglist"
+            android:text="@string/action_menu_epg"
+            android:textColor="#FFF" />
+
+
+        <Button
+            android:id="@+id/action_menu_recordings"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:cacheColorHint="?android:attr/colorBackground"
+            android:drawableTop="@drawable/btn_recordings"
+            android:text="@string/action_menu_recordings"
+            android:textColor="#FFF" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+    <Button
+            android:id="@+id/action_menu_wakeup"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:cacheColorHint="?android:attr/colorBackground"
+            android:drawableTop="@drawable/btn_wakeup"
+
+            android:padding="5dip"
+            android:text="@string/action_menu_wakeup"
+            android:textColor="#FFF" />
+
+        <Button
+            android:id="@+id/action_menu_remote"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:cacheColorHint="?android:attr/colorBackground"
+            android:drawableTop="@drawable/btn_remote"
+            android:padding="5dip"
+            android:text="@string/action_menu_remote"
+            android:textColor="#FFF" />
+
+
+        <Button
+            android:id="@+id/action_menu_timers"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/list_selector_background"
+            android:cacheColorHint="?android:attr/colorBackground"
+            android:drawableTop="@drawable/btn_timer"
+            android:text="@string/action_menu_timers"
+            android:textColor="#FFF" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

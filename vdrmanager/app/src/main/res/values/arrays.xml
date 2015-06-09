@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="wakeup_methods_values">
+        <item>url</item>
+        <item>wol</item>
+    </string-array>
+    <string-array name="lang_values">
+        <item>en</item>
+        <item>de</item>
+        <item>fr</item>
+        <item>it</item>
+        <item>uk</item>
+    </string-array>
+
+    <string-array name="remux_entry_values">
+        <item>EXT</item>
+        <item>EXTERN</item>
+    </string-array>
+
+    <string-array name="imdb_urls_velues">
+        <item>akas.imdb.com</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+    </string-array>
+
+
+    <string-array name="recstream_entry_values">
+        <item>vdr-live</item>
+        <item>vdr-streamdev</item>
+        <item>vdr-smarttvweb</item>
+    </string-array>
+
+  <string-array name="recent_channels_order_entry_values">
+    <item>most</item>
+    <item>last</item>
+  </string-array>
+  <array name="recstream_smarttvweb_entry_values">
+      	<item>progressive</item>
+        <item>has</item>
+        <item>hls</item>
+      </array>
+  
+
+
+
+</resources>

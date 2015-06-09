@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:v7="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/main_menu_vdrlist_add"
+        android:icon="@android:drawable/ic_menu_add"
+        v7:showAsAction="always"
+        android:title="@string/new_vdr"/>
+    <item
+        android:id="@+id/main_menu_vdrlist_restore"
+        android:title="@string/settings_backup_restore"/>
+
+</menu><!-- From: file:/home/lado/StudioProjects/vdrmanager/app/src/main/res/menu/vdrlist.xml -->
