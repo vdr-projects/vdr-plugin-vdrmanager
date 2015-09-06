@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-android:text="Header"
-android:layout_margin="2dip" android:paddingLeft="4dip" android:paddingRight="4dip"
-android:background="#444444"
-android:textAppearance="?android:textAppearanceMedium"
-android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/header_item"/>
-
-<!-- From: file:/home/lado/StudioProjects/vdrmanager/app/src/main/res/layout/header_item.xml -->
