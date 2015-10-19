@@ -63,7 +63,7 @@ public class SvdrpProgressDialog<T> extends ProgressDialog implements
 
 	@Override
 	public void svdrpEvent(SvdrpEvent event, Throwable t) {
-		progress.dismiss();
+		this.svdrpEvent(event);
 		Utils.say(getContext(), t.getLocalizedMessage());
 	}
 }

@@ -190,6 +190,9 @@
     <string name="timer_default_primary_limit_summary">Default primary limit</string>
     <string name="timer_default_lifetime_title">Default lifetime</string>
     <string name="timer_default_lifetime_summary">Default lifetime</string>
+    <string name="timer_already_exists">Timer already defined.</string>
+    <string name="timer_created">Timer created</string>
+
 
     <!-- GUI -->
     <string name="gui_preferences">GUI Settings</string>
@@ -536,4 +539,5 @@ What do you want to do?</string>
     <string name="menu_remapback">\'Back\' is \'Back\' HITK</string>
     <string name="remapback_hint">Longpress on Back Button to leave the remote.</string>
     <string name="not_yet_implemented">Not Yet Implemented</string>
+    <string name="timer_error" >Can not create timer: %1$s</string>
 </resources>

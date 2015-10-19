@@ -20,9 +20,7 @@ public class SvdrpException extends Exception {
 
 	public SvdrpException(SvdrpEvent event, String text) {
 		super(text);
-	}
-	public SvdrpException(String text) {
-		this(null,text);
+		this.event = event;
 	}
 
 	public SvdrpException(String text, Throwable cause) {

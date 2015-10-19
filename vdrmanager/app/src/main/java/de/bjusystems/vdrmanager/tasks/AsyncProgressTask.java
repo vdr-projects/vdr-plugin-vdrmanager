@@ -5,6 +5,7 @@ import de.bjusystems.vdrmanager.gui.SvdrpProgressDialog;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
+import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 
 public abstract class AsyncProgressTask<Result> {
 
@@ -18,6 +19,7 @@ public abstract class AsyncProgressTask<Result> {
     @Override
     public void svdrpEvent(final SvdrpEvent event) {
       super.svdrpEvent(event);
+        AsyncProgressTask.this.svdrpEvent(event);
       switch (event) {
       case ABORTED:
       case CONNECT_ERROR:
@@ -31,6 +33,12 @@ public abstract class AsyncProgressTask<Result> {
         break;
       }
     }
+
+      @Override
+      public void svdrpEvent(SvdrpEvent event, Throwable th) {
+          super.svdrpEvent(event,th);
+         AsyncProgressTask.this.svdrpEvent(event, th);
+      }
   }
 
   Activity activity;
@@ -59,5 +67,15 @@ public abstract class AsyncProgressTask<Result> {
     task.run();
   }
 
-  public abstract void finished(SvdrpEvent event);
+  public void svdrpEvent(final SvdrpEvent event){
+
+  }
+
+
+    public void svdrpEvent(final SvdrpEvent event, Throwable th){
+
+    }
+
+
+    public abstract void finished(SvdrpEvent event);
 }

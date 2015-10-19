@@ -9,8 +9,8 @@ android {
             storePassword 'HGr6du07'
         }
     }
-    compileSdkVersion 'Google Inc.:Google APIs:21'
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "de.bjusystems.vdrmanager"
         minSdkVersion 8
@@ -26,10 +26,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:appcompat-v7:19.1.0'
     compile files('libs/ormlite-android-4.47.jar')
     compile files('libs/ormlite-core-4.47.jar')
     compile files('libs/slf4j-android-1.6.1-RC1.jar')
     compile files('libs/svdrp4j-1.1.0-SNAPSHOT.jar')
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
 }

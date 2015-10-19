@@ -86,5 +86,6 @@ public class SetTimerClient extends SvdrpClient<Timer> {
   public int getProgressTextId() {
     return R.string.progress_timer_save;
   }
+
 }
 

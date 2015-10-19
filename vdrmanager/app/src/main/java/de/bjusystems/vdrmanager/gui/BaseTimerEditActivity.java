@@ -21,7 +21,6 @@ import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 /**
- *
  * This class is a base class for all the listings, which can deal with timers
  *
  * @author lado

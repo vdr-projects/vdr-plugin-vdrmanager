@@ -462,7 +462,7 @@ public abstract class SvdrpClient<Result> {
 						msg = line;
 					}
 					disconnect();
-					informListener(SvdrpEvent.ERROR, new SvdrpException(msg));
+					informListener(SvdrpEvent.ERROR, new SvdrpException(SvdrpEvent.ERROR,msg));
 					break;
 				}
 
