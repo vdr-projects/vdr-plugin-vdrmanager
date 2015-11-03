@@ -25,6 +25,49 @@
 #define INDEXFILESUFFIX   "/index.vdr"
 #define LENGTHFILESUFFIX  "/length.vdr"
 
+#ifdef DEF_LIST_LOCK
+
+#define READ_LOCK_BASE(Class, Define) LOCK_##Define##_READ; const c##Class * the##Class = Class
+#define WRITE_LOCK_BASE(Class, Define) LOCK_##Define##_WRITE; c##Class * the##Class = Class
+
+#define READ_LOCK_TIMERS READ_LOCK_BASE(Timers, TIMERS)
+#define WRITE_LOCK_TIMERS WRITE_LOCK_BASE(Timers, TIMERS)
+
+#define READ_LOCK_RECORDINGS READ_LOCK_BASE(Recordings, RECORDINGS)
+#define WRITE_LOCK_RECORDINGS WRITE_LOCK_BASE(Recordings, RECORDINGS)
+
+#define READ_LOCK_CHANNELS READ_LOCK_BASE(Channels, CHANNELS)
+#define WRITE_LOCK_CHANNELS WRITE_LOCK_BASE(Channels, CHANNELS)
+
+#define READ_LOCK_SCHEDULES READ_LOCK_BASE(Schedules, SCHEDULES)
+#define WRITE_LOCK_SCHEDULES WRITE_LOCK_BASE(Schedules, SCHEDULES)
+
+#define RECORDING_CONTROLS_PROCESS cRecordControls::Process(theTimers, time(NULL))
+#define LIST_ELEM_CONST const
+
+#else
+
+#define READ_LOCK_BASE(Class) c##Class * the##Class = &Class
+#define WRITE_LOCK_BASE(Class) c##Class * the##Class = &Class
+
+#define READ_LOCK_TIMERS READ_LOCK_BASE(Timers)
+#define WRITE_LOCK_TIMERS WRITE_LOCK_BASE(Timers)
+
+#define READ_LOCK_RECORDINGS READ_LOCK_BASE(Recordings)
+#define WRITE_LOCK_RECORDINGS WRITE_LOCK_BASE(Recordings)
+
+#define READ_LOCK_CHANNELS READ_LOCK_BASE(Channels)
+#define WRITE_LOCK_CHANNELS WRITE_LOCK_BASE(Channels)
+
+#define LOCKED_SCHEDULES cSchedulesLock schedulesLock; const cSchedules * theSchedules = cSchedules::Schedules(schedulesLock);
+#define READ_LOCK_SCHEDULES  LOCKED_SCHEDULES
+#define WRITE_LOCK_SCHEDULES LOCKED_SCHEDULES
+
+#define RECORDING_CONTROLS_PROCESS cRecordControls::Process(time(NULL))
+#define LIST_ELEM_CONST
+
+#endif
+
 static char ServiceInterface[] = "Epgsearch-services-v1.1";
 
 string cHelpers::GetRecordings(string args) {
@@ -103,7 +146,8 @@ string cHelpers::GetTimersIntern(string options) {
 	string result = "START\r\n";
 
 	// iterate through all timers
-	for (cTimer * timer = Timers.First(); timer; timer = Timers.Next(timer)) {
+	READ_LOCK_TIMERS;
+	for (const cTimer * timer = theTimers->First(); timer; timer = theTimers->Next(timer)) {
 		result += ToText(timer, conflicts);
 	}
 
@@ -127,9 +171,10 @@ string cHelpers::GetRecordingsIntern() {
 	string result = sstm.str();
 
 	//iterate through all recordings
-	cRecording* recording = NULL;
-	for (int i = 0; i < Recordings.Count(); i++) {
-		recording = Recordings.Get(i);
+	READ_LOCK_RECORDINGS;
+	const cRecording* recording = NULL;
+	for (int i = 0; i < theRecordings->Count(); i++) {
+		recording = theRecordings->Get(i);
 		result += ToText(recording);
 	}
 	return result + "END\r\n";
@@ -141,8 +186,9 @@ string cHelpers::GetChannelsIntern(string wantedChannels) {
 	string currentGroup = "";
 
 	char number[10];
-	for (cChannel * channel = Channels.First(); channel; channel =
-			Channels.Next(channel)) {
+	READ_LOCK_CHANNELS;
+	for (const cChannel * channel = theChannels->First(); channel; channel =
+			theChannels->Next(channel)) {
 
 		// channel group
 		if (channel->GroupSep()) {
@@ -186,7 +232,7 @@ string cHelpers::SetChannelIntern(const string args) {
 		return "!ERROR:SetChannel;empty args\r\n";
 	}
 
-	cChannel *channel;
+	const cChannel *channel;
 	bool isnum = true;
 	for (int i = 0; i < (int) args.length(); i++) {
 		if (!std::isdigit(args[i])) {
@@ -196,12 +242,13 @@ string cHelpers::SetChannelIntern(const string args) {
 
 	}
 
+	READ_LOCK_CHANNELS;
 	if (isnum) {
 		int nr = atoi(args.c_str());
-		channel = Channels.GetByNumber(nr);
+		channel = theChannels->GetByNumber(nr);
 	} else {
 		tChannelID chid = tChannelID::FromString(args.c_str());
-		channel = Channels.GetByChannelID(chid);
+		channel = theChannels->GetByChannelID(chid);
 	}
 
 	if (!channel) {
@@ -259,21 +306,21 @@ string cHelpers::GetEventsIntern(string wantedChannels, string when) {
 
 	string result = "START\r\n";
 
-	cSchedulesLock schedulesLock;
-	const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-	for (cSchedule * schedule = schedules->First(); schedule; schedule =
-			schedules->Next(schedule)) {
+	READ_LOCK_SCHEDULES;
+	READ_LOCK_CHANNELS;
+	for (const cSchedule * schedule = theSchedules->First(); schedule; schedule =
+			theSchedules->Next(schedule)) {
 
-		cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
+		const cChannel * channel = theChannels->GetByChannelID(schedule->ChannelID());
 		if (!IsWantedChannel(channel, wantedChannels)) {
 			continue;
 		}
 
 		const cList<cEvent> * events = schedule->Events();
-		for (cEvent * event = events->First(); event;
+		for (const cEvent * event = events->First(); event;
 				event = events->Next(event)) {
 			if (IsWantedTime(wantedTime, event)) {
-				cEvent * match = event;
+				const cEvent * match = event;
 				if (when == "NEXT") {
 					match = events->Next(match);
 					if (!match) {
@@ -307,7 +354,8 @@ string cHelpers::DelRecording(cRecording * recording) {
 #else
 	if (RecordingsHandler.GetUsage(FileName)) {
 		RecordingsHandler.Del(FileName);
-		recording = Recordings.GetByName(FileName); // RecordingsHandler.Del() might have deleted it if it was the edited version
+		WRITE_LOCK_RECORDINGS;
+		recording = theRecordings->GetByName(FileName); // RecordingsHandler.Del() might have deleted it if it was the edited version
 		// we continue with the code below even if recording is NULL,
 		// in order to have the menu updated etc.
 	}
@@ -318,9 +366,10 @@ string cHelpers::DelRecording(cRecording * recording) {
 		cControl::Shutdown();
 	}
 
+	WRITE_LOCK_RECORDINGS;
 	if (!recording || recording->Delete()) {
 		cReplayControl::ClearLastReplayed(FileName);
-		Recordings.DelByName(FileName);
+		theRecordings->DelByName(FileName);
 #if VDRVERSNUM > 10727
 		cVideoDiskUsage::ForceCheck();
 #endif
@@ -337,7 +386,11 @@ string cHelpers::DelRecordingIntern(string args) {
 
 	int index = atoi(args.c_str());
 
-	cRecording *recording = Recordings.Get(index);
+	cRecording *recording = NULL;
+	{
+		WRITE_LOCK_RECORDINGS;
+		recording = theRecordings->Get(index);
+	}
 	if (!recording) {
 		return Error("Recording not found");
 	}
@@ -362,12 +415,13 @@ string cHelpers::DelRecordingIntern(string args) {
 	cTimer *timer = rc->Timer();
 	if (timer) {
 		timer->Skip();
-		cRecordControls::Process(time(NULL));
+		WRITE_LOCK_TIMERS;
+		RECORDING_CONTROLS_PROCESS;
 		if (timer->IsSingleEvent()) {
 			isyslog("deleting timer %s", *timer->ToDescr());
-			Timers.Del(timer);
+			theTimers->Del(timer);
 		}
-		Timers.SetModified();
+		theTimers->SetModified();
 	}
 	return cHelpers::DelRecording(recording);
 }
@@ -397,23 +451,20 @@ string cHelpers::SetTimerIntern(char op, string param) {
 			return Error("Error in timer settings");
 		}
 
-		cTimer* checkTimer = Timers.GetTimer(newTimer.get());
+		WRITE_LOCK_TIMERS;
+		cTimer* checkTimer = theTimers->GetTimer(newTimer.get());
 		if (checkTimer) {
 			return Error("Timer already defined");
 		}
 
-		Timers.Add(newTimer.get());
-		Timers.SetModified();
+		theTimers->Add(newTimer.get());
+		theTimers->SetModified();
 		dsyslog("[vdrmanager] timer %s added", *newTimer->ToDescr());
 		newTimer.release();
 		break;
 	}
 	case 'D':
 	case 'd': {
-		if (Timers.BeingEdited()) {
-			return Error("Timers are being edited - try again later");
-		}
-
 		dsyslog("[vdrmanager] try parse %s ", param.c_str());
 
 		auto_ptr<cTimer> timer(new cTimer);
@@ -423,7 +474,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 
 		dsyslog("[vdrmanager] timer %s parsed", *timer->ToDescr());
 
-		cTimer * t = Timers.GetTimer(timer.get());
+		WRITE_LOCK_TIMERS;
+		cTimer * t = theTimers->GetTimer(timer.get());
 
 		if (!t) {
 			return Error("Timer not defined");
@@ -437,23 +489,19 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		if (t->Recording()) {
 			if (forceDelete == true) {
 				t->Skip();
-				cRecordControls::Process(time(NULL));
+				RECORDING_CONTROLS_PROCESS;
 			} else {
 				return Error("Timer  is recording");
 			}
 		}
 
 		dsyslog("[vdrmanager] deleting timer %s", *t->ToDescr());
-		Timers.Del(t);
-		Timers.SetModified();
+		theTimers->Del(t);
+		theTimers->SetModified();
 		break;
 	}
 	case 'M':
 	case 'm': {
-
-		if (Timers.BeingEdited()) {
-			return Error("Timers are being edited - try again later");
-		}
 
 		string sep = string(TIMER_SEP);
 
@@ -470,7 +518,8 @@ string cHelpers::SetTimerIntern(char op, string param) {
 			return Error("Error in timer settings");
 		}
 
-		cTimer* oldTimer = Timers.GetTimer(otimer.get());
+		WRITE_LOCK_TIMERS;
+		cTimer* oldTimer = theTimers->GetTimer(otimer.get());
 		if (oldTimer == 0) {
 			return Error("Timer not defined");
 		}
@@ -481,7 +530,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		}
 
 		*oldTimer = copy;
-		Timers.SetModified();
+		theTimers->SetModified();
 		dsyslog("[vdrmanager] timer %s modified (%s)", *oldTimer->ToDescr(),
 				oldTimer->HasFlags(tfActive) ? "active" : "inactive");
 
@@ -489,22 +538,19 @@ string cHelpers::SetTimerIntern(char op, string param) {
 	}
 	case 'T':
 	case 't': {
-		if (Timers.BeingEdited()) {
-			return Error("Timers are being edited - try again later");
-		}
-
 		auto_ptr<cTimer> timer(new cTimer);
 		if (!timer->Parse(param.c_str())) {
 			return Error("Error in timer settings");
 		}
 
-		cTimer* toggleTimer = Timers.GetTimer(timer.get());
+		WRITE_LOCK_TIMERS;
+		cTimer* toggleTimer = theTimers->GetTimer(timer.get());
 		if (toggleTimer == 0) {
 			return Error("Timer not defined");
 		}
 
 		toggleTimer->OnOff();
-		Timers.SetModified();
+		theTimers->SetModified();
 		dsyslog("[vdrmanager] timer %s toggled %s", *toggleTimer->ToDescr(),
 				toggleTimer->HasFlags(tfActive) ? "on" : "off");
 		break;
@@ -523,10 +569,6 @@ string cHelpers::SetTimerIntern(string args) {
 //if (sep == string::npos) {
 //return "!ERROR:no separator found\r\n";
 //}
-
-	if (Timers.BeingEdited()) {
-		return Error("Timers are being edited - try again later");
-	}
 
 	char operation = args[0];
 
@@ -557,18 +599,18 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 
 	string result = "START\r\n";
 
-	cSchedulesLock schedulesLock;
-	const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-	for (cSchedule * schedule = schedules->First(); schedule; schedule =
-			schedules->Next(schedule)) {
+	READ_LOCK_SCHEDULES;
+	READ_LOCK_CHANNELS;
+	for (const cSchedule * schedule = theSchedules->First(); schedule; schedule =
+			theSchedules->Next(schedule)) {
 
-		cChannel * channel = Channels.GetByChannelID(schedule->ChannelID());
+		const cChannel * channel = theChannels->GetByChannelID(schedule->ChannelID());
 		if (!IsWantedChannel(channel, wantedChannels)) {
 			continue;
 		}
 
 		const cList<cEvent> * events = schedule->Events();
-		for (cEvent * event = events->First(); event;
+		for (const cEvent * event = events->First(); event;
 				event = events->Next(event)) {
 
 			if (IsWantedTime(0, event) && IsWantedEvent(event, pattern)) { //time must be ok, so stop > now
@@ -582,7 +624,7 @@ string cHelpers::SearchEventsIntern(string wantedChannels, string pattern) {
 
 //copied from vdr-live
 
-long cHelpers::Duration(cRecording* recording) {
+long cHelpers::Duration(const cRecording* recording) {
 	long RecLength = 0;
 	if (!recording->FileName())
 		return 0;
@@ -623,7 +665,7 @@ long cHelpers::Duration(cRecording* recording) {
 	return RecLength;
 }
 
-string cHelpers::ToText(cRecording * recording) {
+string cHelpers::ToText(const cRecording * recording) {
 	const cRecordingInfo * info = recording->Info();
 #if APIVERSNUM >= 10705
 	const cEvent * event = info->GetEvent();
@@ -755,7 +797,7 @@ string cHelpers::ToText(cRecording * recording) {
 	return result;
 }
 
-string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
+string cHelpers::ToText(const cTimer * timer, set<string> conflicts) {
 
 	const cChannel * channel = timer->Channel();
 	const char * channelName = channel->Name();
@@ -808,16 +850,16 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 	const cEvent * event = timer->Event();
 	if (!event) {
 		dsyslog("[vdrmanager] timer's event is NULL. Try find it");
-		cChannel * channel = Channels.GetByChannelID(
+		READ_LOCK_CHANNELS;
+		const cChannel * channel = theChannels->GetByChannelID(
 				timer->Channel()->GetChannelID());
 		if (channel) {
-			cSchedulesLock schedulesLock;
-			const cSchedules * schedules = cSchedules::Schedules(schedulesLock);
-			const cSchedule * schedule = schedules->GetSchedule(
+			READ_LOCK_SCHEDULES;
+			const cSchedule * schedule = theSchedules->GetSchedule(
 					channel->GetChannelID());
 			if (schedule) {
 				const cList<cEvent> * events = schedule->Events();
-				for (cEvent * ev = events->First(); event;
+				for (const cEvent * ev = events->First(); event;
 						ev = events->Next(ev)) {
 					if (timer->StartTime() <= ev->StartTime()
 							&& timer->StopTime()
@@ -873,7 +915,8 @@ string cHelpers::ToText(cTimer * timer, set<string> conflicts) {
 
 string cHelpers::ToText(const cEvent * event) {
 
-	cChannel * channel = Channels.GetByChannelID(
+	READ_LOCK_CHANNELS;
+	LIST_ELEM_CONST cChannel * channel = theChannels->GetByChannelID(
 			event->Schedule()->ChannelID());
 
 // search assigned timer
@@ -936,7 +979,8 @@ string cHelpers::ToText(const cEvent * event) {
 
 	result += "\r\n";
 
-	cTimer * eventTimer = Timers.GetMatch(event);
+	READ_LOCK_TIMERS;
+	LIST_ELEM_CONST cTimer * eventTimer = theTimers->GetMatch(event);
 
 	if (eventTimer) {
 		result += ToText(eventTimer, set<string>());
@@ -945,7 +989,7 @@ string cHelpers::ToText(const cEvent * event) {
 	return result;
 }
 
-bool cHelpers::IsWantedEvent(cEvent * event, string pattern) {
+bool cHelpers::IsWantedEvent(const cEvent * event, string pattern) {
 
 	string text = event->Title();
 	if (event->Description()) {
@@ -955,7 +999,7 @@ bool cHelpers::IsWantedEvent(cEvent * event, string pattern) {
 	return ToLower(text).find(ToLower(pattern)) != string::npos;
 }
 
-bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
+bool cHelpers::IsWantedChannel(const cChannel * channel, string wantedChannels) {
 
 	if (!channel) {
 		return false;
@@ -998,7 +1042,7 @@ bool cHelpers::IsWantedChannel(cChannel * channel, string wantedChannels) {
 	return found;
 }
 
-bool cHelpers::IsWantedTime(time_t when, cEvent * event) {
+bool cHelpers::IsWantedTime(time_t when, const cEvent * event) {
 
 	time_t startTime = event->StartTime();
 	time_t stopTime = startTime + event->Duration();
@@ -1142,7 +1186,7 @@ string cHelpers::UnMapSpecialChars(string text) {
 /**
  * based on vdr-restfulapi's RecordingLengthInSeconds
  */
-int cHelpers::RecordingLengthInSeconds(cRecording* recording) {
+int cHelpers::RecordingLengthInSeconds(const cRecording* recording) {
 	return Duration(recording) * 60;
 }
 
