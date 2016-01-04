@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
+import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 /**
@@ -488,9 +489,9 @@ public class Preferences {
      *
      * @return preferences
      */
-    public static Preferences getPreferences() {
-        return thePrefs;
-    }
+    //public static Preferences getPreferences() {
+        //return thePrefs;
+    //}
 
     public String getRecStreamMethod() {
         return getCurrentVdr().getRecStreamMethod();
@@ -504,6 +505,7 @@ public class Preferences {
     public static Preferences get() {
         return thePrefs;
     }
+
 
     private static void initInternal(final Context context) {
 
@@ -593,17 +595,23 @@ public class Preferences {
      * @return Preferences
      */
     public static void init(final Context context) {
-        // if (thePrefs != null) {
-        // return;
-        // }
-        synchronized (Preferences.class) {
-            // if (thePrefs != null) {
-            // return;
-            // }
-            initInternal(context);
+
+        try {
+            if (thePrefs != null) {
+                return;
+            }
+            synchronized (Preferences.class) {
+                if(thePrefs != null){
+                    return;
+                }
+                initInternal(context);
+                initVDR(context);
+            }
+        } finally {
             setLocale(context);
         }
     }
+
 
     private static boolean initFromOldVersion(Context context) {
 

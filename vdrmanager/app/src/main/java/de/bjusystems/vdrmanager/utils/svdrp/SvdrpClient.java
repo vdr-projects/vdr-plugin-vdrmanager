@@ -16,6 +16,7 @@ import java.util.TimerTask;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
+import android.content.Context;
 import android.sax.StartElementListener;
 import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
@@ -66,7 +67,7 @@ public abstract class SvdrpClient<Result> {
 	private final Timer watchDog = new Timer();
 
 	private String encoding;
-	
+
 
 	// private NativeDES crypt = new NativeDES();
 
@@ -96,11 +97,8 @@ public abstract class SvdrpClient<Result> {
 	 * @param prefs
 	 *            Preferences
 	 */
-	protected SvdrpClient(
-			final CertificateProblemListener certificateProblemListener) {
-		// results.clear();
+	protected SvdrpClient(final CertificateProblemListener certificateProblemListener) {
 		this.certificateProblemListener = certificateProblemListener;
-		encoding = Preferences.get().getEncoding();
 	}
 
 	/**
@@ -223,11 +221,12 @@ public abstract class SvdrpClient<Result> {
 	protected boolean connect() throws IOException {
 
 		final Preferences prefs = Preferences.get();
+		encoding = prefs.getEncoding();
 		try {
 			// connect
 			informListener(SvdrpEvent.CONNECTING);
 
-			if (Preferences.get().isSecure()) {
+			if (prefs.isSecure()) {
 				socket = new MySSLSocketFactory(false,
 						certificateProblemListener).createSocket();
 			} else {

@@ -147,6 +147,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Preferences.init(this);
+	}
+
 	private void vpsUnchecked() {
 		if (prevStart != null) {
 			tView.startField.setText(prevStart);

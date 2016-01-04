@@ -18,14 +18,14 @@ public class EpgSearchTimeValues {
 
 	public List<EpgSearchTimeValue> getValues() {
 
-		final Preferences prefs = Preferences.getPreferences();
+
 
 		// fixed values for now and next
 		values.add(new EpgSearchTimeValue(0, context.getString(R.string.epg_list_time_now)));
 		values.add(new EpgSearchTimeValue(1, context.getString(R.string.epg_list_time_next)));
 
 		// get user defined values
-		final String userValueString = prefs.getEpgSearchTimes();
+		final String userValueString = Preferences.get().getEpgSearchTimes();
 
 		final String[] userValues = userValueString.split(",");
 
@@ -48,7 +48,7 @@ public class EpgSearchTimeValues {
 	public void saveValues(final List<EpgSearchTimeValue> values) {
 
 		// get old values
-		final Preferences prefs = Preferences.getPreferences();
+		final Preferences prefs = Preferences.get();
 
 		// add value
 		String newValues = "";

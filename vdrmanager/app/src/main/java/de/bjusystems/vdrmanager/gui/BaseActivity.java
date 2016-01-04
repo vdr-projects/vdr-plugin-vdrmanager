@@ -53,6 +53,10 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	private ProgressDialog progress;
 
+	protected Preferences getPrefs(){
+		return Preferences.get();
+	}
+
 	// protected SvdrpProgressDialog progress;
 
 	private CharSequence mDrawerTitle;
@@ -119,8 +123,7 @@ public abstract class BaseActivity<Result, T extends ListView> extends
 
 	@Override
 	protected void onResume() {
-		Preferences.setLocale(this);
-		// Preferences.init(this);
+		Preferences.init(this);
 		super.onResume();
 	}
 

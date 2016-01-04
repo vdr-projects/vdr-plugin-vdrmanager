@@ -85,6 +85,7 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         return true;
     }
 
+
     @Override
     public void onBackPressed() {
         if(isBackKeyRemapped() == false) {
@@ -187,6 +188,12 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         }
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Preferences.init(this);
+    }
 
     public void setAllButtonListener(ViewGroup viewGroup) {
 

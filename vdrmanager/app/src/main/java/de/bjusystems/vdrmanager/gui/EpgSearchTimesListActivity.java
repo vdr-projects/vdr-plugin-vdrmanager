@@ -94,6 +94,7 @@ public class EpgSearchTimesListActivity extends Activity
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Preferences.init(this);
 	}
 
 	@Override

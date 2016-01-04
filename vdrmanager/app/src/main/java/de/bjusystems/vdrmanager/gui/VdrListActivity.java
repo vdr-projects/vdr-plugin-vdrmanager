@@ -3,12 +3,14 @@ package de.bjusystems.vdrmanager.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
@@ -29,8 +32,8 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
-public class VdrListActivity extends ListActivity implements
-		OnItemClickListener, OnItemLongClickListener {
+public class VdrListActivity extends ActionBarActivity implements
+		OnItemClickListener, OnItemLongClickListener, View.OnClickListener {
 
 	private static final String TAG = VdrListActivity.class.getName();
 
@@ -64,6 +67,17 @@ public class VdrListActivity extends ListActivity implements
 				Boolean.FALSE);
 	}
 
+
+	@Override
+	public void onClick(View v) {
+
+		if(v.getId() == R.id.new_vdr){
+			editVdr(null);
+			return;
+		}
+
+	}
+
 	static class Holder {
 		public TextView text1;
 		public TextView text2;
@@ -77,6 +91,9 @@ public class VdrListActivity extends ListActivity implements
 		populateIntent();
 
 		setContentView(R.layout.vdr_list_add_delete);
+
+
+		findViewById(R.id.new_vdr).setOnClickListener(this);
 
 		// initCursor();
 		final Vdr cur = Preferences.get().getCurrentVdr();
@@ -149,10 +166,13 @@ public class VdrListActivity extends ListActivity implements
 		// }
 		//
 		// };
-		setListAdapter(adapter);
-		registerForContextMenu(getListView());
-		getListView().setOnItemClickListener(this);
-		getListView().setOnItemLongClickListener(this);
+		ListView listView = (ListView) findViewById(R.id.vdr_list);
+		listView.setAdapter(adapter);
+		registerForContextMenu(listView);
+		listView.setOnItemClickListener(this);
+		listView.setOnItemLongClickListener(this);
+		listView.setLongClickable(true);
+		listView.setEmptyView(findViewById(R.id.empty_view));
 	}
 
 	/*
@@ -257,7 +277,7 @@ public class VdrListActivity extends ListActivity implements
 				.setNegativeButton(android.R.string.cancel, null)//
 				.create()//
 				.show();
-		return false;
+		return true;
 	}
 
 	@Override
@@ -277,9 +297,6 @@ public class VdrListActivity extends ListActivity implements
 			Intent intent = IntentUtils.newIntent(this,
 					BackupSettingsActivity.class);
 			startActivity(intent);
-			return true;
-		} else if (item.getItemId() == R.id.main_menu_vdrlist_add) {
-			editVdr(null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

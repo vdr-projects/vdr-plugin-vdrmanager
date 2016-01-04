@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:orientation="vertical"
-    android:layout_height="fill_parent" >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:choiceMode="singleChoice"
-        android:drawSelectorOnTop="false"
-        android:fastScrollEnabled="true"
-        android:scrollingCache="true" />
+
 
     <TextView
-        android:id="@android:id/empty"
+        android:id="@+id/empty_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="20dip"
+        android:padding="20.0dip"
         android:text="@string/no_vdr"
         android:textAppearance="?android:textAppearanceMedium" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/new_vdr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+        android:text="@string/new_vdr" />
+
+
+    <ListView
+        android:id="@+id/vdr_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:choiceMode="singleChoice"
+        android:drawSelectorOnTop="false"
+        android:fastScrollEnabled="true"
+        android:layout_above="@+id/new_vdr"
+        android:scrollingCache="true" />
+</RelativeLayout>

@@ -2,6 +2,7 @@ package de.bjusystems.vdrmanager.gui;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -9,6 +10,7 @@ import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.gesture.Prediction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -52,7 +54,7 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 /**
  * This class is used for showing what's current running on all channels
  *
- * @author bju
+ * @author bju22
  */
 public class EpgDetailsActivity extends ActionBarActivity implements
         OnClickListener, OnPageChangeListener, View.OnLongClickListener {
@@ -97,6 +99,15 @@ public class EpgDetailsActivity extends ActionBarActivity implements
             }
 
                 final Timer timer = new Timer(cEvent);
+
+            Date start = new Date(timer.getStart().getTime()
+                    - Preferences.get().getTimerPreMargin() * 60000);
+            timer.setStart(start);
+
+            Date end = new Date(timer.getStop().getTime()
+                    + Preferences.get().getTimerPostMargin() * 60000);
+            timer.setStop(end);
+
                 final CreateTimerTask task = new CreateTimerTask(
                         EpgDetailsActivity.this, timer) {
                     boolean error = false;
@@ -405,7 +416,9 @@ public class EpgDetailsActivity extends ActionBarActivity implements
 
                 public void onClick(View v) {
                     startFilmDatabaseBrowseIntent(
-                            String.format(IMDB_BASE_URL, Preferences.get()
+                            String.format(IMDB_BASE_URL, Preferences.get(
+
+                            )
                                     .getImdbUrl())
                                     + IMDB_URL_QUERY, view, IMDB_URL_ENCODING);
                 }
@@ -493,7 +506,7 @@ public class EpgDetailsActivity extends ActionBarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        // TODO Check here whether the config has changed for imdb
+        Preferences.init(this);
     }
 
     @Override

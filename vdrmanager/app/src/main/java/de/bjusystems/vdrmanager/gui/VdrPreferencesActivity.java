@@ -482,6 +482,8 @@ public class VdrPreferencesActivity extends BasePreferencesActivity implements
 		return true;
 	}
 
+
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != Activity.RESULT_OK) {

@@ -1,5 +1,7 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
+import android.content.Context;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Recording;
 

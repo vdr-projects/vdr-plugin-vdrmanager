@@ -23,9 +23,9 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 
 	Wakeuper getWakeuper() {
 		// Preferences
-		final Preferences prefs = Preferences.getPreferences();
+		final Preferences prefs = Preferences.get();
 
-		if (Preferences.getPreferences().getWakeupMethod().equals("url")) {
+		if (Preferences.get().getWakeupMethod().equals("url")) {
 			return new Wakeuper() {
 				public void wakeup(Context context) {
 					// wakeup by http request

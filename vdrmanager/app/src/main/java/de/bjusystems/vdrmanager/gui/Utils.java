@@ -140,7 +140,7 @@ public class Utils {
 
 	private static String getBaseUrl() {
 		final StringBuilder sb = new StringBuilder();
-		final Preferences p = Preferences.getPreferences();
+		final Preferences p = Preferences.get();
 		String auth = trimToEmpty(p.getStreamingUsername()) + ":"
 				+ trimToEmpty(p.getStreamingPassword());
 		if (auth.length() == 1) {
@@ -156,7 +156,7 @@ public class Utils {
 
 	private static String getStreamUrl(final String chn) {
 		// "http://192.168.1.119:3000/TS/"
-		final Preferences p = Preferences.getPreferences();
+		final Preferences p = Preferences.get();
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getBaseUrl()).append("/").append(p.getStreamFormat())
 				.append("/").append(chn);
@@ -167,7 +167,7 @@ public class Utils {
 	private static String getRemuxStreamUrl(final String chn) {
 		// "http://192.168.1.119:3000/TS/"
 		final StringBuilder sb = new StringBuilder();
-		final Preferences p = Preferences.getPreferences();
+		final Preferences p = Preferences.get();
 		sb.append(getBaseUrl()).append("/").append(p.getRemuxCommand())
 				.append(";").append(p.getRemuxParameter()).append("/")
 				.append(chn);
@@ -339,16 +339,19 @@ public class Utils {
 	private static String getRecordingStream(final Activity ctx,
 			final Recording rec) {
 
-		final String m = Preferences.get().getRecStreamMethod();
+
+		Preferences prefs = Preferences.get();
+
+		final String m = prefs.getRecStreamMethod();
 
 		final StringBuilder url = new StringBuilder();
 
 		if (StringUtils.equals(m, "vdr-live")) {
 			url.append("http://")
-					.append(Preferences.get().getHost())
+					.append(prefs.getHost())
 					//
 					.append(":")
-					.append(Integer.valueOf(Preferences.get().getLivePort()))
+					.append(Integer.valueOf(prefs.getLivePort()))
 					//
 					.append("/recstream.html?recid=recording_")
 					.append(Utils.md5(rec.getFileName()));
@@ -356,21 +359,22 @@ public class Utils {
 			final String urlstring = url.toString();
 			return urlstring;
 		} else if (StringUtils.equals(m, "vdr-streamdev")) {
-			url.append("http://").append(Preferences.get().getHost())
+			url.append("http://").append(prefs.getHost())
 					//
 					.append(":")
-					.append(Integer.valueOf(Preferences.get().getStreamPort()))
+					.append(Integer.valueOf(
+							prefs.getStreamPort()))
 					//
 					.append("/").append(rec.getDevInode());
 		} else if (StringUtils.equals(m, "vdr-smarttvweb")) {
 
-			String type = Preferences.get().getSmarttvewebType();
+			String type = prefs.getSmarttvewebType();
 
 			url.append("http://")
-					.append(Preferences.get().getHost())
+					.append(prefs.getHost())
 					//
 					.append(":")
-					.append(Integer.valueOf(Preferences.get()
+					.append(Integer.valueOf(prefs
 							.getSmarttvewebPort()))
 					//
 					.append(Utils.encodeUrlPath(rec.getFileName()));
