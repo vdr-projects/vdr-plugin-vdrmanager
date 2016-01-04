@@ -1,2 +1,3 @@
-vdrmanager/app/build
+vdrmanager/app/build/
 .idea
+vdrmanager/.gradle/
