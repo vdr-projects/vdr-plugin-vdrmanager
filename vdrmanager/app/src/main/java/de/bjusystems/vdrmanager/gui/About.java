@@ -8,11 +8,12 @@ import android.text.SpannableString;
 import android.text.util.Linkify;
 
 public class About {
-	
-	static AlertDialog about = null;
-	
+
 	public static void show(Activity activity){
-		if(about == null){
+		if(activity.isFinishing()){
+			return;
+		}
+
 			String vi = "";
 			PackageInfo pi = Utils.getPackageInfo(activity);
 			if(pi != null){
@@ -21,15 +22,13 @@ public class About {
 			//View view = activity.getLayoutInflater().inflate(R.layout.about, null);
 			 final SpannableString s = new SpannableString(activity.getString(R.string.about_text,vi));
 			    Linkify.addLinks(s, Linkify.ALL);
-			about = new AlertDialog.Builder(activity)
+			new AlertDialog.Builder(activity)
 			.setTitle(R.string.about_title)
 			.setMessage(s)
 			.setPositiveButton(android.R.string.ok, null)
 			.setCancelable(false)
-			.create();
-		}
-		if(!activity.isFinishing()){
-			about.show();
+			.create()
+			.show();
 		}
 	}
-}
+

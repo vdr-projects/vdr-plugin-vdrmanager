@@ -547,6 +547,14 @@ public class EpgDetailsActivity extends ActionBarActivity implements
 
         final Event cEvent = epgs.get(pager.getCurrentItem());
 
+        if(v.getId() == R.id.epg_event_livetv) {
+            if (cEvent instanceof Recording) {
+                Utils.streamRecording(this, (Recording) cEvent);
+            } else {
+                Utils.stream(this, String.valueOf(cEvent.getChannelNumber()));
+            }
+            return;
+        }
 
         if (cEvent instanceof Timerable == false) {
             return;
@@ -556,13 +564,6 @@ public class EpgDetailsActivity extends ActionBarActivity implements
 
 
         switch (v.getId()) {
-            case R.id.epg_event_livetv:
-                if (cEvent instanceof Recording) {
-                    Utils.streamRecording(this, (Recording) cEvent);
-                } else {
-                    Utils.stream(this, String.valueOf(cEvent.getChannelNumber()));
-                }
-                break;
             case R.id.epg_event_create_timer:
                 final ArrayAdapter<Wrapper> ada = new ArrayAdapter<Wrapper>(this,
                         android.R.layout.simple_dropdown_item_1line);
@@ -792,6 +793,9 @@ public class EpgDetailsActivity extends ActionBarActivity implements
     public void onPageSelected(int position) {
 
         Event cEvent = epgs.get(position);
+        if(cEvent == null){
+            return;
+        }
         String cn = cEvent.getChannelName();
         // View view = pager.getChildAt(arg0);
         // state = (ImageView) view.findViewById(R.id.epg_timer_state);
