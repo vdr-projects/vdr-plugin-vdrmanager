@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.http.HttpHelper;
@@ -27,14 +30,15 @@ public class AsyncWakeupTask extends AsyncTask<Object, WakeupProgress, Void> {
 
 		if (Preferences.get().getWakeupMethod().equals("url")) {
 			return new Wakeuper() {
-				public void wakeup(Context context) {
+				public void wakeup(Context context) throws  Exception{
 					// wakeup by http request
 					final HttpHelper httpHelper = new HttpHelper();
-					httpHelper.performGet(prefs.getWakeupUrl(),
-							prefs.getWakeupUser(), prefs.getWakeupPassword(),
-							null);
-					// request sent
-
+						int result = httpHelper.performGet(prefs.getWakeupUrl(),
+								prefs.getWakeupUser(), prefs.getWakeupPassword(),
+								null);
+						if(result == 200){
+							throw new Exception("Http Status Code "+result);
+						}
 				}
 			};
 		} else {
