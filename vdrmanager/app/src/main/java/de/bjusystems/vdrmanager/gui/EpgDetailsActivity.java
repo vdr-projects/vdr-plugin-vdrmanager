@@ -73,7 +73,7 @@ public class EpgDetailsActivity extends ActionBarActivity implements
 
     private static final String TMDB_URL_ENCODING = "UTF-8";
 
-    public static String TMDB_URL = "http://www.themoviedb.org/search?search=%s";
+    public static String TMDB_URL = "http://www.themoviedb.org/search?query=%s";
 
     private String highlight = null;
 

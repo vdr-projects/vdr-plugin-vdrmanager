@@ -7,6 +7,7 @@
   <string name="action_menu_epg">Liste EPG</string>
   <string name="action_menu_search">Recherche EPG</string>
   <string name="action_menu_wakeup">Réveil</string>
+  <string name="action_menu_remote">Remote</string>
   <string name="app_name">VDR-Manager</string>
   <string name="channel_item_menu_epg">Afficher EPG</string>
   <string name="channel_item_menu_stream">Direct en streaming</string>
@@ -61,12 +62,14 @@
   <string name="navigae_at_the_start">Début</string>
   <string name="epg_search_times_add">Ajouter du temps</string>
   <string name="epg_search_times_window">Temps personnalisé</string>
+  <!-- What's on display -->
   <string name="epg_list_time_label">Qu\'y a-t-il maintenant</string>
   <string name="epg_list_time_now">Maintenant</string>
   <string name="epg_list_time_next">Après</string>
   <string name="epg_list_time_adhoc">Ad Hoc</string>
   <string name="epg_list_channel_spinner">Chaîne</string>
   <string name="epg_list_search_label">Résultats de la recherche</string>
+  <!-- create timer -->
   <string name="epg_event_share_text">Partager</string>
   <string name="epg_event_imdb_text">Recherche sur IMDb</string>
   <string name="epg_event_omdb_text">Recherche sur OMDB</string>
@@ -74,6 +77,7 @@
   <string name="epg_eent_livetv_text">Diffusion en stream</string>
   <string name="epg_event_create_timer_text">Ajouter une programmation</string>
   <string name="epg_event_modify_timer_text">Modifier une programmation</string>
+  <!-- search -->
   <string name="epg_search_button">Rechercher</string>
   <string name="epg_duration_template">%1$s min</string>
   <string name="epg_duration_template_live">%1$s/%2$s min</string>
@@ -124,6 +128,7 @@ streamdevhosts.conf.</string>
   <string name="main_menu_switched_to">Basculer vers %1$s</string>
   <string name="vdr_devices_summary">Définir un ou plusieurs équipements VDR.</string>
   <string name="vdr_devices">Équipement VDR</string>
+  <!-- VDR plugin preferences -->
   <string name="vdr_preferences">Paramètres réseau</string>
   <string name="vdr_host_title">Hôte VDR</string>
   <string name="vdr_host_summary">Hôte VDR en fonctionnement</string>
@@ -133,11 +138,13 @@ streamdevhosts.conf.</string>
   <string name="vdr_password_summary">Mot de passe pour le plugin VDR</string>
   <string name="vdr_ssl_title">Connexion sécurisée</string>
   <string name="vdr_ssl_summary">Utiliser SSL pour les connexions</string>
+  <!-- channel filter preferences -->
   <string name="channel_filter_preferences">Paramètres des chaînes</string>
   <string name="channel_filter_filter_title">Limitation pour les chaînes</string>
   <string name="channel_filter_filter_summary">Utiliser uniquement les chaines données</string>
   <string name="channel_filter_last_title">Filtrer chaîne</string>
   <string name="channel_filter_last_summary">Séparer par une virgule les numéros de chaîne ou les intervalles (séparateur \'-\'). Ex: 1,2,4-10</string>
+  <!-- wakeup -->
   <string name="wakeup_preferences">Réveiller VDR à distance</string>
   <string name="wakeup_enabled_title">Pouvoir réveiller à distance VDR</string>
   <string name="wakeup_enabled_summary">Permettre de réveiller VDR à distance</string>
@@ -157,6 +164,7 @@ streamdevhosts.conf.</string>
   <string name="wakeup_wol_custom_boradcast_summary">À moins que vous n\'ayez une table ARP statique vous devriez utiliser une adresse de broadcast.</string>
   <string name="wakeup_wol_mac_title">Adresse MAC</string>
   <string name="wakeup_wol_mac_summary">Adresse MAC du hôte VDR. Utiliser \':\' ou \'-\' ou espace comme séparateur.</string>
+  <!-- timer -->
   <string name="timer_preferences">Programmation par défaut</string>
   <string name="timer_pre_start_buffer_title">Marge de début</string>
   <string name="timer_pre_start_buffer_summary">Minutes enregistrées avant le commencement de l\'émission</string>
@@ -168,6 +176,9 @@ streamdevhosts.conf.</string>
   <string name="timer_default_primary_limit_summary">Limite principale par défaut</string>
   <string name="timer_default_lifetime_title">Durée de vie par défaut</string>
   <string name="timer_default_lifetime_summary">Durée de vie par défaut</string>
+  <string name="timer_already_exists">Timer already defined.</string>
+  <string name="timer_created">Timer created</string>
+  <!-- GUI -->
   <string name="gui_preferences">Paramètres GUI</string>
   <string name="gui_enable_24h_format_title">Utiliser le format 24h</string>
   <string name="gui_enable_24h_format_summary_on">13:00</string>
@@ -201,6 +212,7 @@ streamdevhosts.conf.</string>
     <item>imdb.pt</item>
   </string-array>
   <string-array name="lang">
+    <!-- <item>Default language</item> -->
     <item>Anglais</item>
     <item>Allemand</item>
     <item>Français</item>
@@ -250,6 +262,7 @@ streamdevhosts.conf.</string>
   <string name="recstream_method_summary">Actuellement le Streaming par VDR live et ou le plugin streamdev est supporté</string>
   <string name="settings_live_port">Port pour le plugin VDR live</string>
   <string name="settings_live_port_summary">Le port par défaut pour le plugin VDR live est 8008.</string>
+  <!-- progress -->
   <string name="progress_connect">Connexion&#8230;</string>
   <string name="progress_connect_error">Échec de connexion !</string>
   <string name="progress_connect_timeout">Connexion expirée !</string>
@@ -281,8 +294,23 @@ streamdevhosts.conf.</string>
   <string name="gui_max_recent_channels_title">Chaînes récentes Max</string>
   <string name="gui_max_recent_channels_summary">Combien de chaines voulez-vous garder dans les chaînes récentes ?</string>
   <string name="timer_detail_day_title">Jour</string>
+  <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to repeat every day
+    -->
   <string name="every_day">Tous les jours</string>
+  <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to never repeat
+    -->
   <string name="never">Jamais</string>
+  <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: concatenate days with
+         this character, i.e. "Mon, Tue, Wed"
+    -->
   <string name="day_concat">","</string>
   <string name="timer_detail_repeat_title">Répéter</string>
   <string name="timer_detail_use_vps">Utiliser VPS :</string>
@@ -339,6 +367,7 @@ streamdevhosts.conf.</string>
     <item>EPG par Chaîne</item>
     <item>Enregistrements</item>
     <item>Enregistrements</item>
+    <item>Remote</item>
   </string-array>
   <string name="filter">Filtre</string>
   <string name="audio_tracks_template">Pistes audio : %1$s</string>
@@ -351,6 +380,8 @@ streamdevhosts.conf.</string>
   <string name="no_results">Pas de résultat&#8230;</string>
   <string name="recording_started">L\'enregistrement a commencé</string>
   <string name="set_time">Définir l\'heure</string>
+  <!-- … -->
+  <!-- 	     SSL related messages -->
   <string name="certificate_problem_message_title">Avertissement du certificat</string>
   <string name="certificate_problem_message_text">Le certificat n\'a pas été accepté:\n\n
 Nom d\'hôte:\n
@@ -363,6 +394,7 @@ Que voulez-vous faire?</string>
   <string name="certificate_accept_once">Accepter une fois</string>
   <string name="certificate_accepted_forever">Toujours accepter</string>
   <string name="certificate_not_accepted">Abandonner</string>
+  <!-- EPG Content -->
   <string name="Content$Movie__Drama">Film/Dramatique</string>
   <string name="Content$Detective__Thriller">Détectives/Polar</string>
   <string name="Content$Adventure__Western__War">Aventure/Western/Guerre</string>
@@ -441,7 +473,8 @@ Que voulez-vous faire?</string>
   <string name="Content$Original_Language">Version originale</string>
   <string name="Content$Black_and_White">Noir &amp; Blanc</string>
   <string name="Content$Unpublished">Inédit</string>
-  <string name="Content$Live_Broadcast">Direct</string>
+  <string name="Content$Live_Broadcast">Live Broadcast</string>
+  <!-- EPG Content END -->
   <string name="type_to_filter">Type de filtre</string>
   <string name="drive_info">Libre %1$s Go of %2$s Go (%3$s%%)</string>
   <string name="drive_img">Disque</string>
@@ -462,4 +495,13 @@ Que voulez-vous faire?</string>
   <string name="remote_enable_title">Activer la télécommande de VDR</string>
   <string name="svdrp_port_title">Port DVDRP</string>
   <string name="svdrp_port_summary">Par défaut le 6419</string>
+  <string name="label">Label</string>
+  <string name="hitkcommand">HITK Command</string>
+  <string name="menu_reset">Reset</string>
+  <string name="menu_exprt">Export</string>
+  <string name="menu_imprt">Import</string>
+  <string name="menu_remapback">\'Back\' is \'Back\' HITK</string>
+  <string name="remapback_hint">Longpress on Back Button to leave the remote.</string>
+  <string name="not_yet_implemented">Not Yet Implemented</string>
+  <string name="timer_error">Can not create timer: %1$s</string>
 </resources>
