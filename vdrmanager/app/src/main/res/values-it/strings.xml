@@ -256,10 +256,14 @@
     <item>imdb.it</item>
     <item>imdb.pt</item>
   </string-array>
+
   <string-array name="lang">
     <item>Inglese</item>
     <item>Tedesco</item>
+      <item>Francese</item>
     <item>Italiano</item>
+      <item>Polacco</item>
+      <item>Ucraino</item>
   </string-array>
   <string-array name="remux_entries">
     <item>EXT</item>

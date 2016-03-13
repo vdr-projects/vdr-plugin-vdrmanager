@@ -254,7 +254,11 @@ herrlado&lt;herrlado@gmail.com&gt;
   <string-array name="lang">
     <item>Англійська</item>
     <item>Німецька</item>
+    <item>французька</item>
     <item>Італійська</item>
+    <item>Польська</item>
+    <item>українська</item>
+    <item></item>
   </string-array>
   <string-array name="remux_entries">
     <item>EXT</item>

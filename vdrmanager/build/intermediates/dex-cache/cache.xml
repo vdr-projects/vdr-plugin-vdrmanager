@@ -2,88 +2,74 @@
 <items version="2" >
 
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/jars/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-83fce4df92e18416e729f641ac48c8fa01b50cdd.jar" />
-    </item>
-    <item
         jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/ormlite-core-4.47.jar"
         jumboMode="false"
-        revision="21.1.2"
+        revision="23.0.2"
         sha1="e11abddd1e9c2053a92133fa83f78f7bedb820a9">
         <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/ormlite-core-4.47-f4351fd8956d1b69c8e44b91acc06d6bd235d5f2.jar" />
     </item>
     <item
-        jar="/opt/android-sdk-update-manager/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.0.0-alpha1/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-4b1246a750c524481c2f504854994ea0e029605c.jar" />
+        revision="23.0.2"
+        sha1="a6af5beedc2e8c946abc3771525e2fed77439309">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-40295f8557712b09508afb03458127475367ce30.jar" />
     </item>
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/slf4j-android-1.6.1-RC1.jar"
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0-alpha1/jars/libs/internal_impl-24.0.0-alpha1.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="a0b527e8aabcc1f1e97d1674dc3f4f0794ec5df1">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/slf4j-android-1.6.1-RC1-f6bdb9b40f113bad4847688d0617ca1ece7cb7ac.jar" />
+        revision="23.0.2"
+        sha1="e57fba0a2d57d3501d8f4ff44c23092978804845">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/internal_impl-24.0.0-alpha1-37673310e79c5d93c0a81c7969ee0ebdeb97b96f.jar" />
     </item>
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/jars/classes.jar"
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.0.0-alpha1/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="95fd37732ec852e99f07eeb516a3650172f1d136">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-95de545bde6ed05eabed2ed644a938b5a39aef95.jar" />
+        revision="23.0.2"
+        sha1="9684c95278dc45a142d7de3db9e7e39aa520e1e0">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-0577cfbb1def3ac06965afda6daf98e5a6100a62.jar" />
     </item>
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/jars/classes.jar"
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0-alpha1/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-acb188962163b46e4214b360fb4cbccc68f17858.jar" />
+        revision="23.0.2"
+        sha1="9aaaea3a89040f8176f810c85e288fc74d5d1f12">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-409085bdde255d7732cbe24ac353880a6339d315.jar" />
     </item>
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/slf4j-android-1.6.1-RC1.jar"
+        jar="/opt/android-sdk-update-manager/extras/android/m2repository/com/android/support/support-annotations/24.0.0-alpha1/support-annotations-24.0.0-alpha1.jar"
         jumboMode="false"
-        revision="22.0.1"
-        sha1="a0b527e8aabcc1f1e97d1674dc3f4f0794ec5df1">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/slf4j-android-1.6.1-RC1-f6bdb9b40f113bad4847688d0617ca1ece7cb7ac.jar" />
-    </item>
-    <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/svdrp4j-1.1.0-SNAPSHOT.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="ab78bd1a6dddd90492477dc828583d298cfc173c">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/svdrp4j-1.1.0-SNAPSHOT-9aad1a4ae5633d9645273a17693384af69d9c05a.jar" />
-    </item>
-    <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/ormlite-android-4.47.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c72f9ed54d8a8bab3fbf56da2b358308a67899a4">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/ormlite-android-4.47-cd582e76513b150a799d72777f8ce54c8cef042c.jar" />
+        revision="23.0.2"
+        sha1="b8062546971a3d196343232a19a3c0016272ba47">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/support-annotations-24.0.0-alpha1-9b56aef9f09623e3eda79dcf95940b0190d118b7.jar" />
     </item>
     <item
         jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/svdrp4j-1.1.0-SNAPSHOT.jar"
         jumboMode="false"
-        revision="22.0.1"
+        revision="23.0.2"
         sha1="ab78bd1a6dddd90492477dc828583d298cfc173c">
         <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/svdrp4j-1.1.0-SNAPSHOT-9aad1a4ae5633d9645273a17693384af69d9c05a.jar" />
     </item>
     <item
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/slf4j-android-1.6.1-RC1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a0b527e8aabcc1f1e97d1674dc3f4f0794ec5df1">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/slf4j-android-1.6.1-RC1-f6bdb9b40f113bad4847688d0617ca1ece7cb7ac.jar" />
+    </item>
+    <item
         jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/ormlite-android-4.47.jar"
         jumboMode="false"
-        revision="21.1.2"
+        revision="23.0.2"
         sha1="c72f9ed54d8a8bab3fbf56da2b358308a67899a4">
         <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/ormlite-android-4.47-cd582e76513b150a799d72777f8ce54c8cef042c.jar" />
     </item>
     <item
-        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/libs/ormlite-core-4.47.jar"
+        jar="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.0.0-alpha1/jars/classes.jar"
         jumboMode="false"
-        revision="22.0.1"
-        sha1="e11abddd1e9c2053a92133fa83f78f7bedb820a9">
-        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/ormlite-core-4.47-f4351fd8956d1b69c8e44b91acc06d6bd235d5f2.jar" />
+        revision="23.0.2"
+        sha1="ed88e1f0c8fbf66e1da918545f0a6790f893bceb">
+        <dex dex="/home/lado/development/android/vdr-manager/vdrmanager/app/build/intermediates/pre-dexed/debug/classes-5e6d2a441c57259bc316cbec1508efda56635738.jar" />
     </item>
 
 </items>

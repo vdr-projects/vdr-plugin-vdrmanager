@@ -235,6 +235,7 @@
         <item>German</item>
         <item>French</item>
         <item>Italian</item>
+        <item>Polish</item>
         <item>Ukrainian</item>
     </string-array>
     <string-array name="remux_entries">

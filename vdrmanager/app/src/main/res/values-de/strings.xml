@@ -297,8 +297,10 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
   <string-array name="lang">
     <item>Englisch</item>
     <item>Deutsch</item>
+    <item>Französisch</item>
     <item>Italienisch</item>
-    <item>ukrainisch</item>
+    <item>Polnisch</item>
+    <item>Ukrainisch</item>
   </string-array>
   <string-array name="remux_entries">
     <item>EXT</item>
