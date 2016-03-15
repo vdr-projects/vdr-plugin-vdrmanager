@@ -7,6 +7,8 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+
+
     signingConfigs {
         config {
             keyAlias 'vdrmanager'
@@ -21,7 +23,16 @@ android {
         applicationId "de.bjusystems.vdrmanager"
         minSdkVersion 8
         targetSdkVersion 23
+        //vectorDrawables.useSupportLibrary = true
+
     }
+
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -36,6 +47,6 @@ dependencies {
     compile files('libs/ormlite-core-4.47.jar')
     compile files('libs/slf4j-android-1.6.1-RC1.jar')
     compile files('libs/svdrp4j-1.1.0-SNAPSHOT.jar')
-    compile 'com.android.support:support-v4:24.0.0-alpha1'
-    compile 'com.android.support:appcompat-v7:24.0.0-alpha1'
+    compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.0'
 }
