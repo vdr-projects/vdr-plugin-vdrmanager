@@ -43,10 +43,10 @@ android {
 }
 
 dependencies {
-    compile files('libs/ormlite-android-4.47.jar')
-    compile files('libs/ormlite-core-4.47.jar')
-    compile files('libs/slf4j-android-1.6.1-RC1.jar')
-    compile files('libs/svdrp4j-1.1.0-SNAPSHOT.jar')
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'org.slf4j:slf4j-android:1.7.19'
+    compile 'org.hampelratte:svdrp4j:1.1.1'
 }
