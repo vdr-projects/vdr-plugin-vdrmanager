@@ -11,10 +11,7 @@ android {
 
     signingConfigs {
         config {
-            keyAlias 'vdrmanager'
-            keyPassword 'HGr6du07'
-            storeFile file('/home/lado/development/android/keystores/vdrmanager/release.jks')
-            storePassword 'HGr6du07'
+         
         }
     }
     compileSdkVersion 23
@@ -48,5 +45,5 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'org.slf4j:slf4j-android:1.7.19'
-    compile 'org.hampelratte:svdrp4j:1.1.1'
+    compile 'org.hampelratte:svdrp4j:1.1.0-SNAPSHOT'
 }
