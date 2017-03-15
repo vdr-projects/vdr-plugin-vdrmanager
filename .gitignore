@@ -3,3 +3,5 @@ vdrmanager/app/build/
 vdrmanager/.gradle/
 vdrmanager/local.properties
 vdrmanager/vdrmanager.iml
+vdr-vdrmanager/CMakeLists.txt
+vdrmanager/gradle/
