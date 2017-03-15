@@ -550,6 +550,7 @@ string cHelpers::SetTimerIntern(char op, string param) {
 		}
 
 		toggleTimer->OnOff();
+                toggleTimer->Append(clearenv())
 		theTimers->SetModified();
 		dsyslog("[vdrmanager] timer %s toggled %s", *toggleTimer->ToDescr(),
 				toggleTimer->HasFlags(tfActive) ? "on" : "off");
