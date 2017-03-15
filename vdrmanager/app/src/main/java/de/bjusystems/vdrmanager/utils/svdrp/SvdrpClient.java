@@ -94,8 +94,6 @@ public abstract class SvdrpClient<Result> {
 	/**
 	 * Constructor
 	 *
-	 * @param prefs
-	 *            Preferences
 	 */
 	protected SvdrpClient(final CertificateProblemListener certificateProblemListener) {
 		this.certificateProblemListener = certificateProblemListener;
