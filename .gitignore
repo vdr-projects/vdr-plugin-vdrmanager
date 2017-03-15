@@ -1,3 +1,5 @@
 vdrmanager/app/build/
 .idea
 vdrmanager/.gradle/
+vdrmanager/local.properties
+vdrmanager/vdrmanager.iml
