@@ -68,14 +68,19 @@ bool cVdrManagerThread::Init()
 
 #if VDRMANAGER_USE_SSL
   cVdrmanagerServerSocket * sslSock;
-  if (!access(certFile, R_OK) && !access(keyFile, R_OK))  {
+  bool certFileOk = !access(certFile, R_OK);
+  bool keyFileOk = !access(keyFile, R_OK);
+  if (certFileOk && keyFileOk)  {
     sslSock = new cVdrmanagerServerSocket();
     if (sslSock == NULL || !sslSock->Create(sslPort, password, forceCheckSvdrp, compressionMode, certFile, keyFile)) {
       return false;
     }
   } else {
     sslSock = NULL;
-    esyslog("[vdrmanager] SSL key files %s and %s can't be read. SSL disabled.", certFile, keyFile);
+    if (!certFileOk)
+      esyslog("[vdrmanager] SSL cert file %s can't be read (errno %d). SSL disabled.", certFile, errno);
+    if (!keyFileOk)
+      esyslog("[vdrmanager] SSL key file %s can't be read (errno %d). SSL disabled.", keyFile, errno);
   }
 
   // register server sockets

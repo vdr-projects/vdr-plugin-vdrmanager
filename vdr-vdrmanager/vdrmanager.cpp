@@ -159,7 +159,7 @@ bool cVdrManager::ProcessArgs(int argc, char *argv[]) {
 		      certFile = keyFile = optarg;
 		    } else {
 		      certFile = strndup(optarg, sep - optarg);
-		      keyFile = sep;
+		      keyFile = sep+1;
 		    }
 		  }
 			break;
