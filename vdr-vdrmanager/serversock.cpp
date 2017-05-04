@@ -19,14 +19,9 @@ static int clientno = 0;
  */
 cVdrmanagerServerSocket::cVdrmanagerServerSocket() : cVdrmanagerSocket() {
   port = -1;
-  sslCtx = NULL;
 }
 
 cVdrmanagerServerSocket::~cVdrmanagerServerSocket() {
-#if VDRMANAGER_USE_SSL
-  if (sslCtx)
-    SSL_CTX_free(sslCtx);
-#endif
 }
 
 bool cVdrmanagerServerSocket::Create(int port, const char * password, bool forceCheckSvrp, int compressionMode,
@@ -34,8 +29,10 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 
   this->port = port;
   this->password = password;
-	this->forceCheckSvdrp = forceCheckSvrp;
-	this->compressionMode = compressionMode;
+  this->forceCheckSvdrp = forceCheckSvrp;
+  this->compressionMode = compressionMode;
+  this->certFile = certFile;
+  this->keyFile = keyFile;
 
 	// create socket
 	sock = socket(PF_INET, SOCK_STREAM, 0);
@@ -75,8 +72,7 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 	}
 
 #if VDRMANAGER_USE_SSL
-
-  if (certFile) {
+	if (certFile) {
     isyslog("[vdrmanager] initialize SSL");
 
     OpenSSL_add_all_algorithms();
@@ -86,71 +82,44 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 
     SSL_load_error_strings();
     SSL_library_init();
-
-    SSL_METHOD * method = (SSL_METHOD *)SSLv23_server_method();
-    sslCtx = SSL_CTX_new(method);
-    if (sslCtx == NULL) {
-      long errorCode = ERR_get_error();
-      char * error = ERR_error_string(errorCode, NULL);
-      esyslog("[vdrmanager] Error initializing SSL context: %s", error);
-      Close();
-      return false;
-    }
-    SSL_CTX_set_options(sslCtx, SSL_OP_NO_SSLv3);
-
-    /* set the local certificate from CertFile */
-   SSL_CTX_use_certificate_file(sslCtx, certFile, SSL_FILETYPE_PEM);
-    /* set the private key from KeyFile */
-   SSL_CTX_use_PrivateKey_file(sslCtx, keyFile, SSL_FILETYPE_PEM);
-    /* verify private key */
-   if (!SSL_CTX_check_private_key(sslCtx)) {
-     long errorCode = ERR_get_error();
-     char * error = ERR_error_string(errorCode, NULL);
-     esyslog("[vdrmanager] Error checking SSL keys: %s", error);
-     Close();
-     return false;
-   }
-
-   SSL_CTX_set_mode(sslCtx, SSL_MODE_ENABLE_PARTIAL_WRITE);
-  }
+	}
 #endif
-
 	return true;
 }
 
 cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
-        cVdrmanagerClientSocket * newsocket = NULL;
+  cVdrmanagerClientSocket * newsocket = NULL;
 
-        isyslog("[vdrmanager] new %sclient on port %d", sslCtx ? "SSL " : "", port);
+  isyslog("[vdrmanager] new client on port %d", port);
 
-        // accept the connection
-        struct sockaddr_in clientname;
-        uint size = sizeof(clientname);
-        int newsock = accept(sock, (struct sockaddr *) &clientname, &size);
-        if (newsock > 0) {
-                // create client socket
-                newsocket = new cVdrmanagerClientSocket(password, compressionMode);
-                if (!newsocket->Attach(newsock, sslCtx)) {
-                        delete newsocket;
-                        return NULL;
-                }
+  // accept the connection
+  struct sockaddr_in clientname;
+  uint size = sizeof(clientname);
+  int newsock = accept(sock, (struct sockaddr *) &clientname, &size);
+  if (newsock > 0) {
+    // create client socket
+    newsocket = new cVdrmanagerClientSocket(password, compressionMode, certFile, keyFile);
+    if (!newsocket->Attach(newsock)) {
+      delete newsocket;
+      return NULL;
+    }
 
-                if (!IsPasswordSet() || forceCheckSvdrp == true) {
-                        bool accepted = SVDRPhosts.Acceptable(clientname.sin_addr.s_addr);
-                        if (!accepted) {
-                                newsocket->Write(string("NACC Access denied.\n"));
-                                newsocket->Flush();
-                                delete newsocket;
-                                newsocket = NULL;
-                        }
-                        dsyslog(
-                                        "[vdrmanager] connect from %s, port %hd - %s", inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port), accepted ? "accepted" : "DENIED");
-                }
-        } else if (errno != EINTR && errno != EAGAIN
-                )
-                LOG_ERROR;
+    if (!IsPasswordSet() || forceCheckSvdrp == true) {
+      bool accepted = SVDRPhosts.Acceptable(clientname.sin_addr.s_addr);
+      if (!accepted) {
+        newsocket->Write(string("NACC Access denied.\n"));
+        newsocket->Flush();
+        delete newsocket;
+        newsocket = NULL;
+      }
+      dsyslog("[vdrmanager] connect from %s, port %hd - %s",
+          inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port),
+          accepted ? "accepted" : "DENIED");
+    }
+  } else if (errno != EINTR && errno != EAGAIN)
+    LOG_ERROR;
 
-        return newsocket;
+  return newsocket;
 }
 
 int cVdrmanagerServerSocket::GetPort() {

@@ -24,7 +24,6 @@ class cVdrmanagerServerSocket : public cVdrmanagerSocket
 {
 private:
   int port;
-  SSL_CTX * sslCtx;
 public:
   cVdrmanagerServerSocket();
   virtual ~cVdrmanagerServerSocket();

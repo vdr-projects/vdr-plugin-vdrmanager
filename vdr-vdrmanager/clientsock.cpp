@@ -17,7 +17,7 @@ static int clientno = 0;
 /*
  * cVdrmonClientSocket
  */
-cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int compressionMode) {
+cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int compressionMode, const char * certFile, const char * keyFile) {
 	readbuf = "";
 	writebuf = "";
 	sendbuf = NULL;
@@ -28,6 +28,8 @@ cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int comp
 	client = ++clientno;
 	this->password = password;
 	this->compressionMode = compressionMode;
+	this->certFile = certFile;
+	this->keyFile = keyFile;
 	login = false;
 	compression = false;
 	initCompression = false;
@@ -42,6 +44,9 @@ cVdrmanagerClientSocket::~cVdrmanagerClientSocket() {
 #if VDRMANAGER_USE_SSL
   if (ssl) {
     SSL_free(ssl);
+  }
+  if (sslCtx) {
+    SSL_CTX_free(sslCtx);
   }
 #endif
 }
@@ -292,6 +297,64 @@ int cVdrmanagerClientSocket::FlushNoSSL() {
 
 #if VDRMANAGER_USE_SSL
 
+bool cVdrmanagerClientSocket::LoadCerts() {
+
+  if (certFile) {
+    isyslog("[vdrmanager] initialize SSL context");
+
+    SSL_METHOD * method = (SSL_METHOD *)SSLv23_server_method();
+    sslCtx = SSL_CTX_new(method);
+    if (sslCtx == NULL) {
+      long errorCode = ERR_get_error();
+      char * error = ERR_error_string(errorCode, NULL);
+      esyslog("[vdrmanager] Error initializing SSL context: %s", error);
+      SSL_CTX_free(sslCtx);
+      sslCtx = NULL;
+      return false;
+    }
+    SSL_CTX_set_options(sslCtx, SSL_OP_NO_SSLv3);
+
+    /* set the local certificate from CertFile */
+    if (SSL_CTX_use_certificate_chain_file(sslCtx, certFile) != 1) {
+      long errorCode = ERR_get_error();
+      char * error = ERR_error_string(errorCode, NULL);
+      esyslog("[vdrmanager] Error loading cert chain file %s: %s", certFile, error);
+      SSL_CTX_free(sslCtx);
+      sslCtx = NULL;
+    } else {
+      isyslog("[vdrmanager] cert chain file loaded %s", certFile);  
+    }
+
+    /* set the private key from KeyFile */
+    if (SSL_CTX_use_PrivateKey_file(sslCtx, keyFile, SSL_FILETYPE_PEM) != 1) {
+      long errorCode = ERR_get_error();
+      char * error = ERR_error_string(errorCode, NULL);
+      esyslog("[vdrmanager] Error loading key file %s: %s", keyFile, error);
+      SSL_CTX_free(sslCtx);
+      sslCtx = NULL;
+      return false;
+    } else {
+      isyslog("[vdrmanager] key file loaded %s", keyFile);  
+    }
+
+    /* verify private key */
+    if (!SSL_CTX_check_private_key(sslCtx)) {
+      long errorCode = ERR_get_error();
+      char * error = ERR_error_string(errorCode, NULL);
+      esyslog("[vdrmanager] Error checking SSL keys: %s", error);
+      SSL_CTX_free(sslCtx);
+      sslCtx = NULL;
+      return false;
+    }
+
+    SSL_CTX_set_mode(sslCtx, SSL_MODE_ENABLE_PARTIAL_WRITE);
+
+    return true;
+  }
+
+  return true;
+}
+
 int cVdrmanagerClientSocket::FlushSSL() {
 
   sslReadWrite = SSL_NO_RETRY;
@@ -325,20 +388,22 @@ int cVdrmanagerClientSocket::FlushSSL() {
 
 #endif
 
-bool cVdrmanagerClientSocket::Attach(int fd, SSL_CTX * sslCtx) {
+bool cVdrmanagerClientSocket::Attach(int fd) {
 	sock = fd;
 	if (!MakeDontBlock()) {
 	  return false;
 	}
 
 #if VDRMANAGER_USE_SSL
-	if (sslCtx) {
-	  ssl = SSL_new(sslCtx);
-    SSL_set_accept_state(ssl);
-    BIO *bio = BIO_new_socket(sock, BIO_NOCLOSE);
-	  SSL_set_bio(ssl, bio, bio);
-	  BIO_set_nbio(bio, 1);
+
+	if (!LoadCerts()) {
+	  return false;
 	}
+  ssl = SSL_new(sslCtx);
+  SSL_set_accept_state(ssl);
+  BIO *bio = BIO_new_socket(sock, BIO_NOCLOSE);
+  SSL_set_bio(ssl, bio, bio);
+  BIO_set_nbio(bio, 1);
 #endif
 
 	return true;

@@ -37,14 +37,15 @@ private:
   bool initCompression;
   int compressionMode;
 #if VDRMANAGER_USE_SSL
+  SSL_CTX * sslCtx;
   SSL * ssl;
   int sslReadWrite;
   int sslWantsSelect;
 #endif
 public:
-  cVdrmanagerClientSocket(const char * password, int compressionMode);
+  cVdrmanagerClientSocket(const char * password, int compressionMode, const char * certFile, const char * keyFile);
   virtual ~cVdrmanagerClientSocket();
-  bool Attach(int fd, SSL_CTX * sslCtx);
+  bool Attach(int fd);
   bool IsLineComplete();
   bool GetLine(string& line);
   void Write(string line);
@@ -58,6 +59,7 @@ public:
   int GetSslReadWrite();
   int GetSslWantsSelect();
   bool IsSSL();
+  bool LoadCerts();
 #endif
   bool Disconnected();
   void Disconnect();

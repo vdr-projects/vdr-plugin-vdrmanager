@@ -25,6 +25,8 @@ protected:
   const char * password;
   bool forceCheckSvdrp;
   int compressionMode;
+  const char * certFile;
+  const char * keyFile;
 protected:
   cVdrmanagerSocket();
   bool IsPasswordSet();
