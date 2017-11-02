@@ -2,17 +2,18 @@ package de.bjusystems.vdrmanager.app;
 
 import android.app.Activity;
 import android.app.Application;
+
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import de.bjusystems.vdrmanager.data.Channel;
 import de.bjusystems.vdrmanager.data.EpgSearchParams;
 import de.bjusystems.vdrmanager.data.Event;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.data.Vdr;
-
-import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 
 public class VdrManagerApp extends Application {

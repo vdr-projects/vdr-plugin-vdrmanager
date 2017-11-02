@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
- <string name="action_menu_channels">Channels</string>
- <string name="action_menu_timers">Timers</string>
- <string name="action_menu_recordings">Recordings</string>
- <string name="action_menu_epg">EPG list</string>
- <string name="action_menu_search">EPG search</string>
- <string name="action_menu_wakeup">Wakeup</string>
- <string name="action_menu_remote">Remote</string>
- <string name="app_name">VDR-Manager</string>
- <string name="channel_item_menu_epg">Show EPG</string>
- <string name="channel_item_menu_stream">Live stream</string>
- <string name="channel_item_menu_hide">Hide</string>
- <string name="channel_item_menu_hide_permanent">Hide permanent</string>
- <string name="channel_group_menu_hide">Hide</string>
- <string name="channel_group_menu_hide_permanent">Hide permanent</string>
- <string name="menu_groupby">Group by</string>
- <string name="groupby_group">Group</string>
- <string name="groupby_provider">Provider</string>
- <string name="groupby_name">Name</string>
- <string name="groupby_source">Source</string>
- <string name="groupby_channel">By Channel</string>
- <string name="groupby_date">By Date</string>
- <string name="groupby_name_all_channels_group">All Channels</string>
- <string name="groupby_window_title_templte">Group by %1$s</string>
- <string name="common_delete">Delete</string>
- <string name="prefs_current_value">Current:</string>
- <string name="prefs_current_value_template">\nCurrent: %1$s</string>
- <string name="prefs_current_value_not_set">&lt;not set></string>
- <string name="no_connection">No connection</string>
- <string name="aborted">Connection aborted.</string>
- <string name="no_connection_retry">Retry</string>
- <string name="refresh">Refresh</string>
- <string name="done">Done</string>
- <string name="share">Share</string>
- <string name="addtocal">Add to calendar</string>
- <string name="search_reapt">Reruns</string>
- <string name="share_chooser">Share EPG Entry</string>
- <string name="about_text">About "VDR-Manager" Software for Android\n
+    <string name="action_menu_channels">Channels</string>
+    <string name="action_menu_timers">Timers</string>
+    <string name="action_menu_recordings">Recordings</string>
+    <string name="action_menu_epg">EPG list</string>
+    <string name="action_menu_search">EPG search</string>
+    <string name="action_menu_wakeup">Wakeup</string>
+    <string name="action_menu_remote">Remote</string>
+    <string name="app_name">VDR-Manager</string>
+    <string name="channel_item_menu_epg">Show EPG</string>
+    <string name="channel_item_menu_stream">Live stream</string>
+    <string name="channel_item_menu_hide">Hide</string>
+    <string name="channel_item_menu_hide_permanent">Hide permanent</string>
+    <string name="channel_group_menu_hide">Hide</string>
+    <string name="channel_group_menu_hide_permanent">Hide permanent</string>
+    <string name="menu_groupby">Group by</string>
+    <string name="groupby_group">Group</string>
+    <string name="groupby_provider">Provider</string>
+    <string name="groupby_name">Name</string>
+    <string name="groupby_source">Source</string>
+    <string name="groupby_channel">By Channel</string>
+    <string name="groupby_date">By Date</string>
+    <string name="groupby_name_all_channels_group">All Channels</string>
+    <string name="groupby_window_title_templte">Group by %1$s</string>
+    <string name="common_delete">Delete</string>
+    <string name="prefs_current_value">Current:</string>
+    <string name="prefs_current_value_template">\nCurrent: %1$s</string>
+    <string name="prefs_current_value_not_set">&lt;not set></string>
+    <string name="no_connection">No connection</string>
+    <string name="aborted">Connection aborted.</string>
+    <string name="no_connection_retry">Retry</string>
+    <string name="refresh">Refresh</string>
+    <string name="done">Done</string>
+    <string name="share">Share</string>
+    <string name="addtocal">Add to calendar</string>
+    <string name="search_reapt">Reruns</string>
+    <string name="share_chooser">Share EPG Entry</string>
+    <string name="about_text">About "VDR-Manager" Software for Android\n
   This is Version %1$s\n
   If you have a VDR at home reachable
   over the internet and own a mobile phone running Android then you possibly find this program useful.
@@ -46,389 +46,389 @@
   bju&lt;herrlado@gmail.com>
   herrlado&lt;herrlado@gmail.com>
  </string>
- <string name="about_title">About</string>
- <string name="no_internet_connection">No data connection</string>
- <string name="update_will_start_in">Update will start in one second</string>
- <string name="epg_menu_search">Search EPG</string>
- <string name="epg_menu_times">Search times</string>
- <string name="epg_item_menu_timer_add">Create timer</string>
- <string name="epg_item_menu_timer_record">Record</string>
- <string name="epg_item_menu_timer_delete">Delete timer</string>
- <string name="epg_item_menu_timer_modify">Modify timer</string>
- <string name="epg_item_menu_timer_enable">Enable timer</string>
- <string name="epg_item_menu_timer_disable">Disable timer</string>
- <string name="epg_no_items">Nothing found…</string>
- <string name="epg_client_errors">An error occurred, check logs…</string>
- <string name="navigae_at_the_end">End</string>
- <string name="navigae_at_the_start">Beginning</string>
- <string name="epg_search_times_add">Add time</string>
- <string name="epg_search_times_window">Custom times</string>
+    <string name="about_title">About</string>
+    <string name="no_internet_connection">No data connection</string>
+    <string name="update_will_start_in">Update will start in one second</string>
+    <string name="epg_menu_search">Search EPG</string>
+    <string name="epg_menu_times">Search times</string>
+    <string name="epg_item_menu_timer_add">Create timer</string>
+    <string name="epg_item_menu_timer_record">Record</string>
+    <string name="epg_item_menu_timer_delete">Delete timer</string>
+    <string name="epg_item_menu_timer_modify">Modify timer</string>
+    <string name="epg_item_menu_timer_enable">Enable timer</string>
+    <string name="epg_item_menu_timer_disable">Disable timer</string>
+    <string name="epg_no_items">Nothing found…</string>
+    <string name="epg_client_errors">An error occurred, check logs…</string>
+    <string name="navigae_at_the_end">End</string>
+    <string name="navigae_at_the_start">Beginning</string>
+    <string name="epg_search_times_add">Add time</string>
+    <string name="epg_search_times_window">Custom times</string>
 
- <!-- What's on display -->
- <string name="epg_list_time_label">What\'s on at</string>
- <string name="epg_list_time_now">Now</string>
- <string name="epg_list_time_next">Next</string>
- <string name="epg_list_time_adhoc">Ad Hoc</string>
- <string name="epg_list_channel_spinner">Channel</string>
- <string name="epg_list_search_label">Search results</string>
+    <!-- What's on display -->
+    <string name="epg_list_time_label">What\'s on at</string>
+    <string name="epg_list_time_now">Now</string>
+    <string name="epg_list_time_next">Next</string>
+    <string name="epg_list_time_adhoc">Ad Hoc</string>
+    <string name="epg_list_channel_spinner">Channel</string>
+    <string name="epg_list_search_label">Search results</string>
 
- <!-- create timer -->
- <string name="epg_event_share_text">Share</string>
- <string name="epg_event_imdb_text">IMDb Search</string>
- <string name="epg_event_omdb_text">OMDB Search</string>
- <string name="epg_event_tmdb_text">TMDb Search</string>
- <string name="epg_eent_livetv_text">Stream</string>
- <string name="epg_event_create_timer_text">Add timer</string>
- <string name="epg_event_modify_timer_text">Modify timer</string>
+    <!-- create timer -->
+    <string name="epg_event_share_text">Share</string>
+    <string name="epg_event_imdb_text">IMDb Search</string>
+    <string name="epg_event_omdb_text">OMDB Search</string>
+    <string name="epg_event_tmdb_text">TMDb Search</string>
+    <string name="epg_eent_livetv_text">Stream</string>
+    <string name="epg_event_create_timer_text">Add timer</string>
+    <string name="epg_event_modify_timer_text">Modify timer</string>
 
- <!-- search -->
- <string name="epg_search_button">Search</string>
- <string name="epg_duration_template">%1$s min</string>
- <string name="epg_duration_template_live">%1$s/%2$s min</string>
- <string name="epg_of_a_channel">%1$s, %2$s/%3$s</string>
- <string name="epg_by_channel">EPG by channel</string>
- <string name="epg_by_search">EPG Search</string>
- <string name="epg_by_search_param">EPG Search: \'%1$s\'</string>
- <string name="epg_by_time">EPG by time</string>
- <string name="epg_by_time_args">EPG by time: \'%1$s\'</string>
- <string name="search_epg_hint">Search EPG</string>
- <string name="epg_search_settings_description">Search VDR EPG</string>
- <string name="epg_window_title_count">%1$s, %2$s items</string>
- <string name="channels_window_title_count">%1$s, %2$s/%3$s</string>
- <string name="new_timer">New timer</string>
- <string name="vdr_error_text">The communication with VDR has caused an error: %1$s</string>
- <string name="livetv">Live TV</string>
- <string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
+    <!-- search -->
+    <string name="epg_search_button">Search</string>
+    <string name="epg_duration_template">%1$s min</string>
+    <string name="epg_duration_template_live">%1$s/%2$s min</string>
+    <string name="epg_of_a_channel">%1$s, %2$s/%3$s</string>
+    <string name="epg_by_channel">EPG by channel</string>
+    <string name="epg_by_search">EPG Search</string>
+    <string name="epg_by_search_param">EPG Search: \'%1$s\'</string>
+    <string name="epg_by_time">EPG by time</string>
+    <string name="epg_by_time_args">EPG by time: \'%1$s\'</string>
+    <string name="search_epg_hint">Search EPG</string>
+    <string name="epg_search_settings_description">Search VDR EPG</string>
+    <string name="epg_window_title_count">%1$s, %2$s items</string>
+    <string name="channels_window_title_count">%1$s, %2$s/%3$s</string>
+    <string name="new_timer">New timer</string>
+    <string name="vdr_error_text">The communication with VDR has caused an error: %1$s</string>
+    <string name="livetv">Live TV</string>
+    <string name="settings_livetv_summary">Needs streamdev-server on VDR and an external
   player such as VPlayer
  </string>
- <string name="settings_livetv_streamformat">Streamformat</string>
- <string name="settings_livetv_port">Streaming Port</string>
- <string name="settings_livetv_port_summary">Default 3000. The access must be enabled in
+    <string name="settings_livetv_streamformat">Streamformat</string>
+    <string name="settings_livetv_port">Streaming Port</string>
+    <string name="settings_livetv_port_summary">Default 3000. The access must be enabled in
   streamdevhosts.conf.
  </string>
 
- <string-array name="livetv_streamformat">
-  <item>TS</item>
-  <item>PES</item>
-  <item>ES</item>
-  <item>PS</item>
- </string-array>
+    <string-array name="livetv_streamformat">
+        <item>TS</item>
+        <item>PES</item>
+        <item>ES</item>
+        <item>PS</item>
+    </string-array>
 
- <string name="key_remux_enable">remux_enable</string>
- <string name="key_remux_command">remux_command</string>
- <string name="key_remux_parameter">remux_parameter</string>
- <string name="stream_via_as">Stream</string>
- <string name="stream_choose_audio">Choose Audio Track</string>
- <string name="stream_via">via %s</string>
- <string name="stream_as">as %s</string>
- <string name="remux_title">Remux</string>
- <string name="remux_enable_title">Enable Remux</string>
- <string name="remux_enable_summary">Enable streaming via remux (e.g. externremux.sh)</string>
- <string name="remux_command_title">Command</string>
- <string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/EXT/1</string>
- <string name="remux_parameter_title">Parameter</string>
- <string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/EXT;DSL1000/1</string>
- <string name="main_menu_preferences">Preferences</string>
- <string name="main_menu_info">Info</string>
- <string name="main_menu_exit">Exit</string>
- <string name="main_menu_goto">Switch Device</string>
- <string name="main_menu_goto_title">Switch to…</string>
- <string name="main_menu_goto_no_vdr">Can not load selected device :(</string>
- <string name="main_menu_switched_to">Switched to %1$s</string>
- <string name="vdr_devices_summary">Define one or more VDR Devices.</string>
- <string name="vdr_devices">VDR Devices</string>
+    <string name="key_remux_enable">remux_enable</string>
+    <string name="key_remux_command">remux_command</string>
+    <string name="key_remux_parameter">remux_parameter</string>
+    <string name="stream_via_as">Stream</string>
+    <string name="stream_choose_audio">Choose Audio Track</string>
+    <string name="stream_via">via %s</string>
+    <string name="stream_as">as %s</string>
+    <string name="remux_title">Remux</string>
+    <string name="remux_enable_title">Enable Remux</string>
+    <string name="remux_enable_summary">Enable streaming via remux (e.g. externremux.sh)</string>
+    <string name="remux_command_title">Command</string>
+    <string name="remux_command_summary">Typically EXT or Extern e.g. http://vdr:3000/EXT/1</string>
+    <string name="remux_parameter_title">Parameter</string>
+    <string name="remux_parameter_summary">Control Streaming quality. E.g. http://vdr:3000/EXT;DSL1000/1</string>
+    <string name="main_menu_preferences">Preferences</string>
+    <string name="main_menu_info">Info</string>
+    <string name="main_menu_exit">Exit</string>
+    <string name="main_menu_goto">Switch Device</string>
+    <string name="main_menu_goto_title">Switch to…</string>
+    <string name="main_menu_goto_no_vdr">Can not load selected device :(</string>
+    <string name="main_menu_switched_to">Switched to %1$s</string>
+    <string name="vdr_devices_summary">Define one or more VDR Devices.</string>
+    <string name="vdr_devices">VDR Devices</string>
 
- <!-- VDR plugin preferences -->
- <string name="vdr_preferences">Network settings</string>
- <string name="vdr_host_title">VDR host</string>
- <string name="vdr_host_summary">Host running VDR</string>
- <string name="vdr_port_title">VDR plugin port</string>
- <string name="vdr_port_summary">Port for connections to VDR plugin</string>
- <string name="vdr_password_title">VDR plugin password</string>
- <string name="vdr_password_summary">Password for the VDR plugin</string>
- <string name="vdr_ssl_title">Secure connect</string>
- <string name="vdr_ssl_summary">Use SSL for connections</string>
+    <!-- VDR plugin preferences -->
+    <string name="vdr_preferences">Network settings</string>
+    <string name="vdr_host_title">VDR host</string>
+    <string name="vdr_host_summary">Host running VDR</string>
+    <string name="vdr_port_title">VDR plugin port</string>
+    <string name="vdr_port_summary">Port for connections to VDR plugin</string>
+    <string name="vdr_password_title">VDR plugin password</string>
+    <string name="vdr_password_summary">Password for the VDR plugin</string>
+    <string name="vdr_ssl_title">Secure connect</string>
+    <string name="vdr_ssl_summary">Use SSL for connections</string>
 
- <!-- channel filter preferences -->
- <string name="channel_filter_preferences">Channel settings</string>
- <string name="channel_filter_filter_title">Limit channels</string>
- <string name="channel_filter_filter_summary">Use only given channels</string>
- <string name="channel_filter_last_title">Channel filter</string>
- <string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10
+    <!-- channel filter preferences -->
+    <string name="channel_filter_preferences">Channel settings</string>
+    <string name="channel_filter_filter_title">Limit channels</string>
+    <string name="channel_filter_filter_summary">Use only given channels</string>
+    <string name="channel_filter_last_title">Channel filter</string>
+    <string name="channel_filter_last_summary">Comma separated channelnumbers or ranges (separator \'-\'). A.e. 1,2,4-10
  </string>
 
- <!-- wakeup -->
- <string name="wakeup_preferences">Remote VDR host wakeup</string>
- <string name="wakeup_enabled_title">Can remote wakeup VDR</string>
- <string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
- <string name="wakeup_url_title">URL for remote wakeup</string>
- <string name="wakeup_url_summary">URL for a request doing the wakeup</string>
- <string name="wakeup_user_title">Wakeup user</string>
- <string name="wakeup_user_summary">User for remote wakeup</string>
- <string name="wakeup_password_title">Wakeup password</string>
- <string name="wakeup_password_summary">Password for remote wakeup</string>
- <string name="wakeup_method_title">Wakeup method</string>
- <string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
+    <!-- wakeup -->
+    <string name="wakeup_preferences">Remote VDR host wakeup</string>
+    <string name="wakeup_enabled_title">Can remote wakeup VDR</string>
+    <string name="wakeup_enabled_summary">Enables to remote wakeup the VDR host</string>
+    <string name="wakeup_url_title">URL for remote wakeup</string>
+    <string name="wakeup_url_summary">URL for a request doing the wakeup</string>
+    <string name="wakeup_user_title">Wakeup user</string>
+    <string name="wakeup_user_summary">User for remote wakeup</string>
+    <string name="wakeup_password_title">Wakeup password</string>
+    <string name="wakeup_password_summary">Password for remote wakeup</string>
+    <string name="wakeup_method_title">Wakeup method</string>
+    <string name="wakeup_method_summary">Choose a method to wakeup the vdr host</string>
 
- <string-array name="wakeup_methods">
-  <item>Call a URL</item>
-  <item>WOL</item>
- </string-array>
+    <string-array name="wakeup_methods">
+        <item>Call a URL</item>
+        <item>WOL</item>
+    </string-array>
 
- <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
- <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of
+    <string name="wakeup_wol_custom_boradcast_title">Destination IP address</string>
+    <string name="wakeup_wol_custom_boradcast_summary">Unless you have static ARP tables you should use some kind of
   broadcast address.
  </string>
- <string name="wakeup_wol_mac_title">MAC-Address</string>
- <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
+    <string name="wakeup_wol_mac_title">MAC-Address</string>
+    <string name="wakeup_wol_mac_summary">MAC-Address of the VDR host. Use \':\' or \'-\' or a space as separator.</string>
 
- <!-- timer -->
- <string name="timer_preferences">Timer defaults</string>
- <string name="timer_pre_start_buffer_title">Margin at start</string>
- <string name="timer_pre_start_buffer_summary">Minutes recording starts before the beginning of
+    <!-- timer -->
+    <string name="timer_preferences">Timer defaults</string>
+    <string name="timer_pre_start_buffer_title">Margin at start</string>
+    <string name="timer_pre_start_buffer_summary">Minutes recording starts before the beginning of
   the broadcast
  </string>
- <string name="timer_post_end_buffer_title">Margin at stop</string>
- <string name="timer_post_end_buffer_summary">Minutes recording stops after the end of the
+    <string name="timer_post_end_buffer_title">Margin at stop</string>
+    <string name="timer_post_end_buffer_summary">Minutes recording stops after the end of the
   broadcast
  </string>
- <string name="timer_default_priority_title">Default priority</string>
- <string name="timer_default_priority_summary">Default priority</string>
- <string name="timer_default_primary_limit_title">Default primary limit</string>
- <string name="timer_default_primary_limit_summary">Default primary limit</string>
- <string name="timer_default_lifetime_title">Default lifetime</string>
- <string name="timer_default_lifetime_summary">Default lifetime</string>
- <string name="timer_already_exists">Timer already defined.</string>
- <string name="timer_created">Timer created</string>
+    <string name="timer_default_priority_title">Default priority</string>
+    <string name="timer_default_priority_summary">Default priority</string>
+    <string name="timer_default_primary_limit_title">Default primary limit</string>
+    <string name="timer_default_primary_limit_summary">Default primary limit</string>
+    <string name="timer_default_lifetime_title">Default lifetime</string>
+    <string name="timer_default_lifetime_summary">Default lifetime</string>
+    <string name="timer_already_exists">Timer already defined.</string>
+    <string name="timer_created">Timer created</string>
 
 
- <!-- GUI -->
- <string name="gui_preferences">GUI Settings</string>
- <string name="gui_enable_24h_format_title">Use 24-hour format</string>
- <string name="gui_enable_24h_format_summary_on">13:00</string>
- <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
- <string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
- <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
- <string name="gui_quit_on_back_title">Quit on back button</string>
- <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
- <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
- <string name="qui_show_imdb_button_title">Show IMDb Button</string>
- <string name="qui_show_imdb_button_summary_on">IMDb Button is shown</string>
- <string name="qui_show_imdb_button_summary_off">IMDb Button is not shown</string>
- <string name="qui_imdb_url_title">IMDb Site</string>
- <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
- <string name="qui_show_omdb_button_title">Show OMDB Button</string>
- <string name="qui_show_omdb_button_summary_on">OMDB Button is shown</string>
- <string name="qui_show_omdb_button_summary_off">OMDB Button is not shown</string>
- <string name="qui_show_tmdb_button_title">Show TMDb Button</string>
- <string name="qui_show_tmdb_button_summary_on">TMDb Button is shown</string>
- <string name="qui_show_tmdb_button_summary_off">TMDb Button is not shown</string>
- <string name="gui_custom_locale_title">Custom language</string>
- <string name="gui_custom_locale_sum">Set a custom language.</string>
+    <!-- GUI -->
+    <string name="gui_preferences">GUI Settings</string>
+    <string name="gui_enable_24h_format_title">Use 24-hour format</string>
+    <string name="gui_enable_24h_format_summary_on">13:00</string>
+    <string name="gui_enable_24h_format_summary_off">1:00 PM</string>
+    <string name="gui_channels_show_channel_numbers_title">Show channel numbers</string>
+    <string name="gui_channels_show_channel_numbers_summary">Show channel numbers in the channel list.</string>
+    <string name="gui_quit_on_back_title">Quit on back button</string>
+    <string name="gui_quit_on_back_summary_on">Back button quits the VDR-Manager</string>
+    <string name="gui_quit_on_back_summary_off">Back button does not quit VDR-Manager</string>
+    <string name="qui_show_imdb_button_title">Show IMDb Button</string>
+    <string name="qui_show_imdb_button_summary_on">IMDb Button is shown</string>
+    <string name="qui_show_imdb_button_summary_off">IMDb Button is not shown</string>
+    <string name="qui_imdb_url_title">IMDb Site</string>
+    <string name="qui_imdb_url_summary">Which IMDb site to search.</string>
+    <string name="qui_show_omdb_button_title">Show OMDB Button</string>
+    <string name="qui_show_omdb_button_summary_on">OMDB Button is shown</string>
+    <string name="qui_show_omdb_button_summary_off">OMDB Button is not shown</string>
+    <string name="qui_show_tmdb_button_title">Show TMDb Button</string>
+    <string name="qui_show_tmdb_button_summary_on">TMDb Button is shown</string>
+    <string name="qui_show_tmdb_button_summary_off">TMDb Button is not shown</string>
+    <string name="gui_custom_locale_title">Custom language</string>
+    <string name="gui_custom_locale_sum">Set a custom language.</string>
 
- <string-array name="imdb_urls">
-  <item>International</item>
-  <item>imdb.com</item>
-  <item>uk.imdb.com</item>
-  <item>imdb.de</item>
-  <item>imdb.es</item>
-  <item>imdb.fr</item>
-  <item>imdb.it</item>
-  <item>imdb.pt</item>
- </string-array>
- <string-array name="lang">
+    <string-array name="imdb_urls">
+        <item>International</item>
+        <item>imdb.com</item>
+        <item>uk.imdb.com</item>
+        <item>imdb.de</item>
+        <item>imdb.es</item>
+        <item>imdb.fr</item>
+        <item>imdb.it</item>
+        <item>imdb.pt</item>
+    </string-array>
+    <string-array name="lang">
 
-  <!-- <item>Default language</item> -->
-  <item>English</item>
-  <item>German</item>
-  <item>French</item>
-  <item>Italian</item>
-  <item>Polish</item>
-  <item>Ukrainian</item>
- </string-array>
- <string-array name="remux_entries">
-  <item>EXT</item>
-  <item>EXTERN (deprecated)</item>
- </string-array>
+        <!-- <item>Default language</item> -->
+        <item>English</item>
+        <item>German</item>
+        <item>French</item>
+        <item>Italian</item>
+        <item>Polish</item>
+        <item>Ukrainian</item>
+    </string-array>
+    <string-array name="remux_entries">
+        <item>EXT</item>
+        <item>EXTERN (deprecated)</item>
+    </string-array>
 
- <string name="vdr_advanced_preferences">Advanced</string>
- <string name="vdr_advanced_preferences_summary">Advanced settings</string>
- <string name="vdr_conntimeout_title">Connection Timeout</string>
- <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
- <string name="vdr_readtimeout_title">Read Timeout</string>
- <string name="vdr_readtimeout_sum">How long (in seconds) to wait for every read line operation?</string>
- <string name="vdr_timeout_title">Total timeout</string>
- <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?
+    <string name="vdr_advanced_preferences">Advanced</string>
+    <string name="vdr_advanced_preferences_summary">Advanced settings</string>
+    <string name="vdr_conntimeout_title">Connection Timeout</string>
+    <string name="vdr_conntimeout_sum">How long (in seconds) to wait before the connection is established?</string>
+    <string name="vdr_readtimeout_title">Read Timeout</string>
+    <string name="vdr_readtimeout_sum">How long (in seconds) to wait for every read line operation?</string>
+    <string name="vdr_timeout_title">Total timeout</string>
+    <string name="vdr_timeout_sum">How long (in seconds) to wait for a whole I/O operation, before it gets aborted?
  </string>
- <string name="streaming_password_title">Streamdev password</string>
- <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
- <string name="streaming_username_title">Streamdev username</string>
- <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
- <string name="vdr_encoding_title">Character encoding</string>
- <string name="vdr_encoding_summary">Character encoding of your VDR device. Default is utf-8.</string>
- <string name="new_vdr">New VDR</string>
- <string name="no_vdr">No VDR Devices</string>
- <string name="vdr_devices_category">VDR devices</string>
- <string name="vdr_prefs_category">Device</string>
- <string name="vdr_name_title">Name</string>
- <string name="vdr_name_summary">A name for this device</string>
- <string name="vdr_device_delete_qeustion">Delete this device?</string>
- <string name="recstream">Streaming of recordings</string>
- <string name="recstream_enable_title">Streaming of recordings</string>
- <string name="recstream_enable_summary">Enable Streaming of recordings</string>
+    <string name="streaming_password_title">Streamdev password</string>
+    <string name="streaming_password_sum">Set your streamdev server password. (a.e. -a \'username:password\')</string>
+    <string name="streaming_username_title">Streamdev username</string>
+    <string name="streaming_username_sum">Set your streamdev server username. (a.e. -a \'username:password\')</string>
+    <string name="vdr_encoding_title">Character encoding</string>
+    <string name="vdr_encoding_summary">Character encoding of your VDR device. Default is utf-8.</string>
+    <string name="new_vdr">New VDR</string>
+    <string name="no_vdr">No VDR Devices</string>
+    <string name="vdr_devices_category">VDR devices</string>
+    <string name="vdr_prefs_category">Device</string>
+    <string name="vdr_name_title">Name</string>
+    <string name="vdr_name_summary">A name for this device</string>
+    <string name="vdr_device_delete_qeustion">Delete this device?</string>
+    <string name="recstream">Streaming of recordings</string>
+    <string name="recstream_enable_title">Streaming of recordings</string>
+    <string name="recstream_enable_summary">Enable Streaming of recordings</string>
 
- <string-array name="recstream_entries">
-  <item>live plugin</item>
-  <item>streamdev plugin</item>
-  <item>smarttvweb plugin</item>
- </string-array>
+    <string-array name="recstream_entries">
+        <item>live plugin</item>
+        <item>streamdev plugin</item>
+        <item>smarttvweb plugin</item>
+    </string-array>
 
 
- <string-array name="recstream_smarttvweb_entries">
-  <item>Progressive</item>
-  <item>MPEG-DASH</item>
-  <item>Apple HLS</item>
- </string-array>
+    <string-array name="recstream_smarttvweb_entries">
+        <item>Progressive</item>
+        <item>MPEG-DASH</item>
+        <item>Apple HLS</item>
+    </string-array>
 
- <string name="recstream_method_title">Streaming method</string>
- <string name="recstream_method_summary">Currently Streaming over VDR live and or streamdev plugin is supported</string>
- <string name="settings_live_port">VDR live plugin port</string>
- <string name="settings_live_port_summary">VDR live plugin has default port 8008.</string>
+    <string name="recstream_method_title">Streaming method</string>
+    <string name="recstream_method_summary">Currently Streaming over VDR live and or streamdev plugin is supported</string>
+    <string name="settings_live_port">VDR live plugin port</string>
+    <string name="settings_live_port_summary">VDR live plugin has default port 8008.</string>
 
- <!-- progress -->
- <string name="progress_connect">Connecting…</string>
- <string name="progress_connect_error">Connection failed!</string>
- <string name="progress_connect_timeout">Connection timeout!</string>
- <string name="progress_login">Login.</string>
- <string name="progress_login_error">Login failed.</string>
- <string name="progress_whatson_loading">Loading EPG…</string>
- <string name="progress_timers_loading">Loading timers…</string>
- <string name="progress_recordings_loading">Loading recordings…</string>
- <string name="progress_switching">Switching…</string>
- <string name="progress_channels_loading">Loading channels…</string>
- <string name="progress_loading">Loading…</string>
- <string name="progress_disconnect">Disconnecting…</string>
- <string name="progress_wakeup_sending">Initiating wakeup request…</string>
- <string name="progress_wakeup_sent">Wakeup request sent</string>
- <string name="progress_wakeup_error">Error sending wakeup request: %1$s</string>
- <string name="progress_timer_save">Saving timer…</string>
- <string name="progress_timer_delete">Deleting timer…</string>
- <string name="progress_recording_delete">Deleting recording…</string>
- <string name="progress_timer_enable">Enabling timer…</string>
- <string name="progress_timer_modify">Updating timer…</string>
- <string name="progress_timer_disable">Disabling timer…</string>
- <string name="progress_connect_finished_abnormal">Connection finished abnormal</string>
- <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
- <string name="progress_cache_hit">Loaded from cache.</string>
- <string name="recording_item_menu_delete">Delete</string>
- <string name="recording_item_menu_stream">Stream</string>
- <string name="recent_channels">Recent channels</string>
- <string name="recent_channels_no_history">No history…</string>
- <string name="gui_max_recent_channels_title">Max. recent channels</string>
- <string name="gui_max_recent_channels_summary">How many channels should be kept in the recent channels?</string>
- <string name="timer_detail_day_title">Day</string>
+    <!-- progress -->
+    <string name="progress_connect">Connecting…</string>
+    <string name="progress_connect_error">Connection failed!</string>
+    <string name="progress_connect_timeout">Connection timeout!</string>
+    <string name="progress_login">Login.</string>
+    <string name="progress_login_error">Login failed.</string>
+    <string name="progress_whatson_loading">Loading EPG…</string>
+    <string name="progress_timers_loading">Loading timers…</string>
+    <string name="progress_recordings_loading">Loading recordings…</string>
+    <string name="progress_switching">Switching…</string>
+    <string name="progress_channels_loading">Loading channels…</string>
+    <string name="progress_loading">Loading…</string>
+    <string name="progress_disconnect">Disconnecting…</string>
+    <string name="progress_wakeup_sending">Initiating wakeup request…</string>
+    <string name="progress_wakeup_sent">Wakeup request sent</string>
+    <string name="progress_wakeup_error">Error sending wakeup request: %1$s</string>
+    <string name="progress_timer_save">Saving timer…</string>
+    <string name="progress_timer_delete">Deleting timer…</string>
+    <string name="progress_recording_delete">Deleting recording…</string>
+    <string name="progress_timer_enable">Enabling timer…</string>
+    <string name="progress_timer_modify">Updating timer…</string>
+    <string name="progress_timer_disable">Disabling timer…</string>
+    <string name="progress_connect_finished_abnormal">Connection finished abnormal</string>
+    <string name="progress_connect_finished_abnormal_arg">Connection finished abnormal: %1$s</string>
+    <string name="progress_cache_hit">Loaded from cache.</string>
+    <string name="recording_item_menu_delete">Delete</string>
+    <string name="recording_item_menu_stream">Stream</string>
+    <string name="recent_channels">Recent channels</string>
+    <string name="recent_channels_no_history">No history…</string>
+    <string name="gui_max_recent_channels_title">Max. recent channels</string>
+    <string name="gui_max_recent_channels_summary">How many channels should be kept in the recent channels?</string>
+    <string name="timer_detail_day_title">Day</string>
 
- <!--
-	  Repeat options that appear under an alarm on main Alarm Clock
-	  screen to identify repetition schedule: special case for when
-	  the alarm is set to repeat every day
- -->
- <string name="every_day">Every day</string>
+    <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to repeat every day
+    -->
+    <string name="every_day">Every day</string>
 
- <!--
-	  Repeat options that appear under an alarm on main Alarm Clock
-	  screen to identify repetition schedule: special case for when
-	  the alarm is set to never repeat
- -->
- <string name="never">Never</string>
+    <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: special case for when
+         the alarm is set to never repeat
+    -->
+    <string name="never">Never</string>
 
- <!--
-	  Repeat options that appear under an alarm on main Alarm Clock
-	  screen to identify repetition schedule: concatenate days with
-	  this character, i.e. "Mon, Tue, Wed"
- -->
- <string name="day_concat">", "</string>
- <string name="timer_detail_repeat_title">Repeat</string>
- <string name="timer_detail_use_vps">Use VPS:</string>
- <string name="timer_detail_priority">Priority:</string>
- <string name="timer_detail_lifetime">Lifetime:</string>
- <string name="timer_detail_lifetime_hint">e.g. 99</string>
- <string name="timer_detail_priority_hint">e.g. 50</string>
- <string name="timer_detail_title_vps">%1$s (VPS)</string>
- <string name="channel_item_menu_switch">Switch to</string>
- <string name="switching_success">Switched to %s</string>
- <string name="switching_failed">Switching to %1$s failed: %2$s</string>
- <string name="switch_to_channel">Switch to</string>
- <string name="sort">Sort</string>
- <string name="sortby">Sort by</string>
- <string name="sortby_time">Time</string>
- <string name="sortby_channel">Channel</string>
- <string name="sortby_alphabet">Alphabet</string>
- <string name="sortby_channellist">Chanellist</string>
- <string name="main_menu_clear_search">Clear Search History</string>
- <string name="vdr_host_not_defined">VDR host not defined</string>
- <string name="processing">Processing…</string>
+    <!--
+         Repeat options that appear under an alarm on main Alarm Clock
+         screen to identify repetition schedule: concatenate days with
+         this character, i.e. "Mon, Tue, Wed"
+    -->
+    <string name="day_concat">", "</string>
+    <string name="timer_detail_repeat_title">Repeat</string>
+    <string name="timer_detail_use_vps">Use VPS:</string>
+    <string name="timer_detail_priority">Priority:</string>
+    <string name="timer_detail_lifetime">Lifetime:</string>
+    <string name="timer_detail_lifetime_hint">e.g. 99</string>
+    <string name="timer_detail_priority_hint">e.g. 50</string>
+    <string name="timer_detail_title_vps">%1$s (VPS)</string>
+    <string name="channel_item_menu_switch">Switch to</string>
+    <string name="switching_success">Switched to %s</string>
+    <string name="switching_failed">Switching to %1$s failed: %2$s</string>
+    <string name="switch_to_channel">Switch to</string>
+    <string name="sort">Sort</string>
+    <string name="sortby">Sort by</string>
+    <string name="sortby_time">Time</string>
+    <string name="sortby_channel">Channel</string>
+    <string name="sortby_alphabet">Alphabet</string>
+    <string name="sortby_channellist">Chanellist</string>
+    <string name="main_menu_clear_search">Clear Search History</string>
+    <string name="vdr_host_not_defined">VDR host not defined</string>
+    <string name="processing">Processing…</string>
 
- <string-array name="recent_channels_order_entries">
-  <item>Mostly used</item>
-  <item>Last used</item>
- </string-array>
- <string-array name="epg_sort_by_time_alpha">
-  <item>Time</item>
-  <item>Alphabet</item>
- </string-array>
- <string-array name="epg_sort_by_time_alpha_channel">
-  <item>Time</item>
-  <item>Alphabet</item>
-  <item>Channel</item>
- </string-array>
- <string-array name="epg_sort_by_channels_alpha">
-  <item>Channels</item>
-  <item>Alphabet</item>
- </string-array>
- <string-array name="recordings_group_by">
-  <item>By Time</item>
-  <item>By Alphabet</item>
- </string-array>
+    <string-array name="recent_channels_order_entries">
+        <item>Mostly used</item>
+        <item>Last used</item>
+    </string-array>
+    <string-array name="epg_sort_by_time_alpha">
+        <item>Time</item>
+        <item>Alphabet</item>
+    </string-array>
+    <string-array name="epg_sort_by_time_alpha_channel">
+        <item>Time</item>
+        <item>Alphabet</item>
+        <item>Channel</item>
+    </string-array>
+    <string-array name="epg_sort_by_channels_alpha">
+        <item>Channels</item>
+        <item>Alphabet</item>
+    </string-array>
+    <string-array name="recordings_group_by">
+        <item>By Time</item>
+        <item>By Alphabet</item>
+    </string-array>
 
- <string name="gui_recent_channels_order_summary">Sort by last used or mostly used</string>
- <string name="gui_recent_channels_order_title">Recent Channels Sorting</string>
+    <string name="gui_recent_channels_order_summary">Sort by last used or mostly used</string>
+    <string name="gui_recent_channels_order_title">Recent Channels Sorting</string>
 
- <string-array name="channels_group_by">
-  <item>Group</item>
-  <item>Provider</item>
-  <item>Source</item>
-  <item>Name</item>
- </string-array>
- <string-array name="navigation_array">
-  <item>Channels</item>
-  <item>EPG by Time</item>
-  <item>EPG by Channel</item>
-  <item>Recordings</item>
-  <item>Timers</item>
-  <item>Remote</item>
- </string-array>
+    <string-array name="channels_group_by">
+        <item>Group</item>
+        <item>Provider</item>
+        <item>Source</item>
+        <item>Name</item>
+    </string-array>
+    <string-array name="navigation_array">
+        <item>Channels</item>
+        <item>EPG by Time</item>
+        <item>EPG by Channel</item>
+        <item>Recordings</item>
+        <item>Timers</item>
+        <item>Remote</item>
+    </string-array>
 
- <string name="filter">Filter</string>
- <string name="audio_tracks_template">Audio Tracks: %1$s</string>
- <string name="audio_track_dolby">D</string>
- <string name="vdr_timezone_summary">The time zone used on the server. It is important if you travel and modify timers
+    <string name="filter">Filter</string>
+    <string name="audio_tracks_template">Audio Tracks: %1$s</string>
+    <string name="audio_track_dolby">D</string>
+    <string name="vdr_timezone_summary">The time zone used on the server. It is important if you travel and modify timers
   from another time zone.
  </string>
- <string name="vdr_timezone_title">Select server time zone</string>
- <string name="zone_list_menu_sort_alphabetically">Sort alphabetically</string>
- <string name="zone_list_menu_sort_by_timezone">Sort by time zone</string>
- <string name="probing">Probing %1$s …</string>
- <string name="no_results">No results…</string>
- <string name="recording_started">Recording started</string>
- <string name="set_time">Set time</string>
- <!-- … -->
+    <string name="vdr_timezone_title">Select server time zone</string>
+    <string name="zone_list_menu_sort_alphabetically">Sort alphabetically</string>
+    <string name="zone_list_menu_sort_by_timezone">Sort by time zone</string>
+    <string name="probing">Probing %1$s …</string>
+    <string name="no_results">No results…</string>
+    <string name="recording_started">Recording started</string>
+    <string name="set_time">Set time</string>
+    <!-- … -->
 
 
- <!-- 	     SSL related messages -->
+    <!-- 	     SSL related messages -->
 
- <string name="certificate_problem_message_title">Certificate warning</string>
- <string name="certificate_problem_message_text">The server certificate was not accepted:\n\n
+    <string name="certificate_problem_message_title">Certificate warning</string>
+    <string name="certificate_problem_message_text">The server certificate was not accepted:\n\n
   Hostname:\n
   %1$s\n
   Valid from:\n
@@ -437,124 +437,127 @@
   %3$s\n\n
   What do you want to do?
  </string>
- <string name="certificate_accept_once">Accept once</string>
- <string name="certificate_accepted_forever">Accept forever</string>
- <string name="certificate_not_accepted">Abort</string>
+    <string name="certificate_accept_once">Accept once</string>
+    <string name="certificate_accepted_forever">Accept forever</string>
+    <string name="certificate_not_accepted">Abort</string>
 
- <!-- EPG Content -->
- <string name="Content_Movie__Drama">Movie/Drama</string>
- <string name="Content_Detective__Thriller">Detective/Thriller</string>
- <string name="Content_Adventure__Western__War">Adventure/Western/War</string>
- <string name="Content_Science_Fiction__Fantasy__Horror">Science Fiction/Fantasy/Horror</string>
- <string name="Content_Comedy">Comedy</string>
- <string name="Content_Soap__Melodrama__Folkloric">Soap/Melodrama/Folkloric</string>
- <string name="Content_Romance">Romance</string>
- <string name="Content_Serious__Classical__Religious__Historical_Movie__Drama">Serious/Classical/Religious/Historical
+    <!-- EPG Content -->
+    <string name="Content_Movie__Drama">Movie/Drama</string>
+    <string name="Content_Detective__Thriller">Detective/Thriller</string>
+    <string name="Content_Adventure__Western__War">Adventure/Western/War</string>
+    <string name="Content_Science_Fiction__Fantasy__Horror">Science Fiction/Fantasy/Horror</string>
+    <string name="Content_Comedy">Comedy</string>
+    <string name="Content_Soap__Melodrama__Folkloric">Soap/Melodrama/Folkloric</string>
+    <string name="Content_Romance">Romance</string>
+    <string name="Content_Serious__Classical__Religious__Historical_Movie__Drama">Serious/Classical/Religious/Historical
   Movie/Drama
  </string>
- <string name="Content_Adult_Movie__Drama">Adult Movie/Drama</string>
- <string name="Content_News__Current_Affairs">News/Current Affairs</string>
- <string name="Content_News__Weather_Report">News/Weather Report</string>
- <string name="Content_News_Magazine">News Magazine</string>
- <string name="Content_Documentary">Documentary</string>
- <string name="Content_Discussion__Inverview__Debate">Discussion/Inverview/Debate</string>
- <string name="Content_Show__Game_Show">Show/Game Show</string>
- <string name="Content_Game_Show__Quiz__Contest">Game Show/Quiz/Contest</string>
- <string name="Content_Variety_Show">Variety Show</string>
- <string name="Content_Talk_Show">Talk Show</string>
- <string name="Content_Sports">Sports</string>
- <string name="Content_Special_Event">Special Event</string>
- <string name="Content_Sport_Magazine">Sport Magazine</string>
- <string name="Content_Football__Soccer">Football/Soccer</string>
- <string name="Content_Tennis__Squash">Tennis/Squash</string>
- <string name="Content_Team_Sports">Team Sports</string>
- <string name="Content_Athletics">Athletics</string>
- <string name="Content_Motor_Sport">Motor Sport</string>
- <string name="Content_Water_Sport">Water Sport</string>
- <string name="Content_Winter_Sports">Winter Sports</string>
- <string name="Content_Equestrian">Equestrian</string>
- <string name="Content_Martial_Sports">Martial Sports</string>
- <string name="Content_Childrens__Youth_Programme">Children\'s/Youth Programme</string>
- <string name="Content_Preschool_Childrens_Programme">Pre-school Children\'s Programme</string>
- <string name="Content_Entertainment_Programme_for_6_to_14">Entertainment Programme for 6 to 14</string>
- <string name="Content_Entertainment_Programme_for_10_to_16">Entertainment Programme for 10 to 16</string>
- <string name="Content_Informational__Educational__School_Programme">Informational/Educational/School Programme</string>
- <string name="Content_Cartoons__Puppets">Cartoons/Puppets</string>
- <string name="Content_Music__Ballet__Dance">Music/Ballet/Dance</string>
- <string name="Content_Rock__Pop">Rock/Pop</string>
- <string name="Content_Serious__Classical_Music">Serious/Classical Music</string>
- <string name="Content_Folk__Tradional_Music">Folk/Tradional Music</string>
- <string name="Content_Jazz">Jazz</string>
- <string name="Content_Musical__Opera">Musical/Opera</string>
- <string name="Content_Ballet">Ballet</string>
- <string name="Content_Arts__Culture">Arts/Culture</string>
- <string name="Content_Performing_Arts">Performing Arts</string>
- <string name="Content_Fine_Arts">Fine Arts</string>
- <string name="Content_Religion">Religion</string>
- <string name="Content_Popular_Culture__Traditional_Arts">Popular Culture/Traditional Arts</string>
- <string name="Content_Literature">Literature</string>
- <string name="Content_Film__Cinema">Film/Cinema</string>
- <string name="Content_Experimental_Film__Video">Experimental Film/Video</string>
- <string name="Content_Broadcasting__Press">Broadcasting/Press</string>
- <string name="Content_New_Media">New Media</string>
- <string name="Content_Arts__Culture_Magazine">Arts/Culture Magazine</string>
- <string name="Content_Fashion">Fashion</string>
- <string name="Content_Social__Political__Economics">Social/Political/Economics</string>
- <string name="Content_Magazine__Report__Documentary">Magazine/Report/Documentary</string>
- <string name="Content_Economics__Social_Advisory">Economics/Social Advisory</string>
- <string name="Content_Remarkable_People">Remarkable People</string>
- <string name="Content_Education__Science__Factual">Education/Science/Factual</string>
- <string name="Content_Nature__Animals__Environment">Nature/Animals/Environment</string>
- <string name="Content_Technology__Natural_Sciences">Technology/Natural Sciences</string>
- <string name="Content_Medicine__Physiology__Psychology">Medicine/Physiology/Psychology</string>
- <string name="Content_Foreign_Countries__Expeditions">Foreign Countries/Expeditions</string>
- <string name="Content_Social__Spiritual_Sciences">Social/Spiritual Sciences</string>
- <string name="Content_Further_Education">Further Education</string>
- <string name="Content_Languages">Languages</string>
- <string name="Content_Leisure__Hobbies">Leisure/Hobbies</string>
- <string name="Content_Tourism__Travel">Tourism/Travel</string>
- <string name="Content_Handicraft">Handicraft</string>
- <string name="Content_Motoring">Motoring</string>
- <string name="Content_Fitness_and_Health">Fitness &amp; Health</string>
- <string name="Content_Cooking">Cooking</string>
- <string name="Content_Advertisement__Shopping">Advertisement/Shopping</string>
- <string name="Content_Gardening">Gardening</string>
- <string name="Content_Original_Language">Original Language</string>
- <string name="Content_Black_and_White">Black &amp; White</string>
- <string name="Content_Unpublished">Unpublished</string>
- <string name="Content_Live_Broadcast">Live Broadcast</string>
- <string name="Content_Unknown"></string>
- <!-- EPG Content END -->
- <string name="type_to_filter">type to filter</string>
- <string name="drive_info">Free %1$s GB of %2$s GB (%3$s%%)</string>
- <string name="drive_img">Drive</string>
- <string name="sad_img">Sad</string>
- <string name="search">Search</string>
- <string name="clear_term_after_search_title">Clear Term after Search</string>
- <string name="clear_term_after_search_summary_off">Search term remains after peforming search</string>
- <string name="clear_term_after_search_summary_on">Term gets cleared after performing search</string>
- <string name="drawer_open">Open navigation drawer</string>
- <string name="drawer_close">Close navigation drawer</string>
- <string name="action_websearch">Web search</string>
- <string name="settings_smarttvweb_port_summary">VDR smarttvweb plugin has default port 8000</string>
- <string name="settings_smarttvweb_port">Smarttvweb port</string>
- <string name="recstream_smarttvweb_method_title">Smarttvweb Stream Type</string>
- <string name="recstream_smarttvweb_method_summary">Supported methods: \'Progressive\', \'MPEG-DASH \/ OIPF HAS\',
+    <string name="Content_Adult_Movie__Drama">Adult Movie/Drama</string>
+    <string name="Content_News__Current_Affairs">News/Current Affairs</string>
+    <string name="Content_News__Weather_Report">News/Weather Report</string>
+    <string name="Content_News_Magazine">News Magazine</string>
+    <string name="Content_Documentary">Documentary</string>
+    <string name="Content_Discussion__Inverview__Debate">Discussion/Inverview/Debate</string>
+    <string name="Content_Show__Game_Show">Show/Game Show</string>
+    <string name="Content_Game_Show__Quiz__Contest">Game Show/Quiz/Contest</string>
+    <string name="Content_Variety_Show">Variety Show</string>
+    <string name="Content_Talk_Show">Talk Show</string>
+    <string name="Content_Sports">Sports</string>
+    <string name="Content_Special_Event">Special Event</string>
+    <string name="Content_Sport_Magazine">Sport Magazine</string>
+    <string name="Content_Football__Soccer">Football/Soccer</string>
+    <string name="Content_Tennis__Squash">Tennis/Squash</string>
+    <string name="Content_Team_Sports">Team Sports</string>
+    <string name="Content_Athletics">Athletics</string>
+    <string name="Content_Motor_Sport">Motor Sport</string>
+    <string name="Content_Water_Sport">Water Sport</string>
+    <string name="Content_Winter_Sports">Winter Sports</string>
+    <string name="Content_Equestrian">Equestrian</string>
+    <string name="Content_Martial_Sports">Martial Sports</string>
+    <string name="Content_Childrens__Youth_Programme">Children\'s/Youth Programme</string>
+    <string name="Content_Preschool_Childrens_Programme">Pre-school Children\'s Programme</string>
+    <string name="Content_Entertainment_Programme_for_6_to_14">Entertainment Programme for 6 to 14</string>
+    <string name="Content_Entertainment_Programme_for_10_to_16">Entertainment Programme for 10 to 16</string>
+    <string name="Content_Informational__Educational__School_Programme">Informational/Educational/School Programme</string>
+    <string name="Content_Cartoons__Puppets">Cartoons/Puppets</string>
+    <string name="Content_Music__Ballet__Dance">Music/Ballet/Dance</string>
+    <string name="Content_Rock__Pop">Rock/Pop</string>
+    <string name="Content_Serious__Classical_Music">Serious/Classical Music</string>
+    <string name="Content_Folk__Tradional_Music">Folk/Tradional Music</string>
+    <string name="Content_Jazz">Jazz</string>
+    <string name="Content_Musical__Opera">Musical/Opera</string>
+    <string name="Content_Ballet">Ballet</string>
+    <string name="Content_Arts__Culture">Arts/Culture</string>
+    <string name="Content_Performing_Arts">Performing Arts</string>
+    <string name="Content_Fine_Arts">Fine Arts</string>
+    <string name="Content_Religion">Religion</string>
+    <string name="Content_Popular_Culture__Traditional_Arts">Popular Culture/Traditional Arts</string>
+    <string name="Content_Literature">Literature</string>
+    <string name="Content_Film__Cinema">Film/Cinema</string>
+    <string name="Content_Experimental_Film__Video">Experimental Film/Video</string>
+    <string name="Content_Broadcasting__Press">Broadcasting/Press</string>
+    <string name="Content_New_Media">New Media</string>
+    <string name="Content_Arts__Culture_Magazine">Arts/Culture Magazine</string>
+    <string name="Content_Fashion">Fashion</string>
+    <string name="Content_Social__Political__Economics">Social/Political/Economics</string>
+    <string name="Content_Magazine__Report__Documentary">Magazine/Report/Documentary</string>
+    <string name="Content_Economics__Social_Advisory">Economics/Social Advisory</string>
+    <string name="Content_Remarkable_People">Remarkable People</string>
+    <string name="Content_Education__Science__Factual">Education/Science/Factual</string>
+    <string name="Content_Nature__Animals__Environment">Nature/Animals/Environment</string>
+    <string name="Content_Technology__Natural_Sciences">Technology/Natural Sciences</string>
+    <string name="Content_Medicine__Physiology__Psychology">Medicine/Physiology/Psychology</string>
+    <string name="Content_Foreign_Countries__Expeditions">Foreign Countries/Expeditions</string>
+    <string name="Content_Social__Spiritual_Sciences">Social/Spiritual Sciences</string>
+    <string name="Content_Further_Education">Further Education</string>
+    <string name="Content_Languages">Languages</string>
+    <string name="Content_Leisure__Hobbies">Leisure/Hobbies</string>
+    <string name="Content_Tourism__Travel">Tourism/Travel</string>
+    <string name="Content_Handicraft">Handicraft</string>
+    <string name="Content_Motoring">Motoring</string>
+    <string name="Content_Fitness_and_Health">Fitness &amp; Health</string>
+    <string name="Content_Cooking">Cooking</string>
+    <string name="Content_Advertisement__Shopping">Advertisement/Shopping</string>
+    <string name="Content_Gardening">Gardening</string>
+    <string name="Content_Original_Language">Original Language</string>
+    <string name="Content_Black_and_White">Black &amp; White</string>
+    <string name="Content_Unpublished">Unpublished</string>
+    <string name="Content_Live_Broadcast">Live Broadcast</string>
+    <string name="Content_Unknown"></string>
+    <!-- EPG Content END -->
+    <string name="type_to_filter">type to filter</string>
+    <string name="drive_info">Free %1$s GB of %2$s GB (%3$s%%)</string>
+    <string name="drive_img">Drive</string>
+    <string name="sad_img">Sad</string>
+    <string name="search">Search</string>
+    <string name="clear_term_after_search_title">Clear Term after Search</string>
+    <string name="clear_term_after_search_summary_off">Search term remains after peforming search</string>
+    <string name="clear_term_after_search_summary_on">Term gets cleared after performing search</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="settings_smarttvweb_port_summary">VDR smarttvweb plugin has default port 8000</string>
+    <string name="settings_smarttvweb_port">Smarttvweb port</string>
+    <string name="recstream_smarttvweb_method_title">Smarttvweb Stream Type</string>
+    <string name="recstream_smarttvweb_method_summary">Supported methods: \'Progressive\', \'MPEG-DASH \/ OIPF HAS\',
   \'Apple HLS\'
  </string>
- <string name="remote">Remote Control</string>
- <string name="remote_enable_summary">Shows the remote control view if enabled</string>
- <string name="remote_enable_title">Enable VDR remote control</string>
- <string name="svdrp_port_title">SVDRP Port</string>
- <string name="svdrp_port_summary">Default is 6419</string>
- <string name="label">Label</string>
- <string name="hitkcommand">HITK Command</string>
- <string name="menu_reset">Reset</string>
- <string name="menu_exprt">Export</string>
- <string name="export_custom_key_mapping">Export Custom Key Mapping</string>
- <string name="menu_imprt">Import</string>
- <string name="menu_remapback">\'Back\' is \'Back\' HITK</string>
- <string name="remapback_hint">Longpress on Back Button to leave the remote.</string>
- <string name="not_yet_implemented">Not Yet Implemented</string>
- <string name="timer_error">Can not create timer: %1$s</string>
+    <string name="remote">Remote Control</string>
+    <string name="remote_enable_summary">Shows the remote control view if enabled</string>
+    <string name="remote_enable_title">Enable VDR remote control</string>
+    <string name="svdrp_port_title">SVDRP Port</string>
+    <string name="svdrp_port_summary">Default is 6419</string>
+    <string name="label">Label</string>
+    <string name="hitkcommand">HITK Command</string>
+    <string name="menu_reset">Reset</string>
+    <string name="menu_exprt">Export</string>
+    <string name="export_custom_key_mapping">Export Custom Key Mapping</string>
+    <string name="menu_imprt">Import</string>
+    <string name="menu_remapback">\'Back\' is \'Back\' HITK</string>
+    <string name="remapback_hint">Longpress on Back Button to leave the remote.</string>
+    <string name="not_yet_implemented">Not Yet Implemented</string>
+    <string name="timer_error">Can not create timer: %1$s</string>
+    <string name="permission_rationale">The app needs Storage permissions to import/export.</string>
+    <string name="remote_keys_imported">Remote Keys imported: %1$s</string>
+    <string name="remote_nothing_to_import" >No custom mapping…</string>
 </resources>

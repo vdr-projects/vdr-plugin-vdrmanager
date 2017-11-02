@@ -10,7 +10,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import de.bjusystems.vdrmanager.R;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
 import de.bjusystems.vdrmanager.data.Preferences;
 

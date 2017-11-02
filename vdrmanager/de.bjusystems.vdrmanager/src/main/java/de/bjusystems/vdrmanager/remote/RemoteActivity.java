@@ -7,9 +7,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -35,11 +38,21 @@ import org.hampelratte.svdrp.commands.HITK;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import de.androvdr.widget.AnimatedTextView;
 import de.androvdr.widget.FontAwesome;
 import de.bjusystems.vdrmanager.R;
+import de.bjusystems.vdrmanager.backup.IOUtils;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.gui.ColoredButton;
 import de.bjusystems.vdrmanager.gui.Utils;
@@ -52,6 +65,10 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
     private static final int TAG_KEY = -100;
 
+    private static final String TAG = RemoteActivity.class.getSimpleName();
+
+    private static final int READ_REQUEST_CODE = 19;
+
     private Connection connection;
 
     private AnimatedTextView result;
@@ -60,11 +77,14 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
     private View dummyContextMenuView;
 
+    private ViewGroup remoteroot;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
 
         //Remove notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -77,12 +97,12 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         view.setOnLongClickListener(this);
 
 
-        ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.remoteroot);
+        remoteroot = (ViewGroup) view.findViewById(R.id.remoteroot);
 
         //Button button = (Button) viewGroup.findViewById(R.id.red);
         //button.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
 
-        setAllButtonListener(viewGroup);
+        setAllButtonListener(remoteroot);
 
         result = (AnimatedTextView) findViewById(R.id.result);
         //Animation in = AnimationUtils.loadAnimation(this,android.R.anim.fade_in);
@@ -95,9 +115,14 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
         in = new AlphaAnimation(0.0f, 1.0f);
         in.setDuration(100);
-
-        //SearchableSpinner spinner2 = (SearchableSpinner) findViewById(R.id.search2);
-        //spinner2.setList(getResources().getStringArray(R.array.font));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            Uri uri = (Uri) bundle.get(Intent.EXTRA_STREAM);
+            if (uri != null) {
+                importFromUri(uri);
+                return;
+            }
+        }
 
     }
 
@@ -162,46 +187,83 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
     public void export() {
         SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.remoteroot);
-        ArrayList<Pair<String, String>> list = new ArrayList<>();
-        gather(viewGroup, list, sharedPref);
+        HashMap<String, Pair<String, String>> map = new HashMap<>();
+        collect(viewGroup, map, sharedPref);
+
+        if(map.isEmpty()){
+            Utils.say(this, R.string.remote_nothing_to_import);
+            return;
+        }
 
         JSONObject root = new JSONObject();
         try {
-            for (Pair<String, String> stringStringPair : list) {
-                root.put(stringStringPair.first, stringStringPair.second);
+            for (Map.Entry<String, Pair<String, String>> e : map.entrySet()) {
+                JSONObject pair = new JSONObject();
+                Pair<String, String> stringStringPair = e.getValue();
+                pair.put("key", stringStringPair.first);
+                pair.put("label", stringStringPair.second);
+                root.put(e.getKey(), pair);
             }
         } catch (JSONException jse) {
             Utils.say(this, jse.getLocalizedMessage());
         }
 
-        Intent i = new Intent(android.content.Intent.ACTION_SEND);
-        i.setType("application/json");
-        i.putExtra(android.content.Intent.EXTRA_TEXT, root.toString());
-        startActivity(Intent.createChooser(i, getResources().getString(R.string.export_custom_key_mapping)));
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+        String content = root.toString();
+        File outputFile = null;
+        try {
+            outputFile = File.createTempFile("vdr_remote_keys_", ".json", Environment.getExternalStorageDirectory());
+            final FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+            fileOutputStream.write(content.getBytes("utf-8"));
+            IOUtils.closeQuietly(fileOutputStream);
+        } catch (IOException iox) {
+            Log.d(TAG, iox.getMessage(), iox);
+            Utils.say(this, iox.getLocalizedMessage());
+            return;
+        }
+        intentShareFile.setType("text/plain");
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + outputFile.getAbsolutePath()));
+
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,
+                getString(R.string.export_custom_key_mapping));
+
+        intentShareFile.putExtra(Intent.EXTRA_TEXT, content);
+
+        startActivity(Intent.createChooser(intentShareFile, getString(R.string.export_custom_key_mapping)));
     }
+
+    //Intent i = new Intent(android.content.Intent.ACTION_SEND);
+    //  i.setType("application/json");
+//        i.putExtra(android.content.Intent.EXTRA_TEXT,root.toString());
+
+    //  startActivity(Intent.createChooser(i, getResources().
+
+    //getString()));
+//}
 
     /**
      * Gather.
      *
      * @param viewGroup  the view group
-     * @param pair       the pair
+     * @param map        the map
      * @param sharedPref the shared pref
      */
-    public void gather(ViewGroup viewGroup, ArrayList<Pair<String, String>> pair, SharedPreferences sharedPref) {
+    public void collect(ViewGroup viewGroup, HashMap<String, Pair<String, String>> map, SharedPreferences sharedPref) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View v = viewGroup.getChildAt(i);
             if (v instanceof ViewGroup) {
-                gather((ViewGroup) v, pair, sharedPref);
+                collect((ViewGroup) v, map, sharedPref);
             } else if (v instanceof Button) {
                 if (v.getTag() == null) {
                     continue;
                 }
-                String hitk = sharedPref.getString("key_" + String.valueOf(v.getTag()), null);
-                String label = sharedPref.getString("label_" + String.valueOf(v.getTag()), null);
+                String tagKey = String.valueOf(v.getTag());
+                String hitk = sharedPref.getString("key_" + tagKey, null);
+                String label = sharedPref.getString("label_" + tagKey, null);
                 if (hitk == null && label == null) {
                     continue;
                 }
-                pair.add(Pair.create(hitk, label));
+                map.put(tagKey, Pair.create(hitk, label));
             }
         }
     }
@@ -272,7 +334,9 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
 
     private void restart() {
-
+        if(getIntent() != null) {
+            getIntent().removeExtra(Intent.EXTRA_STREAM);
+        }
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             recreate();
         } else {
@@ -299,7 +363,18 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
                 return true;
             }
             case R.id.imprt: {
-                Utils.say(this, R.string.not_yet_implemented);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+                // Filter to only show results that can be "opened", such as a
+                // file (as opposed to a list of contacts or timezones)
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                // Filter to show only images, using the image MIME data type.
+                // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+                // To search for all documents available via installed storage providers,
+                // it would be "*/*".
+                intent.setType("*/*");
+                startActivityForResult(intent, READ_REQUEST_CODE);
                 return true;
             }
             case R.id.remapback: {
@@ -322,6 +397,13 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
     ;
 
+    /**
+     * On create context menu.
+     *
+     * @param menu     the menu
+     * @param v        the v
+     * @param menuInfo the menu info
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
@@ -416,6 +498,70 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
         return false;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (data != null) {
+                uri = data.getData();
+                importFromUri(uri);
+            }
+        }
+    }
+
+    private void importFromUri(Uri uri) {
+        try {
+            Log.i(TAG, "Uri: " + uri.toString());
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            IOUtils.copy(getContentResolver().openInputStream(uri), bos);
+            JSONObject object = new JSONObject(new String(bos.toByteArray(), "utf-8"
+            ));
+            IOUtils.closeQuietly(bos);
+            final Iterator<String> keys = object.keys();
+            Set<String> all = new HashSet<String>();
+            for (de.bjusystems.vdrmanager.remote.HITK hitk : de.bjusystems.vdrmanager.remote.HITK.values()) {
+                all.add(hitk.getValue());
+            }
+            SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = sharedPref.edit();
+            int counter = 0;
+            while (keys.hasNext()) {
+                final String next = keys.next();
+                if (all.contains(next) == false) {
+                    continue;
+                }
+                JSONObject pair = object.getJSONObject(next);
+                String key = pair.getString("key");
+                if (all.contains(key) == false) {
+                    continue;
+                }
+                String value = pair.getString("label");
+                edit.putString("key_" + next, key);
+                edit.putString("label_" + next, value);
+                counter++;
+            }
+            edit.commit();
+            Utils.say(this, getString(R.string.remote_keys_imported, String.valueOf(counter)));
+            if (counter > 0) {
+                setAllButtonListener(remoteroot);
+            }
+        } catch (Exception iox)
+
+        {
+            Log.w(TAG, iox.getMessage(), iox);
+            Utils.say(this, iox.getMessage());
+        }
+    }
+
 
     private void putVdrKey(String key, CharSequence value) {
         SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);

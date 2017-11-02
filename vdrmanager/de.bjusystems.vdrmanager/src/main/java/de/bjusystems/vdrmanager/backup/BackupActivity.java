@@ -21,69 +21,72 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import de.bjusystems.vdrmanager.R;
 
 /**
  * Activity to backup data to the SD card.
- * 
+ *
  * @author Jimmy Shih
  */
 public class BackupActivity extends Activity {
 
-  private static final int DIALOG_PROGRESS_ID = 0;
+    private static final int DIALOG_PROGRESS_ID = 0;
 
-  private BackupAsyncTask backupAsyncTask;
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    private BackupAsyncTask backupAsyncTask;
 
-    Object retained = getLastNonConfigurationInstance();
-    if (retained instanceof BackupAsyncTask) {
-      backupAsyncTask = (BackupAsyncTask) retained;
-      backupAsyncTask.setActivity(this);
-    } else {
-      backupAsyncTask = new BackupAsyncTask(this);
-      backupAsyncTask.execute();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Object retained = getLastNonConfigurationInstance();
+        if (retained instanceof BackupAsyncTask) {
+            backupAsyncTask = (BackupAsyncTask) retained;
+            backupAsyncTask.setActivity(this);
+        } else {
+            backupAsyncTask = new BackupAsyncTask(this);
+            backupAsyncTask.execute();
+        }
     }
-  }
 
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    backupAsyncTask.setActivity(null);
-    return backupAsyncTask;
-  }
-
-  @Override
-  protected Dialog onCreateDialog(int id) {
-    if (id != DIALOG_PROGRESS_ID) {
-      return null;
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        backupAsyncTask.setActivity(null);
+        return backupAsyncTask;
     }
-    return DialogUtils.createSpinnerProgressDialog(
-        this, R.string.settings_backup_now_progress_message, new DialogInterface.OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialog) {
-            finish();
-          }
-        });
-  }
 
-  /**
-   * Invokes when the associated AsyncTask completes.
-   *
-   * @param success true if the AsyncTask is successful
-   * @param messageId message id to display to user
-   */
-  public void onAsyncTaskCompleted(boolean success, int messageId) {
-    removeDialog(DIALOG_PROGRESS_ID);
-    Toast.makeText(this, messageId, success ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
-    finish();
-  }
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if (id != DIALOG_PROGRESS_ID) {
+            return null;
+        }
+        return DialogUtils.createSpinnerProgressDialog(
+                this, R.string.settings_backup_now_progress_message, new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+    }
 
-  /**
-   * Shows the progress dialog.
-   */
-  public void showProgressDialog() {
-    showDialog(DIALOG_PROGRESS_ID);
-  }
+    /**
+     * Invokes when the associated AsyncTask completes.
+     *
+     * @param success   true if the AsyncTask is successful
+     * @param messageId message id to display to user
+     */
+    public void onAsyncTaskCompleted(boolean success, int messageId) {
+        removeDialog(DIALOG_PROGRESS_ID);
+        Toast.makeText(this, messageId, success ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    /**
+     * Shows the progress dialog.
+     */
+    public void showProgressDialog() {
+        showDialog(DIALOG_PROGRESS_ID);
+    }
 }
