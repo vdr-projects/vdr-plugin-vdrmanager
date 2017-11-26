@@ -202,15 +202,21 @@
             android:key="key_remote_enable"
             android:summary="@string/remote_enable_summary"
             android:title="@string/remote_enable_title" />
-            
-            <EditTextPreference
+
+         <EditTextPreference
+             android:inputType="text"
+             android:dependency="key_remote_enable"
+             android:key="key_svdrp_host"
+             android:summary="@string/svdrp_host_summary"
+             android:title="@string/svdrp_host_title"/>
+        <EditTextPreference
             android:inputType="number"
             android:key="key_svdrp_port"
             android:dependency="key_remote_enable"
             android:summary="@string/svdrp_port_summary"
             android:defaultValue="@integer/svdrp_default_port"
             android:title="@string/svdrp_port_title" />
-         
+
      </PreferenceCategory>
 
     <PreferenceScreen android:title="Advanced" >

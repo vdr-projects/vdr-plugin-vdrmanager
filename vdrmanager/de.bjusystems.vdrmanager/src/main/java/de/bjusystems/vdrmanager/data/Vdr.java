@@ -193,6 +193,9 @@ public class Vdr {
 	@DatabaseField(columnName = "stz")
 	private String serverTimeZone = "Europe/Berlin";
 
+	@DatabaseField(columnName="svdrpHost")
+	private String svdrpHost = "";
+
 	@DatabaseField(columnName="svdrpPort")
 	private int svdrpPort = 6419;
 	
@@ -601,6 +604,7 @@ public class Vdr {
 		map.put("key_smarttvweb_port", smarttvwebPort);
 		map.put("key_smarttvweb_recstream_method", smarttvwebType);
 		map.put("key_remote_enable", enableRemote);
+		map.put("key_svdrp_host", svdrpHost);
 		map.put("key_svdrp_port", svdrpPort);
 		return map;
 	}
@@ -694,6 +698,7 @@ public class Vdr {
 		smarttvwebPort=  getInteger(map, "key_smarttvweb_port", 8000);
 		smarttvwebType=  get(map, "key_smarttvweb_recstream_method", "progressive");
 		enableRemote = getBoolean(map, "key_remote_enable", true);
+		svdrpHost = get(map, "key_svdrp_host", "");
 		svdrpPort = getInteger(map, "key_svdrp_port", 6419);
 	}
 
@@ -711,6 +716,14 @@ public class Vdr {
 
 	public void setSmarttvwebType(String smarttvwebType) {
 		this.smarttvwebType = smarttvwebType;
+	}
+
+	public String getSvdrpHost() {
+		return svdrpHost;
+	}
+
+	public void setSvdrpHost(String svdrpHost) {
+		this.svdrpHost = svdrpHost;
 	}
 
 	public int getSvdrpPort() {

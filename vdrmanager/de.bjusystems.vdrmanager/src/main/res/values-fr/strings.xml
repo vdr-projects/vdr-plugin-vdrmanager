@@ -493,7 +493,9 @@ Que voulez-vous faire?</string>
   <string name="remote">Télécommande</string>
   <string name="remote_enable_summary">Afficher la télécommande si activée</string>
   <string name="remote_enable_title">Activer la télécommande de VDR</string>
-  <string name="svdrp_port_title">Port DVDRP</string>
+  <string name="svdrp_host_title">Hôte SVDRP</string>
+  <string name="svdrp_host_summary">Hôte SVDRP</string>
+  <string name="svdrp_port_title">Port SVDRP</string>
   <string name="svdrp_port_summary">Par défaut le 6419</string>
   <string name="label">Label</string>
   <string name="hitkcommand">HITK Command</string>

@@ -547,6 +547,8 @@
     <string name="remote_enable_title">Enable VDR remote control</string>
     <string name="svdrp_port_title">SVDRP Port</string>
     <string name="svdrp_port_summary">Default is 6419</string>
+    <string name="svdrp_host_title">SVDRP Host</string>
+    <string name="svdrp_host_summary">Default is vdr host</string>
     <string name="label">Label</string>
     <string name="hitkcommand">HITK Command</string>
     <string name="menu_reset">Reset</string>

@@ -32,7 +32,7 @@ public class DBAccess extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to
 	// increase the database version
 	// Version 3 since 0.6
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 
 	private RuntimeExceptionDao<Vdr, Integer> vdrDAO = null;
 
@@ -124,6 +124,10 @@ public class DBAccess extends OrmLiteSqliteOpenHelper {
 				.executeRaw(
 						"UPDATE `vdr` set svdrpPort = ?", "6419");
 				
+			}
+
+			if (oldVersion < 6) {
+				getVdrDAO().executeRaw("ALTER TABLE `vdr` ADD COLUMN svdrpHost varchar");
 			}
 
 		} catch (SQLException e) {

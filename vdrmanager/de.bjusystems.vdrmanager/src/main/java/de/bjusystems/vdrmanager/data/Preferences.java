@@ -238,6 +238,15 @@ public class Preferences {
      *
      * @return port
      */
+    public String getSvdrpHost() {
+        return getCurrentVdr().getSvdrpHost();
+    }
+
+    /**
+     * Gets the port
+     *
+     * @return port
+     */
     public int getSvdrpPort() {
         return getCurrentVdr().getSvdrpPort();
     }

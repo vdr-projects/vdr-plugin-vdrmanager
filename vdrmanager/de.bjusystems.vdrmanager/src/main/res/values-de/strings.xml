@@ -493,8 +493,10 @@ Wie soll verfahren werden?</string>
   <string name="remote">Remote Control</string>
   <string name="remote_enable_summary">Shows the remote control view if enabled</string>
   <string name="remote_enable_title">Enable VDR remote control</string>
+  <string name="svdrp_host_title">SVDRP Hostname</string>
+  <string name="svdrp_host_summary">Standard ist der VDR Host</string>
   <string name="svdrp_port_title">SVDRP Port</string>
-  <string name="svdrp_port_summary">Default is 6419</string>
+  <string name="svdrp_port_summary">Standard ist 6419</string>
   <string name="label">Label</string>
   <string name="hitkcommand">HITK Command</string>
   <string name="menu_reset">Reset</string>
