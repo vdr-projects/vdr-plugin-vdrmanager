@@ -1,7 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
-.gradle/
-de.bjusystems.vdrmanager/build/*
+.gradle
+de.bjusystems.vdrmanager/build/
 keystore.properties
 *.iml
 .idea
-build/*
+build/
