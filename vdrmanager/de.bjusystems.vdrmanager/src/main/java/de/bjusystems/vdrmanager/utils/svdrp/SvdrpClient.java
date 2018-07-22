@@ -1,13 +1,17 @@
 package de.bjusystems.vdrmanager.utils.svdrp;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -16,9 +20,6 @@ import java.util.TimerTask;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-import android.content.Context;
-import android.sax.StartElementListener;
-import android.util.Log;
 import de.bjusystems.vdrmanager.app.C;
 import de.bjusystems.vdrmanager.data.Preferences;
 
@@ -224,20 +225,69 @@ public abstract class SvdrpClient<Result> {
 			// connect
 			informListener(SvdrpEvent.CONNECTING);
 
-			if (prefs.isSecure()) {
-				socket = new MySSLSocketFactory(false,
-						certificateProblemListener).createSocket();
-			} else {
-				socket = new Socket();
+			InetAddress ip4address = null;
+			InetAddress ip6address = null;
+
+			final InetAddress[] addresses = InetAddress.getAllByName(prefs.getHost());
+			for (final InetAddress address : addresses) {
+				if  (address instanceof Inet4Address) {
+					ip4address = address;
+				} else if (address instanceof Inet6Address) {
+					ip6address = address;
+				}
 			}
 
-			socket.connect(
-					new InetSocketAddress(prefs.getHost(), prefs
-							.getPort()),
-					prefs.getConnectionTimeout() * 1000);// 8 secs for connect
-			if (abort) {
-				informListener(SvdrpEvent.ABORTED);
+			List<InetAddress> addressToTry = new ArrayList<>();
+
+			switch (prefs.getIp46Mode()) {
+				case "ip4":
+					addressToTry.add(ip4address);
+					break;
+				case "ip6":
+					addressToTry.add(ip6address);
+					break;
+				case "ip46":
+					addressToTry.add(ip4address);
+					addressToTry.add(ip6address);
+					break;
+				case "ip64":
+					addressToTry.add(ip6address);
+					addressToTry.add(ip4address);
+					break;
 			}
+
+			Exception exception = null;
+			for (final InetAddress inetAddress : addressToTry) {
+				if (inetAddress == null) {
+					continue;
+				}
+				if (abort) {
+					break;
+				}
+
+				try {
+					initSocket(prefs);
+					socket.connect(new InetSocketAddress(
+							inetAddress,
+							prefs.getPort()),
+							prefs.getConnectionTimeout() * 1000);
+					break;
+				} catch (Exception e) {
+					socket.close();
+					Log.w(TAG, "Couldn't connect to " + inetAddress.getHostAddress());
+					exception = e;
+				}
+			}
+
+			if (!socket.isConnected()) {
+				if (abort) {
+					informListener(SvdrpEvent.ABORTED);
+				} else {
+					informListener(SvdrpEvent.CONNECT_ERROR);
+				}
+				return false;
+			}
+
 			//
 			socket.setSoTimeout(prefs.getReadTimeout() * 1000);// 15 sec for
 			// each read
@@ -261,14 +311,6 @@ public abstract class SvdrpClient<Result> {
 			outputStream = socket.getOutputStream();
 			inputStream = socket.getInputStream();
 
-		} catch (final SocketTimeoutException sote) {
-			Log.w(TAG, sote);
-			if (abort) {
-				informListener(SvdrpEvent.ABORTED);
-			} else {
-				informListener(SvdrpEvent.CONNECTION_TIMEOUT);
-			}
-			return false;
 		} catch (final Exception e) {
 
 			Log.w(TAG, e);
@@ -291,6 +333,18 @@ public abstract class SvdrpClient<Result> {
 			informListener(SvdrpEvent.LOGGED_IN);
 		}
 		return true;
+	}
+
+	private void initSocket(final Preferences prefs) throws Exception {
+		if (socket != null) {
+			socket.close();
+		}
+		if (prefs.isSecure()) {
+            socket = new MySSLSocketFactory(false,
+                    certificateProblemListener).createSocket();
+        } else {
+            socket = new Socket();
+        }
 	}
 
 	/**

@@ -10,7 +10,6 @@ import android.text.TextUtils;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 /**
@@ -160,6 +159,10 @@ public class Preferences {
 
     public String getStreamingPassword() {
         return getCurrentVdr().getStreamingPassword();
+    }
+
+    public String getIp46Mode() {
+        return getCurrentVdr().getIp46Mode();
     }
 
     /**

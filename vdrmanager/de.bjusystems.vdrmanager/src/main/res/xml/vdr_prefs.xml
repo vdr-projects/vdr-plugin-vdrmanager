@@ -32,6 +32,15 @@
             android:enabled="true"
             android:summary="@string/vdr_ssl_summary"
             android:title="@string/vdr_ssl_title" />
+
+        <ListPreference
+            android:entries="@array/vdr_ip46_mode"
+            android:entryValues="@array/vdr_ip46_mode_values"
+            android:defaultValue="ip4_only"
+            android:key="vdr_ip46_mode"
+            android:title="@string/vdr_ip46_mode_title"
+            android:summary="@string/vdr_ip46_mode_summary"/>
+
     </PreferenceCategory>
     <PreferenceCategory
         android:key="filter_preferences"

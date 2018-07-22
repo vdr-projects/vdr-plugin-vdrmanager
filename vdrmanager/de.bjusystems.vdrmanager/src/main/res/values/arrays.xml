@@ -46,8 +46,12 @@
         <item>has</item>
         <item>hls</item>
       </array>
-  
 
-
+    <string-array name="vdr_ip46_mode_values">
+        <item>ip4</item>
+        <item>ip6</item>
+        <item>ip46</item>
+        <item>ip64</item>
+    </string-array>
 
 </resources>

@@ -137,6 +137,8 @@ herrlado&lt;herrlado@gmail.com&gt;</string>
   <string name="vdr_password_summary">Passwort für das VDR Plugin</string>
   <string name="vdr_ssl_title">Sichere Verbindung</string>
   <string name="vdr_ssl_summary">Verwende SSL für Verbindungen (aktuell nicht implementiert)</string>
+  <string name="vdr_ip46_mode_title">IPv4/6 Auswahl</string>
+  <string name="vdr_ip46_mode_summary">IPv4/6 Auswahl-Modus</string>
   <!-- channel filter preferences -->
   <string name="channel_filter_preferences">Kanaleinstellungen</string>
   <string name="channel_filter_filter_title">Begrenze Kanäle</string>
