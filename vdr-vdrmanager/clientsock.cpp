@@ -35,6 +35,7 @@ cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int comp
 	initCompression = false;
 #if VDRMANAGER_USE_SSL
 	ssl = NULL;
+	sslCtx = NULL;
 	sslReadWrite = SSL_NO_RETRY;
 	sslWantsSelect = SSL_ERROR_NONE;
 #endif
