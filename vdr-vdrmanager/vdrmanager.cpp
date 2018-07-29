@@ -35,7 +35,7 @@
 #endif
 #define VDRMANAGER_ARGS VDRMANAGER_ARGS_COMMON VDRMANAGER_ARGS_SSL VDRMANAGER_ARGS_COMPRESS
 
-static const char *VERSION = "0.14";
+static const char *VERSION = "0.15";
 static const char *DESCRIPTION = "VDR-Manager plugin";
 
 class cVdrManager: public cPlugin {
