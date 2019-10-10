@@ -11,7 +11,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +23,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.viewpagerindicator.TitleProvider;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.app.VdrManagerApp;
@@ -41,6 +43,7 @@ import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
 import de.bjusystems.vdrmanager.tasks.DeleteTimerTask;
 import de.bjusystems.vdrmanager.tasks.ToggleTimerTask;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
+import de.bjusystems.vdrmanager.utils.VdrManagerExceptionHandler;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
 import java.net.URLEncoder;
@@ -53,7 +56,7 @@ import java.util.List;
  *
  * @author bju22
  */
-public class EpgDetailsActivity extends ActionBarActivity implements
+public class EpgDetailsActivity extends AppCompatActivity implements
         OnClickListener, OnPageChangeListener, View.OnLongClickListener {
 
     public static final String TAG = "EpgDetailsActivity";
@@ -95,7 +98,7 @@ public class EpgDetailsActivity extends ActionBarActivity implements
                 return true;
             }
 
-                final Timer timer = new Timer(cEvent);
+            final Timer timer = new Timer(cEvent);
 
             Date start = new Date(timer.getStart().getTime()
                     - Preferences.get().getTimerPreMargin() * 60000);
@@ -105,29 +108,30 @@ public class EpgDetailsActivity extends ActionBarActivity implements
                     + Preferences.get().getTimerPostMargin() * 60000);
             timer.setStop(end);
 
-                final CreateTimerTask task = new CreateTimerTask(
-                        EpgDetailsActivity.this, timer) {
-                    boolean error = false;
-                    @Override
-                    public void svdrpEvent(final SvdrpEvent event, Throwable th) {
-                        if(event == SvdrpEvent.ERROR){
-                            error = true;
-                        }
-                        super.svdrpEvent(event, th);
-                    }
+            final CreateTimerTask task = new CreateTimerTask(
+                    EpgDetailsActivity.this, timer) {
+                boolean error = false;
 
-                    @Override
-                    public void finished(SvdrpEvent event) {
-                        modifed = true;
-                        EpgCache.CACHE.remove(timer
-                                .getChannelId());
-                        if(error == false && event == SvdrpEvent.FINISHED_SUCCESS) {
-                            say(R.string.timer_created);
-                        }
+                @Override
+                public void svdrpEvent(final SvdrpEvent event, Throwable th) {
+                    if (event == SvdrpEvent.ERROR) {
+                        error = true;
                     }
-                };
-                task.start();
-                return true;
+                    super.svdrpEvent(event, th);
+                }
+
+                @Override
+                public void finished(SvdrpEvent event) {
+                    modifed = true;
+                    EpgCache.CACHE.remove(timer
+                            .getChannelId());
+                    if (error == false && event == SvdrpEvent.FINISHED_SUCCESS) {
+                        say(R.string.timer_created);
+                    }
+                }
+            };
+            task.start();
+            return true;
 
 
         }
@@ -184,6 +188,8 @@ public class EpgDetailsActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(VdrManagerExceptionHandler.get(this,
+                Thread.getDefaultUncaughtExceptionHandler()));
         getSupportActionBar().setHomeButtonEnabled(true);
         // requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -544,7 +550,7 @@ public class EpgDetailsActivity extends ActionBarActivity implements
 
         final Event cEvent = epgs.get(pager.getCurrentItem());
 
-        if(v.getId() == R.id.epg_event_livetv) {
+        if (v.getId() == R.id.epg_event_livetv) {
             if (cEvent instanceof Recording) {
                 Utils.streamRecording(this, (Recording) cEvent);
             } else {
@@ -790,7 +796,7 @@ public class EpgDetailsActivity extends ActionBarActivity implements
     public void onPageSelected(int position) {
 
         Event cEvent = epgs.get(position);
-        if(cEvent == null){
+        if (cEvent == null) {
             return;
         }
         String cn = cEvent.getChannelName();
