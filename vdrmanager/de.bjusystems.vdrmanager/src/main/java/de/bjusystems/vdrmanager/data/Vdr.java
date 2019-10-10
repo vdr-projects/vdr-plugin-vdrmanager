@@ -193,11 +193,17 @@ public class Vdr {
 	@DatabaseField(columnName = "stz")
 	private String serverTimeZone = "Europe/Berlin";
 
+	@DatabaseField(columnName="svdrpHost")
+	private String svdrpHost = "";
+
 	@DatabaseField(columnName="svdrpPort")
 	private int svdrpPort = 6419;
 	
 	@DatabaseField(columnName="enableRemote")
 	private boolean enableRemote = true;
+
+	@DatabaseField(columnName="ip46Mode")
+	private String ip46Mode = "ip4";
 	
 	public String getServerTimeZone() {
 		return serverTimeZone;
@@ -495,6 +501,14 @@ public class Vdr {
 		this.timeout = timeout;
 	}
 
+	public String getIp46Mode() {
+		return ip46Mode;
+	}
+
+	public void setIp46Mode(final String ip46Mode) {
+		this.ip46Mode = ip46Mode;
+	}
+
 	private static <T> T get(Map<String, Object> map, String key) {
 		return get(map, key, null);
 	}
@@ -563,6 +577,7 @@ public class Vdr {
 		map.put("vdr_port", port);
 		map.put("vdr_password", password);
 		map.put("vdr_secure", secure);
+		map.put("vdr_ip46_mode", ip46Mode);
 
 		map.put("limit_channels", filterChannels);
 		map.put("last_channel", channelFilter);
@@ -601,53 +616,13 @@ public class Vdr {
 		map.put("key_smarttvweb_port", smarttvwebPort);
 		map.put("key_smarttvweb_recstream_method", smarttvwebType);
 		map.put("key_remote_enable", enableRemote);
+		map.put("key_svdrp_host", svdrpHost);
 		map.put("key_svdrp_port", svdrpPort);
 		return map;
 	}
 
 	public void set(Map<String, Object> map) {
 		init(map);
-/*
-		name = get(map, "vdr_name");
-		host = get(map, "vdr_host");
-		port = getInteger(map, "vdr_port");
-		password = get(map, "vdr_password");
-		secure = getBoolean(map, "vdr_secure");
-
-		filterChannels = getBoolean(map, "limit_channels");
-		channelFilter = get(map, "last_channel");
-
-		wakeupEnabled = getBoolean(map, "key_wakeup_enabled");
-		wakeupUrl = get(map, "key_wakeup_url");
-		wakeupUser = get(map, "key_wakeup_user");
-		wakeupPassword = get(map, "key_wakeup_password");
-		wakeupMethod = get(map, "key_wakeup_method");
-		wolCustomBroadcast = get(map, "key_wol_custom_broadcast");
-		mac = get(map, "key_wakeup_wol_mac");
-
-		connectionTimeout = getInteger(map, "key_conntimeout_key");
-		readTimeout = getInteger(map, "key_vdr_readtimeout");
-		timeout = getInteger(map, "key_vdr_timeout");
-
-		timerPreMargin = getInteger(map, "timer_pre_start_buffer"
-				);
-		timerPostMargin = getInteger(map, "timer_post_end_buffer");
-		timerDefaultPriority = getInteger(map, "timer_default_priority");
-		timerDefaultLifetime = getInteger(map, "timer_default_lifetime");
-
-		streamPort = getInteger(map, "streamingport");
-		streamingPassword = get(map, "key_streaming_password");
-		streamingUsername = get(map, "key_streaming_username");
-		encoding = get(map, "key_vdr_encoding");
-		streamFormat = get(map, "livetv_streamformat");
-		remuxCommand = get(map, "remux_command");
-		remuxParameter = get(map, "remux_parameter");
-		enableRemux = getBoolean(map, "remux_enable");
-
-		enableRecStreaming = getBoolean(map, "key_rec_stream_enable");
-		livePort = getInteger(map, "key_live_port");
-		recStreamMethod = get(map, "key_recstream_method");
-		*/
 	}
 
 	public void init(Map<String, Object> map) {
@@ -656,6 +631,7 @@ public class Vdr {
 		port = getInteger(map, "vdr_port", 6420);
 		password = get(map, "vdr_password", "");
 		secure = getBoolean(map, "vdr_secure");
+		ip46Mode = get(map, "vdr_ip46_mode");
 
 		filterChannels = getBoolean(map, "limit_channels", true);
 		channelFilter = get(map, "last_channel", "");
@@ -694,6 +670,7 @@ public class Vdr {
 		smarttvwebPort=  getInteger(map, "key_smarttvweb_port", 8000);
 		smarttvwebType=  get(map, "key_smarttvweb_recstream_method", "progressive");
 		enableRemote = getBoolean(map, "key_remote_enable", true);
+		svdrpHost = get(map, "key_svdrp_host", "");
 		svdrpPort = getInteger(map, "key_svdrp_port", 6419);
 	}
 
@@ -711,6 +688,14 @@ public class Vdr {
 
 	public void setSmarttvwebType(String smarttvwebType) {
 		this.smarttvwebType = smarttvwebType;
+	}
+
+	public String getSvdrpHost() {
+		return svdrpHost;
+	}
+
+	public void setSvdrpHost(String svdrpHost) {
+		this.svdrpHost = svdrpHost;
 	}
 
 	public int getSvdrpPort() {

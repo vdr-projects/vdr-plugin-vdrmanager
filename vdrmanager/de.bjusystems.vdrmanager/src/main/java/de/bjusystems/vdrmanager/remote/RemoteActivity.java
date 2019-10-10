@@ -777,7 +777,11 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
             try {
 
                 if (connection == null) {
-                    connection = new Connection(Preferences.get().getHost(), Preferences.get().getSvdrpPort());
+                    String host = Preferences.get().getSvdrpHost();
+                    if (host == null || host.length() == 0) {
+                        host = Preferences.get().getHost();
+                    }
+                    connection = new Connection(host, Preferences.get().getSvdrpPort());
                 }
 
                 send = connection.send(new HITK(hitk[0]));

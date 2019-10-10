@@ -35,6 +35,7 @@ cVdrmanagerClientSocket::cVdrmanagerClientSocket(const char * password, int comp
 	initCompression = false;
 #if VDRMANAGER_USE_SSL
 	ssl = NULL;
+	sslCtx = NULL;
 	sslReadWrite = SSL_NO_RETRY;
 	sslWantsSelect = SSL_ERROR_NONE;
 #endif
@@ -399,11 +400,14 @@ bool cVdrmanagerClientSocket::Attach(int fd) {
 	if (!LoadCerts()) {
 	  return false;
 	}
-  ssl = SSL_new(sslCtx);
-  SSL_set_accept_state(ssl);
-  BIO *bio = BIO_new_socket(sock, BIO_NOCLOSE);
-  SSL_set_bio(ssl, bio, bio);
-  BIO_set_nbio(bio, 1);
+	
+	if (certFile) {
+	  ssl = SSL_new(sslCtx);
+	  SSL_set_accept_state(ssl);
+	  BIO *bio = BIO_new_socket(sock, BIO_NOCLOSE);
+	  SSL_set_bio(ssl, bio, bio);
+	  BIO_set_nbio(bio, 1);
+	}
 #endif
 
 	return true;

@@ -6,8 +6,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.utils.http.HttpHelper;

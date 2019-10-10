@@ -148,6 +148,15 @@
     <string name="vdr_password_summary">Password for the VDR plugin</string>
     <string name="vdr_ssl_title">Secure connect</string>
     <string name="vdr_ssl_summary">Use SSL for connections</string>
+    <string name="vdr_ip46_mode_title">IPv4/6 selection</string>
+    <string name="vdr_ip46_mode_summary">IPv4/6 selection mode</string>
+
+    <string-array name="vdr_ip46_mode">
+        <item>Use only IPv4</item>
+        <item>Use only IPv6</item>
+        <item>Prefer IPv4 over IPv6</item>
+        <item>Prefer IPv6 over IPv4</item>
+    </string-array>
 
     <!-- channel filter preferences -->
     <string name="channel_filter_preferences">Channel settings</string>
@@ -547,6 +556,8 @@
     <string name="remote_enable_title">Enable VDR remote control</string>
     <string name="svdrp_port_title">SVDRP Port</string>
     <string name="svdrp_port_summary">Default is 6419</string>
+    <string name="svdrp_host_title">SVDRP Host</string>
+    <string name="svdrp_host_summary">Default is vdr host</string>
     <string name="label">Label</string>
     <string name="hitkcommand">HITK Command</string>
     <string name="menu_reset">Reset</string>

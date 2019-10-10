@@ -1,6 +1,7 @@
 /*
  * extendes sockets
  */
+#include <string.h>
 #include <unistd.h>
 #include <vdr/plugin.h>
 
@@ -35,7 +36,7 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
   this->keyFile = keyFile;
 
 	// create socket
-	sock = socket(PF_INET, SOCK_STREAM, 0);
+	sock = socket(AF_INET6, SOCK_STREAM, 0);
 	if (sock < 0) {
 		LOG_ERROR;
 		return false;
@@ -48,11 +49,12 @@ bool cVdrmanagerServerSocket::Create(int port, const char * password, bool force
 	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &ReUseAddr, sizeof(ReUseAddr));
 
 	// bind to address
-	struct sockaddr_in name;
-	name.sin_family = AF_INET;
-	name.sin_port = htons(port);
-	name.sin_addr.s_addr = htonl(INADDR_ANY);
-	if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
+	struct sockaddr_in6 addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin6_family = AF_INET6;
+	addr.sin6_port = htons(port);
+	addr.sin6_addr = in6addr_any;
+	if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 		LOG_ERROR;
 		Close();
 		return false;
@@ -93,7 +95,7 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
   isyslog("[vdrmanager] new client on port %d", port);
 
   // accept the connection
-  struct sockaddr_in clientname;
+  struct sockaddr_in6 clientname;
   uint size = sizeof(clientname);
   int newsock = accept(sock, (struct sockaddr *) &clientname, &size);
   if (newsock > 0) {
@@ -105,7 +107,8 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
     }
 
     if (!IsPasswordSet() || forceCheckSvdrp == true) {
-      bool accepted = SVDRPhosts.Acceptable(clientname.sin_addr.s_addr);
+/*
+      bool accepted = SVDRPhosts.Acceptable(clientname.sin6_addr);
       if (!accepted) {
         newsocket->Write(string("NACC Access denied.\n"));
         newsocket->Flush();
@@ -115,6 +118,7 @@ cVdrmanagerClientSocket * cVdrmanagerServerSocket::Accept() {
       dsyslog("[vdrmanager] connect from %s, port %hd - %s",
           inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port),
           accepted ? "accepted" : "DENIED");
+*/
     }
   } else if (errno != EINTR && errno != EAGAIN)
     LOG_ERROR;

@@ -10,7 +10,6 @@ import android.text.TextUtils;
 
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.StringUtils;
-import de.bjusystems.vdrmanager.app.VdrManagerApp;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
 /**
@@ -162,6 +161,10 @@ public class Preferences {
         return getCurrentVdr().getStreamingPassword();
     }
 
+    public String getIp46Mode() {
+        return getCurrentVdr().getIp46Mode();
+    }
+
     /**
      * Properties singleton
      */
@@ -231,6 +234,15 @@ public class Preferences {
      */
     public int getPort() {
         return getCurrentVdr().getPort();
+    }
+
+    /**
+     * Gets the port
+     *
+     * @return port
+     */
+    public String getSvdrpHost() {
+        return getCurrentVdr().getSvdrpHost();
     }
 
     /**

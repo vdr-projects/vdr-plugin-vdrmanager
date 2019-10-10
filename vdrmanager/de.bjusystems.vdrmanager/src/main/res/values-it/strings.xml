@@ -493,6 +493,8 @@ What do you want to do?</string>
   <string name="remote">Remote Control</string>
   <string name="remote_enable_summary">Shows the remote control view if enabled</string>
   <string name="remote_enable_title">Enable VDR remote control</string>
+  <string name="svdrp_host_title">SVDRP Nome sistema/IP</string>
+  <string name="svdrp_host_summary">Default is VDR host</string>
   <string name="svdrp_port_title">SVDRP Port</string>
   <string name="svdrp_port_summary">Default is 6419</string>
   <string name="label">Label</string>

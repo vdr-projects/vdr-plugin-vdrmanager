@@ -37,16 +37,23 @@
         <item>vdr-smarttvweb</item>
     </string-array>
 
-    <string-array name="recent_channels_order_entry_values">
-        <item>most</item>
-        <item>last</item>
-    </string-array>
-    <array name="recstream_smarttvweb_entry_values">
-        <item>progressive</item>
+  <string-array name="recent_channels_order_entry_values">
+    <item>most</item>
+    <item>last</item>
+  </string-array>
+  <array name="recstream_smarttvweb_entry_values">
+      	<item>progressive</item>
         <item>has</item>
         <item>hls</item>
-    </array>
+      </array>
+  
 
+    <string-array name="vdr_ip46_mode_values">
+        <item>ip4</item>
+        <item>ip6</item>
+        <item>ip46</item>
+        <item>ip64</item>
+    </string-array>
     <string-array name="font">
         <item> 500px </item>
         <item> address-book </item>
@@ -835,5 +842,6 @@
         <item> youtube-play </item>
         <item> youtube-square </item>
     </string-array>
+
 
 </resources>
