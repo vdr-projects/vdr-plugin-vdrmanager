@@ -45,16 +45,38 @@ import de.bjusystems.vdrmanager.utils.svdrp.SvdrpException;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpListener;
 import de.bjusystems.vdrmanager.utils.svdrp.SwitchChannelClient;
 
+/**
+ * The type Utils.
+ */
 public class Utils {
 
+    /**
+     * The constant TAG.
+     */
     public static final String TAG = Utils.class.getName();
 
+    /**
+     * The constant EMPTY_LIST.
+     */
     public static final List EMPTY_LIST = new ArrayList(0);
+    /**
+     * The constant EMPTY.
+     */
     public static final String[] EMPTY = new String[]{};
+    /**
+     * The constant HIGHLIGHT_TEXT.
+     */
     public static final ForegroundColorSpan HIGHLIGHT_TEXT = new ForegroundColorSpan(
 
             Color.RED);
 
+    /**
+     * Highlight char sequence.
+     *
+     * @param where the where
+     * @param what  the what
+     * @return the char sequence
+     */
     public static CharSequence highlight(final String where, String what) {
         if (TextUtils.isEmpty(what)) {
             return where;
@@ -72,6 +94,13 @@ public class Utils {
         return ss;
     }
 
+    /**
+     * Highlight 2 pair.
+     *
+     * @param where the where
+     * @param what  the what
+     * @return the pair
+     */
     public static Pair<Boolean, CharSequence> highlight2(final String where,
                                                          String what) {
         if (TextUtils.isEmpty(what)) {
@@ -90,11 +119,24 @@ public class Utils {
         return Pair.create(Boolean.TRUE, (CharSequence) ss);
     }
 
+    /**
+     * Gets progress.
+     *
+     * @param start the start
+     * @param stop  the stop
+     * @return the progress
+     */
     public static int getProgress(final Date start, final Date stop) {
         final long now = System.currentTimeMillis();
         return getProgress(now, start.getTime(), stop.getTime());
     }
 
+    /**
+     * Gets progress.
+     *
+     * @param e the e
+     * @return the progress
+     */
     public static int getProgress(final Event e) {
         if (e instanceof Recording == false) {
             return getProgress(e.getStart(), e.getStop());
@@ -109,8 +151,8 @@ public class Utils {
 
     /**
      * @param now
-     * @param time
-     * @param time2
+     * @param start
+     * @param stop
      * @return -1, is not not between start stop,
      */
     private static int getProgress(final long now, final long start,
@@ -123,6 +165,12 @@ public class Utils {
         return -1;
     }
 
+    /**
+     * Is live boolean.
+     *
+     * @param event the event
+     * @return the boolean
+     */
     public static boolean isLive(final Event event) {
         final long now = System.currentTimeMillis();
         return now >= event.getStart().getTime()
@@ -175,14 +223,42 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * Stream.
+     *
+     * @param activity the activity
+     * @param event    the event
+     */
     public static void stream(final Activity activity, final Event event) {
         stream(activity, event.getStreamId());
     }
 
+    /**
+     * Stream.
+     *
+     * @param activity the activity
+     * @param channel  the channel
+     */
     public static void stream(final Activity activity, final Channel channel) {
         stream(activity, channel.getId());
     }
 
+    /**
+     * Stream.
+     *
+     * @param activity the activity
+     * @param rec      the channel
+     */
+    public static void stream(final Activity activity, final Recording rec) {
+        stream(activity, rec.getDevInode());
+    }
+
+    /**
+     * Stream.
+     *
+     * @param activity the activity
+     * @param idornr   the idornr
+     */
     public static void stream(final Activity activity, final String idornr) {
 
         if (Preferences.get().isEnableRemux() == false) {
@@ -224,10 +300,16 @@ public class Utils {
                         }).create().show();
     }
 
+    /**
+     * Start stream.
+     *
+     * @param activity the activity
+     * @param url      the url
+     */
     public static void startStream(final Activity activity, final String url) {
         try {
             final Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(url.toString()), "video/*");
+            intent.setDataAndType(Uri.parse(url), "video/*");
             activity.startActivityForResult(intent, 1);
         } catch (final ActivityNotFoundException anfe) {
             Log.w(TAG, anfe);
@@ -236,6 +318,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Md 5 string.
+     *
+     * @param s the s
+     * @return the string
+     */
     public static final String md5(final String s) {
         try {
             // Create MD5 Hash
@@ -261,12 +349,24 @@ public class Utils {
         return "";
     }
 
+    /**
+     * Gets duration.
+     *
+     * @param event the event
+     * @return the duration
+     */
     public static int getDuration(final Event event) {
         final long millis = event.getDuration();
         final int minuts = (int) (millis / 1000 / 60);
         return minuts;
     }
 
+    /**
+     * Share event.
+     *
+     * @param activity the activity
+     * @param event    the event
+     */
     public static void shareEvent(final Activity activity, final Event event) {
         final Intent share = new Intent(android.content.Intent.ACTION_SEND);
         share.setType("text/plain");
@@ -290,6 +390,12 @@ public class Utils {
                 activity.getString(R.string.share_chooser)));
     }
 
+    /**
+     * Add calendar event.
+     *
+     * @param activity the activity
+     * @param event    the event
+     */
     public static void addCalendarEvent(final Activity activity,
                                         final Event event) {
         final Intent intent = new Intent(Intent.ACTION_EDIT);
@@ -301,6 +407,12 @@ public class Utils {
         activity.startActivity(intent);
     }
 
+    /**
+     * Map special chars string.
+     *
+     * @param src the src
+     * @return the string
+     */
     public static String mapSpecialChars(final String src) {
         if (src == null) {
             return "";
@@ -308,6 +420,12 @@ public class Utils {
         return src.replace("|##", C.DATA_SEPARATOR).replace("||#", "\n");
     }
 
+    /**
+     * Un map special chars string.
+     *
+     * @param src the src
+     * @return the string
+     */
     public static String unMapSpecialChars(final String src) {
         if (src == null) {
             return "";
@@ -315,6 +433,12 @@ public class Utils {
         return src.replace(C.DATA_SEPARATOR, "|##").replace("\n", "||#");
     }
 
+    /**
+     * Gets package info.
+     *
+     * @param ctx the ctx
+     * @return the package info
+     */
     public static PackageInfo getPackageInfo(final Context ctx) {
         PackageInfo pi = null;
         try {
@@ -326,6 +450,12 @@ public class Utils {
         return pi;
     }
 
+    /**
+     * Check internet connection boolean.
+     *
+     * @param ctx the ctx
+     * @return the boolean
+     */
     public static boolean checkInternetConnection(final Context ctx) {
         final ConnectivityManager cm = (ConnectivityManager) ctx
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -337,7 +467,7 @@ public class Utils {
         return false;
     }
 
-    private static String getRecordingStream(final Activity ctx,
+    private static String getRecordingStream(final Context ctx,
                                              final Recording rec) {
 
 
@@ -388,20 +518,71 @@ public class Utils {
         return url.toString();
     }
 
-    public static void streamRecording(final Activity ctx, final Recording rec) {
+
+    public static void streamRecording(final Activity activity, final Recording rec) {
+
+
+        if (Preferences.get().isEnableRemux() == false) {
+            streamRecordingDirect(activity, rec);
+            return;
+        }
+
+        final String sf = Preferences.get().getStreamFormat();
+        final String ext = activity.getString(R.string.remux_title);
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.stream_via_as)
+                //
+                .setItems(
+                        new String[]{
+                                activity.getString(R.string.stream_as, sf),
+                                activity.getString(R.string.stream_via, ext)},// TODO
+                        // add
+                        // here
+                        // what
+                        // will
+                        // be
+                        // used
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog,
+                                                final int which) {
+                                switch (which) {
+                                    case 0:
+                                        streamRecordingDirect(activity, rec);
+                                        break;
+                                    case 1:
+                                        startStream(activity, getRemuxStreamUrl(rec.getDevInode()));
+                                        break;
+                                }
+                            }
+                        }).create().show();
+
+
+    }
+
+
+    private static void streamRecordingDirect(final Activity ctx, final Recording rec) {
         final String urlstring = getRecordingStream(ctx, rec);
         Log.d(TAG, "try stream: " + urlstring);
         Utils.startStream(ctx, urlstring);
     }
 
+    /**
+     * Switch to.
+     *
+     * @param activity the activity
+     * @param channel  the channel
+     */
     public static void switchTo(final Activity activity, final Channel channel) {
         switchTo(activity, channel.getId(), channel.getName());
     }
 
     /**
-     * @param ctx
-     * @param id
-     * @param name Optional für die Anzeige
+     * Switch to.
+     *
+     * @param activity the activity
+     * @param id       the id
+     * @param name     Optional für die Anzeige
      */
     public static void switchTo(final Activity activity, final String id,
                                 final String name) {
@@ -436,20 +617,45 @@ public class Utils {
         task.run();
     }
 
+    /**
+     * Say.
+     *
+     * @param ctx the ctx
+     * @param msg the msg
+     */
     public static void say(final Context ctx, final String msg) {
         final Toast t = Toast.makeText(ctx, msg, Toast.LENGTH_SHORT);
         t.setGravity(Gravity.CENTER, 0, 0);
         t.show();
     }
 
+    /**
+     * Encode url path string.
+     *
+     * @param path the path
+     * @return the string
+     */
     public static String encodeUrlPath(String path) {
         return path.replaceAll("%", "%25");
     }
 
+    /**
+     * Say.
+     *
+     * @param ctx the ctx
+     * @param msg the msg
+     */
     public static void say(final Context ctx, final int msg) {
         say(ctx, msg, Toast.LENGTH_SHORT);
     }
 
+    /**
+     * Say.
+     *
+     * @param ctx      the ctx
+     * @param msg      the msg
+     * @param duration the duration
+     */
     public static void say(final Context ctx, final int msg, final int duration) {
         final Toast t = Toast.makeText(ctx, msg, duration);
         t.setGravity(Gravity.CENTER, 0, 0);
@@ -461,8 +667,8 @@ public class Utils {
      *
      * @param context the context
      * @param time    the time in milliseconds
+     * @return the string
      */
-
     public static String formatDateTime(final Context context, final long time) {
         return android.text.format.DateFormat.getDateFormat(context).format(
                 time)
@@ -471,6 +677,16 @@ public class Utils {
                 DateUtils.FORMAT_SHOW_TIME).toString();
     }
 
+    /**
+     * Gets timer state drawable.
+     *
+     * @param match    the match
+     * @param full     the full
+     * @param begin    the begin
+     * @param end      the end
+     * @param conflict the conflict
+     * @return the timer state drawable
+     */
     public static int getTimerStateDrawable(final TimerMatch match,
                                             final int full, final int begin, final int end, final int conflict) {
 
@@ -486,6 +702,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Format audio string.
+     *
+     * @param context the context
+     * @param tracks  the tracks
+     * @return the string
+     */
     public static String formatAudio(final Context context,
                                      final List<AudioTrack> tracks) {
 
@@ -505,6 +728,13 @@ public class Utils {
 
     }
 
+    /**
+     * Gets timer match.
+     *
+     * @param event the event
+     * @param timer the timer
+     * @return the timer match
+     */
     public static TimerMatch getTimerMatch(Event event, Timer timer) {
         if (timer == null) {
             return null;
@@ -522,6 +752,12 @@ public class Utils {
         return timerMatch;
     }
 
+    /**
+     * Content to string int.
+     *
+     * @param c the c
+     * @return the int
+     */
     public static int contentToString(int c) {
         ;
         switch (c & 0xF0) {
@@ -743,6 +979,13 @@ public class Utils {
         return R.string.Content_Unknown;
     }
 
+    /**
+     * Gets conten string.
+     *
+     * @param ctx      the ctx
+     * @param contents the contents
+     * @return the conten string
+     */
     public static String getContenString(Context ctx, int[] contents) {
 
         if (contents.length == 0) {
@@ -762,6 +1005,12 @@ public class Utils {
         return sb.toString();
     }
 
+    /**
+     * Is serie boolean.
+     *
+     * @param contents the contents
+     * @return the boolean
+     */
     public static boolean isSerie(int[] contents) {
         if (contents.length == 0) {
             return false;

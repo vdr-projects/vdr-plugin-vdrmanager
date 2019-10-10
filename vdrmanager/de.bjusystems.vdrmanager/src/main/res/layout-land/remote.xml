@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/remoteroot"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <LinearLayout
+        android:id="@+id/resultwrapper"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true">
+
+        <de.androvdr.widget.AnimatedTextView
+            android:id="@+id/result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:maxLines="1"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/resultwrapper"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/rows0"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/Power"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Power"
+                    android:text="XXX" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Back"
+                    android:text="@string/back" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Setup"
+                    android:text="@string/f085" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/navigation"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/rows1"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/colorButtons">
+
+                <de.androvdr.widget.SquareButton
+                    android:id="@+id/ok"
+                    style="@style/cursorButton"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_toLeftOf="@+id/right"
+                    android:layout_toStartOf="@+id/right"
+                    android:tag="Ok"
+                    android:text="@string/ok" />
+
+
+                <de.androvdr.widget.SquareButton
+                    android:id="@+id/right"
+                    style="@style/cursorButton"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/up"
+                    android:layout_toRightOf="@+id/up"
+                    android:tag="Right"
+                    android:text="@string/f061" />
+
+
+                <de.androvdr.widget.SquareButton
+                    android:id="@+id/left"
+                    style="@style/cursorButton"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/ok"
+                    android:layout_toStartOf="@+id/ok"
+                    android:tag="Left"
+                    android:text="@string/f060" />
+
+                <de.androvdr.widget.SquareButton
+                    android:id="@+id/up"
+                    style="@style/cursorButton"
+                    android:layout_above="@+id/ok"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:tag="Up"
+                    android:text="@string/f062" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/ChannelUp"
+                    style="@style/volChanButton"
+
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/up"
+                    android:tag="Channel+"
+                    android:text="@string/f0aa" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/VolumeUp"
+                    style="@style/volChanButton"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignTop="@+id/up"
+                    android:tag="Volume+"
+                    android:text="@string/f028" />
+
+                <de.androvdr.widget.SquareButton
+                    android:id="@+id/down"
+                    style="@style/cursorButton"
+
+                    android:layout_below="@+id/ok"
+
+                    android:layout_gravity="center_horizontal"
+                    android:layout_toLeftOf="@+id/right"
+                    android:layout_toStartOf="@+id/right"
+                    android:tag="Down"
+                    android:text="@string/f063" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/ChannelDown"
+                    style="@style/volChanButton"
+                    android:layout_alignBottom="@+id/down"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:tag="Channel-"
+                    android:text="@string/f0ab" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/VolumeDown"
+                    style="@style/volChanButton"
+                    android:layout_alignBottom="@+id/down"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:tag="Volume-"
+                    android:text="@string/f027" />
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/colorButtons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/rows0"
+                android:orientation="horizontal">
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/red"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Red"
+                    android:text="@string/remotesquares"
+                    android:textColor="@color/red" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/green"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Green"
+                    android:text="@string/remotesquares"
+                    android:textColor="@color/green" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/yellow"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Yellow"
+                    android:text="@string/remotesquares"
+                    android:textColor="@color/yellow" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    android:id="@+id/blue"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Blue"
+                    android:text="@string/remotesquares"
+                    android:textColor="@color/blue" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/rows1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/rows2"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:orientation="horizontal">
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Mute"
+                    android:text="@string/fa_mute" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Info"
+                    android:text="@string/f129" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Back"
+                    android:text="@string/f177" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Menu"
+                    android:text="@string/f0c9" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:id="@+id/rows2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Audio"
+                    android:text="@string/f025" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Subtitles"
+                    android:text="@string/fa_bars" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="PrevChannel"
+                    android:text="@string/f0e2" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Commands"
+                    android:text="@string/f120" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Audio"
+                    android:text="@string/f025" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Subtitles"
+                    android:text="S" />
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="PrevChannel"
+                    android:text="@string/f0e2" />
+
+
+                <de.androvdr.widget.FontAwesomeButton
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="0dp"
+
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="Commands"
+                    android:text="@string/f120" />
+            </LinearLayout>
+
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

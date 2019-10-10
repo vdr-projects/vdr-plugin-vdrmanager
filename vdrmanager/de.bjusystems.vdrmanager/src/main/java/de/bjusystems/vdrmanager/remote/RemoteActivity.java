@@ -4,6 +4,7 @@ package de.bjusystems.vdrmanager.remote;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -51,12 +51,21 @@ import java.util.Set;
 
 import de.androvdr.widget.AnimatedTextView;
 import de.androvdr.widget.FontAwesome;
+import de.bjusystems.vdrmanager.ButtonMapping;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.backup.IOUtils;
 import de.bjusystems.vdrmanager.data.Preferences;
-import de.bjusystems.vdrmanager.gui.ColoredButton;
 import de.bjusystems.vdrmanager.gui.Utils;
+import de.bjusystems.vdrmanager.gui.colorpicker.ColorPickerDialog;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
+
+import static de.bjusystems.vdrmanager.ButtonMapping.COLOR;
+import static de.bjusystems.vdrmanager.ButtonMapping.COLOR_PREFIX;
+import static de.bjusystems.vdrmanager.ButtonMapping.KEY;
+import static de.bjusystems.vdrmanager.ButtonMapping.KEY_PREFIX;
+import static de.bjusystems.vdrmanager.ButtonMapping.LABEL;
+import static de.bjusystems.vdrmanager.ButtonMapping.LABEL_PREFIX;
+import static de.bjusystems.vdrmanager.ButtonMapping.NO_COLOR;
 
 /**
  * The type Remote activity.
@@ -187,22 +196,20 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
     public void export() {
         SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.remoteroot);
-        HashMap<String, Pair<String, String>> map = new HashMap<>();
+        HashMap<String, ButtonMapping> map = new HashMap<>();
         collect(viewGroup, map, sharedPref);
 
-        if(map.isEmpty()){
+        if (map.isEmpty()) {
             Utils.say(this, R.string.remote_nothing_to_import);
             return;
         }
 
         JSONObject root = new JSONObject();
         try {
-            for (Map.Entry<String, Pair<String, String>> e : map.entrySet()) {
-                JSONObject pair = new JSONObject();
-                Pair<String, String> stringStringPair = e.getValue();
-                pair.put("key", stringStringPair.first);
-                pair.put("label", stringStringPair.second);
-                root.put(e.getKey(), pair);
+            for (Map.Entry<String, ButtonMapping> e : map.entrySet()) {
+                JSONObject button = new JSONObject();
+                ButtonMapping buttonMapping = e.getValue();
+                root.put(e.getKey(), buttonMapping.toJson());
             }
         } catch (JSONException jse) {
             Utils.say(this, jse.getLocalizedMessage());
@@ -248,7 +255,7 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
      * @param map        the map
      * @param sharedPref the shared pref
      */
-    public void collect(ViewGroup viewGroup, HashMap<String, Pair<String, String>> map, SharedPreferences sharedPref) {
+    public void collect(ViewGroup viewGroup, HashMap<String, ButtonMapping> map, SharedPreferences sharedPref) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View v = viewGroup.getChildAt(i);
             if (v instanceof ViewGroup) {
@@ -258,12 +265,13 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
                     continue;
                 }
                 String tagKey = String.valueOf(v.getTag());
-                String hitk = sharedPref.getString("key_" + tagKey, null);
-                String label = sharedPref.getString("label_" + tagKey, null);
-                if (hitk == null && label == null) {
+                String hitk = sharedPref.getString(KEY_PREFIX + tagKey, null);
+                String label = sharedPref.getString(LABEL_PREFIX + tagKey, null);
+                Integer color = sharedPref.getInt(COLOR_PREFIX + tagKey, -1);
+                if (hitk == null && label == null && color == -1) {
                     continue;
                 }
-                map.put(tagKey, Pair.create(hitk, label));
+                map.put(tagKey, new ButtonMapping(hitk, label, color));
             }
         }
     }
@@ -317,12 +325,22 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
                 ((Button) v).setOnClickListener(this);
                 ((Button) v).setOnLongClickListener(this);
 
-                String hitk = sharedPref.getString("key_" + String.valueOf(v.getTag()), null);
+                String hitk = sharedPref.getString(KEY_PREFIX + String.valueOf(v.getTag()), null);
                 setOverrideTag(v, hitk);
-                String label = sharedPref.getString("label_" + String.valueOf(v.getTag()), null);
+                String label = sharedPref.getString(LABEL_PREFIX + String.valueOf(v.getTag()), null);
                 setOverrideLabel((Button) v, label);
+                Integer color = sharedPref.getInt(COLOR_PREFIX + String.valueOf(v.getTag()), NO_COLOR);
+                setOverrideColor((Button) v, color);
+
             }
         }
+    }
+
+    private void setOverrideColor(Button v, Integer color) {
+        if (color == null || color == NO_COLOR) {
+            return;
+        }
+        v.setTextColor(color);
     }
 
     private void setOverrideLabel(Button b, CharSequence label) {
@@ -334,7 +352,7 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
 
 
     private void restart() {
-        if(getIntent() != null) {
+        if (getIntent() != null) {
             getIntent().removeExtra(Intent.EXTRA_STREAM);
         }
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -412,6 +430,18 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         MenuItem item = menu.findItem(R.id.remapback);
     }
 
+
+    private Activity scanForActivity(Context cont) {
+        if (cont == null)
+            return null;
+        else if (cont instanceof Activity)
+            return (Activity) cont;
+        else if (cont instanceof ContextWrapper)
+            return scanForActivity(((ContextWrapper) cont).getBaseContext());
+
+        return null;
+    }
+
     @Override
     public boolean onLongClick(final View v) {
 
@@ -420,48 +450,130 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
             return true;
         }
 
-        CharSequence text = ((Button) v).getText();
         final String tag = (String) v.getTag();
+
+        final Button button = (Button) v;
+        final CharSequence initilHitkLabel = button.getText();
         final String override = (String) v.getTag(TAG_KEY);
-        String current = override != null ? override : tag;
+        final String initialHitk = override != null ? override : tag;
 
-        View view = getLayoutInflater().inflate(R.layout.edit_remote_key, null);
+        final View rview = getLayoutInflater().inflate(R.layout.edit_remote_key, null);
 
 
-        final EditText hitk = (EditText) view.findViewById(R.id.hitk);
-        TextView hitkLabel = (TextView) view.findViewById(R.id.hitkLabel);
-        if (v instanceof ColoredButton) {
-            hitk.setVisibility(View.GONE);
-            hitkLabel.setVisibility(View.GONE);
-        } else {
-            hitk.setVisibility(View.VISIBLE);
-            hitkLabel.setVisibility(View.VISIBLE);
-            hitk.setTypeface(
-                    FontAwesome.getFontAwesome(this)
-            );
-        }
-        hitk.setText(text);
-        final Spinner hitkspinner = (Spinner) view.findViewById(R.id.hitkSpinner);
+        final EditText hitk = (EditText) rview.findViewById(R.id.hitk);
+        TextView hitkLabel = (TextView) rview.findViewById(R.id.hitkLabel);
+        View hitkLabelColorPicker = rview.findViewById(R.id.hitkLabelColorPicker);
+        View faPicker = rview.findViewById(R.id.faPicker);
+
+        faPicker.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList items = new ArrayList();
+                FaListDialog faListDialog = new FaListDialog(RemoteActivity.this);
+                faListDialog.setSearchableItem(new FaListDialog.SearchableItem<String>() {
+                    @Override
+                    public void onSearchableItemClicked(String item, int position) {
+                        hitk.setText(item.substring(0,1));
+                        hitk.setSelection(hitk.getText().
+                                length());
+                    }
+                });
+                //faListDialog.setOnSearchableItemClickListener(new FaListDialog.SearchableItem() {
+                //  @Override
+                //public void onSearchableItemClicked(Object item, int position) {
+
+//                    }
+//                });
+
+
+                faListDialog.show();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(RemoteActivity.this);
+//                View view = getLayoutInflater().inflate(R.layout.searchspinner, null);
+//                builder.setView(view);
+//                if (view instanceof ViewGroup) {
+//                    ViewGroup faPickerVG = (ViewGroup) view;
+//                    for (int i = 0; i < faPickerVG.getChildCount(); ++i) {
+//                        final View childAt = faPickerVG.getChildAt(i);
+//                        if (childAt instanceof TextView) {
+//                            ((TextView) childAt).setTypeface(FontAwesome.getFontAwesome(RemoteActivity.this));
+//                        }
+//                    }
+//                }
+//                builder.create().show();
+
+            }
+        });
+//        if (v instanceof ColoredButton) {
+//            hitk.setVisibility(View.GONE);
+//            hitkLabel.setVisibility(View.GONE);
+//        } else {
+        hitk.setVisibility(View.VISIBLE);
+        hitkLabel.setVisibility(View.VISIBLE);
+        hitk.setTypeface(
+                FontAwesome.getFontAwesome(this));
+        //);
+        //}
+        hitk.setText(initilHitkLabel);
+        hitk.setSelection(hitk.getText().
+
+                length());
+
+        final int initialTextColor = button.getCurrentTextColor();
+        final int[] currentTextColor = {initialTextColor};
+        hitk.setTextColor(currentTextColor[0]);
+        final ColorPickerDialog colorPicker = new ColorPickerDialog(
+
+                RemoteActivity.this, null, currentTextColor[0]);
+        colorPicker
+                .setOnColorChangedListener(new ColorPickerDialog.OnColorChangedListener() {
+                    @Override
+                    public void colorChanged(int color) {
+                        currentTextColor[0] = color;
+                        hitk.setTextColor(currentTextColor[0]);
+
+                        colorPicker.dismiss();
+                    }
+                });
+        hitkLabelColorPicker.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                colorPicker.show();
+            }
+        });
+
+
+        final Spinner hitkspinner = (Spinner) rview.findViewById(R.id.hitkSpinner);
 
         final ArrayList<String> keys = new ArrayList<>();
-        for (de.bjusystems.vdrmanager.remote.HITK hk : de.bjusystems.vdrmanager.remote.HITK.values()) {
+        for (
+                de.bjusystems.vdrmanager.remote.HITK hk : de.bjusystems.vdrmanager.remote.HITK.values())
+
+        {
             keys.add(hk.getValue());
         }
+
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item, keys.toArray(new String[]{}));
 // Specify the layout to use when the list of choices appears
         // hitkspinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         hitkspinner.setAdapter(adapter);
         int selected = -1;
-        for (int i = 0; i < keys.size(); ++i) {
+        for (
+                int i = 0; i < keys.size(); ++i)
+
+        {
             String k = keys.get(i);
-            if (k.equals(current)) {
+            if (k.equals(initialHitk)) {
                 selected = i;
                 break;
             }
         }
         hitkspinner.setSelection(selected);
-        hitkspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        hitkspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+
+        {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -474,26 +586,54 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+
+        {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 CharSequence nhk = hitk.getText();
-                ((Button) v).setText(nhk);
                 String hitk = (String) hitkspinner.getSelectedItem();
-                putVdrKey("key_" + tag, hitk);
-                putVdrKey("label_" + tag, nhk);
+                if (initialTextColor == currentTextColor[0] &&//
+                        initilHitkLabel.toString().equals(nhk.toString()) && //
+                        initialHitk.equals(hitk)
+                        ) {
+                    return;
+                }
+
+                ((Button) v).setText(nhk);
+                ((Button) v).setTextColor(currentTextColor[0]);
+                putVdrKey(KEY_PREFIX + tag, hitk);
+                putVdrKey(LABEL_PREFIX + tag, nhk);
+                if (currentTextColor[0] != NO_COLOR) {
+                    putVdrKey(COLOR_PREFIX + tag, currentTextColor[0]);
+                }
                 setOverrideTag(v, hitk);
 
             }
         })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .
+
+                        setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).
+                setNeutralButton(R.string.reset, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        removeVdrKey(KEY_PREFIX + tag);
+                        removeVdrKey(LABEL_PREFIX + tag);
+                        removeVdrKey(COLOR_PREFIX + tag);
+                        restart();
                     }
-                }).setView(view);
+                })
 
-        builder.create().show();
+                .setView(rview);
+
+        builder.create().
+
+                show();
 
 
         return false;
@@ -539,14 +679,17 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
                 if (all.contains(next) == false) {
                     continue;
                 }
-                JSONObject pair = object.getJSONObject(next);
-                String key = pair.getString("key");
+                JSONObject button = object.getJSONObject(next);
+                String key = button.getString(KEY);
                 if (all.contains(key) == false) {
                     continue;
                 }
-                String value = pair.getString("label");
-                edit.putString("key_" + next, key);
-                edit.putString("label_" + next, value);
+                String value = button.getString(LABEL);
+                edit.putString(KEY_PREFIX + next, key);
+                edit.putString(LABEL_PREFIX + next, value);
+                if (button.getInt(COLOR) != NO_COLOR) {
+                    edit.putInt(COLOR_PREFIX + next, button.getInt(COLOR));
+                }
                 counter++;
             }
             edit.commit();
@@ -567,6 +710,20 @@ public class RemoteActivity extends Activity implements OnClickListener, View.On
         SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPref.edit();
         edit.putString(key, String.valueOf(value));
+        edit.commit();
+    }
+
+    private void removeVdrKey(String key) {
+        SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPref.edit();
+        edit.remove(key);
+        edit.commit();
+    }
+
+    private void putVdrKey(String key, Integer value) {
+        SharedPreferences sharedPref = getSharedPreferences("remote_" + Preferences.get().getCurrentVdr().getId(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPref.edit();
+        edit.putInt(key, value);
         edit.commit();
     }
 

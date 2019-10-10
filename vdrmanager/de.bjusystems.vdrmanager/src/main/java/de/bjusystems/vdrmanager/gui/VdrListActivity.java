@@ -19,6 +19,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.app.Intents;
 import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
@@ -27,276 +31,274 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VdrListActivity extends AppCompatActivity implements
-		OnItemClickListener, OnItemLongClickListener, View.OnClickListener {
+        OnItemClickListener, OnItemLongClickListener, View.OnClickListener {
 
-	private static final String TAG = VdrListActivity.class.getName();
+    private static final String TAG = VdrListActivity.class.getName();
 
-	List<Vdr> list = new ArrayList<Vdr>();
+    List<Vdr> list = new ArrayList<Vdr>();
 
-	ArrayAdapter<Vdr> adapter = null;
+    ArrayAdapter<Vdr> adapter = null;
 
-	// Cursor cursor;
+    // Cursor cursor;
 
-	String[] listItems = {};
+    String[] listItems = {};
 
-	private boolean emptyConfig = false;
+    private boolean emptyConfig = false;
 
-	// private void initCursor() {
-	//
-	// //if (cursor != null) {
-	// //if (!cursor.isClosed()) {
-	// //cursor.close();
-	// // }
-	// //}
-	// try {
-	// cursor = getHelper().getVdrCursor();
-	// //startManagingCursor(cursor);
-	// } catch (Exception ex) {
-	// Log.w(TAG,ex);
-	// }
-	// }
+    // private void initCursor() {
+    //
+    // //if (cursor != null) {
+    // //if (!cursor.isClosed()) {
+    // //cursor.close();
+    // // }
+    // //}
+    // try {
+    // cursor = getHelper().getVdrCursor();
+    // //startManagingCursor(cursor);
+    // } catch (Exception ex) {
+    // Log.w(TAG,ex);
+    // }
+    // }
 
-	private void populateIntent() {
-		emptyConfig = getIntent().getBooleanExtra(Intents.EMPTY_CONFIG,
-				Boolean.FALSE);
-	}
-
-
-	@Override
-	public void onClick(View v) {
-
-		if(v.getId() == R.id.new_vdr){
-			editVdr(null);
-			return;
-		}
-
-	}
-
-	static class Holder {
-		public TextView text1;
-		public TextView text2;
-	}
-
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		populateIntent();
-
-		setContentView(R.layout.vdr_list_add_delete);
+    private void populateIntent() {
+        emptyConfig = getIntent().getBooleanExtra(Intents.EMPTY_CONFIG,
+                Boolean.FALSE);
+    }
 
 
-		findViewById(R.id.new_vdr).setOnClickListener(this);
+    @Override
+    public void onClick(View v) {
 
-		// initCursor();
-		final Vdr cur = Preferences.get().getCurrentVdr();
-		adapter = new ArrayAdapter<Vdr>(this,
-				android.R.layout.simple_list_item_2, list) {
+        if (v.getId() == R.id.new_vdr) {
+            editVdr(null);
+            return;
+        }
 
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				// recycle view?
-				Holder holder = null;
-				View view = convertView;
-				if (view == null) {
-					view = getLayoutInflater().inflate(
-							android.R.layout.simple_list_item_2, null);
-					holder = new Holder();
+    }
 
-					holder.text1 = (TextView) view
-							.findViewById(android.R.id.text1);
-					holder.text2 = (TextView) view
-							.findViewById(android.R.id.text2);
-					view.setTag(holder);
-				} else {
-					holder = (Holder) view.getTag();
-				}
+    static class Holder {
+        public TextView text1;
+        public TextView text2;
+    }
 
-				Vdr vdr = getItem(position);
-				String name = (vdr.getName() != null ? vdr.getName() : "");
-				String host = vdr.getHost();
-				holder.text2.setText(host);
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-				if (cur != null && cur.getId() == vdr.getId()) {
-					SpannableString content = new SpannableString(name);
-					content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-					holder.text1.setText(content);
-					// text1.setText(text1.getText());
-				} else {
-					holder.text1.setTypeface(Typeface.DEFAULT);
-					holder.text1.setText(name);
-				}
-				return view;
-			}
+        populateIntent();
 
-		};
+        setContentView(R.layout.vdr_list_add_delete);
 
-		// adapter = new ArrayAdapter<Vdr>(
-		// "name", "host" }, new int[] { android.R.id.text1,
-		// android.R.id.text2}) {
-		// @Override
-		// public void bindView(View view, Context context,
-		// Cursor cursor) {
-		//
-		// TextView text1 = (TextView)view.findViewById(android.R.id.text1);
-		// TextView text2 = (TextView)view.findViewById(android.R.id.text2);
-		// int id = cursor.getInt(cursor.getColumnIndex("_id"));
-		// String name = cursor.getString(cursor.getColumnIndex("name"));
-		// String host = cursor.getString(cursor.getColumnIndex("host"));
-		// text2.setText(host);
-		//
-		// if(cur != null && cur.getId() == id) {
-		// SpannableString content = new SpannableString(name);
-		// content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-		// text1.setText(content);
-		// //text1.setText(text1.getText());
-		// } else {
-		// text1.setTypeface(Typeface.DEFAULT);
-		// text1.setText(name);
-		// }
-		//
-		//
-		// }
-		//
-		// };
-		ListView listView = (ListView) findViewById(R.id.vdr_list);
-		listView.setAdapter(adapter);
-		registerForContextMenu(listView);
-		listView.setOnItemClickListener(this);
-		listView.setOnItemLongClickListener(this);
-		listView.setLongClickable(true);
-		listView.setEmptyView(findViewById(R.id.empty_view));
-	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget
-	 * .AdapterView, android.view.View, int, long)
-	 */
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		editVdr(adapter.getItem(position).getId());
-	}
+        findViewById(R.id.new_vdr).setOnClickListener(this);
 
-	/**
-	 * Start {@link VdrPreferencesActivity} to create or edit a vdr
-	 *
-	 * @param id
-	 *            may be null. Then a new vdr is created
-	 */
-	private void editVdr(Integer id) {
-		Intent intent = new Intent(this, VdrPreferencesActivity.class);
-		intent.putExtra(Intents.VDR_ID, id);
-		startActivityForResult(intent, Intents.EDIT_VDR);
-	}
+        // initCursor();
+        final Vdr cur = Preferences.get().getCurrentVdr();
+        adapter = new ArrayAdapter<Vdr>(this,
+                android.R.layout.simple_list_item_2, list) {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see android.app.Activity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                // recycle view?
+                Holder holder = null;
+                View view = convertView;
+                if (view == null) {
+                    view = getLayoutInflater().inflate(
+                            android.R.layout.simple_list_item_2, null);
+                    holder = new Holder();
 
-		if (resultCode != RESULT_OK) {
-			return;
-		}
-		if (requestCode == Intents.EDIT_VDR) {
-			refresh();
-			return;
-		}
+                    holder.text1 = (TextView) view
+                            .findViewById(android.R.id.text1);
+                    holder.text2 = (TextView) view
+                            .findViewById(android.R.id.text2);
+                    view.setTag(holder);
+                } else {
+                    holder = (Holder) view.getTag();
+                }
 
-	}
+                Vdr vdr = getItem(position);
+                String name = (vdr.getName() != null ? vdr.getName() : "");
+                String host = vdr.getHost();
+                holder.text2.setText(host);
 
-	@Override
-	protected void onResume() {
-		refresh();
-		super.onResume();
-	}
+                if (cur != null && cur.getId() == vdr.getId()) {
+                    SpannableString content = new SpannableString(name);
+                    content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+                    holder.text1.setText(content);
+                    // text1.setText(text1.getText());
+                } else {
+                    holder.text1.setTypeface(Typeface.DEFAULT);
+                    holder.text1.setText(name);
+                }
+                return view;
+            }
 
-	@Override
-	public void onBackPressed() {
-		if (list.isEmpty()) {
-			finish();
-			return;
-		}
-		if (emptyConfig) {
-			Intent intent = new Intent(this, VdrManagerActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			finish();
-		} else {
-			super.onBackPressed();
-		}
-	}
+        };
 
-	/**
-	 * Refresh the list
-	 */
-	private void refresh() {
-		list.clear();
-		list.addAll(DBAccess.get(this).getVdrDAO().queryForAll());
-		adapter.notifyDataSetChanged();
-	}
+        // adapter = new ArrayAdapter<Vdr>(
+        // "name", "host" }, new int[] { android.R.id.text1,
+        // android.R.id.text2}) {
+        // @Override
+        // public void bindView(View view, Context context,
+        // Cursor cursor) {
+        //
+        // TextView text1 = (TextView)view.findViewById(android.R.id.text1);
+        // TextView text2 = (TextView)view.findViewById(android.R.id.text2);
+        // int id = cursor.getInt(cursor.getColumnIndex("_id"));
+        // String name = cursor.getString(cursor.getColumnIndex("name"));
+        // String host = cursor.getString(cursor.getColumnIndex("host"));
+        // text2.setText(host);
+        //
+        // if(cur != null && cur.getId() == id) {
+        // SpannableString content = new SpannableString(name);
+        // content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        // text1.setText(content);
+        // //text1.setText(text1.getText());
+        // } else {
+        // text1.setTypeface(Typeface.DEFAULT);
+        // text1.setText(name);
+        // }
+        //
+        //
+        // }
+        //
+        // };
+        ListView listView = (ListView) findViewById(R.id.vdr_list);
+        listView.setAdapter(adapter);
+        registerForContextMenu(listView);
+        listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
+        listView.setLongClickable(true);
+        listView.setEmptyView(findViewById(R.id.empty_view));
+    }
 
-	public boolean onItemLongClick(AdapterView<?> parent, View view,
-			final int position, final long id) {
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget
+     * .AdapterView, android.view.View, int, long)
+     */
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+                            long id) {
+        editVdr(adapter.getItem(position).getId());
+    }
 
-		new AlertDialog.Builder(this)
-				.setMessage(R.string.vdr_device_delete_qeustion)//
-				.setPositiveButton(android.R.string.ok,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								if (DBAccess
-										.get(VdrListActivity.this)
-										.getVdrDAO()
-										.deleteById(
-												adapter.getItem(position)
-														.getId()) > 0) {
-									if (Preferences.get().getCurrentVdrContext(
-											VdrListActivity.this) == id) {
-										Preferences.setCurrentVdr(
-												VdrListActivity.this, null);
-									}
-									refresh();
-								}
+    /**
+     * Start {@link VdrPreferencesActivity} to create or edit a vdr
+     *
+     * @param id may be null. Then a new vdr is created
+     */
+    private void editVdr(Integer id) {
+        Intent intent = new Intent(this, VdrPreferencesActivity.class);
+        intent.putExtra(Intents.VDR_ID, id);
+        startActivityForResult(intent, Intents.EDIT_VDR);
+    }
 
-							}
-						})//
-				.setNegativeButton(android.R.string.cancel, null)//
-				.create()//
-				.show();
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.app.Activity#onActivityResult(int, int,
+     * android.content.Intent)
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-	@Override
-	public final boolean onCreateOptionsMenu(final Menu menu) {
-		super.onCreateOptionsMenu(menu);
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == Intents.EDIT_VDR) {
+            refresh();
+            return;
+        }
 
-		final MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.vdrlist, menu);
+    }
 
-		return true;
-	}
+    @Override
+    protected void onResume() {
+        refresh();
+        super.onResume();
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.main_menu_vdrlist_restore) {
+    @Override
+    public void onBackPressed() {
+        if (list.isEmpty()) {
+            finish();
+            return;
+        }
+        if (emptyConfig) {
+            Intent intent = new Intent(this, VdrManagerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-			Intent intent = IntentUtils.newIntent(this,
-					BackupSettingsActivity.class);
-			startActivity(intent);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    /**
+     * Refresh the list
+     */
+    private void refresh() {
+        list.clear();
+        list.addAll(DBAccess.get(this).getVdrDAO().queryForAll());
+        adapter.notifyDataSetChanged();
+    }
+
+    public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                   final int position, final long id) {
+
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.vdr_device_delete_qeustion)//
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                if (DBAccess
+                                        .get(VdrListActivity.this)
+                                        .getVdrDAO()
+                                        .deleteById(
+                                                adapter.getItem(position)
+                                                        .getId()) > 0) {
+                                    if (Preferences.get().getCurrentVdrContext(
+                                            VdrListActivity.this) == id) {
+                                        Preferences.setCurrentVdr(
+                                                VdrListActivity.this, null);
+                                    }
+                                    refresh();
+                                }
+
+                            }
+                        })//
+                .setNegativeButton(android.R.string.cancel, null)//
+                .create()//
+                .show();
+        return true;
+    }
+
+    @Override
+    public final boolean onCreateOptionsMenu(final Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.vdrlist, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.main_menu_vdrlist_restore) {
+
+            Intent intent = IntentUtils.newIntent(this,
+                    BackupSettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

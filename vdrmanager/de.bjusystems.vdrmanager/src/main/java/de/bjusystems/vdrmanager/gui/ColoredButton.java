@@ -1,7 +1,6 @@
 package de.bjusystems.vdrmanager.gui;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -15,14 +14,13 @@ import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.Button;
 
 import de.bjusystems.vdrmanager.R;
 
 /**
  * Created by lado on 03.05.15.
  */
-public class ColoredButton extends Button {
+public class ColoredButton extends android.support.v7.widget.AppCompatButton {
 
 
 private final float defaultRadius = 0.0f;

@@ -37,6 +37,7 @@ import de.bjusystems.vdrmanager.data.Vdr;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.data.db.EPGSearchSuggestionsProvider;
 import de.bjusystems.vdrmanager.remote.RemoteActivity;
+import de.bjusystems.vdrmanager.utils.VdrManagerExceptionHandler;
 import de.bjusystems.vdrmanager.utils.wakeup.AsyncWakeupTask;
 
 public class VdrManagerActivity extends AppCompatActivity implements
@@ -92,7 +93,8 @@ public class VdrManagerActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Thread.setDefaultUncaughtExceptionHandler(VdrManagerExceptionHandler.get(this,
+                Thread.getDefaultUncaughtExceptionHandler()));
         // Preferences.initVDR(this);
 
         // if(Preferences.get().getCurrentVdr() == null){
@@ -108,6 +110,7 @@ public class VdrManagerActivity extends AppCompatActivity implements
             intent.putExtra(Intents.EMPTY_CONFIG, Boolean.TRUE);
             startActivity(intent);
             Toast.makeText(this, R.string.no_vdr, Toast.LENGTH_SHORT).show();
+            checkAndRequestPermission();
             finish();
             return;
         }

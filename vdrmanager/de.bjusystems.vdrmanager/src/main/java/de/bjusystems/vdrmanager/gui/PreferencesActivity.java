@@ -12,7 +12,11 @@ import android.preference.PreferenceManager;
 import de.bjusystems.vdrmanager.R;
 import de.bjusystems.vdrmanager.backup.BackupSettingsActivity;
 import de.bjusystems.vdrmanager.data.Preferences;
+import de.bjusystems.vdrmanager.utils.VdrManagerExceptionHandler;
 
+/**
+ * The type Preferences activity.
+ */
 public class PreferencesActivity extends BasePreferencesActivity implements
 		OnSharedPreferenceChangeListener, OnPreferenceChangeListener,
 		OnPreferenceClickListener {
@@ -29,6 +33,8 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Thread.setDefaultUncaughtExceptionHandler(VdrManagerExceptionHandler.get(this,
+				Thread.getDefaultUncaughtExceptionHandler()));
 
 		this.getPreferenceManager().setSharedPreferencesName(
 				Preferences.getPreferenceFile(this));
@@ -49,7 +55,13 @@ public class PreferencesActivity extends BasePreferencesActivity implements
 		updateChildPreferences();
 	}
 
-	// /** Return a properly configured SharedPreferences instance */
+	/**
+	 * Gets shared preferences.
+	 *
+	 * @param context the context
+	 * @return the shared preferences
+	 */
+// /** Return a properly configured SharedPreferences instance */
 	public static SharedPreferences getSharedPreferences(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}

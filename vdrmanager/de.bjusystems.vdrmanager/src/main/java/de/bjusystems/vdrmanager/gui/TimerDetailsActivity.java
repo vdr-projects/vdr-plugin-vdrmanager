@@ -34,17 +34,30 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.Timer;
 import de.bjusystems.vdrmanager.tasks.CreateTimerTask;
 import de.bjusystems.vdrmanager.tasks.ModifyTimerTask;
+import de.bjusystems.vdrmanager.utils.VdrManagerExceptionHandler;
 import de.bjusystems.vdrmanager.utils.date.DateFormatter;
 import de.bjusystems.vdrmanager.utils.svdrp.SetTimerClient.TimerOperation;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpEvent;
 
+/**
+ * The type Timer details activity.
+ */
 public class TimerDetailsActivity extends Activity implements OnClickListener,
 		OnDateSetListener, OnTimeSetListener {
 
+	/**
+	 * The constant REQUEST_CODE_TIMER_MODIFIED.
+	 */
 	public static final int REQUEST_CODE_TIMER_MODIFIED = 34;
 
+	/**
+	 * The constant REQUEST_CODE_TIMER_EDIT.
+	 */
 	public static final int REQUEST_CODE_TIMER_EDIT = 35;
 
+	/**
+	 * The constant REQUEST_CODE_TIMER_ADD.
+	 */
 	public static final int REQUEST_CODE_TIMER_ADD = 36;
 
 	private CharSequence prevStart;
@@ -56,6 +69,8 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Thread.setDefaultUncaughtExceptionHandler(VdrManagerExceptionHandler.get(this,
+				Thread.getDefaultUncaughtExceptionHandler()));
 		View view = getLayoutInflater().inflate(R.layout.timer_detail, null);
 		tView = new EditTimerViewHolder();
 		tView.view = view;
@@ -170,29 +185,80 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		tView.dateField.setEnabled(true);
 	}
 
+	/**
+	 * The type Edit timer view holder.
+	 */
 	public class EditTimerViewHolder {
+		/**
+		 * The View.
+		 */
 		View view;
+		/**
+		 * The Title.
+		 */
 		TextView title;
+		/**
+		 * The Channel.
+		 */
 		TextView channel;
+		/**
+		 * The Date field.
+		 */
 		Button dateField;
+		/**
+		 * The Start field.
+		 */
 		Button startField;
+		/**
+		 * The End field.
+		 */
 		Button endField;
+		/**
+		 * The Save button.
+		 */
 		Button saveButton;
+		/**
+		 * The Modify button.
+		 */
 		Button modifyButton;
+		/**
+		 * The Vps.
+		 */
 		CheckBox vps;
+		/**
+		 * The Repeat.
+		 */
 		Button repeat;
+		/**
+		 * The Priority.
+		 */
 		EditText priority;
+		/**
+		 * The Lifecycle.
+		 */
 		EditText lifecycle;
 	}
 
+	/**
+	 * The T view.
+	 */
 	EditTimerViewHolder tView = null;
 
+	/**
+	 * The Edit start.
+	 */
 	boolean editStart;
 
 	// SetTimerClient setTimerClient;
 
+	/**
+	 * The Timer.
+	 */
 	Timer timer;
 
+	/**
+	 * The Original.
+	 */
 	Timer original;
 
 	private void updateDates(Date start, Date stop) {
@@ -261,15 +327,26 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 
 	}
 
+	/**
+	 * Gets app.
+	 *
+	 * @return the app
+	 */
 	protected VdrManagerApp getApp() {
 		final VdrManagerApp app = (VdrManagerApp) getApplication();
 		return app;
 	}
 
+	/**
+	 * Add.
+	 */
 	public void add() {
 		updateDisplay(TimerOperation.CREATE);
 	}
 
+	/**
+	 * Modify.
+	 */
 	public void modify() {
 		updateDisplay(TimerOperation.MODIFY);
 	}
@@ -384,6 +461,11 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		}
 	}
 
+	/**
+	 * Gets selected items.
+	 *
+	 * @return the selected items
+	 */
 	DaysOfWeek getSelectedItems() {
 		String str = timer.getWeekdays();
 
@@ -410,6 +492,11 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		return Integer.valueOf(text.getText().toString());
 	}
 
+	/**
+	 * Say.
+	 *
+	 * @param res the res
+	 */
 	protected void say(int res) {
 		Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
 	}
@@ -475,6 +562,9 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		task.start();
 	}
 
+	/**
+	 * Done.
+	 */
 	public void done() {
 		setResult(RESULT_OK);
 		finish();
@@ -490,6 +580,9 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		task.start();
 	}
 
+	/**
+	 * The type Days of week.
+	 */
 	/*
 	 * Days of week code as a single int. 0x00: no day 0x01: Monday 0x02:
 	 * Tuesday 0x04: Wednesday 0x08: Thursday 0x10: Friday 0x20: Saturday 0x40:
@@ -504,10 +597,22 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 		// Bitmask of all repeating days
 		private int mDays;
 
+		/**
+		 * Instantiates a new Days of week.
+		 *
+		 * @param days the days
+		 */
 		DaysOfWeek(int days) {
 			mDays = days;
 		}
 
+		/**
+		 * To string string.
+		 *
+		 * @param context   the context
+		 * @param showNever the show never
+		 * @return the string
+		 */
 		public String toString(Context context, boolean showNever) {
 			StringBuilder ret = new StringBuilder();
 
@@ -551,6 +656,12 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			return ((mDays & (1 << day)) > 0);
 		}
 
+		/**
+		 * Set.
+		 *
+		 * @param day the day
+		 * @param set the set
+		 */
 		public void set(int day, boolean set) {
 			if (set) {
 				mDays |= (1 << day);
@@ -559,15 +670,30 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			}
 		}
 
+		/**
+		 * Set.
+		 *
+		 * @param dow the dow
+		 */
 		public void set(DaysOfWeek dow) {
 			mDays = dow.mDays;
 		}
 
+		/**
+		 * Gets coded.
+		 *
+		 * @return the coded
+		 */
 		public int getCoded() {
 			return mDays;
 		}
 
-		// Returns days of week encoded in an array of booleans.
+		/**
+		 * Get boolean array boolean [ ].
+		 *
+		 * @return the boolean [ ]
+		 */
+// Returns days of week encoded in an array of booleans.
 		public boolean[] getBooleanArray() {
 			boolean[] ret = new boolean[7];
 			for (int i = 0; i < 7; i++) {
@@ -576,6 +702,11 @@ public class TimerDetailsActivity extends Activity implements OnClickListener,
 			return ret;
 		}
 
+		/**
+		 * Is repeat set boolean.
+		 *
+		 * @return the boolean
+		 */
 		public boolean isRepeatSet() {
 			return mDays != 0;
 		}

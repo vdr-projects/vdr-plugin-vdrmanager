@@ -4,4 +4,6 @@
     <dimen name="item_margin">0dp</dimen>
     <dimen name="item_inset">2dp</dimen>
     <dimen name="recycler_height">200dp</dimen>
+    <dimen name="color_picker_center">90dip</dimen>
+    <dimen name="color_picker_radius">30dip</dimen>
 </resources>

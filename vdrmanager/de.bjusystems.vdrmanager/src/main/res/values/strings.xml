@@ -560,4 +560,26 @@
     <string name="permission_rationale">The app needs Storage permissions to import/export.</string>
     <string name="remote_keys_imported">Remote Keys imported: %1$s</string>
     <string name="remote_nothing_to_import" >No custom mapping…</string>
+    <string name="reset">Reset</string>
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+    <string name="f061"></string>
+    <string name="f060"></string>
+    <string name="f062"></string>
+    <string name="remotesquares"></string>
+    <string name="fa_mute"></string>
+    <string name="f129"></string>
+    <string name="f177"></string>
+    <string name="f0c9"></string>
+    <string name="f0e2"></string>
+    <string name="f120"></string>
+    <string name="f027"></string>
+    <string name="f0ab"></string>
+    <string name="f063"></string>
+    <string name="f028"></string>
+    <string name="f0aa"></string>
+    <string name="f085"></string>
+    <string name="fa_power_off"></string>
+    <string name="fa_bars"></string>
+    <string name="f025"></string>
 </resources>

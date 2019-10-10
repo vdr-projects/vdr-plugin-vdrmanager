@@ -29,6 +29,7 @@ import de.bjusystems.vdrmanager.data.Preferences;
 import de.bjusystems.vdrmanager.data.RecenteChannel;
 import de.bjusystems.vdrmanager.data.db.DBAccess;
 import de.bjusystems.vdrmanager.tasks.VoidAsyncTask;
+import de.bjusystems.vdrmanager.utils.VdrManagerExceptionHandler;
 import de.bjusystems.vdrmanager.utils.svdrp.ChannelClient;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpAsyncTask;
 import de.bjusystems.vdrmanager.utils.svdrp.SvdrpClient;
@@ -50,26 +51,53 @@ public class ChannelListActivity extends
 
 	private static final String TAG = ChannelListActivity.class.getName();
 
+	/**
+	 * The Adapter.
+	 */
 	ChannelAdapter adapter;
 
+	/**
+	 * The Prefs.
+	 */
 	Preferences prefs;
 
 	// private static final LinkedList<Channel> RECENT = new
 	// LinkedList<Channel>();
 
+	/**
+	 * The constant MENU_GROUP.
+	 */
 	public static final int MENU_GROUP = 0;
+	/**
+	 * The constant MENU_PROVIDER.
+	 */
 	public static final int MENU_PROVIDER = 1;
+	/**
+	 * The constant MENU_SOURCE.
+	 */
 	public static final int MENU_SOURCE = 2;
+	/**
+	 * The constant MENU_NAME.
+	 */
 	public static final int MENU_NAME = 3;
 
+	/**
+	 * The constant GROUP_NATURAL.
+	 */
 	public static final boolean GROUP_NATURAL = false;
 
+	/**
+	 * The constant GROUP_REVERSE.
+	 */
 	public static final boolean GROUP_REVERSE = true;
 
 	private int groupBy;
 
 	private boolean groupByReverse;
 
+	/**
+	 * The constant ALL_CHANNELS_GROUP.
+	 */
 	final static ArrayList<String> ALL_CHANNELS_GROUP = new ArrayList<String>(1);
 
 	@Override
@@ -82,6 +110,8 @@ public class ChannelListActivity extends
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Thread.setDefaultUncaughtExceptionHandler(VdrManagerExceptionHandler.get(this,
+				Thread.getDefaultUncaughtExceptionHandler()));
 
 		// Attach view
 		
@@ -147,12 +177,26 @@ public class ChannelListActivity extends
 		task.run();
 	}
 
+	/**
+	 * The Recent adapter.
+	 */
 	static RecentChannelsAdapter RECENT_ADAPTER = null;
 
+	/**
+	 * The type Recent channels adapter.
+	 */
 	static class RecentChannelsAdapter extends ArrayAdapter<Channel> {
 		private final Activity context;
+		/**
+		 * The Res id.
+		 */
 		int resId;
 
+		/**
+		 * Instantiates a new Recent channels adapter.
+		 *
+		 * @param context the context
+		 */
 		public RecentChannelsAdapter(final Activity context) {
 			super(context, android.R.layout.simple_list_item_1);
 			this.context = context;
@@ -165,6 +209,9 @@ public class ChannelListActivity extends
 			}
 		}
 
+		/**
+		 * The Show channel numbers.
+		 */
 		public boolean showChannelNumbers;
 
 		@Override
@@ -285,6 +332,9 @@ public class ChannelListActivity extends
 		return R.array.channels_group_by;
 	}
 
+	/**
+	 * The Group by dialog.
+	 */
 	AlertDialog groupByDialog = null;
 
 	@Override

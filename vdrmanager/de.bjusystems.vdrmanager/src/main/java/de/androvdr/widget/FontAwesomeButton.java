@@ -2,12 +2,11 @@ package de.androvdr.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.Button;
 
 /**
  * Created by lado on 04.05.15.
  */
-public class FontAwesomeButton extends Button {
+public class FontAwesomeButton extends android.support.v7.widget.AppCompatButton {
 
 
     public FontAwesomeButton(Context context, AttributeSet attrs, int defStyle) {
